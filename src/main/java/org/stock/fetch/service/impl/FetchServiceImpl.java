@@ -1,6 +1,5 @@
 package org.stock.fetch.service.impl;
 
-
 import java.util.Date;
 import java.util.List;
 
@@ -11,12 +10,15 @@ import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.service.FetchService;
 
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
+import com.aeasycredit.commons.lang.utils.DatesUtils;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+/**
+ * https://www.cnyes.com/twstock/ps_historyprice/2881.htm
+ */
 @Service
 public class FetchServiceImpl implements FetchService {
     
@@ -25,13 +27,16 @@ public class FetchServiceImpl implements FetchService {
     
     @Autowired
     private StockHistoryMapper stockHistoryMapper;
-
+    
+    /**
+     * 日期格式為：yyyy/MM/dd
+     */
     @Override
-    public void fetch() throws Exception {
+    public void fetch(String startDate, String endDate) throws Exception {
         String stockId = "2881";
         HtmlPage page = webClient.getPage("https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockId);
-        page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", "2017/06/01");  
-        page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", "2017/07/01");  
+        page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
+        page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
         HtmlForm form = page.getHtmlElementById("aspnetForm");
         HtmlPage page2 = form.getOneHtmlElementByAttribute("input", "id", "ctl00_ContentPlaceHolder1_submitBut").click();
         HtmlForm form2 = page2.getHtmlElementById("aspnetForm");
@@ -54,8 +59,7 @@ public class FetchServiceImpl implements FetchService {
                         switch(i) {
                             case 0:
                               // 日期
-                                System.out.println("--->"+td.asText());
-                                stockHistory.setDate(td.asText());
+                                stockHistory.setDate(DatesUtils.YYMMDD2.toDate(td.asText()));
                             break;
                             case 1:
                               // 開盤
@@ -100,6 +104,11 @@ public class FetchServiceImpl implements FetchService {
                 }
             }
         }
+    }
+
+    @Override
+    public List<StockHistory> select(Date startDate, Date endDate) {
+        return stockHistoryMapper.select(startDate, endDate);
     }
     
 }

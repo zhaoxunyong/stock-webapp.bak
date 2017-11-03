@@ -7,7 +7,7 @@ public class StockHistory {
 
     private String stockId;
 
-    private String date;
+    private Date date;
 
     private String opening;
 
@@ -47,12 +47,12 @@ public class StockHistory {
         this.stockId = stockId == null ? null : stockId.trim();
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date == null ? null : date.trim();
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getOpening() {

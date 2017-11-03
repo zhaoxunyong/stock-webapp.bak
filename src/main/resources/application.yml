@@ -24,7 +24,12 @@ mybatis:
 
 #攔截器需排除的路徑
 interceptor: 
-  excludePath: /login,/loginPage,/logout,/sessionLostError,/user/find,/user/authList,/user/getAuthList,/user/changePassword
+  excludePath: |
+    /login,
+    /loginPage,
+    /logout,
+    /sessionLostError,
+    /fetch/index
   
 # Log
 logging:

@@ -35,6 +35,8 @@ public class FetchServiceTest {
     
     @Test
     public void fetch() throws Exception {
-        fetchService.fetch();
+        String startDate = "2017/07/02";
+        String endDate = "2017/08/01";
+        fetchService.fetch(startDate, endDate);
     }
 }

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50637
 File Encoding         : 65001
 
-Date: 2017-11-03 15:45:15
+Date: 2017-11-03 16:19:11
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -22,7 +22,7 @@ DROP TABLE IF EXISTS `stock_history`;
 CREATE TABLE `stock_history` (
   `id` bigint(20) NOT NULL COMMENT '主鍵',
   `stock_id` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '股票id',
-  `date` varchar(100) CHARACTER SET utf8 NOT NULL COMMENT '日期',
+  `date` date NOT NULL COMMENT '日期',
   `opening` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '開盤',
   `highest` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '最高',
   `lowest` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '最低',
