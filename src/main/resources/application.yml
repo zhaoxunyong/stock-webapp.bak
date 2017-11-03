@@ -29,7 +29,8 @@ interceptor:
     /loginPage,
     /logout,
     /sessionLostError,
-    /fetch/index
+    /fetch/index,
+    /fetch/data
   
 # Log
 logging:

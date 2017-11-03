@@ -65,5 +65,6 @@
   <select id="select" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" /> from stock_history
     where date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
+    ORDER BY date asc
   </select>
 </mapper>

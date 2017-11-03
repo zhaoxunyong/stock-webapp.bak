@@ -43,7 +43,7 @@ public class FetchServiceImpl implements FetchService {
         HtmlElement element = form2.getOneHtmlElementByAttribute("table", "enableviewstate", "false");
 //        System.out.println("1===>"+element.asXml());
         List<HtmlElement> trs = element.getElementsByTagName("tr");
-        System.out.println("2===>"+trs);
+//        System.out.println("2===>"+trs);
         if(trs!=null && !trs.isEmpty()) {
             for(HtmlElement tr : trs) {
 //                System.out.println("3===>"+tr.asXml());
