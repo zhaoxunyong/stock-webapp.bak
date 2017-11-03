@@ -1,0 +1,21 @@
+[Unit]
+Description=Employee Server Application
+After=network.target
+
+[Service]
+Type=simple
+User=dev
+WorkingDirectory=/works/app/hkapp/employee-server
+ExecStart=/works/app/hkapp/employee-server/start.sh 
+ExecStop=/works/app/hkapp/employee-server/stop.sh
+
+# ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGQUIT
+TimeoutStopSec=20
+
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+
+[Install]
+WantedBy=multi-user.target

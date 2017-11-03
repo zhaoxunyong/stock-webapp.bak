@@ -1,0 +1,733 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="includes/commonHead :: header"></head>
+<body>
+<style>
+	.panel-body {overflow-y:auto}
+</style>
+	
+<!-- 	<table id="authDg" title="权限列表" class="easyui-treegrid" 
+		url="/auth/allTreeList" treeField="name" idField="id" 
+		toolbar="#toolbar"
+		rownumbers="true" fitColumns="true" singleSelect="true" fit="true">
+	<thead>
+		<tr>
+			<th field="id" width="20" hidden="true">ID</th>
+			<th field="name" width="50">名称</th>
+			<th field="authorityCode" width="50">权限</th>
+			<th field="memo" width="100">备注</th>
+		</tr>
+	</thead>
+	</table> -->
+<table id="authListTable"></table>
+<div id="toolbar">
+	来源：
+	<select id="source"> 
+		<option th:each="sourceObj:${sourceList}" th:value="${sourceObj.value}" th:text="${sourceObj.text}" ></option>
+	</select>
+	<a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="auth.addAuth()">新增权限</a>
+	<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="auth.editAuth()">修改权限</a>
+	<a href="#" class="easyui-linkbutton" iconCls="icon-delete" plain="true" onclick="auth.delAuth()">删除权限</a>
+	<a href="#" class="easyui-linkbutton" iconCls="icon-cog" plain="true" onclick="addPositionAuth()">职位权限</a>
+	<a href="#" class="easyui-linkbutton" iconCls="icon-cog" plain="true" onclick="addUserAuth()">用户权限</a>
+	<a onclick="authListTable.treegrid('reload');return false;"
+				href="javascript:void(0);" class="easyui-linkbutton"
+				data-options="plain:true,iconCls:'icon-reload'">刷新</a>
+</div>
+
+<!-- 職位權限對話框 -->
+<div id="postDialog" modal="true" class="easyui-dialog" style="width:400px;height:350px;padding:10px 20px" closed="true" buttons="#dlg-buttons">
+	
+	<table id="postDg" class="easyui-treegrid" data-options="rownumbers:false, fitColumns:true, fit:true">
+		<thead>
+			<tr>
+				<th field="ck" checkbox="true"></th>
+				<th field="postName" width="50">名称</th>
+				<th field="postCode" width="50">编号</th>
+			</tr>
+		</thead>	  
+	</table>
+</div>
+<div id="dlg-buttons">
+	<a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="savePositionAuth()">保存</a>
+	<a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#postDialog').dialog('close')">取消</a>
+</div>
+
+<!-- 用户对话框 -->
+<div id="userDialog" modal="true" class="easyui-dialog yhqx" style="width:800px;height:480px;border:0;" closed="true" buttons="#dlg-buttons1">
+	<div class="easyui-layout" style="width:100%;height:400px;border:none">
+		<div region="west" style="width:200px;">
+			<div id="orgUnitMenu">
+				<ul id="tt" class="easyui-tree"></ul>
+			</div>
+		</div>
+		<div id="content" region="center" style="border:none;">
+			<table id="userDg" class="easyui-datagrid" style="width:100%;height:400px;" data-options="rownumbers:true,fitColumns:true,pagination:true">
+			<thead>
+				<tr>
+					<th field="ck" checkbox="true"></th>
+					<th field="userId" width="20" hidden="true">ID</th>
+					<th field="loginName" width="100">登录名</th>
+					<th field="name" width="100">姓名</th>
+				</tr>
+			</thead>		
+			</table>
+		</div>
+	</div>
+
+</div>
+
+<div id="dlg-buttons1">
+	<a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveUserAuth()">保存</a>
+	<a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="closeUserDialog()">取消</a>
+</div>
+
+<!-- 新增权限对话框 -->
+<div id="addAuthDlg" modal="true" class="easyui-dialog" style="width:450px" closed="true" buttons="#dlg-buttons-addAuth">
+	<form id="authForm" method="post">
+		<input type="hidden" name="id"/>
+		<input type="hidden" name="source"/>
+		<input type="hidden" name="parentId"/>
+		 <div class="dialogPop">
+			<dl>
+				<dt><span>*</span>父级目录：</dt>
+				<dd><select id="parentIdSelect" class="easyui-combotree" data-options="panelHeight:'150'"></select></dd>
+			</dl>
+			<dl>
+				<dt><span>*</span>权限编码：</dt>
+				<dd><input id="authCode" class="easyui-combobox" name="authorityCode" data-options="panelHeight:150"/></dd>
+			</dl>
+			<dl>
+				<dt><span>*</span>名 称：</dt>
+				<dd><input id="authName" name="name" class="easyui-textbox" readonly="readonly" data-options="required:true"/></dd>
+			</dl>
+			<dl>
+				<dt><span>*</span>备注：</dt>
+				<dd><input name="memo"  class="easyui-textbox"  data-options="required:true,multiline:true"/></dd>
+			</dl>
+		</div>
+		
+	</form>
+</div>
+<div id="dlg-buttons-addAuth">
+	<a href="#" class="easyui-linkbutton" iconCls="icon-ok" onclick="auth.saveAuth()">保存</a>
+	<a href="#" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#addAuthDlg').dialog('close')">取消</a>
+</div>
+
+<script th:inline="javascript">
+
+var authorityIdSelected = "";
+
+// 当前选择的组织单元菜单
+var currentMenuNode = null;
+
+	//$("#openConfirm").click(function(){ 
+		 //DialogUtils.openModalDialog("id","test","/position/index",400,300,function(e){console.info('closed');console.info(e)})
+	//	DialogUtils.tip("test message");
+	//});
+
+function addPositionAuth(){
+	$("#postDg").treegrid("uncheckAll");
+	// 检查是否选中了一个权限
+	var selectedAuth = $("#authListTable").datagrid("getSelected");
+	if (!selectedAuth)
+	{
+		$.messager.alert("提示","请先选择权限");
+		return false;
+	}
+	
+	// 选中的权限ID
+	var authorityId = selectedAuth.id;
+	authorityIdSelected = authorityId;
+	
+	$('#postDialog').dialog('open').dialog('setTitle','配置职位权限');
+	
+	// 获取权限ID关联的职位
+	var positionIds = "";
+	$.ajax({
+        url: "/auth/positionIds?id=" + authorityId,
+        type: "get",
+        dataType: "json",
+        async: false,
+        success: function (data) {
+        	positionIds = data;
+        }
+    });
+	// 获取所有职位列表，并默认选中权限关联的职位
+        	// 动态加载职位表格数据
+            //$("#postDg").datagrid("loadData", data);  //动态取数据
+            $("#postDg").treegrid({
+            	url: "/position/allPosition",
+            	idField:'id',    
+                treeField:'postName', 
+                singleSelect:false,
+                onLoadSuccess : function(row,data){
+                	// 默认选中已经关联的职位
+                	 var rowData = data;
+                     console.log(rowData);
+                	 $.each(rowData, function(ridx, robj){
+                         $.each(positionIds, function(pidx, pobj){
+                       	  	if(robj.postId == pobj){
+                       	  	  console.log(pobj);
+                                 $("#postDg").treegrid("select",pobj);
+                               }
+       				  });
+                         if(robj.children.length > 0){
+                 	  		$.each(robj.children,function(cidx,cobj){
+       		          	  		$.each(positionIds, function(pidx, pobj){
+	       		                	  	if(cobj.postId == pobj){
+	       		                        var row =  $("#postDg").treegrid("find",pobj);
+	       		                      	$("#postDg").treegrid("select",row.id);
+       		                        }
+       						   });
+                 	  		})
+                 	  	}
+                   });
+                }
+            });
+            
+           
+	
+	
+	//$('#fm').form('clear');
+	//url = 'save_user.php';
+}
+
+
+function savePositionAuth() {
+	
+	var paramObj = {};
+	paramObj.authorityId = authorityIdSelected;
+	
+
+	var positionIds = [];
+	//var positionIds = "";
+	var selectedPostRows = $('#postDg').datagrid('getSelections');
+	$.each(selectedPostRows, function(idx, obj){ 
+		positionIds.push(obj.postId);
+		//positionIds += obj.positionId + ",";
+	});
+	paramObj.positionIds = positionIds;
+	//alert(positionIds);
+	
+	$.ajax({
+        url: "/auth/savePositionAuthority",
+        type: "post",
+        dataType: "json",
+        data:paramObj,
+        success: function (data) {
+        	if (data)
+        	{
+	        	if (data.result == "true") {
+	        		$.messager.alert("提示","保存成功");
+	        		$('#postDialog').dialog('close');
+	        	} else {
+	        		$.messager.alert("提示","保存失败");
+	        	}
+        	} else {
+        		$.messager.alert("提示","保存失败");
+        	}
+        }
+    });
+}
+
+var userIds = "";
+var allViewUserIds = [];
+var allUnSelectUserIds = [];
+var allSelectUserIds = [];
+
+function addUserAuth() {
+	/**
+	$('#orgUnitMenu').tree({
+		url: '/auth/getTreeDeptList',
+		loadFilter: function(rows){
+			return rows;
+		},
+		onClick:function(node){  
+			
+			$.triggerge('menu_click',{href:node.url,title:node.target.innerText})
+        }  
+	});
+	*/
+	// 检查是否选中了一个权限
+	var selectedAuth = $("#authListTable").datagrid("getSelected");
+	if (!selectedAuth)
+	{
+		$.messager.alert("提示","请先选择权限");
+		return false;
+	}
+	
+	// 选中的权限ID
+	var authorityId = selectedAuth.id;
+	authorityIdSelected = authorityId;
+	
+	// 获取权限ID关联的用户
+	//var userIds = "";
+	$.ajax({
+        url: "/auth/getUserIdList?authorityId=" + authorityId,
+        type: "get",
+        dataType: "json",
+        async: false,
+        success: function (data) {
+        	userIds = data;
+        }
+    });
+	
+	
+	$("#orgUnitMenu ul").tree({  
+		url:"/auth/getTreeDeptList",
+		/* onLoadSuccess:function(node,data){
+			var tree = $("#orgUnitMenu ul").tree("getRoot");
+			$("#orgUnitMenu ul").tree("select",tree.target);
+		}, */
+		onClick:function(node){  
+            
+            	currentMenuNode = node;
+            	
+            	var paramObj = {};
+            	paramObj.deptId = node.id;
+            	
+            	// 查询用户信息并展示
+            	$.ajax({
+                    url: "/auth/getUserList",
+                    type: "get",
+                    dataType: "json",
+                    data: paramObj,
+                    success: function (data) {
+                    	
+                    	// 动态加载表格数据
+                        $("#userDg").datagrid("loadData", data);  //动态取数据
+                        // 默认选中已经关联的用户
+                        var rowData = data.rows;  
+                        $.each(rowData, function(idx, obj){
+                        	
+                              $.each(userIds, function(idx1, obj1){
+
+                            	  if(obj.userId == "" + obj1){  
+                                      $("#userDg").datagrid("selectRow", idx);
+                                    }
+            				  });
+                        });
+                        
+                    }
+                });
+        }  
+    });
+	$("#orgUnitMenu ul").click();
+	$('#userDialog').dialog('open').dialog('setTitle','用户权限');
+	
+}
+
+function getUserListData(deptId, page, rows) {
+	
+	var paramObj = {};
+	paramObj.page = page;
+	paramObj.rows = rows;
+	paramObj.deptId = deptId;
+	var resultObj = null;
+	
+	$.ajax({
+        url: "/auth/getUserList",
+        type: "get",
+        dataType: "json",
+        data: paramObj,
+        async: false,
+        success: function (data) {
+        	
+            resultObj = data;
+        }
+    });
+	return resultObj;
+}
+
+$(function(){
+	
+	// 用户列表分页
+	$("#userDg").datagrid("getPager").pagination({pageList: [2, 10, 20, 30, 40, 50],
+	    onSelectPage: function (pageNumber, pageSize) {
+	    	
+	    	// 进入下一页之前，保存已勾选及该页所有记录的用户ID
+	    	pageBeforeProcess();
+	    	
+	    	var deptId = currentMenuNode.id;
+	    	var data = getUserListData(deptId, pageNumber, pageSize);
+	    	$("#userDg").datagrid("loadData", data);
+	    	
+            // 默认选中已经关联的用户
+            var rowData = data.rows;
+            $.each(rowData, function(idx, obj){
+                  $.each(userIds, function(idx1, obj1){
+                	  /*<![CDATA[*/
+                	  if(obj.userId == obj1){  
+                		  
+                      	$("#userDg").datagrid("selectRow", idx);
+                       }
+                	  /*]]>*/
+                	  
+                	  
+				  });
+                  
+                  // 检查是否在之前的翻页中已经选择过，若是则默认也选中
+                  $.each(allSelectUserIds, function(idx1, obj1){
+                	  if(obj.userId == obj1){  
+                          $("#userDg").datagrid("selectRow", idx);
+                        }
+				  });
+                  
+                  $.each(allUnSelectUserIds, function(idx1, obj1){
+                	  if(obj.userId == obj1){  
+                          $("#userDg").datagrid("unselectRow", idx);
+                        }
+				  });
+                  
+            });
+	    }
+	});
+	
+});
+
+/**
+ * 关闭用户权限关联对话框
+ */
+function closeUserDialog() {
+	// 关闭对话框
+	$('#userDialog').dialog('close');
+	// 清空用户列表中的数据
+	//$('#userDg').datagrid('loadData', { total: 0, rows: [] });  
+	
+	allViewUserIds = [];
+	allSelectUserIds = [];
+	allUnSelectUserIds = [];
+}
+
+/**
+ * 保存用户权限关联信息
+ */
+function saveUserAuth() {
+	
+	// 获取当前页面的勾选的用户及所有用户ID信息（有翻页则在翻页时也获取）
+	pageBeforeProcess();
+	
+	var paramObj = {};
+	paramObj.authorityId = authorityIdSelected;
+
+	var positionIds = [];
+	//paramObj.allViewUserIds = allViewUserIds;
+	paramObj.allSelectUserIds = allSelectUserIds;
+	paramObj.allUnSelectUserIds = allUnSelectUserIds;
+	
+	$.ajax({
+        url: "/auth/saveUserAuthority",
+        type: "post",
+        dataType: "json",
+        data:paramObj,
+        success: function (data) {
+        	if (data)
+        	{
+	        	if (data.result == "true") {
+	        		$.messager.alert("提示","保存成功");
+	        		//$('#userDialog').dialog('close');
+	        		closeUserDialog();
+	        	} else {
+	        		$.messager.alert("提示","保存失败");
+	        	}
+        	} else {
+        		$.messager.alert("提示","保存失败");
+        	}
+        }
+    });
+	
+}
+
+function arrayToStr(array) {
+	var str = "";
+	$.each(array, function(index, object){
+		str += object + ","
+	});
+	return str;
+}
+
+/**
+ * 翻页前处理
+ */
+function pageBeforeProcess(){
+	/*<![CDATA[*/
+	var curSelectUserIds = []; // 当前页选择的用户ID
+	var curUnSelectUserIds = []; // 当前页未选择的用户ID
+	
+	var selectRows = $('#userDg').datagrid('getSelections');
+	// 获取当前页已勾选的用户ID
+	$.each(selectRows, function(index, rowObj) {   
+		curSelectUserIds.push(rowObj.userId);
+	});
+	
+	var allRows = $("#userDg").datagrid("getRows");
+	$.each(allRows, function(index, rowObj) {   
+		
+		// 获取当前页未勾选的用户ID
+		if ($.inArray(rowObj.userId, curSelectUserIds) < 0) {
+			curUnSelectUserIds.push(rowObj.userId);
+		}
+	});
+	 
+	// 所有已勾选的列表中，如果在当前页是未勾选的，则从其中移除
+	$.each(curUnSelectUserIds, function(index, value){
+		
+		if ($.inArray(value, allSelectUserIds) >= 0) {
+			removeValueInArray(allSelectUserIds, value);
+		}
+	});
+	
+	
+	// 所有未勾选的列表中，如果在当前页是已勾选的，则从其中移除
+	$.each(curSelectUserIds, function(index, value){
+		
+		if ($.inArray(value, allUnSelectUserIds) >= 0) {
+			removeValueInArray(allUnSelectUserIds, value);
+		}
+	});
+	
+	// 把当前页已勾选的记录放入所有勾选用户列表中
+	$.each(curSelectUserIds, function(index, value){
+		
+		if ($.inArray(value, allSelectUserIds) < 0) {
+			allSelectUserIds.push(value);
+		}
+	});
+	
+	// 把当前页未勾选的记录放入所有未勾选用户列表中
+	$.each(curUnSelectUserIds, function(index, value){
+		
+		if ($.inArray(value, allUnSelectUserIds) < 0) {
+			allUnSelectUserIds.push(value);
+		}
+	});
+	//alert("已勾选：" + arrayToStr(allSelectUserIds) + " 未勾选:" + arrayToStr(allUnSelectUserIds));
+	
+	/*]]>*/
+}
+
+function removeValueInArray(arr, val) {
+	/*<![CDATA[*/
+  for(var i=0; i<arr.length; i++) {
+    if(arr[i] == val) {
+      arr.splice(i, 1);
+      break;
+    }
+  }
+	/*]]>*/
+}
+
+var auth = {};
+
+/**
+ * 打开新增权限对话框
+ */
+auth.addAuth = function() {
+	
+	$('#addAuthDlg').dialog('open').dialog('setTitle','新增权限');
+	$('#authForm').form('clear');
+	url = '/auth/saveAuth';
+	
+	var source = $("#source").val();
+	
+	$('#authCode').combobox({
+		url:'/user/getAuthCode?source='+source,    
+	    valueField:'value',    
+	    textField:'value',
+	    required:true,
+	    editable:false,
+	    onSelect : function(record){
+	    	$('#authName').textbox("setValue", record.name);
+	    }
+	})
+	$("#parentIdSelect").combotree({
+		url: "/auth/allTreeList?source=" + source,  
+    	method: 'get'//,  
+    	//loadFilter: function (rows) {  
+    	//    return convert(rows);  
+    	//} 
+	});
+	
+	$(":hidden[name='source']").val(source);
+}
+
+/**
+ * 删除权限
+ */
+auth.delAuth = function() {
+	
+	// 检查是否选中了一个权限
+	var selectedAuth = $("#authListTable").datagrid("getSelected");
+	if (!selectedAuth)
+	{
+		$.messager.alert("提示","请先选择权限");
+		return false;
+	}
+	
+	DialogUtils.confirm("提示","确认删除",function(confirmResult){
+		
+		if (confirmResult) {
+			var paramObj = {};
+			paramObj.id = selectedAuth.id;
+			
+			$.ajax({
+		        url: "/auth/delete",
+		        type: "post",
+		        dataType: "json",
+		        data:paramObj,
+		        success: function (data) {
+		        	if (data)
+		        	{
+			        	if (data.result == "success") {
+			        		//$.messager.alert("提示","删除成功");
+			        		DialogUtils.tip("删除成功");
+			        		// 刷新权限列表
+			        		var source = $("#source").val();
+							authListTable.treegrid("reload", {source:source});
+			        		
+			        	} else {
+			        		//$.messager.alert("提示","删除失败");
+			        		DialogUtils.tip("删除失败");
+			        	}
+		        	} else {
+		        		//$.messager.alert("提示","删除失败");
+		        		DialogUtils.tip("删除失败");
+		        	}
+		        }
+		    });
+		
+		} else {
+			return false;
+		}
+		
+	});
+	
+
+	
+	
+}
+
+/**
+ * 修改权限
+ */
+auth.editAuth = function() {
+	
+	// 检查是否选中了一个权限
+	var selectedAuth = $("#authListTable").datagrid("getSelected");
+	if (!selectedAuth)
+	{
+		$.messager.alert("提示","请先选择权限");
+		return false;
+	}
+	
+	$('#addAuthDlg').dialog('open').dialog('setTitle','修改权限');
+	$('#authForm').form('clear');
+	url = '/auth/saveAuth';
+	
+	var source = $("#source").val();
+	
+	$("#parentIdSelect").combotree({
+		url: "/auth/allTreeList?source=" + source,  
+    	method: 'get'
+	});
+	
+	$(":hidden[name='source']").val(source);
+	
+	$('#authForm').form('load',selectedAuth);
+	
+	$("#parentIdSelect").combotree('setValues',$(":hidden[name='parentId']").val());
+
+}
+
+/**
+ * 保存权限信息
+ */
+auth.saveAuth = function() {
+
+	var parentIdValue = $("#parentIdSelect").combotree('getValue');
+	$(":hidden[name='parentId']").val(parentIdValue);
+	
+	$('#authForm').form('submit',{
+		url: url,
+		onSubmit: function(){
+			return $(this).form('validate');
+		},
+		success: function(result){
+			var result = eval('('+result+')');
+			if (result.errorMsg){
+				$.messager.show({
+					title: '错误',
+					msg: result.errorMsg
+				});
+			} else {
+				$('#addAuthDlg').dialog('close');
+				//$('#authListTable').datagrid('reload');
+				var source = $("#source").val();
+				authListTable.treegrid("reload", {source:source});
+			}
+		}
+	});
+}
+var authListTable = null;
+$(function(){
+	var source = $("#source").val();
+	// 加载权限列表数据
+	authListTable = $('#authListTable').treegrid({
+		url : "/auth/allTreeList",
+		queryParams:{source:source},
+		fit : true,
+		fitColumns : true,
+		border : false,
+		loadMsg : "正在加載數據請等待......",
+		idField : 'id',
+		//checkOnSelect : true,
+		//selectOnCheck : true,
+		remoteSort : false,
+		nowrap : false,
+		singleSelect : true,
+		rownumbers : true,
+		 treeField: "name",
+		columns : [ [ 
+		{
+			field : 'name',
+			title : '权限名称',
+			width : 120
+		},{
+			field : 'authorityCode',
+			title : '权限编码',
+			width : 100
+
+		},
+		{
+			field : 'memo',
+			title : '备注',
+			width : 120
+		},
+		{
+			field : 'parentId',
+			title : '父目录',
+			hidden : true,
+			width : 120
+		}
+		 ] ],
+		 toolbar : '#toolbar'
+	});
+	
+	// 来源系统改变，重新获取对应的权限列表信息
+	$('#source').change(function(){
+		
+		var source = $(this).val();
+	    authListTable.treegrid("reload", {source:source});  //动态取数据
+		
+	});
+	
+	
+	
+	
+});
+
+</script>
+
+</body>
+</html>

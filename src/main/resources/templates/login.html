@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/css/reset.css}" />
+<link rel="stylesheet" th:href="@{/css/login.css}" />
+<head th:replace="includes/commonHead :: header"></head>
+<body>
+<div class="wrapper">
+	<div class="login-main">
+		<i class="logo"></i>
+		<div class="login-box">
+			<form id="loginForm" method="post">
+				<dl>
+				    <dd class="title">員工管理系統</dd>
+					<dd>
+						<input name="userName" type="text" required="true" placeholder="請輸入用戶名" id="username" autocomplete="off"/>
+						<i class="i i-a"></i>
+					</dd>
+					<dd>
+						<input name="password" type="password" required="true" placeholder="請輸入密碼" id="password" autocomplete="off"/>
+						<i class="i i-b"></i>
+					</dd>
+				</dl>
+			</form>
+			<input value="登錄" id="loginSumbitBtn" type="submit"/>
+			<div class="error"></div>
+		</div>
+	</div>
+	<ul class="bg-bubbles">
+		<li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+	</ul>
+</div>
+<script th:inline="javascript">
+	$(function(){	
+		$("#loginSumbitBtn").click(function(){
+			$('#loginForm').form('submit',{
+				url: "/login",
+				onSubmit: function(){
+					return $(this).form('validate');
+				},
+				success: function(result){
+					if(result.indexOf("success") != -1){
+						location.href = "/index";
+						return;
+					}
+					if($("#username").val() == "" || $("#username").val() == null){
+						$(".error").html("請輸入用戶名");
+						return;
+					}
+					if($("#password").val() == "" || $("#password").val() == null){
+						$(".error").html("請輸入密碼")
+						return;
+					} else {
+						$(".error").html("用戶名或密碼錯誤，登錄失敗")
+						return;
+					}
+				}
+			});		
+		});	
+	});	
+	
+	if(top != self) {  
+	    if(top.location != self.location) {  
+	        top.location = self.location;  
+	    }  
+	}
+	
+	//回车键登录
+	$("body").keydown(function() {
+	    if (event.keyCode == "13") {//keyCode=13是回车键
+	        $('#loginSumbitBtn').click();
+	    }
+	});
+</script>
+</body>
+</html>

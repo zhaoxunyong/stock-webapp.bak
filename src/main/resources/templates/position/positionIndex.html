@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="includes/commonHead :: header"></head>
+<body>
+	
+<!-- 	<table id="postListTable" title="職位列表" class="easyui-datagrid"
+		url="/position/allPosition" rownumbers="true" fitColumns="true" singleSelect="true" fit="true">
+	<thead>
+		<tr>
+			<th field="postName" width="50">職位名稱</th>
+			<th field="postCode" width="50">職位編號</th>
+		</tr>
+	</thead>
+</table> -->
+
+<table id="postListTable"></table>
+<div id="toolbar">
+	<a id="configPostAuthALink" onclick="configPostAuth();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-database-key'">配置職位權限</a>
+	<a id="configPostOperatorALink" onclick="configPostOperator();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-folder-user'">配置職位人員</a>
+</div>
+<script th:inline="javascript">
+
+//配置職位權限
+function configPostAuth(){
+	var row = $('#postListTable').treegrid('getSelected');
+	var boxHeight = $('.panel-noscroll').height() * 0.85;
+	if($.ObjectUtils.isEmpty(row)){
+		$.messager.alert("提示","沒有選中的職位");
+		return ;
+	}
+	DialogUtils.progress({
+        text : '加載中，請等待....'
+	});
+	DialogUtils.openModalDialog(
+		"configPostAuth",
+		$.formatString("配置職位權限_[{0}]",row.postName),
+		$.formatString("/position/toConfigPostAuth?postId={0}",row.id),
+		450,boxHeight,function(){
+			//$('#treeGrid').treegrid('reload');
+			//alert('reload');
+		}
+	);
+}
+//配置職位人員
+function configPostOperator(){
+	var row = $('#postListTable').treegrid('getSelected');
+	var boxHeight = $('.panel-noscroll').height() * 0.85;
+	if($.ObjectUtils.isEmpty(row)){
+		$.messager.alert("提示","沒有選中的職位");
+		return ;
+	}
+	DialogUtils.progress({
+        text : '加載中，請等待....'
+	});
+	DialogUtils.openModalDialog(
+		"configPostOperator",
+		$.formatString("配置職位人員_[{0}]",row.postName),
+		$.formatString("/position/toConfigPostUser?postId={0}",row.id),
+		850,boxHeight,function(){
+			//$('#treeGrid').treegrid('reload');
+			//alert('reload');
+		}
+	);
+}
+$(function(){
+	var source = $("#source").val();
+	// 加载权限列表数据
+	$('#postListTable').treegrid({
+		url : "/position/allPosition",
+		fit : true,
+		fitColumns : true,
+		border : false,
+		loadMsg : "正在加載數據請等待......",
+		idField : 'id',
+		remoteSort : false,
+		nowrap : false,
+		singleSelect : true,
+		rownumbers : true,
+		 treeField: "postName",
+		columns : [ [ 
+		{
+			field : 'postName',
+			title : '職位名稱',
+			width : 120
+		},{
+			field : 'postCode',
+			title : '職位編號',
+			width : 100
+		}
+		 ] ],
+		 toolbar : '#toolbar'
+	});
+	
+});
+</script>
+
+</body>
+</html>
