@@ -30,6 +30,7 @@ interceptor:
     /logout,
     /sessionLostError,
     /fetch/index,
+    /fetch/index2,
     /fetch/data
   
 # Log

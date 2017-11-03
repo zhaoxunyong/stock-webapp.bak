@@ -20,9 +20,17 @@ public class FetchController {
     private FetchService fetchService;
     
     @RequestMapping("/index")
-    public ModelAndView fetch(String startDate, String endDate) {
+    public ModelAndView index(String startDate, String endDate) {
         List<StockHistory> historys = fetchService.select(DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
         ModelAndView view = new ModelAndView("fetch");
+        view.addObject("historys", historys);
+        return view;
+    }
+    
+    @RequestMapping("/index2")
+    public ModelAndView index2(String startDate, String endDate) {
+        List<StockHistory> historys = fetchService.select(DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
+        ModelAndView view = new ModelAndView("fetch2");
         view.addObject("historys", historys);
         return view;
     }
