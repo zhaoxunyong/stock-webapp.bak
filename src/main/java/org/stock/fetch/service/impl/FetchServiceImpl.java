@@ -18,6 +18,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 /**
  * https://www.cnyes.com/twstock/ps_historyprice/2881.htm
+ * https://github.com/andredumas/techan.js/wiki/Gallery
  */
 @Service
 public class FetchServiceImpl implements FetchService {
