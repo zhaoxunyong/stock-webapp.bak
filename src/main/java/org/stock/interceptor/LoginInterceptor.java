@@ -1,9 +1,3 @@
-/*
- * 描述： 登录拦截器
- * 修改人： Weng.weng
- * 修改时间： May 31, 2017
- * 项目： employee-server
- */
 package org.stock.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,14 +12,6 @@ import org.stock.user.model.User;
 import com.aeasycredit.commons.lang.constant.CommonConstant;
 import com.aeasycredit.commons.lang.exception.SessionException;
 
-/**
- * 登录拦截器<br>
- * 
- * @author Weng.weng
- * @version [版本号, May 31, 2017]
- * @see [相关类/方法]
- * @since [产品/模块版本]
- */
 public class LoginInterceptor implements HandlerInterceptor {
     
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

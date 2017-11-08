@@ -1,9 +1,3 @@
-/*
- * 描述： 读取配置文件中的用户名密码信息
- * 修改人： Weng.weng
- * 修改时间： May 31, 2017
- * 项目： employee-server
- */
 package org.stock.config;
 
 import java.io.FileNotFoundException;
@@ -23,14 +17,6 @@ import org.yaml.snakeyaml.Yaml;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 
-/**
- * 读取配置文件中的用户名密码信息<br>
- * 
- * @author Weng.weng
- * @version [版本号, May 31, 2017]
- * @see [相关类/方法]
- * @since [产品/模块版本]
- */
 @Component
 public class UserConfig {
     

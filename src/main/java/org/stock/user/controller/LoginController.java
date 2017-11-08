@@ -1,9 +1,3 @@
-/*
- * 描述： 登录Controller
- * 修改人： Weng.weng
- * 修改时间： May 31, 2017
- * 项目： employee-server
- */
 package org.stock.user.controller;
 
 import java.util.Map;
@@ -23,15 +17,6 @@ import org.stock.user.model.User;
 import com.aeasycredit.commons.codec.utils.MD5Utils;
 import com.aeasycredit.commons.lang.constant.CommonConstant;
 
-/**
- * 登录Controller<br>
- * 实现用户登录及退出系统功能
- * 
- * @author Weng.weng
- * @version [版本号, May 31, 2017]
- * @see [相关类/方法]
- * @since [产品/模块版本]
- */
 @Controller
 public class LoginController {
     

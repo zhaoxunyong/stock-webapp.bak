@@ -7,11 +7,7 @@ import org.springframework.boot.web.servlet.ErrorPage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
-/**
- * 配置内置web服务器
- * @author roy
- *
- */
+
 @Configuration
 @EnableAutoConfiguration
 public class ErrorPageConfig {

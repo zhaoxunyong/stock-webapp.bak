@@ -1,9 +1,3 @@
-/*
- * 描述： Redis緩存配置
- * 修改人： Weng.weng
- * 修改时间： June 4, 2017
- * 项目： employee-server
- */
 package org.stock.config;
 
 import org.springframework.cache.CacheManager;
@@ -15,15 +9,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 //import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
-/**
- * 
- *  Redis緩存配置<br>
- * 
- * @author Weng.weng
- * @version [版本号, Jun 4, 2017]
- * @see [相关类/方法]
- * @since [产品/模块版本]
- */
 @Configuration
 @EnableCaching
 public class RedisConfig {

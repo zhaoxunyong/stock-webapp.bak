@@ -7,15 +7,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.stock.interceptor.LoginInterceptor;
 
-/**
- * 
- * 配置拦截器规则信息<br>
- * 
- * @author Weng.weng
- * @version [版本号, May 16, 2017]
- * @see [相关类/方法]
- * @since [产品/模块版本]
- */
 @Configuration
 public class CustomWebAppConfigurer extends WebMvcConfigurerAdapter {
     

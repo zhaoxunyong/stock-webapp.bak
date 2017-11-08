@@ -6,16 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.stock.user.model.User;
 
-/**
- * 
- * 用户相关数据库操作类<br>
- * 包括获取用户的权限信息，职位信息等
- * 
- * @author Weng.weng
- * @version [版本号, May 17, 2017]
- * @see [相关类/方法]
- * @since [产品/模块版本]
- */
 @Mapper
 public interface UserDao {
     

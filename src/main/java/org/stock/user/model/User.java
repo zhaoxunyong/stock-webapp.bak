@@ -1,23 +1,9 @@
-/*
- * 描述： 用戶Model
- * 修改人： Weng.weng
- * 修改时间： Aug 22, 2017
- * 项目： employee-server
- */
 package org.stock.user.model;
 
 import java.util.Date;
 
 import com.aeasycredit.commons.lang.base.BaseModel;
 
-/**
- * 用戶Model<br>
- * 
- * @author Weng.weng
- * @version [版本号, Aug 22, 2017]
- * @see [相关类/方法]
- * @since [产品/模块版本]
- */
 public class User extends BaseModel {
     
     private static final long serialVersionUID = -2871228322737341033L;
