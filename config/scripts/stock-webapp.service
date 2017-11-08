@@ -1,13 +1,13 @@
 [Unit]
-Description=Employee Server Application
+Description=Stock Webapp Application
 After=network.target
 
 [Service]
 Type=simple
 User=dev
-WorkingDirectory=/works/app/hkapp/employee-server
-ExecStart=/works/app/hkapp/employee-server/start.sh 
-ExecStop=/works/app/hkapp/employee-server/stop.sh
+WorkingDirectory=/works/app/stock-webapp
+ExecStart=/works/app/stock-webapp/start.sh 
+ExecStop=/works/app/stock-webapp/stop.sh
 
 # ExecReload=/bin/kill -s HUP $MAINPID
 KillSignal=SIGQUIT
