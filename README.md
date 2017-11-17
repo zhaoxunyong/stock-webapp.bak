@@ -6,5 +6,7 @@ docker run -d  -p 3306:3306 --restart=always --name mysql \
 mysql:5.6 \
 --character-set-server=utf8 --collation-server=utf8_general_ci
 
+docker run -d -p 6379:6379 --restart=always --name redis redis
+
 http://localhost:8080/fetch/index
 http://localhost:8080/fetch/index2

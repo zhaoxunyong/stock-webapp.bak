@@ -6,7 +6,7 @@ spring:
     name: stock-webapp
     
   datasource: 
-    url: jdbc:mysql://192.168.99.100:3306/stock?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+    url: jdbc:mysql://192.168.99.1:3306/stock?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
     username: stock
     password: Aa123456
     driver-class-name: com.mysql.jdbc.Driver
@@ -16,8 +16,8 @@ spring:
   
   # Redis Config  
   redis: 
-    host: 192.168.100.88
-    port: 6380
+    host: 192.168.99.1
+    port: 6379
 
 mybatis:
   mapperLocations: classpath:mybatis/*.xml
