@@ -1,6 +1,6 @@
 # linux开发环境
 spring:
-#  profiles: docker
+#  profiles: dev
       
 #  zipkin:
 #    enabled: true

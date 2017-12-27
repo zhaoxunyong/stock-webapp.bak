@@ -4,13 +4,13 @@ Navicat MySQL Data Transfer
 Source Server         : 192.168.99.100
 Source Server Version : 50638
 Source Host           : 192.168.99.100:3306
-Source Database       : stock
+Source Database       : wenchun
 
 Target Server Type    : MYSQL
 Target Server Version : 50638
 File Encoding         : 65001
 
-Date: 2017-12-13 18:12:23
+Date: 2017-12-27 17:03:05
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -29,24 +29,25 @@ CREATE TABLE `authority` (
   `update_date` datetime DEFAULT NULL COMMENT '修改時間',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_code_source` (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='權限表';
 
 -- ----------------------------
 -- Records of authority
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for daily_transactions
+-- Table structure for stock_daily_transactions
 -- ----------------------------
-DROP TABLE IF EXISTS `daily_transactions`;
-CREATE TABLE `daily_transactions` (
-  `+-` bigint(20) NOT NULL COMMENT '主鍵',
+DROP TABLE IF EXISTS `stock_daily_transactions`;
+CREATE TABLE `stock_daily_transactions` (
+  `id` bigint(20) NOT NULL COMMENT '主鍵',
+  `stock_id` bigint(20) NOT NULL COMMENT '股票id',
+  `no` varchar(255) NOT NULL COMMENT '代號',
+  `name` varchar(100) NOT NULL COMMENT '商品名稱',
   `account_no` varchar(100) NOT NULL,
   `currency` varchar(20) NOT NULL DEFAULT '' COMMENT '幣別',
   `tx_date` datetime NOT NULL COMMENT '成交日期',
   `tx_kind` varchar(50) NOT NULL COMMENT '交易種類',
-  `no` varchar(255) NOT NULL COMMENT '代號',
-  `name` varchar(100) NOT NULL COMMENT '商品名稱',
   `quantity` varchar(255) DEFAULT NULL COMMENT '數量',
   `tx_price` decimal(16,2) DEFAULT NULL COMMENT '成交價格',
   `tx_amount` decimal(16,2) DEFAULT NULL COMMENT '成交金額',
@@ -63,37 +64,34 @@ CREATE TABLE `daily_transactions` (
   `holding_cost` decimal(16,2) DEFAULT NULL COMMENT '持有成本',
   `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '最后更新时间',
-  PRIMARY KEY (`+-`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='每天買買股';
 
 -- ----------------------------
--- Records of daily_transactions
+-- Records of stock_daily_transactions
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for stock_data
+-- Table structure for stock_datas
 -- ----------------------------
-DROP TABLE IF EXISTS `stock_data`;
-CREATE TABLE `stock_data` (
+DROP TABLE IF EXISTS `stock_datas`;
+CREATE TABLE `stock_datas` (
   `id` bigint(20) NOT NULL COMMENT '主鍵',
   `no` varchar(255) DEFAULT NULL COMMENT '股號',
   `company` varchar(255) DEFAULT NULL COMMENT '公司名稱',
   `ipo` varchar(255) DEFAULT NULL COMMENT '上市櫃',
-  `type` varchar(255) DEFAULT NULL COMMENT '類股',
+  `type` varchar(255) DEFAULT NULL COMMENT '細產類別',
+  `concept_stock` varchar(255) DEFAULT NULL COMMENT '概念股',
   `group_stock` varchar(255) DEFAULT NULL COMMENT '集團股',
-  `concept_stock1` varchar(255) DEFAULT NULL COMMENT '概念股1',
-  `concept_stock2` varchar(255) DEFAULT NULL COMMENT '概念股2',
-  `concept_stock3` varchar(255) DEFAULT NULL COMMENT '概念股3',
-  `concept_stock4` varchar(255) DEFAULT NULL COMMENT '概念股4',
-  `concept_stock5` varchar(255) DEFAULT NULL COMMENT '概念股5',
-  `concept_stock6` varchar(255) DEFAULT NULL COMMENT '概念股6',
+  `manage_item` varchar(255) DEFAULT NULL COMMENT '經營項目',
+  `company_status` varchar(255) DEFAULT NULL COMMENT '公司現狀',
   `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '最后更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='個股资料表';
 
 -- ----------------------------
--- Records of stock_data
+-- Records of stock_datas
 -- ----------------------------
 
 -- ----------------------------
@@ -102,7 +100,7 @@ CREATE TABLE `stock_data` (
 DROP TABLE IF EXISTS `stock_history`;
 CREATE TABLE `stock_history` (
   `id` bigint(20) NOT NULL COMMENT '主鍵',
-  `stock_id` varchar(255) NOT NULL COMMENT '股票id',
+  `stock_id` bigint(20) NOT NULL COMMENT '股票id',
   `date` date NOT NULL COMMENT '日期',
   `opening` varchar(255) NOT NULL COMMENT '開盤',
   `highest` varchar(255) NOT NULL COMMENT '最高',
@@ -116,7 +114,7 @@ CREATE TABLE `stock_history` (
   `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '最后更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='股票交易歷史記錄表';
 
 -- ----------------------------
 -- Records of stock_history
@@ -571,6 +569,59 @@ INSERT INTO `stock_history` VALUES ('377521646913523712', '2881', '2016-01-05', 
 INSERT INTO `stock_history` VALUES ('377521646930300928', '2881', '2016-01-04', '45.05', '45.05', '43.55', '43.55', '-1.45', '-3.22%', '21,116', '931,435', '6.88', '2017-11-03 18:16:15', null);
 
 -- ----------------------------
+-- Table structure for stock_my_data
+-- ----------------------------
+DROP TABLE IF EXISTS `stock_my_data`;
+CREATE TABLE `stock_my_data` (
+  `id` bigint(20) NOT NULL COMMENT '主鍵',
+  `stock_id` bigint(20) DEFAULT NULL COMMENT '股號',
+  `status` tinyint(1) DEFAULT NULL COMMENT '狀態 [0: 禁用 1: 啟用]',
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '最后更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='自選股表';
+
+-- ----------------------------
+-- Records of stock_my_data
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for stock_news
+-- ----------------------------
+DROP TABLE IF EXISTS `stock_news`;
+CREATE TABLE `stock_news` (
+  `id` bigint(20) NOT NULL COMMENT '主鍵',
+  `stock_id` bigint(20) DEFAULT NULL COMMENT '股號',
+  `title` varchar(255) DEFAULT NULL COMMENT '新聞標題',
+  `context` varchar(255) DEFAULT NULL COMMENT '新聞內容',
+  `url` varchar(255) DEFAULT NULL COMMENT '新聞網址',
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '最后更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='股市新聞表';
+
+-- ----------------------------
+-- Records of stock_news
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for stock_news_exclude_key
+-- ----------------------------
+DROP TABLE IF EXISTS `stock_news_exclude_key`;
+CREATE TABLE `stock_news_exclude_key` (
+  `id` bigint(20) NOT NULL COMMENT '主鍵',
+  `key` varchar(255) DEFAULT NULL COMMENT '新聞標題',
+  `status` tinyint(255) DEFAULT '1' COMMENT '是否啟用 [0: 禁用 1: 啟用]',
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '最后更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='新聞不顯示關鍵字表';
+
+-- ----------------------------
+-- Records of stock_news_exclude_key
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for user
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
@@ -586,11 +637,12 @@ CREATE TABLE `user` (
   `create_date` datetime DEFAULT NULL COMMENT '創建時間',
   `update_date` datetime DEFAULT NULL COMMENT '修改時間',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用戶表';
 
 -- ----------------------------
 -- Records of user
 -- ----------------------------
+INSERT INTO `user` VALUES ('1', 'zhaoxunyong', '赵训勇', 'a7d8c94vc78', 'zhaoxunyong@163.com', '13538061757', '0', '1', '2017-12-26 16:32:49', null);
 
 -- ----------------------------
 -- Table structure for user_authority
@@ -603,7 +655,7 @@ CREATE TABLE `user_authority` (
   `create_date` datetime DEFAULT NULL COMMENT '創建時間',
   `update_date` datetime DEFAULT NULL COMMENT '修改時間',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用戶權限表';
 
 -- ----------------------------
 -- Records of user_authority
