@@ -17,6 +17,8 @@ public interface StockHistoryMapper {
 
     List<StockHistory> selectAll();
 
+    int deleteByDate(@Param("stockId") Long stockId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
     List<StockHistory> select(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     int updateByPrimaryKey(StockHistory record);

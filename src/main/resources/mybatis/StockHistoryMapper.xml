@@ -24,21 +24,28 @@
     delete from stock_history
     where id = #{id,jdbcType=BIGINT}
   </delete>
+  
+  <delete id="deleteByDate" parameterType="org.stock.fetch.model.StockHistory" >
+    delete from stock_history
+    where stock_id = #{stockId,jdbcType=BIGINT} and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
+  </delete>
+  
   <insert id="insert" parameterType="org.stock.fetch.model.StockHistory">
     insert into stock_history (id, stock_id, date, opening, 
       highest, lowest, closing, 
       ups_downs, rise_rate, vol, 
       amount, per, create_date, 
       update_date)
-    values (#{id,jdbcType=BIGINT}, #{stockId,jdbcType=VARCHAR}, #{date,jdbcType=VARCHAR}, #{opening,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{stockId,jdbcType=BIGINT}, #{date,jdbcType=VARCHAR}, #{opening,jdbcType=VARCHAR}, 
       #{highest,jdbcType=VARCHAR}, #{lowest,jdbcType=VARCHAR}, #{closing,jdbcType=VARCHAR}, 
       #{upsDowns,jdbcType=VARCHAR}, #{riseRate,jdbcType=VARCHAR}, #{vol,jdbcType=VARCHAR}, 
       #{amount,jdbcType=VARCHAR}, #{per,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{updateDate,jdbcType=TIMESTAMP})
   </insert>
+  
   <update id="updateByPrimaryKey" parameterType="org.stock.fetch.model.StockHistory" >
     update stock_history
-    set stock_id = #{stockId,jdbcType=VARCHAR},
+    set stock_id = #{stockId,jdbcType=BIGINT},
       date = #{date,jdbcType=VARCHAR},
       opening = #{opening,jdbcType=VARCHAR},
       highest = #{highest,jdbcType=VARCHAR},
@@ -53,15 +60,18 @@
       update_date = #{updateDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select id, stock_id, date, opening, highest, lowest, closing, ups_downs, rise_rate, 
     vol, amount, per, create_date, update_date
     from stock_history
     where id = #{id,jdbcType=BIGINT}
   </select>
+  
   <select id="selectAll" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" /> from stock_history
   </select>
+  
   <select id="select" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" /> from stock_history
     where date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}

@@ -2,10 +2,14 @@ package org.stock.fetch.model;
 
 import java.util.Date;
 
-public class StockHistory {
+import com.aeasycredit.commons.lang.base.BaseModel;
+
+public class StockHistory extends BaseModel {
+    private static final long serialVersionUID = -85238337633748064L;
+
     private Long id;
 
-    private String stockId;
+    private Long stockId;
 
     private Date date;
 
@@ -39,12 +43,12 @@ public class StockHistory {
         this.id = id;
     }
 
-    public String getStockId() {
+    public Long getStockId() {
         return stockId;
     }
 
-    public void setStockId(String stockId) {
-        this.stockId = stockId == null ? null : stockId.trim();
+    public void setStockId(Long stockId) {
+        this.stockId = stockId;
     }
 
     public Date getDate() {

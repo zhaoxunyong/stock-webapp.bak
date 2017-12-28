@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.stock.fetch.dao.StockHistoryMapper;
 import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.service.FetchService;
@@ -33,8 +34,9 @@ public class FetchServiceImpl implements FetchService {
      * 日期格式為：yyyy/MM/dd
      */
     @Override
+    @Transactional
     public void fetch(String startDate, String endDate) throws Exception {
-        String stockId = "2881";
+        long stockId = 2881;
         HtmlPage page = webClient.getPage("https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockId);
         page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
         page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
@@ -46,6 +48,7 @@ public class FetchServiceImpl implements FetchService {
         List<HtmlElement> trs = element.getElementsByTagName("tr");
 //        System.out.println("2===>"+trs);
         if(trs!=null && !trs.isEmpty()) {
+            stockHistoryMapper.deleteByDate(stockId, DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
             for(HtmlElement tr : trs) {
 //                System.out.println("3===>"+tr.asXml());
                 List<HtmlElement> tds = tr.getElementsByTagName("td");
@@ -101,6 +104,7 @@ public class FetchServiceImpl implements FetchService {
                         }
                         i++;
                     }
+                    System.out.println("===>"+stockHistory);
                     stockHistoryMapper.insert(stockHistory);
                 }
             }
