@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50638
 File Encoding         : 65001
 
-Date: 2017-12-27 17:03:05
+Date: 2017-12-28 17:07:38
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -36,6 +36,23 @@ CREATE TABLE `authority` (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for stock_concept_type
+-- ----------------------------
+DROP TABLE IF EXISTS `stock_concept_type`;
+CREATE TABLE `stock_concept_type` (
+  `id` bigint(20) NOT NULL COMMENT '主鍵',
+  `name` bigint(20) DEFAULT NULL COMMENT '名稱',
+  `status` tinyint(1) DEFAULT NULL COMMENT '狀態 [0: 禁用 1: 啟用]',
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '最后更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='概念股類型表';
+
+-- ----------------------------
+-- Records of stock_concept_type
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for stock_daily_transactions
 -- ----------------------------
 DROP TABLE IF EXISTS `stock_daily_transactions`;
@@ -48,7 +65,7 @@ CREATE TABLE `stock_daily_transactions` (
   `currency` varchar(20) NOT NULL DEFAULT '' COMMENT '幣別',
   `tx_date` datetime NOT NULL COMMENT '成交日期',
   `tx_kind` varchar(50) NOT NULL COMMENT '交易種類',
-  `quantity` varchar(255) DEFAULT NULL COMMENT '數量',
+  `quantity` int(11) DEFAULT NULL COMMENT '數量',
   `tx_price` decimal(16,2) DEFAULT NULL COMMENT '成交價格',
   `tx_amount` decimal(16,2) DEFAULT NULL COMMENT '成交金額',
   `fee` decimal(16,2) DEFAULT NULL COMMENT '手續費',
@@ -72,26 +89,43 @@ CREATE TABLE `stock_daily_transactions` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for stock_datas
+-- Table structure for stock_data
 -- ----------------------------
-DROP TABLE IF EXISTS `stock_datas`;
-CREATE TABLE `stock_datas` (
+DROP TABLE IF EXISTS `stock_data`;
+CREATE TABLE `stock_data` (
   `id` bigint(20) NOT NULL COMMENT '主鍵',
   `no` varchar(255) DEFAULT NULL COMMENT '股號',
   `company` varchar(255) DEFAULT NULL COMMENT '公司名稱',
-  `ipo` varchar(255) DEFAULT NULL COMMENT '上市櫃',
-  `type` varchar(255) DEFAULT NULL COMMENT '細產類別',
-  `concept_stock` varchar(255) DEFAULT NULL COMMENT '概念股',
-  `group_stock` varchar(255) DEFAULT NULL COMMENT '集團股',
+  `type` tinyint(1) DEFAULT NULL COMMENT '類型 [0: 上市 1: 上櫃]',
+  `kinds` varchar(255) DEFAULT NULL COMMENT '細產類別',
+  `concept_type` bigint(20) DEFAULT NULL COMMENT '概念股類型id',
+  `group_type` bigint(20) DEFAULT NULL COMMENT '集團股類型id',
   `manage_item` varchar(255) DEFAULT NULL COMMENT '經營項目',
   `company_status` varchar(255) DEFAULT NULL COMMENT '公司現狀',
   `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '最后更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='個股资料表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='所有股资料表';
 
 -- ----------------------------
--- Records of stock_datas
+-- Records of stock_data
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for stock_group_type
+-- ----------------------------
+DROP TABLE IF EXISTS `stock_group_type`;
+CREATE TABLE `stock_group_type` (
+  `id` bigint(20) NOT NULL COMMENT '主鍵',
+  `name` bigint(20) DEFAULT NULL COMMENT '名稱',
+  `status` tinyint(1) DEFAULT NULL COMMENT '狀態 [0: 禁用 1: 啟用]',
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '最后更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='集團股類型表';
+
+-- ----------------------------
+-- Records of stock_group_type
 -- ----------------------------
 
 -- ----------------------------
@@ -574,7 +608,24 @@ INSERT INTO `stock_history` VALUES ('377521646930300928', '2881', '2016-01-04', 
 DROP TABLE IF EXISTS `stock_my_data`;
 CREATE TABLE `stock_my_data` (
   `id` bigint(20) NOT NULL COMMENT '主鍵',
-  `stock_id` bigint(20) DEFAULT NULL COMMENT '股號',
+  `stock_id` bigint(20) DEFAULT NULL COMMENT '股票id',
+  `status` tinyint(1) DEFAULT NULL COMMENT '狀態 [0: 禁用 1: 啟用]',
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '最后更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='個股表';
+
+-- ----------------------------
+-- Records of stock_my_data
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for stock_my_selected
+-- ----------------------------
+DROP TABLE IF EXISTS `stock_my_selected`;
+CREATE TABLE `stock_my_selected` (
+  `id` bigint(20) NOT NULL COMMENT '主鍵',
+  `stock_id` bigint(20) DEFAULT NULL COMMENT '股票id',
   `status` tinyint(1) DEFAULT NULL COMMENT '狀態 [0: 禁用 1: 啟用]',
   `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '最后更新时间',
@@ -582,7 +633,25 @@ CREATE TABLE `stock_my_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='自選股表';
 
 -- ----------------------------
--- Records of stock_my_data
+-- Records of stock_my_selected
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for stock_my_store
+-- ----------------------------
+DROP TABLE IF EXISTS `stock_my_store`;
+CREATE TABLE `stock_my_store` (
+  `id` bigint(20) NOT NULL COMMENT '主鍵',
+  `stock_id` bigint(20) DEFAULT NULL COMMENT '股票id',
+  `status` tinyint(1) DEFAULT NULL COMMENT '狀態 [0: 禁用 1: 啟用]',
+  `quantity` int(11) DEFAULT NULL COMMENT '數量',
+  `create_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_date` datetime DEFAULT NULL COMMENT '最后更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='庫存股表';
+
+-- ----------------------------
+-- Records of stock_my_store
 -- ----------------------------
 
 -- ----------------------------
@@ -591,7 +660,7 @@ CREATE TABLE `stock_my_data` (
 DROP TABLE IF EXISTS `stock_news`;
 CREATE TABLE `stock_news` (
   `id` bigint(20) NOT NULL COMMENT '主鍵',
-  `stock_id` bigint(20) DEFAULT NULL COMMENT '股號',
+  `stock_id` bigint(20) DEFAULT NULL COMMENT '股票id',
   `title` varchar(255) DEFAULT NULL COMMENT '新聞標題',
   `context` varchar(255) DEFAULT NULL COMMENT '新聞內容',
   `url` varchar(255) DEFAULT NULL COMMENT '新聞網址',
