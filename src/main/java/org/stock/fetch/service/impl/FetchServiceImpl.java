@@ -45,13 +45,19 @@ public class FetchServiceImpl implements FetchService {
     @Autowired
     private StockDailyTransactionsMapper stockDailyTransactionsMapper;
     
+
+    @Override
+    @Transactional
+    public void fetchAll() throws Exception {
+        
+    }
+    
     /**
      * 日期格式為：yyyy/MM/dd
      */
     @Override
     @Transactional
-    public void fetch(String startDate, String endDate) throws Exception {
-        long stockId = 2881;
+    public void fetch(long stockId, String startDate, String endDate) throws Exception {
         HtmlPage page = webClient.getPage("https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockId);
         page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
         page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
@@ -132,6 +138,7 @@ public class FetchServiceImpl implements FetchService {
     }
 
     @Override
+    @Transactional
     public void importBydailyTransactions(String excelFile) throws IOException {
         Table<Integer, String, Object> table = ExcelUtils.readExcel2table(excelFile, 1, 1);
 //        System.out.println("all=>"+table);
