@@ -12,7 +12,7 @@ public class StockDailyTransactions extends BaseModel {
 
     private Long stockId;
 
-    private String no;
+    private Integer no;
 
     private String name;
 
@@ -72,12 +72,12 @@ public class StockDailyTransactions extends BaseModel {
         this.stockId = stockId;
     }
 
-    public String getNo() {
+    public Integer getNo() {
         return no;
     }
 
-    public void setNo(String no) {
-        this.no = no == null ? null : no.trim();
+    public void setNo(Integer no) {
+        this.no = no;
     }
 
     public String getName() {

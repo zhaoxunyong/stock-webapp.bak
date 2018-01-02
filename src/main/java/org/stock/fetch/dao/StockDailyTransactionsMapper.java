@@ -1,5 +1,7 @@
 package org.stock.fetch.dao;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -10,7 +12,8 @@ import org.stock.fetch.model.StockDailyTransactions;
 public interface StockDailyTransactionsMapper {
     int deleteByPrimaryKey(Long id);
     
-    int delete(@Param("no") String no, @Param("name") String name, @Param("quantity") Integer quantity);
+    // 代号，成交日期，种类，成交价，数量
+    int delete(@Param("no") Integer no, @Param("txDate") Date txDate, @Param("txKind") String txKind, @Param("txPrice") BigDecimal txPrice, @Param("quantity") Integer quantity);
 
     int insert(StockDailyTransactions record);
 

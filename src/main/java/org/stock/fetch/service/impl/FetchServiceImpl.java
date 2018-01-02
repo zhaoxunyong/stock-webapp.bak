@@ -153,7 +153,7 @@ public class FetchServiceImpl implements FetchService {
 //            tx.setUpdateDate(updateDate);
 
             tx.setQuantity(toInteger(rows.get("數量").toString()));
-            tx.setNo(String.valueOf(toInteger(rows.get("代號").toString())));
+            tx.setNo(toInteger(rows.get("代號").toString()));
             
             tx.setAccountNo(rows.get("交易帳號").toString());
             tx.setCashDeposit(toBigDecimal(rows.get("資自備款/券保證金").toString()));
@@ -174,7 +174,7 @@ public class FetchServiceImpl implements FetchService {
             tx.setTxTallage(toBigDecimal(rows.get("交易稅").toString()));
             tx.setZsTallage(toBigDecimal(rows.get("證所稅").toString()));
             System.out.println(tx);
-            stockDailyTransactionsMapper.delete(tx.getNo(), tx.getName(), tx.getQuantity());
+            stockDailyTransactionsMapper.delete(tx.getNo(), tx.getTxDate(), tx.getTxKind(), tx.getTxPrice(), tx.getQuantity());
             stockDailyTransactionsMapper.insert(tx);
         }
     }
