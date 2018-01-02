@@ -18,8 +18,8 @@
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="BaseColumnList">
-	    id, stock_id, date, opening, highest, lowest, closing, ups_downs, rise_rate, vol, amount, per, create_date, update_date
-	</sql>
+    id, stock_id, date, opening, highest, lowest, closing, ups_downs, rise_rate, vol, amount, per, create_date, update_date
+  </sql>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from stock_history
     where id = #{id,jdbcType=BIGINT}
@@ -69,11 +69,13 @@
   </select>
   
   <select id="selectAll" resultMap="BaseResultMap" >
-    select <include refid="BaseColumnList" /> from stock_history
+    select <include refid="BaseColumnList" /> 
+    from stock_history
   </select>
   
   <select id="select" resultMap="BaseResultMap" >
-    select <include refid="BaseColumnList" /> from stock_history
+    select <include refid="BaseColumnList" /> 
+    from stock_history
     where date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
     ORDER BY date asc
   </select>

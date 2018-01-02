@@ -1,5 +1,7 @@
 package com.stock.fetch;
 
+import java.io.IOException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,5 +22,11 @@ public class FetchServiceTest {
         String startDate = "2017/10/01";
         String endDate = "2017/11/01";
         fetchService.fetch(startDate, endDate);
+    }
+    
+    @Test
+    public void importBydailyTransactions() throws IOException {
+        String excelFile = "E:/wenchun/bstw.xlsx";
+        fetchService.importBydailyTransactions(excelFile);
     }
 }
