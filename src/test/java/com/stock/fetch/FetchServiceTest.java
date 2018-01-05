@@ -18,6 +18,11 @@ public class FetchServiceTest {
     private FetchService fetchService;
     
     @Test
+    public void fetchAllKinds() throws Exception {
+        fetchService.fetchAllKinds();
+    }
+    
+    @Test
     public void fetch() throws Exception {
         long stockId = 2881;
         String startDate = "2017/10/01";

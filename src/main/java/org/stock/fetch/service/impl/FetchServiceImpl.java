@@ -12,23 +12,30 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.stock.fetch.constant.StockTypeEnum;
 import org.stock.fetch.dao.StockDailyTransactionsMapper;
 import org.stock.fetch.dao.StockHistoryMapper;
+import org.stock.fetch.dao.StockTypeMapper;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockHistory;
+import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
 
+import com.aeasycredit.commons.lang.exception.ParameterException;
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 import com.aeasycredit.commons.lang.utils.DatesUtils;
 import com.aeasycredit.commons.poi.excel.ExcelUtils;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 
 /**
  * https://www.cnyes.com/twstock/ps_historyprice/2881.htm
+ * https://tw.stock.yahoo.com/h/getclass.php
  * https://github.com/andredumas/techan.js/wiki/Gallery
  */
 @Service
@@ -43,6 +50,9 @@ public class FetchServiceImpl implements FetchService {
     private StockHistoryMapper stockHistoryMapper;
     
     @Autowired
+    private StockTypeMapper stockTypeMapper;
+    
+    @Autowired
     private StockDailyTransactionsMapper stockDailyTransactionsMapper;
     
 
@@ -52,6 +62,76 @@ public class FetchServiceImpl implements FetchService {
         
     }
     
+
+    @Override
+    @Transactional
+    public void fetchAllKinds() throws Exception {
+        fetchKinds(StockTypeEnum.CONCEPT);
+        fetchKinds(StockTypeEnum.GROUP);
+    }
+    
+    @Transactional
+    private void fetchKinds(StockTypeEnum stockTypeEnum) throws Exception {
+        String eleId = "";
+        switch(stockTypeEnum) {
+            case CONCEPT:
+                eleId = "table7";
+                break;
+            case GROUP:
+                eleId = "table9";
+                break;
+            default:
+                throw new ParameterException("stockTypeEnum must be not empty!");
+        }
+        String rootUrl = "https://tw.stock.yahoo.com";
+        HtmlPage page = webClient.getPage(rootUrl + "/h/getclass.php");
+        //        HtmlElement element = page.getHtmlElementById("table7");
+        DomElement element = page.getElementById(eleId);
+        DomElement ele = element.getNextElementSibling();
+        List<HtmlElement> trs = ele.getElementsByTagName("tr");
+//        System.out.println("2===>" + trs);
+        if (trs != null && !trs.isEmpty()) {
+            Date date = new Date();
+            List<StockType> stockTypes = Lists.newArrayList();
+            for (HtmlElement tr : trs) {
+//                System.out.println("3===>" + tr.asXml());
+                List<HtmlElement> tds = tr.getElementsByTagName("td");
+                if (tds != null && !tds.isEmpty()) {
+                    for (HtmlElement td : tds) {
+//                        System.out.println("td=" + td.asXml());
+                        List<HtmlElement> aNodes = td.getElementsByTagName("a");
+                        if(aNodes==null || aNodes.isEmpty()) continue;
+                        HtmlElement aElement = aNodes.get(0);
+                        String href = rootUrl + aElement.getAttribute("href");
+//                        String id = StringUtils.substringAfterLast(href, " ");
+                        String name = td.asText();
+                        System.out.println("href=" + href + "/name=" + name);
+                        StockType stockType = new StockType();
+                        stockType.setId(IdUtils.genLongId());
+                        stockType.setName(name);
+                        stockType.setType(stockTypeEnum.getType());
+                        stockType.setStatus(true);
+                        stockType.setCreateDate(date);
+                        stockTypes.add(stockType);
+                        /*HtmlPage nextPage = webClient.getPage(href);
+                        HtmlElement domNode = (HtmlElement) nextPage.querySelectorAll("table.yui-text-left tbody tr").get(2);
+//                        System.out.println("domNode===>"+domNode.asXml());
+                        
+                        HtmlElement trDomNode = (HtmlElement) domNode.querySelectorAll("table table tbody tr").get(2);
+//                        System.out.println("trDomNode===>"+trDomNode);
+                        List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
+                        HtmlElement tdElement = nextTds.get(1);
+                        System.out.println("tdElement===>"+tdElement.asXml());*/
+//                        stockTypeConceptMapper.deleteByName(name);
+                        if(stockTypeMapper.selectByName(name, stockTypeEnum.getType()) == null) {
+                            stockTypeMapper.insert(stockType);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * 日期格式為：yyyy/MM/dd
      */
