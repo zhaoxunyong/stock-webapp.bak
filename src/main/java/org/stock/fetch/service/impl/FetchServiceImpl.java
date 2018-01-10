@@ -12,21 +12,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.stock.fetch.constant.BuyTypeEnum;
 import org.stock.fetch.constant.StockTypeEnum;
 import org.stock.fetch.dao.StockDailyTransactionsMapper;
+import org.stock.fetch.dao.StockDataMapper;
 import org.stock.fetch.dao.StockHistoryMapper;
 import org.stock.fetch.dao.StockTypeMapper;
 import org.stock.fetch.model.StockDailyTransactions;
+import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
+import org.thymeleaf.util.StringUtils;
 
+import com.aeasycredit.commons.lang.exception.BusinessException;
 import com.aeasycredit.commons.lang.exception.ParameterException;
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 import com.aeasycredit.commons.lang.utils.DatesUtils;
 import com.aeasycredit.commons.poi.excel.ExcelUtils;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -43,6 +50,8 @@ public class FetchServiceImpl implements FetchService {
     
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
+    private final static String ROOT_URL = "https://tw.stock.yahoo.com";
+    
     @Autowired
     private WebClient webClient;
     
@@ -53,27 +62,44 @@ public class FetchServiceImpl implements FetchService {
     private StockTypeMapper stockTypeMapper;
     
     @Autowired
+    private StockDataMapper stockDataMapper;
+    
+    @Autowired
     private StockDailyTransactionsMapper stockDailyTransactionsMapper;
     
 
     @Override
     @Transactional
     public void fetchAll() throws Exception {
-        
+        // 上市
+        List<StockType> marketTypes = fetchKinds(StockTypeEnum.MARKET);
+        fetchStocks(marketTypes);
+        // 上柜
+        List<StockType> counterTypes = fetchKinds(StockTypeEnum.COUNTER);
+        fetchStocks(counterTypes);
+        // 電子行業
+        List<StockType> electronicTypes = fetchKinds(StockTypeEnum.ELECTRONIC);
+        fetchStocks(electronicTypes);
+        // 概念
+        List<StockType> conceptTypes = fetchKinds(StockTypeEnum.CONCEPT);
+        fetchStocks(conceptTypes);
+        // 集團
+        List<StockType> groupTypes = fetchKinds(StockTypeEnum.GROUP);
+        fetchStocks(groupTypes);
     }
     
-
-    @Override
-    @Transactional
-    public void fetchAllKinds() throws Exception {
-        fetchKinds(StockTypeEnum.CONCEPT);
-        fetchKinds(StockTypeEnum.GROUP);
-    }
-    
-    @Transactional
-    private void fetchKinds(StockTypeEnum stockTypeEnum) throws Exception {
+    private List<StockType> fetchKinds(StockTypeEnum stockTypeEnum) throws Exception {
         String eleId = "";
         switch(stockTypeEnum) {
+            case MARKET:
+                eleId = "table1";
+                break;
+            case COUNTER:
+                eleId = "table3";
+                break;
+            case ELECTRONIC:
+                eleId = "table5";
+                break;
             case CONCEPT:
                 eleId = "table7";
                 break;
@@ -83,16 +109,15 @@ public class FetchServiceImpl implements FetchService {
             default:
                 throw new ParameterException("stockTypeEnum must be not empty!");
         }
-        String rootUrl = "https://tw.stock.yahoo.com";
-        HtmlPage page = webClient.getPage(rootUrl + "/h/getclass.php");
+        HtmlPage page = webClient.getPage(ROOT_URL + "/h/getclass.php");
         //        HtmlElement element = page.getHtmlElementById("table7");
         DomElement element = page.getElementById(eleId);
         DomElement ele = element.getNextElementSibling();
         List<HtmlElement> trs = ele.getElementsByTagName("tr");
+        List<StockType> stockTypes = Lists.newArrayList();
 //        System.out.println("2===>" + trs);
         if (trs != null && !trs.isEmpty()) {
             Date date = new Date();
-            List<StockType> stockTypes = Lists.newArrayList();
             for (HtmlElement tr : trs) {
 //                System.out.println("3===>" + tr.asXml());
                 List<HtmlElement> tds = tr.getElementsByTagName("td");
@@ -102,26 +127,18 @@ public class FetchServiceImpl implements FetchService {
                         List<HtmlElement> aNodes = td.getElementsByTagName("a");
                         if(aNodes==null || aNodes.isEmpty()) continue;
                         HtmlElement aElement = aNodes.get(0);
-                        String href = rootUrl + aElement.getAttribute("href");
+                        String url = ROOT_URL + aElement.getAttribute("href");
 //                        String id = StringUtils.substringAfterLast(href, " ");
                         String name = td.asText();
-                        System.out.println("href=" + href + "/name=" + name);
+                        System.out.println("url=" + url + "/name=" + name);
                         StockType stockType = new StockType();
                         stockType.setId(IdUtils.genLongId());
                         stockType.setName(name);
                         stockType.setType(stockTypeEnum.getType());
+                        stockType.setUrl(url);
                         stockType.setStatus(true);
                         stockType.setCreateDate(date);
                         stockTypes.add(stockType);
-                        /*HtmlPage nextPage = webClient.getPage(href);
-                        HtmlElement domNode = (HtmlElement) nextPage.querySelectorAll("table.yui-text-left tbody tr").get(2);
-//                        System.out.println("domNode===>"+domNode.asXml());
-                        
-                        HtmlElement trDomNode = (HtmlElement) domNode.querySelectorAll("table table tbody tr").get(2);
-//                        System.out.println("trDomNode===>"+trDomNode);
-                        List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
-                        HtmlElement tdElement = nextTds.get(1);
-                        System.out.println("tdElement===>"+tdElement.asXml());*/
 //                        stockTypeConceptMapper.deleteByName(name);
                         if(stockTypeMapper.selectByName(name, stockTypeEnum.getType()) == null) {
                             stockTypeMapper.insert(stockType);
@@ -130,6 +147,97 @@ public class FetchServiceImpl implements FetchService {
                 }
             }
         }
+        return stockTypes;
+    }
+    
+
+    
+    private void fetchStocks(List<StockType> stockTypes) throws Exception {
+        Date date = new Date();
+        if(stockTypes!=null && !stockTypes.isEmpty()) {
+            for(StockType stockType : stockTypes) {
+                HtmlPage nextPage = webClient.getPage(stockType.getUrl());
+                List<?> domNodes = nextPage.querySelectorAll("table.yui-text-left tbody tr");
+                if(domNodes==null || domNodes.size() < 3) {
+                    System.out.print("name="+stockType.getName());
+                    System.out.println("/url="+stockType.getUrl());
+                    continue;
+                }
+                HtmlElement domNode = (HtmlElement) domNodes.get(2);
+//                System.out.println("domNode===>"+domNode.asXml());
+                
+                List<DomNode> trDomNodes = domNode.querySelectorAll("table table tbody tr");//.get(2);
+                if(trDomNodes!=null && !trDomNodes.isEmpty()) {
+                    for(int i=2;i<trDomNodes.size();i++) {
+                        HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
+//                        System.out.println("trDomNode="+trDomNode.asXml());
+//                      System.out.println("trDomNode===>"+trDomNode);
+                        List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
+                        HtmlElement tdElement = nextTds.get(1);
+//                        System.out.println("tdElement===>"+tdElement.asXml());
+                        
+                        List<HtmlElement> aNodes = tdElement.getElementsByTagName("a");
+                        if(aNodes==null || aNodes.isEmpty()) continue;
+                        HtmlElement aElement = aNodes.get(0);
+//                        System.out.println("aElement===>"+aElement.asXml());
+                        String url = ROOT_URL + aElement.getAttribute("href");
+//                        String id = StringUtils.substringAfterLast(href, " ");
+                        String value = tdElement.asText();
+                        String no = StringUtils.substringBefore(value, " ");
+                        String company = StringUtils.substringAfter(value, " ");
+//                        System.out.println("url=" + url + "/no=" + no + "/company=" + company);
+                        String kinds = "";
+                        /*try {
+                            String detailUrl = ROOT_URL + "/d/s/company_"+no.replaceAll("[A-Z]+$", "")+".html";
+                            HtmlPage page = webClient.getPage(detailUrl);
+                            HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'產業類別')]").get(0);
+                            DomElement domElement = htmlElement.getNextElementSibling();
+                            kinds = domElement.asText();
+                        } catch(Exception e) {
+                            logger.warn(e.getMessage());
+                        }*/
+                        if(stockType.getType().equals(StockTypeEnum.MARKET.getType()) || stockType.getType().equals(StockTypeEnum.COUNTER.getType())) {
+                            StockData stockData = new StockData();
+                            stockData.setId(IdUtils.genLongId());
+                            stockData.setNo(no);
+                            stockData.setCompany(company);
+                            stockData.setCreateDate(date);
+                            stockData.setKinds(kinds);
+                            stockData.setTypeName(stockType.getName());
+                            stockData.setUrl(url);
+                            stockData.setType(stockType.getType());
+                            stockDataMapper.deleteByNo(no);
+                            stockDataMapper.insert(stockData);
+                        } else {
+                            StockData stockData = stockDataMapper.selectByNo(no);
+                            if(stockData == null) {
+                                // not exist, insert
+                                stockData = new StockData();
+                                stockData.setId(IdUtils.genLongId());
+                                stockData.setNo(no);
+                                stockData.setCompany(company);
+                                stockData.setCreateDate(date);
+                                stockData.setKinds(kinds);
+                                stockData.setUrl(url);
+                                stockData.setType(stockType.getType());
+                                stockDataMapper.insert(stockData);
+                            } else {
+                                // exist, update
+                                if(stockType.getType().equals(StockTypeEnum.CONCEPT.getType())) {
+                                    stockData.setConcepts(stockType.getName());
+                                } else if(stockType.getType().equals(StockTypeEnum.GROUP.getType())) {
+                                    stockData.setGroups(stockType.getName());
+                                } else if(stockType.getType().equals(StockTypeEnum.ELECTRONIC.getType())) {
+                                    stockData.setElectronics(stockType.getName());
+                                }
+                                stockDataMapper.updateByPrimaryKey(stockData);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
     }
 
     /**
@@ -233,14 +341,26 @@ public class FetchServiceImpl implements FetchService {
 //            System.out.println(rows);
             
             StockDailyTransactions tx = new StockDailyTransactions();
+            String no = rows.get("代號").toString().replaceAll("\\.0", "");
+            StockData stockData = stockDataMapper.selectByNo(no);
+            if(stockData == null) {
+                throw new BusinessException("Not found stock data by no: " + no);
+            }
+
+            String txKind = rows.get("種類").toString();
+            if(txKind.indexOf("買") != -1) {
+                tx.setTxKind(BuyTypeEnum.BUY.getType());
+            } else if(txKind.indexOf("賣") != -1) {
+                tx.setTxKind(BuyTypeEnum.SELL.getType());
+            }
             
             tx.setId(IdUtils.genLongId());
-            tx.setStockId(123L);
+            tx.setStockId(stockData.getId());
             tx.setCreateDate(new Date());
 //            tx.setUpdateDate(updateDate);
 
             tx.setQuantity(toInteger(rows.get("數量").toString()));
-            tx.setNo(toInteger(rows.get("代號").toString()));
+            tx.setNo(no);
             
             tx.setAccountNo(rows.get("交易帳號").toString());
             tx.setCashDeposit(toBigDecimal(rows.get("資自備款/券保證金").toString()));
@@ -256,7 +376,6 @@ public class FetchServiceImpl implements FetchService {
             tx.setProfit(toBigDecimal(rows.get("損益").toString()));
             tx.setTxAmount(toBigDecimal(rows.get("成交金額").toString()));
             tx.setTxDate((Date)rows.get("成交日期"));
-            tx.setTxKind(rows.get("種類").toString());
             tx.setTxPrice(toBigDecimal(rows.get("成交價").toString()));
             tx.setTxTallage(toBigDecimal(rows.get("交易稅").toString()));
             tx.setZsTallage(toBigDecimal(rows.get("證所稅").toString()));

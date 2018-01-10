@@ -7,23 +7,20 @@
 package org.stock.fetch.constant;
 
 /**
- * StockTypeEnum
+ * BuyTypeEnum
  * 
  * @author Dave.zhao
  * @version [版本号, 2018年1月5日]
  * @see [相关类/方法]
  * @since [产品/模块版本]
  */
-public enum StockTypeEnum {
-    MARKET(0),
-    COUNTER(1),
-    ELECTRONIC(2),
-    CONCEPT(3),
-    GROUP(4);
+public enum BuyTypeEnum {
+    BUY(0),
+    SELL(1);
     
     int type;
     
-    StockTypeEnum(int type) {
+    BuyTypeEnum(int type) {
         this.type = type;
     }
 

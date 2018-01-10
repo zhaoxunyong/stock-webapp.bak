@@ -2,10 +2,14 @@ package org.stock.fetch.model;
 
 import java.util.Date;
 
+import org.springframework.data.annotation.Transient;
+
 public class StockType {
     private Long id;
 
     private String name;
+    
+    private String url;
 
     private Integer type;
 
@@ -14,7 +18,7 @@ public class StockType {
     private Date createDate;
 
     private Date updateDate;
-
+    
     public Long getId() {
         return id;
     }
@@ -62,4 +66,13 @@ public class StockType {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
 }

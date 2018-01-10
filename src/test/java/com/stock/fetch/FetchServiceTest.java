@@ -18,8 +18,8 @@ public class FetchServiceTest {
     private FetchService fetchService;
     
     @Test
-    public void fetchAllKinds() throws Exception {
-        fetchService.fetchAllKinds();
+    public void fetchAll() throws Exception {
+        fetchService.fetchAll();
     }
     
     @Test

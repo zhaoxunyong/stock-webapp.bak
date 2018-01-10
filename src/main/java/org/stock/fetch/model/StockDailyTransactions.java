@@ -12,7 +12,7 @@ public class StockDailyTransactions extends BaseModel {
 
     private Long stockId;
 
-    private Integer no;
+    private String no;
 
     private String name;
 
@@ -22,7 +22,7 @@ public class StockDailyTransactions extends BaseModel {
 
     private Date txDate;
 
-    private String txKind;
+    private Integer txKind;
 
     private Integer quantity;
 
@@ -72,11 +72,11 @@ public class StockDailyTransactions extends BaseModel {
         this.stockId = stockId;
     }
 
-    public Integer getNo() {
+    public String getNo() {
         return no;
     }
 
-    public void setNo(Integer no) {
+    public void setNo(String no) {
         this.no = no;
     }
 
@@ -112,12 +112,12 @@ public class StockDailyTransactions extends BaseModel {
         this.txDate = txDate;
     }
 
-    public String getTxKind() {
+    public Integer getTxKind() {
         return txKind;
     }
 
-    public void setTxKind(String txKind) {
-        this.txKind = txKind == null ? null : txKind.trim();
+    public void setTxKind(Integer txKind) {
+        this.txKind = txKind;
     }
 
     public Integer getQuantity() {
