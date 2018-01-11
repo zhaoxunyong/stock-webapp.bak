@@ -8,7 +8,6 @@
     <result column="url" property="url" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="type_name" property="typeName" jdbcType="VARCHAR" />
-    <result column="kinds" property="kinds" jdbcType="VARCHAR" />
     <result column="concepts" property="concepts" jdbcType="VARCHAR" />
     <result column="groups" property="groups" jdbcType="BIGINT" />
     <result column="electronics" property="electronics" jdbcType="BIGINT" />
@@ -19,7 +18,7 @@
   </resultMap>
   
   <sql id="BaseColumnList">
-    id, no, company, url, type, type_name, kinds, concepts, groups, electronics, manage_item, company_status, 
+    id, no, company, url, type, type_name, concepts, groups, electronics, manage_item, company_status, 
     create_date, update_date
   </sql>
   
@@ -37,11 +36,11 @@
   
   <insert id="insert" parameterType="org.stock.fetch.model.StockData" useGeneratedKeys="true" keyProperty="id" >
     insert into stock_data (id, no, company, url, type, type_name, 
-      kinds, concepts, groups, electronics, 
+      concepts, groups, electronics, 
       manage_item, company_status, create_date, 
       update_date)
     values (#{id,jdbcType=BIGINT}, #{no,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
-      #{typeName,jdbcType=VARCHAR}, #{kinds,jdbcType=VARCHAR}, #{concepts,jdbcType=VARCHAR}, #{groups,jdbcType=VARCHAR}, #{electronics,jdbcType=VARCHAR}, 
+      #{typeName,jdbcType=VARCHAR}, #{concepts,jdbcType=VARCHAR}, #{groups,jdbcType=VARCHAR}, #{electronics,jdbcType=VARCHAR}, 
       #{manageItem,jdbcType=VARCHAR}, #{companyStatus,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{updateDate,jdbcType=TIMESTAMP})
   </insert>
@@ -53,7 +52,6 @@
       url = #{url,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
       type_name = #{typeName,jdbcType=VARCHAR},
-      kinds = #{kinds,jdbcType=VARCHAR},
       concepts = #{concepts,jdbcType=VARCHAR},
       groups = #{groups,jdbcType=VARCHAR},
       electronics = #{electronics,jdbcType=VARCHAR},

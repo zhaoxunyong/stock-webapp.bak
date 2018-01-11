@@ -12,10 +12,6 @@ public class StockDailyTransactions extends BaseModel {
 
     private Long stockId;
 
-    private String no;
-
-    private String name;
-
     private String accountNo;
 
     private String currency;
@@ -70,22 +66,6 @@ public class StockDailyTransactions extends BaseModel {
 
     public void setStockId(Long stockId) {
         this.stockId = stockId;
-    }
-
-    public String getNo() {
-        return no;
-    }
-
-    public void setNo(String no) {
-        this.no = no;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
     }
 
     public String getAccountNo() {

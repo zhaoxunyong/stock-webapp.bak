@@ -4,8 +4,6 @@
   <resultMap id="BaseResultMap" type="org.stock.fetch.model.StockDailyTransactions" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="stock_id" property="stockId" jdbcType="BIGINT" />
-    <result column="no" property="no" jdbcType="VARCHAR" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
     <result column="currency" property="currency" jdbcType="VARCHAR" />
     <result column="tx_date" property="txDate" jdbcType="TIMESTAMP" />
@@ -28,7 +26,7 @@
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="BaseColumnList">
-    id, stock_id, no, name, account_no, currency, tx_date, tx_kind, quantity, 
+    id, stock_id, account_no, currency, tx_date, tx_kind, quantity, 
     tx_price, tx_amount, fee, tx_tallage, zs_tallage, financing_amount, `cash deposit`, 
     interest, deb_fee, customer_charge, profit, pay_rate, holding_cost, create_date, 
     update_date
@@ -40,7 +38,7 @@
   
   <delete id="delete" parameterType="org.stock.fetch.model.StockDailyTransactions" >
     delete from stock_daily_transactions
-    where no = #{no,jdbcType=VARCHAR}
+    where stock_id = #{stockId,jdbcType=VARCHAR}
     and tx_date = #{txDate,jdbcType=TIMESTAMP}
     and tx_kind = #{txKind,jdbcType=INTEGER}
     and tx_price = #{txPrice,jdbcType=DECIMAL}
@@ -48,7 +46,7 @@
   </delete>
   
   <insert id="insert" parameterType="org.stock.fetch.model.StockDailyTransactions" useGeneratedKeys="true" keyProperty="id" >
-    insert into stock_daily_transactions (id, stock_id, no, name, 
+    insert into stock_daily_transactions (id, stock_id, 
       account_no, currency, tx_date, 
       tx_kind, quantity, tx_price, 
       tx_amount, fee, tx_tallage, 
@@ -56,7 +54,7 @@
       interest, deb_fee, customer_charge, 
       profit, pay_rate, holding_cost, 
       create_date, update_date)
-    values (#{id,jdbcType=BIGINT}, #{stockId,jdbcType=BIGINT}, #{no,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{stockId,jdbcType=BIGINT}, 
       #{accountNo,jdbcType=VARCHAR}, #{currency,jdbcType=VARCHAR}, #{txDate,jdbcType=TIMESTAMP}, 
       #{txKind,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, #{txPrice,jdbcType=DECIMAL}, 
       #{txAmount,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL}, #{txTallage,jdbcType=DECIMAL}, 
@@ -68,8 +66,6 @@
   <update id="updateByPrimaryKey" parameterType="org.stock.fetch.model.StockDailyTransactions" >
     update stock_daily_transactions
     set stock_id = #{stockId,jdbcType=BIGINT},
-      no = #{no,jdbcType=VARCHAR},
-      name = #{name,jdbcType=VARCHAR},
       account_no = #{accountNo,jdbcType=VARCHAR},
       currency = #{currency,jdbcType=VARCHAR},
       tx_date = #{txDate,jdbcType=TIMESTAMP},

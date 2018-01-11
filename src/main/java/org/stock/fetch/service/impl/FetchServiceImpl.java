@@ -186,8 +186,10 @@ public class FetchServiceImpl implements FetchService {
                         String no = StringUtils.substringBefore(value, " ");
                         String company = StringUtils.substringAfter(value, " ");
 //                        System.out.println("url=" + url + "/no=" + no + "/company=" + company);
+                        /*
+                        // 細產類別
                         String kinds = "";
-                        /*try {
+                        try {
                             String detailUrl = ROOT_URL + "/d/s/company_"+no.replaceAll("[A-Z]+$", "")+".html";
                             HtmlPage page = webClient.getPage(detailUrl);
                             HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'產業類別')]").get(0);
@@ -202,7 +204,6 @@ public class FetchServiceImpl implements FetchService {
                             stockData.setNo(no);
                             stockData.setCompany(company);
                             stockData.setCreateDate(date);
-                            stockData.setKinds(kinds);
                             stockData.setTypeName(stockType.getName());
                             stockData.setUrl(url);
                             stockData.setType(stockType.getType());
@@ -217,7 +218,6 @@ public class FetchServiceImpl implements FetchService {
                                 stockData.setNo(no);
                                 stockData.setCompany(company);
                                 stockData.setCreateDate(date);
-                                stockData.setKinds(kinds);
                                 stockData.setUrl(url);
                                 stockData.setType(stockType.getType());
                                 stockDataMapper.insert(stockData);
@@ -360,7 +360,6 @@ public class FetchServiceImpl implements FetchService {
 //            tx.setUpdateDate(updateDate);
 
             tx.setQuantity(toInteger(rows.get("數量").toString()));
-            tx.setNo(no);
             
             tx.setAccountNo(rows.get("交易帳號").toString());
             tx.setCashDeposit(toBigDecimal(rows.get("資自備款/券保證金").toString()));
@@ -371,7 +370,7 @@ public class FetchServiceImpl implements FetchService {
             tx.setFinancingAmount(toBigDecimal(rows.get("融資金額/券擔保品").toString()));
             tx.setHoldingCost(toBigDecimal(rows.get("持有成本").toString()));
             tx.setInterest(toBigDecimal(rows.get("利息").toString()));
-            tx.setName(rows.get("商品名稱").toString());
+//            tx.setName(rows.get("商品名稱").toString());
             tx.setPayRate(toBigDecimal(rows.get("報酬率(%)").toString()));
             tx.setProfit(toBigDecimal(rows.get("損益").toString()));
             tx.setTxAmount(toBigDecimal(rows.get("成交金額").toString()));
@@ -380,7 +379,7 @@ public class FetchServiceImpl implements FetchService {
             tx.setTxTallage(toBigDecimal(rows.get("交易稅").toString()));
             tx.setZsTallage(toBigDecimal(rows.get("證所稅").toString()));
             System.out.println(tx);
-            stockDailyTransactionsMapper.delete(tx.getNo(), tx.getTxDate(), tx.getTxKind(), tx.getTxPrice(), tx.getQuantity());
+            stockDailyTransactionsMapper.delete(tx.getStockId(), tx.getTxDate(), tx.getTxKind(), tx.getTxPrice(), tx.getQuantity());
             stockDailyTransactionsMapper.insert(tx);
         }
     }

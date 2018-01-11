@@ -12,8 +12,8 @@ import org.stock.fetch.model.StockDailyTransactions;
 public interface StockDailyTransactionsMapper {
     int deleteByPrimaryKey(Long id);
     
-    // 代号，成交日期，种类，成交价，数量
-    int delete(@Param("no") String no, @Param("txDate") Date txDate, @Param("txKind") Integer txKind, @Param("txPrice") BigDecimal txPrice, @Param("quantity") Integer quantity);
+    // stock_id，成交日期，种类，成交价，数量
+    int delete(@Param("stockId") Long stockId, @Param("txDate") Date txDate, @Param("txKind") Integer txKind, @Param("txPrice") BigDecimal txPrice, @Param("quantity") Integer quantity);
 
     int insert(StockDailyTransactions record);
 

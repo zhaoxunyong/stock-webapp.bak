@@ -15,8 +15,6 @@ public class StockData {
     
     private String typeName;
 
-    private String kinds;
-
     private String concepts;
 
     private String groups;
@@ -69,14 +67,6 @@ public class StockData {
 
     public void setType(Integer type) {
         this.type = type;
-    }
-
-    public String getKinds() {
-        return kinds;
-    }
-
-    public void setKinds(String kinds) {
-        this.kinds = kinds == null ? null : kinds.trim();
     }
 
     public String getConcepts() {
