@@ -19,11 +19,13 @@ import org.stock.fetch.dao.StockDailyTransactionsMapper;
 import org.stock.fetch.dao.StockDataMapper;
 import org.stock.fetch.dao.StockHistoryMapper;
 import org.stock.fetch.dao.StockMyDataMapper;
+import org.stock.fetch.dao.StockMyStoreMapper;
 import org.stock.fetch.dao.StockTypeMapper;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockMyData;
+import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
 
@@ -67,6 +69,9 @@ public class FetchServiceImpl implements FetchService {
     
     @Autowired
     private StockMyDataMapper stockMyDataMapper;
+    
+    @Autowired
+    private StockMyStoreMapper stockMyStoreMapper;
     
     @Autowired
     private StockDailyTransactionsMapper stockDailyTransactionsMapper;
@@ -443,6 +448,29 @@ public class FetchServiceImpl implements FetchService {
                 stockMyData.setCreateDate(date);
                 stockMyData.setStatus(true);
                 stockMyDataMapper.insert(stockMyData);
+            }
+            
+            StockMyStore stockMyStore = stockMyStoreMapper.select(tx.getStockId(), tx.getTxDate(), tx.getTxKind(), tx.getTxPrice());
+            if(stockMyStore == null) {
+                stockMyStore = new StockMyStore();
+                stockMyStore.setId(IdUtils.genLongId());
+                stockMyStore.setQuantity(tx.getQuantity());
+                stockMyStore.setStatus(true);
+                stockMyStore.setStockId(tx.getStockId());
+                stockMyStore.setTxDate(tx.getTxDate());
+                stockMyStore.setTxKind(tx.getTxKind());
+                stockMyStore.setCreateDate(date);
+                stockMyStore.setTxPrice(tx.getTxPrice());
+                stockMyStoreMapper.insert(stockMyStore);
+            } else {
+                int quantity = stockMyStore.getQuantity();
+                if(tx.getTxKind() == BuyTypeEnum.BUY.getType()) {
+                    // 买 +
+                    stockMyStoreMapper.updateByQuantity(stockMyStore.getId(), quantity);
+                } else if(tx.getTxKind() == BuyTypeEnum.SELL.getType()) {
+                    // 卖 -
+                    stockMyStoreMapper.updateByQuantity(stockMyStore.getId(), -quantity);
+                }
             }
         }
     }
