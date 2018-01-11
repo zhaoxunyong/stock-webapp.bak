@@ -10,7 +10,7 @@ public interface FetchService {
     
     public void fetchAll() throws Exception;
     
-    public void fetch(long stockId, String startDate, String endDate) throws Exception;
+    public void fetchHistory(long stockId, String startDate, String endDate) throws Exception;
     
     List<StockHistory> select(Date startDate, Date endDate);
     

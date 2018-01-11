@@ -1,5 +1,6 @@
 package org.stock.fetch.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class StockData {
@@ -24,6 +25,14 @@ public class StockData {
     private String manageItem;
 
     private String companyStatus;
+    
+    private BigDecimal txPrice;
+    
+    private BigDecimal closing;
+    
+    private BigDecimal highest;
+    
+    private BigDecimal lowest;
 
     private Date createDate;
 
@@ -31,10 +40,6 @@ public class StockData {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getNo() {
@@ -50,9 +55,9 @@ public class StockData {
     }
 
     public void setCompany(String company) {
-        this.company = company == null ? null : company.trim();
+        this.company = company;
     }
-    
+
     public String getUrl() {
         return url;
     }
@@ -67,6 +72,14 @@ public class StockData {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 
     public String getConcepts() {
@@ -85,12 +98,20 @@ public class StockData {
         this.groups = groups;
     }
 
+    public String getElectronics() {
+        return electronics;
+    }
+
+    public void setElectronics(String electronics) {
+        this.electronics = electronics;
+    }
+
     public String getManageItem() {
         return manageItem;
     }
 
     public void setManageItem(String manageItem) {
-        this.manageItem = manageItem == null ? null : manageItem.trim();
+        this.manageItem = manageItem;
     }
 
     public String getCompanyStatus() {
@@ -98,7 +119,39 @@ public class StockData {
     }
 
     public void setCompanyStatus(String companyStatus) {
-        this.companyStatus = companyStatus == null ? null : companyStatus.trim();
+        this.companyStatus = companyStatus;
+    }
+
+    public BigDecimal getTxPrice() {
+        return txPrice;
+    }
+
+    public void setTxPrice(BigDecimal txPrice) {
+        this.txPrice = txPrice;
+    }
+
+    public BigDecimal getClosing() {
+        return closing;
+    }
+
+    public void setClosing(BigDecimal closing) {
+        this.closing = closing;
+    }
+
+    public BigDecimal getHighest() {
+        return highest;
+    }
+
+    public void setHighest(BigDecimal highest) {
+        this.highest = highest;
+    }
+
+    public BigDecimal getLowest() {
+        return lowest;
+    }
+
+    public void setLowest(BigDecimal lowest) {
+        this.lowest = lowest;
     }
 
     public Date getCreateDate() {
@@ -117,20 +170,8 @@ public class StockData {
         this.updateDate = updateDate;
     }
 
-    public String getElectronics() {
-        return electronics;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setElectronics(String electronics) {
-        this.electronics = electronics;
-    }
-
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
-    
 }

@@ -184,7 +184,14 @@ public class FetchServiceImpl implements FetchService {
 //                        String id = StringUtils.substringAfterLast(href, " ");
                         String value = tdElement.asText();
                         String no = StringUtils.substringBefore(value, " ");
-                        String company = StringUtils.substringAfter(value, " ");
+                        String company = StringUtils.substringAfter(value, " ").replaceAll("\r\n", "");
+                        
+                        // tx_price closing highest lowest
+                        HtmlElement txPriceElement = nextTds.get(3);
+                        HtmlElement closingElement = nextTds.get(8);
+                        HtmlElement highestElement = nextTds.get(10);
+                        HtmlElement lowestElement = nextTds.get(11);
+                        
 //                        System.out.println("url=" + url + "/no=" + no + "/company=" + company);
                         /*
                         // 細產類別
@@ -207,6 +214,10 @@ public class FetchServiceImpl implements FetchService {
                             stockData.setTypeName(stockType.getName());
                             stockData.setUrl(url);
                             stockData.setType(stockType.getType());
+                            stockData.setTxPrice(toBigDecimal(txPriceElement.asText()));
+                            stockData.setClosing(toBigDecimal(closingElement.asText()));
+                            stockData.setHighest(toBigDecimal(highestElement.asText()));
+                            stockData.setLowest(toBigDecimal(lowestElement.asText()));
                             stockDataMapper.deleteByNo(no);
                             stockDataMapper.insert(stockData);
                         } else {
@@ -245,7 +256,7 @@ public class FetchServiceImpl implements FetchService {
      */
     @Override
     @Transactional
-    public void fetch(long stockId, String startDate, String endDate) throws Exception {
+    public void fetchHistory(long stockId, String startDate, String endDate) throws Exception {
         HtmlPage page = webClient.getPage("https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockId);
         page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
         page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
@@ -276,23 +287,23 @@ public class FetchServiceImpl implements FetchService {
                             break;
                             case 1:
                               // 開盤
-                                stockHistory.setOpening(td.asText());
+                                stockHistory.setOpening(new BigDecimal(td.asText()));
                               break;
                             case 2:
                                 // 最高    
-                                stockHistory.setHighest(td.asText());
+                                stockHistory.setHighest(new BigDecimal(td.asText()));
                                 break;
                             case 3:
                                 // 最低    
-                                stockHistory.setLowest(td.asText());
+                                stockHistory.setLowest(new BigDecimal(td.asText()));
                                 break;
                             case 4:
                                 // 收盤    
-                                stockHistory.setClosing(td.asText());
+                                stockHistory.setClosing(new BigDecimal(td.asText()));
                                 break;
                             case 5:
                                 // 漲跌    
-                                stockHistory.setUpsDowns(td.asText());
+                                stockHistory.setUpsDowns(new BigDecimal(td.asText()));
                                 break;
                             case 6:
                                 // 漲%    
@@ -385,10 +396,11 @@ public class FetchServiceImpl implements FetchService {
     }
     
     private BigDecimal toBigDecimal(String value) {
-        if(!"-".equals(value)) {
-            return BigDecimal.valueOf(Double.parseDouble(value));
+        try {
+            return new BigDecimal(value);
+        } catch(Exception e) {
+            return BigDecimal.ZERO;
         }
-        return BigDecimal.ZERO;
     }
     
     private Integer toInteger(String value) {

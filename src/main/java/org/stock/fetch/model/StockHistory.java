@@ -1,5 +1,6 @@
 package org.stock.fetch.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.aeasycredit.commons.lang.base.BaseModel;
@@ -13,15 +14,15 @@ public class StockHistory extends BaseModel {
 
     private Date date;
 
-    private String opening;
+    private BigDecimal opening;
 
-    private String highest;
+    private BigDecimal highest;
 
-    private String lowest;
+    private BigDecimal lowest;
 
-    private String closing;
+    private BigDecimal closing;
 
-    private String upsDowns;
+    private BigDecimal upsDowns;
 
     private String riseRate;
 
@@ -59,44 +60,44 @@ public class StockHistory extends BaseModel {
         this.date = date;
     }
 
-    public String getOpening() {
+    public BigDecimal getOpening() {
         return opening;
     }
 
-    public void setOpening(String opening) {
-        this.opening = opening == null ? null : opening.trim();
+    public void setOpening(BigDecimal opening) {
+        this.opening = opening;
     }
 
-    public String getHighest() {
+    public BigDecimal getHighest() {
         return highest;
     }
 
-    public void setHighest(String highest) {
-        this.highest = highest == null ? null : highest.trim();
+    public void setHighest(BigDecimal highest) {
+        this.highest = highest;
     }
 
-    public String getLowest() {
+    public BigDecimal getLowest() {
         return lowest;
     }
 
-    public void setLowest(String lowest) {
-        this.lowest = lowest == null ? null : lowest.trim();
+    public void setLowest(BigDecimal lowest) {
+        this.lowest = lowest;
     }
 
-    public String getClosing() {
+    public BigDecimal getClosing() {
         return closing;
     }
 
-    public void setClosing(String closing) {
-        this.closing = closing == null ? null : closing.trim();
+    public void setClosing(BigDecimal closing) {
+        this.closing = closing;
     }
 
-    public String getUpsDowns() {
+    public BigDecimal getUpsDowns() {
         return upsDowns;
     }
 
-    public void setUpsDowns(String upsDowns) {
-        this.upsDowns = upsDowns == null ? null : upsDowns.trim();
+    public void setUpsDowns(BigDecimal upsDowns) {
+        this.upsDowns = upsDowns;
     }
 
     public String getRiseRate() {
@@ -104,7 +105,7 @@ public class StockHistory extends BaseModel {
     }
 
     public void setRiseRate(String riseRate) {
-        this.riseRate = riseRate == null ? null : riseRate.trim();
+        this.riseRate = riseRate;
     }
 
     public String getVol() {
@@ -112,7 +113,7 @@ public class StockHistory extends BaseModel {
     }
 
     public void setVol(String vol) {
-        this.vol = vol == null ? null : vol.trim();
+        this.vol = vol;
     }
 
     public String getAmount() {
@@ -120,7 +121,7 @@ public class StockHistory extends BaseModel {
     }
 
     public void setAmount(String amount) {
-        this.amount = amount == null ? null : amount.trim();
+        this.amount = amount;
     }
 
     public String getPer() {
@@ -128,7 +129,7 @@ public class StockHistory extends BaseModel {
     }
 
     public void setPer(String per) {
-        this.per = per == null ? null : per.trim();
+        this.per = per;
     }
 
     public Date getCreateDate() {
@@ -146,4 +147,5 @@ public class StockHistory extends BaseModel {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
 }

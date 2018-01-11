@@ -23,11 +23,11 @@ public class FetchServiceTest {
     }
     
     @Test
-    public void fetch() throws Exception {
+    public void fetchHistory() throws Exception {
         long stockId = 2881;
         String startDate = "2017/10/01";
         String endDate = "2017/11/01";
-        fetchService.fetch(stockId, startDate, endDate);
+        fetchService.fetchHistory(stockId, startDate, endDate);
     }
     
     @Test
