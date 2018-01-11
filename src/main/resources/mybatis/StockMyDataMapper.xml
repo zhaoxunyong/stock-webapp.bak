@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.stock.fetch.dao.StockMyDataMapper">
+  <resultMap id="BaseResultMap" type="org.stock.fetch.model.StockMyData">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="stock_id" jdbcType="BIGINT" property="stockId" />
+    <result column="kinds" jdbcType="VARCHAR" property="kinds" />
+    <result column="industry" jdbcType="VARCHAR" property="industry" />
+    <result column="status" jdbcType="BIT" property="status" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+  </resultMap>
+  
+  <sql id="BaseColumnList">
+    id, stock_id, kinds, industry, status, create_date, update_date
+  </sql>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from stock_my_data
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" keyProperty="id" parameterType="org.stock.fetch.model.StockMyData" useGeneratedKeys="true">
+    insert into stock_my_data (id, stock_id, kinds, industry, 
+      status, create_date, update_date
+      )
+    values (#{id,jdbcType=BIGINT}, #{stockId,jdbcType=BIGINT}, #{kinds,jdbcType=VARCHAR}, #{industry,jdbcType=VARCHAR}, 
+      #{status,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="org.stock.fetch.model.StockMyData">
+    update stock_my_data
+    set stock_id = #{stockId,jdbcType=BIGINT},
+      kinds = #{kinds,jdbcType=VARCHAR},
+      industry = #{industry,jdbcType=VARCHAR},
+      status = #{status,jdbcType=BIT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, stock_id, kinds, industry, status, create_date, update_date
+    from stock_my_data
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectByStockId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select <include refid="BaseColumnList" />
+    from stock_my_data
+    where stock_id = #{stockId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, stock_id, kinds, industry, status, create_date, update_date
+    from stock_my_data
+  </select>
+</mapper>

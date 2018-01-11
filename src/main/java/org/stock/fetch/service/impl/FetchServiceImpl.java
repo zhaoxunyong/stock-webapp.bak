@@ -17,10 +17,12 @@ import org.stock.fetch.constant.StockTypeEnum;
 import org.stock.fetch.dao.StockDailyTransactionsMapper;
 import org.stock.fetch.dao.StockDataMapper;
 import org.stock.fetch.dao.StockHistoryMapper;
+import org.stock.fetch.dao.StockMyDataMapper;
 import org.stock.fetch.dao.StockTypeMapper;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
+import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
 import org.thymeleaf.util.StringUtils;
@@ -63,6 +65,9 @@ public class FetchServiceImpl implements FetchService {
     
     @Autowired
     private StockDataMapper stockDataMapper;
+    
+    @Autowired
+    private StockMyDataMapper stockMyDataMapper;
     
     @Autowired
     private StockDailyTransactionsMapper stockDailyTransactionsMapper;
@@ -339,6 +344,7 @@ public class FetchServiceImpl implements FetchService {
     @Override
     @Transactional
     public void importBydailyTransactions(String excelFile) throws IOException {
+        Date date = new Date();
         Table<Integer, String, Object> table = ExcelUtils.readExcel2table(excelFile, 1, 1);
 //        System.out.println("all=>"+table);
         Set<Integer> rowKeys = table.rowKeySet();
@@ -367,7 +373,7 @@ public class FetchServiceImpl implements FetchService {
             
             tx.setId(IdUtils.genLongId());
             tx.setStockId(stockData.getId());
-            tx.setCreateDate(new Date());
+            tx.setCreateDate(date);
 //            tx.setUpdateDate(updateDate);
 
             tx.setQuantity(toInteger(rows.get("數量").toString()));
@@ -392,6 +398,16 @@ public class FetchServiceImpl implements FetchService {
             System.out.println(tx);
             stockDailyTransactionsMapper.delete(tx.getStockId(), tx.getTxDate(), tx.getTxKind(), tx.getTxPrice(), tx.getQuantity());
             stockDailyTransactionsMapper.insert(tx);
+            
+            StockMyData stockMyData = stockMyDataMapper.selectByStockId(tx.getStockId());
+            if(stockMyData == null) {
+                stockMyData = new StockMyData();
+                stockMyData.setId(IdUtils.genLongId());
+                stockMyData.setStockId(tx.getStockId());
+                stockMyData.setCreateDate(date);
+                stockMyData.setStatus(true);
+                stockMyDataMapper.insert(stockMyData);
+            }
         }
     }
     
