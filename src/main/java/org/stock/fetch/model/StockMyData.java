@@ -2,10 +2,15 @@ package org.stock.fetch.model;
 
 import java.util.Date;
 
+import org.springframework.data.annotation.Transient;
+
 public class StockMyData {
     private Long id;
 
     private Long stockId;
+    
+    @Transient
+    private String no;
 
     private String kinds;
 
@@ -72,4 +77,13 @@ public class StockMyData {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
+    public String getNo() {
+        return no;
+    }
+
+    public void setNo(String no) {
+        this.no = no;
+    }
+    
 }

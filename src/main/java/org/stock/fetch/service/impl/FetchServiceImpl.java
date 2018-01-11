@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
-import org.thymeleaf.util.StringUtils;
 
 import com.aeasycredit.commons.lang.exception.BusinessException;
 import com.aeasycredit.commons.lang.exception.ParameterException;
@@ -35,7 +35,6 @@ import com.aeasycredit.commons.poi.excel.ExcelUtils;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -91,6 +90,38 @@ public class FetchServiceImpl implements FetchService {
         // 集團
         List<StockType> groupTypes = fetchKinds(StockTypeEnum.GROUP);
         fetchStocks(groupTypes);
+    }
+
+    @Override
+    @Transactional
+    public void fetchDetail() throws Exception {
+        List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
+        if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
+            for(StockMyData stockMyData : stockMyDatas) {
+                // 
+                /*HtmlPage page = webClient.getPage("https://www.cmoney.tw/finance/f00026.aspx?s="+stockMyData.getNo());
+                HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'細產業別')]").get(0);
+                DomElement domElement = htmlElement.getNextElementSibling();
+                String kinds = domElement.asText();
+                System.out.println("kinds--->"+kinds);*/
+                
+                // 細產類別
+                String kinds = "";
+                try {
+                    String detailUrl = ROOT_URL + "/d/s/company_"+stockMyData.getNo().replaceAll("[A-Z]+$", "")+".html";
+                    HtmlPage page = webClient.getPage(detailUrl);
+                    HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'產業類別')]").get(0);
+                    DomElement domElement = htmlElement.getNextElementSibling();
+                    kinds = domElement.asText();
+                    if(StringUtils.isNotBlank(kinds)) {
+                        stockMyData.setKinds(kinds);
+                        stockMyDataMapper.updateByPrimaryKey(stockMyData);
+                    }
+                } catch(Exception e) {
+                    logger.warn(e.getMessage());
+                }
+            }
+        }
     }
     
     private List<StockType> fetchKinds(StockTypeEnum stockTypeEnum) throws Exception {
@@ -261,8 +292,13 @@ public class FetchServiceImpl implements FetchService {
      */
     @Override
     @Transactional
-    public void fetchHistory(long stockId, String startDate, String endDate) throws Exception {
-        HtmlPage page = webClient.getPage("https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockId);
+    public void fetchHistory(String no, String startDate, String endDate) throws Exception {
+        StockData stockData = stockDataMapper.selectByNo(no);
+        if(stockData == null) {
+            throw new BusinessException("Not found stock data by no: " + no);
+        }
+        long stockId = stockData.getId();
+        HtmlPage page = webClient.getPage("https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo());
         page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
         page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
         HtmlForm form = page.getHtmlElementById("aspnetForm");
