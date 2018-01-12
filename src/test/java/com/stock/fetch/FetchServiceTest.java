@@ -1,5 +1,6 @@
 package com.stock.fetch;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.stock.StockApplication;
 import org.stock.fetch.service.FetchService;
+import org.stock.utils.FileMd5Utils;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=StockApplication.class)
@@ -39,5 +41,12 @@ public class FetchServiceTest {
     public void importBydailyTransactions() throws IOException {
         String excelFile = "E:/wenchun/bstw.xlsx";
         fetchService.importBydailyTransactions(excelFile);
+    }
+    
+    @Test
+    public void fileMd5() throws IOException {
+        String excelFile = "E:/wenchun/bstw.xlsx";
+        String md5 = FileMd5Utils.getMD5(new File(excelFile));
+        System.out.println("md5===>"+md5);
     }
 }

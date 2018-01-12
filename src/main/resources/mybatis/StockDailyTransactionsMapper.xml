@@ -25,12 +25,14 @@
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
   </resultMap>
+  
   <sql id="BaseColumnList">
     id, stock_id, account_no, currency, tx_date, tx_kind, quantity, 
     tx_price, tx_amount, fee, tx_tallage, zs_tallage, financing_amount, `cash deposit`, 
     interest, deb_fee, customer_charge, profit, pay_rate, holding_cost, create_date, 
     update_date
   </sql>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from stock_daily_transactions
     where id = #{id,jdbcType=BIGINT}
@@ -63,6 +65,7 @@
       #{profit,jdbcType=DECIMAL}, #{payRate,jdbcType=DECIMAL}, #{holdingCost,jdbcType=DECIMAL}, 
       #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
   </insert>
+  
   <update id="updateByPrimaryKey" parameterType="org.stock.fetch.model.StockDailyTransactions" >
     update stock_daily_transactions
     set stock_id = #{stockId,jdbcType=BIGINT},
@@ -88,13 +91,16 @@
       update_date = #{updateDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select <include refid="BaseColumnList" />
     from stock_daily_transactions
     where id = #{id,jdbcType=BIGINT}
   </select>
+  
   <select id="selectAll" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" />
     from stock_daily_transactions
   </select>
+  
 </mapper>

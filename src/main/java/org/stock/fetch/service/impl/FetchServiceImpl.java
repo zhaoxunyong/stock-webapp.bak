@@ -1,5 +1,6 @@
 package org.stock.fetch.service.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.stock.fetch.constant.BuyTypeEnum;
 import org.stock.fetch.constant.StockTypeEnum;
+import org.stock.fetch.dao.StockDailyTransactionsHistoryMapper;
 import org.stock.fetch.dao.StockDailyTransactionsMapper;
 import org.stock.fetch.dao.StockDataMapper;
 import org.stock.fetch.dao.StockHistoryMapper;
@@ -22,12 +24,14 @@ import org.stock.fetch.dao.StockMyDataMapper;
 import org.stock.fetch.dao.StockMyStoreMapper;
 import org.stock.fetch.dao.StockTypeMapper;
 import org.stock.fetch.model.StockDailyTransactions;
+import org.stock.fetch.model.StockDailyTransactionsHistory;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
+import org.stock.utils.FileMd5Utils;
 
 import com.aeasycredit.commons.lang.exception.BusinessException;
 import com.aeasycredit.commons.lang.exception.ParameterException;
@@ -72,6 +76,9 @@ public class FetchServiceImpl implements FetchService {
     
     @Autowired
     private StockMyStoreMapper stockMyStoreMapper;
+    
+    @Autowired
+    private StockDailyTransactionsHistoryMapper stockDailyTransactionsHistoryMapper;
     
     @Autowired
     private StockDailyTransactionsMapper stockDailyTransactionsMapper;
@@ -385,6 +392,11 @@ public class FetchServiceImpl implements FetchService {
     @Override
     @Transactional
     public void importBydailyTransactions(String excelFile) throws IOException {
+        String fileMd5 = FileMd5Utils.getMD5(new File(excelFile));
+        StockDailyTransactionsHistory sth = stockDailyTransactionsHistoryMapper.selectByMd5(fileMd5);
+        if(sth != null) {
+            throw new BusinessException("Excel imported already. excelFile: " + excelFile);
+        }
         Date date = new Date();
         Table<Integer, String, Object> table = ExcelUtils.readExcel2table(excelFile, 1, 1);
 //        System.out.println("all=>"+table);
@@ -473,6 +485,11 @@ public class FetchServiceImpl implements FetchService {
                 }
             }
         }
+        sth = new StockDailyTransactionsHistory();
+        sth.setId(IdUtils.genLongId());
+        sth.setFileMd5(fileMd5);
+        sth.setCreateDate(date);
+        stockDailyTransactionsHistoryMapper.insert(sth);
     }
     
     private BigDecimal toBigDecimal(String value) {
