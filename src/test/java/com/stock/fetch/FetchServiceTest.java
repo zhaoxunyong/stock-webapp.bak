@@ -30,6 +30,11 @@ public class FetchServiceTest {
     }
     
     @Test
+    public void fetchNews() throws Exception {
+        fetchService.fetchNews();
+    }
+    
+    @Test
     public void fetchHistory() throws Exception {
         String no = "2881";
         String startDate = "2017/10/01";

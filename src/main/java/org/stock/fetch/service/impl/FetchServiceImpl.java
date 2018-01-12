@@ -3,10 +3,12 @@ package org.stock.fetch.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -22,6 +24,8 @@ import org.stock.fetch.dao.StockDataMapper;
 import org.stock.fetch.dao.StockHistoryMapper;
 import org.stock.fetch.dao.StockMyDataMapper;
 import org.stock.fetch.dao.StockMyStoreMapper;
+import org.stock.fetch.dao.StockNewsExcludeKeyMapper;
+import org.stock.fetch.dao.StockNewsMapper;
 import org.stock.fetch.dao.StockTypeMapper;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockDailyTransactionsHistory;
@@ -29,6 +33,8 @@ import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMyStore;
+import org.stock.fetch.model.StockNews;
+import org.stock.fetch.model.StockNewsExcludeKey;
 import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
 import org.stock.utils.FileMd5Utils;
@@ -37,6 +43,7 @@ import com.aeasycredit.commons.lang.exception.BusinessException;
 import com.aeasycredit.commons.lang.exception.ParameterException;
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 import com.aeasycredit.commons.lang.utils.DatesUtils;
+import com.aeasycredit.commons.lang.utils.RegexUtils;
 import com.aeasycredit.commons.poi.excel.ExcelUtils;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
@@ -78,11 +85,16 @@ public class FetchServiceImpl implements FetchService {
     private StockMyStoreMapper stockMyStoreMapper;
     
     @Autowired
+    private StockNewsMapper stockNewsMapper;
+    
+    @Autowired
+    private StockNewsExcludeKeyMapper stockNewsExcludeKeyMapper;
+    
+    @Autowired
     private StockDailyTransactionsHistoryMapper stockDailyTransactionsHistoryMapper;
     
     @Autowired
     private StockDailyTransactionsMapper stockDailyTransactionsMapper;
-    
 
     @Override
     @Transactional
@@ -131,6 +143,54 @@ public class FetchServiceImpl implements FetchService {
                     }
                 } catch(Exception e) {
                     logger.warn(e.getMessage());
+                }
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void fetchNews() throws Exception {
+        Date date = new Date();
+        List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
+        if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
+            for(StockMyData stockMyData : stockMyDatas) {
+                String newUrl = ROOT_URL + "/q/h?s="+stockMyData.getNo().replaceAll("[A-Z]+$", "");
+                HtmlPage page = webClient.getPage(newUrl);
+                
+                List<?> trDomNodes = page.querySelectorAll("tr table.yui-text-left tbody tr td table tbody tr");
+                if(trDomNodes!=null && !trDomNodes.isEmpty()) {
+                    for(int i=0;i<trDomNodes.size();i=i+2) {
+                        HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
+                        List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
+                        if(nextTds.size() == 2) {
+                            HtmlElement titleDomNode = (HtmlElement) trDomNodes.get(i+1);
+                            List<HtmlElement> titleTds = titleDomNode.getElementsByTagName("td");
+                            String title = titleTds.get(0).asText().replaceAll("^\\(|\\)$", "");
+                            String newsDate = StringUtils.substringBefore(title, " ");
+                            String froms = StringUtils.substringAfter(title, " ");
+                            
+                            HtmlElement td = nextTds.get(1);
+                            List<HtmlElement> aNodes = td.getElementsByTagName("a");
+                            if(aNodes==null || aNodes.isEmpty()) continue;
+                            HtmlElement aElement = aNodes.get(0);
+                            String url = ROOT_URL + aElement.getAttribute("href");
+                            String subject = td.asText();
+                            StockNews stockNews = new StockNews();
+                            stockNews.setId(IdUtils.genLongId());
+                            stockNews.setFroms(froms);
+                            stockNews.setNewsDate(DatesUtils.YYMMDD2.toDate(newsDate));
+                            stockNews.setStockId(stockMyData.getStockId());
+                            stockNews.setSubject(subject);
+                            stockNews.setUrl(url);
+                            stockNews.setCreateDate(date);
+                            stockNewsMapper.deleteByStockNews(stockNews);
+                            if(!checkNewsSubject(subject)) {
+                                stockNewsMapper.insert(stockNews);
+                                logger.info(stockNews.toString());
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -476,12 +536,14 @@ public class FetchServiceImpl implements FetchService {
                 stockMyStoreMapper.insert(stockMyStore);
             } else {
                 int quantity = stockMyStore.getQuantity();
-                if(tx.getTxKind() == BuyTypeEnum.BUY.getType()) {
-                    // 买 +
-                    stockMyStoreMapper.updateByQuantity(stockMyStore.getId(), quantity);
-                } else if(tx.getTxKind() == BuyTypeEnum.SELL.getType()) {
-                    // 卖 -
-                    stockMyStoreMapper.updateByQuantity(stockMyStore.getId(), -quantity);
+                if(quantity != tx.getQuantity().intValue()) {
+                    if(tx.getTxKind() == BuyTypeEnum.BUY.getType()) {
+                        // 买 +
+                        stockMyStoreMapper.updateByQuantity(stockMyStore.getId(), quantity);
+                    } else if(tx.getTxKind() == BuyTypeEnum.SELL.getType()) {
+                        // 卖 -
+                        stockMyStoreMapper.updateByQuantity(stockMyStore.getId(), -quantity);
+                    }
                 }
             }
         }
@@ -507,6 +569,16 @@ public class FetchServiceImpl implements FetchService {
             logger.warn(e.getMessage());
             return 0;
         }
+    }
+    
+    private boolean checkNewsSubject(String subject) {
+        List<StockNewsExcludeKey> stockNewsExcludeKeys = stockNewsExcludeKeyMapper.selectAll(true);
+        
+        return stockNewsExcludeKeys.stream()
+                .map(StockNewsExcludeKey::getKey)
+//                .peek(System.out::println)
+                .anyMatch(p -> subject.indexOf(p) != -1);
+        
     }
     
 }
