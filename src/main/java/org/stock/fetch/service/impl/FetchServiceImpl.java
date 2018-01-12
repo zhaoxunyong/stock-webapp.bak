@@ -3,12 +3,10 @@ package org.stock.fetch.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -43,7 +41,6 @@ import com.aeasycredit.commons.lang.exception.BusinessException;
 import com.aeasycredit.commons.lang.exception.ParameterException;
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 import com.aeasycredit.commons.lang.utils.DatesUtils;
-import com.aeasycredit.commons.lang.utils.RegexUtils;
 import com.aeasycredit.commons.poi.excel.ExcelUtils;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
@@ -573,12 +570,10 @@ public class FetchServiceImpl implements FetchService {
     
     private boolean checkNewsSubject(String subject) {
         List<StockNewsExcludeKey> stockNewsExcludeKeys = stockNewsExcludeKeyMapper.selectAll(true);
-        
         return stockNewsExcludeKeys.stream()
                 .map(StockNewsExcludeKey::getKey)
 //                .peek(System.out::println)
                 .anyMatch(p -> subject.indexOf(p) != -1);
-        
     }
     
 }
