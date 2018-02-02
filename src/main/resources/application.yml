@@ -25,6 +25,7 @@ mybatis:
 #攔截器需排除的路徑
 interceptor: 
   excludePath: |
+    /,
     /login,
     /loginPage,
     /logout,

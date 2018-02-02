@@ -1,49 +1,70 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="includes/commonHead :: header"></head>
-<body class="easyui-layout">
-    <div data-options="region:'north',split:true" style="height:75px;">
-    	<!-- aEasyCredit Hk Cash App Admin -->
-		<div>
-    		<img alt="" src="/images/los_logo.gif"/>
-    	</div>
-    	<div id="sessionInfoDiv" style="position: absolute; right:5px; top:5px; line-height:22px" class="alert alert-info">
-				<span th:text="${session.session_context.username}"></span>&nbsp;&nbsp;歡迎您！<br/>
-		</div>
-    	<div style="position:absolute;right:5px; bottom:5px;">
-    		<a href="/logout" class="easyui-linkbutton" plain="true">註銷</a>
-    	</div>
+<style>
+body { 
+  background: url(http://lorempixel.com/1920/1920/city/9/) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.panel-default {
+opacity: 0.9;
+margin-top:30px;
+}
+.form-group.last { margin-bottom:0px; }
+</style>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-lock"></span> Login</div>
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-3 control-label">
+                            Email</label>
+                        <div class="col-sm-9">
+                            <input type="username" class="form-control" id="inputEmail3" placeholder="Username" required="" autofocus="" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-3 control-label">
+                            Password</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control" id="inputPassword3" placeholder="Password" required="true" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" />
+                                    Remember me
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group last">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <button type="submit" class="btn btn-success btn-sm">
+                                Sign in</button>
+                                 <button type="reset" class="btn btn-default btn-sm">
+                                Reset</button>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    Not Registred? <a href="http://www.jquery2dotnet.com">Register here</a></div>
+            </div>
+        </div>
     </div>
-    <div data-options="region:'south',split:true" style="height:30px;line-height:25px;text-align:center">@Copy right all received</div>
-    <div data-options="region:'west',title:'菜单',split:true" style="width:150px;">
-    	<iframe id="menuIframe" src="" border="0" frameborder="0"  style="border: 0; width: 100%; height: 100%;"></iframe>
-    </div>
-    <div data-options="region:'center',border:'false'" style="overflow:hidden">
-    	<div id="tabs">
-    		<div class="easyui-layout" data-options="fit:true,border:false,closable:true" title="職位管理">
-		    	<iframe id="workspaceIframe" src="" border="0" frameborder="0"  style="border: 0; width: 100%; height: 100%;"></iframe>
-        	</div>
-    	</div>
-    </div>
-    <script th:inline="javascript">
-    $(document).ready(function(){
-    	
-    	// 避免子页面两次请求
-    	$("#menuIframe").attr("src","/menuPage");
-    	$("#workspaceIframe").attr("src","/position/index");
-    	
-/*     	$("#loginSelect").change(function(){
-    		
-    		var val = $(this).val();
-    		if (val == "login") {
-    			location.href = "/logout";
-    			
-    		} else if (val == "logout") {
-    			location.href = "/logout";
-    		}
-    		
-    	}); */
-    });
-    </script>
+</div>
+    
 </body>
 </html>

@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 
 @Configuration
-@EnableAutoConfiguration
 public class ErrorPageConfig {
 	/**
 	 * 配置内置服务器的错误路径页面
