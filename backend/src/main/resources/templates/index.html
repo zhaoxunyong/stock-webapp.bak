@@ -1,14 +1,17 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" layout:decorator="layout/default">
-<head>
-  <title>Spring Boot and Thymeleaf - Greeting with Thymeleaf Layout Dialect!</title>
-</head>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <body>
-	<!--<section layout:fragment="content">-->
-	<div layout:fragment="content">
-		<p
-			th:text="${'Hello ' + name + '! Greeting from Thymeleaf Layout Dialect!'}"></p>
-		<p>This contents from greeting content!</p>
-	</div>
+<div id="wrapper">
+    <div th:replace="layout/common :: leftmenu"></div>
+
+    <div id="page-content-wrapper">
+        <div id="app"></div>
+    </div>
+</div>
+
+<script th:if="${#arrays.contains(@environment.getActiveProfiles(),'dev')}"
+        src="http://localhost:8888/dist/build.js"></script>
+<script th:if="${!#arrays.contains(@environment.getActiveProfiles(),'dev')}" src="/static/js/build.js"></script>
+
 </body>
 </html>
