@@ -1,9 +1,0 @@
-@echo off
-set registry=192.168.100.87:5000
-set version=1.0.0
-call mvn clean install -Dmaven.test.skip=true
-call docker build -t "%registry%/dave/employee-server:%version%" .
-call docker rm -vf employee-server > /NUL 2>&1
-call docker run -d --name employee-server -p 8078:8078 ^
- -h employee-server --link eureka-server:eureka-server ^
- %registry%/dave/employee-server:%version%

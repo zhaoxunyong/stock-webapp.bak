@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Spring Boot and Thymeleaf - Thymeleaf Layout Dialect</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <script src="https://unpkg.com/vue/dist/vue.js" th:src="@{/webjars/vue/2.5.13/vue.js}"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js" th:src="@{/webjars/axios/0.17.1/dist/axios.js}"></script>
+  <script src="https://cdn.jsdelivr.net/vue.resource/1.3.4/vue-resource.min.js" th:src="@{/webjars/vue-resource/1.3.4/dist/vue-resource.js}"></script>
+
+
+  <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+  <link rel="stylesheet" th:href="@{/css/bootstrap-vue.css}" />
+
+  <script th:src="@{/js/polyfill.min.js}"></script>
+  <script th:src="@{/js/bootstrap-vue.js}"></script>
+</head>
+<body>
+<div th:include="fragments/header :: header(tab='news')">
+		<p>This is default header area for default layout</p>
+	</div>
+	
+	<div layout:fragment="content"></div>
+	
+	<div th:include="fragments/footer :: footer">
+		<p>This is default footer area for default layout</p>
+	</div>
+</body>
+</html>

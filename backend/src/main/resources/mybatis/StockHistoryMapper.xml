@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.stock.fetch.dao.StockHistoryMapper" >
+  <resultMap id="BaseResultMap" type="org.stock.fetch.model.StockHistory" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="stock_id" property="stockId" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="VARCHAR" />
+    <result column="opening" property="opening" jdbcType="DECIMAL" />
+    <result column="highest" property="highest" jdbcType="DECIMAL" />
+    <result column="lowest" property="lowest" jdbcType="DECIMAL" />
+    <result column="closing" property="closing" jdbcType="DECIMAL" />
+    <result column="ups_downs" property="upsDowns" jdbcType="DECIMAL" />
+    <result column="rise_rate" property="riseRate" jdbcType="VARCHAR" />
+    <result column="vol" property="vol" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="VARCHAR" />
+    <result column="per" property="per" jdbcType="VARCHAR" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="BaseColumnList">
+    id, stock_id, date, opening, highest, lowest, closing, ups_downs, rise_rate, vol, amount, per, create_date, update_date
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from stock_history
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <delete id="deleteByDate" parameterType="org.stock.fetch.model.StockHistory" >
+    delete from stock_history
+    where stock_id = #{stockId,jdbcType=BIGINT} and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
+  </delete>
+  
+  <insert id="insert" parameterType="org.stock.fetch.model.StockHistory">
+    insert into stock_history (id, stock_id, date, opening, 
+      highest, lowest, closing, 
+      ups_downs, rise_rate, vol, 
+      amount, per, create_date, 
+      update_date)
+    values (#{id,jdbcType=BIGINT}, #{stockId,jdbcType=BIGINT}, #{date,jdbcType=VARCHAR}, #{opening,jdbcType=DECIMAL}, 
+      #{highest,jdbcType=DECIMAL}, #{lowest,jdbcType=DECIMAL}, #{closing,jdbcType=DECIMAL}, 
+      #{upsDowns,jdbcType=DECIMAL}, #{riseRate,jdbcType=VARCHAR}, #{vol,jdbcType=VARCHAR}, 
+      #{amount,jdbcType=VARCHAR}, #{per,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="org.stock.fetch.model.StockHistory" >
+    update stock_history
+    set stock_id = #{stockId,jdbcType=BIGINT},
+      date = #{date,jdbcType=VARCHAR},
+      opening = #{opening,jdbcType=DECIMAL},
+      highest = #{highest,jdbcType=DECIMAL},
+      lowest = #{lowest,jdbcType=DECIMAL},
+      closing = #{closing,jdbcType=DECIMAL},
+      ups_downs = #{upsDowns,jdbcType=DECIMAL},
+      rise_rate = #{riseRate,jdbcType=VARCHAR},
+      vol = #{vol,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=VARCHAR},
+      per = #{per,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, stock_id, date, opening, highest, lowest, closing, ups_downs, rise_rate, 
+    vol, amount, per, create_date, update_date
+    from stock_history
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select <include refid="BaseColumnList" /> 
+    from stock_history
+  </select>
+  
+  <select id="select" resultMap="BaseResultMap" >
+    select <include refid="BaseColumnList" /> 
+    from stock_history
+    where date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
+    ORDER BY date asc
+  </select>
+</mapper>

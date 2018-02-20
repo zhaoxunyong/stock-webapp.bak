@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.stock.fetch.dao.StockDailyTransactionsMapper" >
+  <resultMap id="BaseResultMap" type="org.stock.fetch.model.StockDailyTransactions" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="stock_id" property="stockId" jdbcType="BIGINT" />
+    <result column="account_no" property="accountNo" jdbcType="VARCHAR" />
+    <result column="currency" property="currency" jdbcType="VARCHAR" />
+    <result column="tx_date" property="txDate" jdbcType="TIMESTAMP" />
+    <result column="tx_kind" property="txKind" jdbcType="INTEGER" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="tx_price" property="txPrice" jdbcType="DECIMAL" />
+    <result column="tx_amount" property="txAmount" jdbcType="DECIMAL" />
+    <result column="fee" property="fee" jdbcType="DECIMAL" />
+    <result column="tx_tallage" property="txTallage" jdbcType="DECIMAL" />
+    <result column="zs_tallage" property="zsTallage" jdbcType="DECIMAL" />
+    <result column="financing_amount" property="financingAmount" jdbcType="DECIMAL" />
+    <result column="cash deposit" property="cashDeposit" jdbcType="DECIMAL" />
+    <result column="interest" property="interest" jdbcType="DECIMAL" />
+    <result column="deb_fee" property="debFee" jdbcType="DECIMAL" />
+    <result column="customer_charge" property="customerCharge" jdbcType="DECIMAL" />
+    <result column="profit" property="profit" jdbcType="DECIMAL" />
+    <result column="pay_rate" property="payRate" jdbcType="DECIMAL" />
+    <result column="holding_cost" property="holdingCost" jdbcType="DECIMAL" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="BaseColumnList">
+    id, stock_id, account_no, currency, tx_date, tx_kind, quantity, 
+    tx_price, tx_amount, fee, tx_tallage, zs_tallage, financing_amount, `cash deposit`, 
+    interest, deb_fee, customer_charge, profit, pay_rate, holding_cost, create_date, 
+    update_date
+  </sql>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from stock_daily_transactions
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <delete id="delete" parameterType="org.stock.fetch.model.StockDailyTransactions" >
+    delete from stock_daily_transactions
+    where stock_id = #{stockId,jdbcType=VARCHAR}
+    and tx_date = #{txDate,jdbcType=TIMESTAMP}
+    and tx_kind = #{txKind,jdbcType=INTEGER}
+    and tx_price = #{txPrice,jdbcType=DECIMAL}
+    and quantity = #{quantity,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insert" parameterType="org.stock.fetch.model.StockDailyTransactions" useGeneratedKeys="true" keyProperty="id" >
+    insert into stock_daily_transactions (id, stock_id, 
+      account_no, currency, tx_date, 
+      tx_kind, quantity, tx_price, 
+      tx_amount, fee, tx_tallage, 
+      zs_tallage, financing_amount, `cash deposit`, 
+      interest, deb_fee, customer_charge, 
+      profit, pay_rate, holding_cost, 
+      create_date, update_date)
+    values (#{id,jdbcType=BIGINT}, #{stockId,jdbcType=BIGINT}, 
+      #{accountNo,jdbcType=VARCHAR}, #{currency,jdbcType=VARCHAR}, #{txDate,jdbcType=TIMESTAMP}, 
+      #{txKind,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, #{txPrice,jdbcType=DECIMAL}, 
+      #{txAmount,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL}, #{txTallage,jdbcType=DECIMAL}, 
+      #{zsTallage,jdbcType=DECIMAL}, #{financingAmount,jdbcType=DECIMAL}, #{cashDeposit,jdbcType=DECIMAL}, 
+      #{interest,jdbcType=DECIMAL}, #{debFee,jdbcType=DECIMAL}, #{customerCharge,jdbcType=DECIMAL}, 
+      #{profit,jdbcType=DECIMAL}, #{payRate,jdbcType=DECIMAL}, #{holdingCost,jdbcType=DECIMAL}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="org.stock.fetch.model.StockDailyTransactions" >
+    update stock_daily_transactions
+    set stock_id = #{stockId,jdbcType=BIGINT},
+      account_no = #{accountNo,jdbcType=VARCHAR},
+      currency = #{currency,jdbcType=VARCHAR},
+      tx_date = #{txDate,jdbcType=TIMESTAMP},
+      tx_kind = #{txKind,jdbcType=INTEGER},
+      quantity = #{quantity,jdbcType=INTEGER},
+      tx_price = #{txPrice,jdbcType=DECIMAL},
+      tx_amount = #{txAmount,jdbcType=DECIMAL},
+      fee = #{fee,jdbcType=DECIMAL},
+      tx_tallage = #{txTallage,jdbcType=DECIMAL},
+      zs_tallage = #{zsTallage,jdbcType=DECIMAL},
+      financing_amount = #{financingAmount,jdbcType=DECIMAL},
+      `cash deposit` = #{cashDeposit,jdbcType=DECIMAL},
+      interest = #{interest,jdbcType=DECIMAL},
+      deb_fee = #{debFee,jdbcType=DECIMAL},
+      customer_charge = #{customerCharge,jdbcType=DECIMAL},
+      profit = #{profit,jdbcType=DECIMAL},
+      pay_rate = #{payRate,jdbcType=DECIMAL},
+      holding_cost = #{holdingCost,jdbcType=DECIMAL},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select <include refid="BaseColumnList" />
+    from stock_daily_transactions
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select <include refid="BaseColumnList" />
+    from stock_daily_transactions
+  </select>
+  
+</mapper>

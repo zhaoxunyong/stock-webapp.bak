@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.stock.fetch.dao.StockMyStoreMapper" >
+  <resultMap id="BaseResultMap" type="org.stock.fetch.model.StockMyStore" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="stock_id" property="stockId" jdbcType="BIGINT" />
+    <result column="tx_price" property="txPrice" jdbcType="DECIMAL" />
+    <result column="tx_date" property="txDate" jdbcType="DATE" />
+    <result column="tx_kind" property="txKind" jdbcType="INTEGER" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="BaseColumnList">
+    id, stock_id, tx_price, tx_date, tx_kind, quantity, status, create_date, update_date
+  </sql>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from stock_my_store
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+  <insert id="insert" parameterType="org.stock.fetch.model.StockMyStore" useGeneratedKeys="true" keyProperty="id" >
+    insert into stock_my_store (id, stock_id, tx_price, tx_date, 
+      tx_kind, quantity, status, 
+      create_date, update_date)
+    values (#{id,jdbcType=BIGINT}, #{stockId,jdbcType=BIGINT}, #{txPrice,jdbcType=DECIMAL}, #{txDate,jdbcType=DATE}, 
+      #{txKind,jdbcType=INTEGER}, #{quantity,jdbcType=INTEGER}, #{status,jdbcType=BIT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterType="org.stock.fetch.model.StockMyStore" >
+    update stock_my_store
+    set stock_id = #{stockId,jdbcType=BIGINT},
+      tx_price = #{txPrice,jdbcType=DECIMAL},
+      tx_date = #{txDate,jdbcType=DATE},
+      tx_kind = #{txKind,jdbcType=INTEGER},
+      quantity = #{quantity,jdbcType=INTEGER},
+      status = #{status,jdbcType=BIT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateByQuantity" parameterType="org.stock.fetch.model.StockMyStore" >
+    update stock_my_store
+    set quantity = quantity + #{quantity,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select <include refid="BaseColumnList" />
+    from stock_my_store
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="select" resultMap="BaseResultMap" parameterType="org.stock.fetch.model.StockMyStore" >
+    select <include refid="BaseColumnList" />
+    from stock_my_store
+    where stock_id = #{stockId,jdbcType=BIGINT} 
+    and tx_price = #{txPrice,jdbcType=DECIMAL} 
+    and tx_date = #{txDate,jdbcType=DATE} 
+    and tx_kind = #{txKind,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select <include refid="BaseColumnList" />
+    from stock_my_store
+  </select>
+</mapper>
