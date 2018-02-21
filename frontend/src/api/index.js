@@ -1,6 +1,6 @@
 // 配置API接口地址
-var root = 'https://cnodejs.org/api/v1'
-// var root = '/api/v1'
+// var root = 'https://cnodejs.org/api/v1'
+var root = '/'
 // 引用axios
 var axios = require('axios')
 // 自定义判断元素类型JS
@@ -37,26 +37,10 @@ function apiAxios (method, url, params, success, failure) {
   if (params) {
     params = filterNull(params)
   }
-  axios({
-    method: method,
-    url: url,
-    data: method === 'POST' || method === 'PUT' ? params : null,
-    params: method === 'GET' || method === 'DELETE' ? params : null,
-    baseURL: root,
-    withCredentials: false
-  })
-  .then(function (res) {
-    if (res.data.success === true) {
-      if (success) {
-        success(res.data)
-      }
-    } else {
-      if (failure) {
-        failure(res.data)
-      } else {
-        window.alert('error: ' + JSON.stringify(res.data))
-      }
-    }
+   axios.get(url).then(function (res) {
+    console.log("res.data---->"+res.data)
+    success(res.data)
+    
   })
   .catch(function (err) {
     let res = err.response

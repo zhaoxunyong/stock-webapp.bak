@@ -55,6 +55,12 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
   
+  <select id="selectByStockId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select <include refid="BaseColumnList" />
+    from stock_news
+    where stock_id = #{stockId,jdbcType=BIGINT}
+  </select>
+  
   <select id="selectAll" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" />
     from stock_news

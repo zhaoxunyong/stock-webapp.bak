@@ -16,6 +16,8 @@ public interface StockNewsMapper {
     StockNews selectByPrimaryKey(Long id);
 
     List<StockNews> selectAll();
+    
+    List<StockNews> selectByStockId(Long stockId);
 
     int updateByPrimaryKey(StockNews record);
 }

@@ -167,11 +167,6 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>com.jayway.jsonpath</groupId>
-			<artifactId>json-path</artifactId>
-		</dependency>
-		
-		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-htmlunit-driver</artifactId>
 		</dependency>
@@ -198,10 +193,52 @@
 		    <artifactId>hystrix-core</artifactId>
 		    <scope>provided</scope>
 		</dependency>
+	        
+        <dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- provided -->
+		<dependency>
+			<groupId>com.aeasycredit</groupId>
+			<artifactId>aeasycredit-commons-swagger</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.restdocs</groupId>
+	    	<artifactId>spring-restdocs-mockmvc</artifactId>
+			<scope>test</scope>
+    	</dependency>
+		
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-staticdocs</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.asciidoctor</groupId>
+			<artifactId>asciidoctorj</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
