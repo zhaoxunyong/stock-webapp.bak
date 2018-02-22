@@ -27,10 +27,25 @@ export default {
   },
   methods: {
     getData () {
-      // this.$api.get('/api/stock/getNewsBystockId/' + this.id, null, r => {
-      this.$api.get('/api/stock/getNewsBystockId/402396131105771520', null, r => {
+      alert("xxx")
+      this.$api.get('/api/stock/getNewsBystockId/' + this.id, null, r => {
+      // this.$api.get('/api/stock/getNewsBystockId/402396131105771520', null, r => {
         this.dat = r
       })
+    },
+    getStatus (urlStr) {
+      var urlStrArr = urlStr.split('/')
+      return urlStrArr[urlStrArr.length - 1]
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      console.log("2--->"+this.getStatus(this.$route.path))
+      alert("222")
+      this.$api.get('/api/stock/getNewsBystockId/' + this.id, null, r => {
+        this.dat = r
+      })
+      //this.$router.push('/content/' + this.getStatus(this.$route.path))
     }
   }
 }

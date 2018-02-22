@@ -1,6 +1,5 @@
 <template>
-  <lefter class="lefter">
-    <div>
+    <div class="lefter">
       <ul>
           <li v-for="i in list">
             <router-link :to="'/content/' + i.id">
@@ -9,7 +8,6 @@
           </li>
         </ul>
     </div>
-  </lefter>
 </template>
 
 <script>
