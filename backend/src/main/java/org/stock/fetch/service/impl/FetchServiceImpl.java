@@ -177,7 +177,7 @@ public class FetchServiceImpl implements FetchService {
                             if(aNodes==null || aNodes.isEmpty()) continue;
                             HtmlElement aElement = aNodes.get(0);
                             String url = ROOT_URL + aElement.getAttribute("href");
-                            String subject = td.asText();
+                            String subject = td.asText() + "("+froms +" "+newsDate+")";
                             StockNews stockNews = new StockNews();
                             stockNews.setId(IdUtils.genLongId());
                             stockNews.setFroms(froms);
@@ -199,13 +199,8 @@ public class FetchServiceImpl implements FetchService {
     }
     
     @Override
-    public void fetchImportantNews() throws Exception {
-    	fetchImportantNewsByPage("1");
-    	fetchImportantNewsByPage("2");
-    }
-    
     @Transactional
-    private void fetchImportantNewsByPage(String fetchPage) throws Exception {
+    public void fetchImportantNews(int fetchPage) throws Exception {
         Date date = new Date();
 		String newUrl = ROOT_URL + "/news_list/url/d/e/N1.html?q=&pg="+fetchPage;
 		HtmlPage page = webClient.getPage(newUrl);

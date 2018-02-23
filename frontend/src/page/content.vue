@@ -2,10 +2,8 @@
   <main-layout>
   <b-container fluid>
       <b-row>
-        <b-col xl="2" sm="2" md="2" lg="2" style="background-color: #dedef8;
-         box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;"><stock-my-data></stock-my-data></b-col>
-        <b-col xl="10" sm="10" md="10" lg="10" style="background-color: #dedef8;
-         box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
+        <b-col xl="2" sm="2" md="2" lg="2" style="box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;"><stock-my-data></stock-my-data></b-col>
+        <b-col xl="10" sm="10" md="10" lg="10" style="box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
           <b-table striped hover :items="items"></b-table>
           <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
         </b-col>
@@ -59,7 +57,7 @@ export default {
         $(rs.rows).each(function(){
           let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.subject+"</a>"
           items.push({
-            '重點資訊': context
+            '個股新聞與研究報告': context
           })
         });
         this.items = items
@@ -80,7 +78,7 @@ export default {
         $(rs.rows).each(function(){
           let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.subject+"</a>"
           items.push({
-            '重點資訊': context
+            '個股新聞與研究報告': context
           })
         });
         this.items = items

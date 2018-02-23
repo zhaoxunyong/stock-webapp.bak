@@ -14,7 +14,7 @@ public interface FetchService {
     
     public void fetchNews() throws Exception;
     
-    public void fetchImportantNews() throws Exception;
+    public void fetchImportantNews(int fetchPage) throws Exception;
     
     public void fetchHistory(String no, String startDate, String endDate) throws Exception;
     

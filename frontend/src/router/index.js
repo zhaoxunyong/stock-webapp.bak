@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from '@/page/index'
+import StockData from '@/page/stockdata'
 import Content from '@/page/content'
 import ImportantNews from '@/page/importantNews'
 
@@ -12,14 +12,23 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component: Index
+      component: StockData
     }, 
     {
-      path: '/content/:id',
-      component: Content
+      path: '/stockData',
+      component: StockData
     }, 
     {
-      path: '/importantNews',
+      path: '/content/:stockId',
+      component: Content,
+      children: [
+        // UserPosts will be rendered inside User's <router-view>
+        // when /user/:stockId/:pageNum is matched
+        { path: ':pageNum', component: Content }
+      ]
+    }, 
+    {
+      path: '/importantNews/:pageNum',
       component: ImportantNews
     }
   ]

@@ -55,8 +55,14 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
   
-  <select id="selectByStockId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByStockId" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" />
+    from stock_news
+    where stock_id = #{stockId,jdbcType=BIGINT}
+    order by news_date desc limit #{startNo, jdbcType=INTEGER}, #{pageSize, jdbcType=INTEGER}
+  </select>
+  <select id="count" resultType="int" parameterType="java.lang.Long" >
+    select count(id) 
     from stock_news
     where stock_id = #{stockId,jdbcType=BIGINT}
   </select>

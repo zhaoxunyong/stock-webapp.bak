@@ -47,5 +47,10 @@
   <select id="selectAll" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" /> 
     from stock_important_news
+    order by news_date desc limit #{startNo, jdbcType=INTEGER}, #{pageSize, jdbcType=INTEGER}
+  </select>
+  <select id="count" resultType="int" >
+    select count(id) 
+    from stock_important_news
   </select>
 </mapper>

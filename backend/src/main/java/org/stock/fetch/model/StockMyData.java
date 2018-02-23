@@ -11,6 +11,9 @@ public class StockMyData {
     
     @Transient
     private String no;
+    
+    @Transient
+    private String company;
 
     private String kinds;
 
@@ -85,5 +88,13 @@ public class StockMyData {
     public void setNo(String no) {
         this.no = no;
     }
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
     
 }

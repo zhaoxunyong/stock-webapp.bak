@@ -2,9 +2,11 @@ package org.stock.fetch.api;
 
 import java.util.List;
 
+import org.stock.fetch.api.dto.PageDto;
 import org.stock.fetch.api.dto.StockDataDto;
+import org.stock.fetch.api.dto.StockImportantNewsDto;
+import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.api.dto.StockNewsDto;
-import org.stock.fetch.model.StockNews;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -14,8 +16,8 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags="Stock api", description="合同相關的接口", protocols="http", produces = "application/json")
 public interface StockApi {
 	
-	@ApiOperation(value="getStockDatas", notes="getStockDatas")
-	public List<StockDataDto> getStockDatas();
+	@ApiOperation(value="getStockMyDatas", notes="getStockMyDatas")
+	public List<StockMyDataDto> getStockMyDatas();
 	
 	@ApiOperation(value="getStockData", notes="getStockData")
 	@ApiImplicitParams({
@@ -27,5 +29,8 @@ public interface StockApi {
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "path"),
 	})
-	public List<StockNewsDto> getNewsBystockId(String stockId);
+	public PageDto<StockNewsDto> getNewsBystockId(String stockId, int curPage, int pageSize);
+	
+	@ApiOperation(value="getImportantNews", notes="getImportantNews")
+	public PageDto<StockImportantNewsDto> getImportantNews(int curPage, int pageSize);
 }
