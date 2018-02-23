@@ -152,12 +152,12 @@ public class FetchServiceImpl implements FetchService {
 
     @Override
     @Transactional
-    public void fetchNews() throws Exception {
+    public void fetchNews(int fetchPage) throws Exception {
         Date date = new Date();
         List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
         if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
             for(StockMyData stockMyData : stockMyDatas) {
-                String newUrl = ROOT_URL + "/q/h?s="+stockMyData.getNo().replaceAll("[A-Z]+$", "");
+                String newUrl = ROOT_URL + "/q/h?s="+stockMyData.getNo().replaceAll("[A-Z]+$", "")+"&pg="+fetchPage;
                 HtmlPage page = webClient.getPage(newUrl);
                 
                 List<?> trDomNodes = page.querySelectorAll("tr table.yui-text-left tbody tr td table tbody tr");

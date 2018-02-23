@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import StockData from '@/page/stockdata'
 import Content from '@/page/content'
 import ImportantNews from '@/page/importantNews'
 
@@ -12,11 +11,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component: StockData
-    }, 
-    {
-      path: '/stockData',
-      component: StockData
+      component: Content
     }, 
     {
       path: '/content/:stockId',

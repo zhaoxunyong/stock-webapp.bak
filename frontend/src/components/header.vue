@@ -9,7 +9,7 @@
         <!-- Navbar dropdowns -->
         <b-nav-item-dropdown text="台股" right>
           <b-dropdown-item href="#">
-            <router-link to="/stockData">
+            <router-link to="/">
               自選股
             </router-link>
           </b-dropdown-item>

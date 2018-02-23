@@ -39,7 +39,6 @@ export default {
   },
   methods: {
     linkGen(pageNum) {
-      //alert("------------>"+'/content/' + this.stockId+'/'+pageNum)
       return {
         path: '/content/' + this.stockId+'/'+pageNum
       }

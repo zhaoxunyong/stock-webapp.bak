@@ -12,7 +12,7 @@ public interface FetchService {
     
     public void fetchDetail() throws Exception;
     
-    public void fetchNews() throws Exception;
+    public void fetchNews(int fetchPage) throws Exception;
     
     public void fetchImportantNews(int fetchPage) throws Exception;
     

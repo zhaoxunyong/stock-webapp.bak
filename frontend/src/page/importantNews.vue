@@ -33,6 +33,7 @@ export default {
     getData () {
       items = []
       let url = '/api/stock/getImportantNews/'+this.$route.params.pageNum+"/"+this.pageSize
+      // alert("url1--->"+url)
       this.$api.get(url, null, rs => {
         // this.items = rs
         this.numberOfPages = rs.pageTotal
@@ -50,6 +51,7 @@ export default {
     '$route' (to, from) {
       items = []
       let url = '/api/stock/getImportantNews/'+this.$route.params.pageNum+"/"+this.pageSize
+      // alert("url2--->"+url)
       this.$api.get(url, null, rs => {
         // this.items = rs
         this.numberOfPages = rs.pageTotal
