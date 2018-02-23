@@ -1,64 +1,68 @@
 <template>
   <main-layout>
-  <b-container fluid>
-      <b-row v-for="i in dat">
-        <b-col style="background-color: #dedef8;
-         box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
-            <a target="_blank" :href="i.url">{{i.froms}}</a>
-            <br />
-            {{i.subject}}
-        </b-col>
-      </b-row>
-  </b-container>
+    <template>
+      <b-table striped hover :items="items"></b-table>
+      <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
+    </template>
   </main-layout>
 </template>
 <script>
 import MainLayout from '../layouts/Main.vue'
+let items = []
 export default {
   components: { 
-    MainLayout,
+    MainLayout
   },
   data () {
     return {
-      id: this.$route.params.id,
-      dat: {}
+      items: [],
+      numberOfPages: 0,
+      currentPage: this.$route.params.pageNum,
+      pageSize: 10
     }
   },
   created () {
     this.getData()
   },
   methods: {
-    getData () {
-      alert("xxx")
-      this.$api.get('/api/stock/getImportantNews/1', null, r => {
-        this.dat = r
-      })
+    linkGen(pageNum) {
+      return {
+        path: '/importantNews/' + pageNum
+      }
     },
-    getStatus (urlStr) {
-      var urlStrArr = urlStr.split('/')
-      return urlStrArr[urlStrArr.length - 1]
+    getData () {
+      items = []
+      let url = '/api/stock/getImportantNews/'+this.$route.params.pageNum+"/"+this.pageSize
+      this.$api.get(url, null, rs => {
+        // this.items = rs
+        this.numberOfPages = rs.pageTotal
+        $(rs.rows).each(function(){
+          let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.froms+"</a>"
+          items.push({
+            '重點資訊': context
+          })
+        });
+        this.items = items
+      })
     }
   },
-  beforeRouteUpdate (to, from, next) {
-    console.log("2--->"+this.getStatus(this.$route.path))
-    alert("222")
-    // this.$api.get('/api/stock/getNewsBystockId/' + this.id, null, r => {
-    this.$api.get('/api/stock/getImportantNews/1', null, r => {
-      this.dat = r
-    })
-    //this.$router.push('/content/' + this.getStatus(this.$route.path))
-    next()
-  }/*,
   watch: {
     '$route' (to, from) {
-      console.log("2--->"+this.getStatus(this.$route.path))
-      alert("222")
-      // this.$api.get('/api/stock/getNewsBystockId/' + this.id, null, r => {
-      this.$api.get('/api/stock/getNewsBystockId/402396131105771520', null, r => {
-        this.dat = r
+      items = []
+      let url = '/api/stock/getImportantNews/'+this.$route.params.pageNum+"/"+this.pageSize
+      this.$api.get(url, null, rs => {
+        // this.items = rs
+        this.numberOfPages = rs.pageTotal
+        $(rs.rows).each(function(){
+          let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.froms+"</a>"
+          items.push({
+            '重點資訊': context
+          })
+        });
+        this.items = items
       })
       //this.$router.push('/content/' + this.getStatus(this.$route.path))
     }
-  }*/
+  }
 }
 </script>
