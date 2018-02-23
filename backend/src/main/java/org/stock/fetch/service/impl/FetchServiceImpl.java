@@ -20,6 +20,7 @@ import org.stock.fetch.dao.StockDailyTransactionsHistoryMapper;
 import org.stock.fetch.dao.StockDailyTransactionsMapper;
 import org.stock.fetch.dao.StockDataMapper;
 import org.stock.fetch.dao.StockHistoryMapper;
+import org.stock.fetch.dao.StockImportantNewsMapper;
 import org.stock.fetch.dao.StockMyDataMapper;
 import org.stock.fetch.dao.StockMyStoreMapper;
 import org.stock.fetch.dao.StockNewsExcludeKeyMapper;
@@ -29,6 +30,7 @@ import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockDailyTransactionsHistory;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
+import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
@@ -83,6 +85,9 @@ public class FetchServiceImpl implements FetchService {
     
     @Autowired
     private StockNewsMapper stockNewsMapper;
+    
+    @Autowired
+    private StockImportantNewsMapper stockImportantNewsMapper;
     
     @Autowired
     private StockNewsExcludeKeyMapper stockNewsExcludeKeyMapper;
@@ -190,6 +195,51 @@ public class FetchServiceImpl implements FetchService {
                     }
                 }
             }
+        }
+    }
+    
+    @Override
+    public void fetchImportantNews() throws Exception {
+    	fetchImportantNewsByPage("1");
+    	fetchImportantNewsByPage("2");
+    }
+    
+    @Transactional
+    private void fetchImportantNewsByPage(String fetchPage) throws Exception {
+        Date date = new Date();
+		String newUrl = ROOT_URL + "/news_list/url/d/e/N1.html?q=&pg="+fetchPage;
+		HtmlPage page = webClient.getPage(newUrl);
+		
+		HtmlElement ele = page.getHtmlElementById("newListContainer");
+		List<?> tableDomNodes = ele.querySelectorAll("table#newListTable tbody tr td table");
+        if(tableDomNodes!=null && !tableDomNodes.isEmpty()) {
+        	for(int i=0;i<tableDomNodes.size();i++) {
+                HtmlElement tableDomNode = (HtmlElement) tableDomNodes.get(i);
+                List<?> trDomNodes = tableDomNode.querySelectorAll("tbody tr");
+                if(trDomNodes!=null && !trDomNodes.isEmpty()) {
+                	HtmlElement fromDomNode = (HtmlElement) trDomNodes.get(0);
+                	// from
+                	HtmlElement td = fromDomNode.getElementsByTagName("td").get(0);
+                	List<HtmlElement> aNodes = td.getElementsByTagName("a");
+                	if(aNodes==null || aNodes.isEmpty()) continue;
+                    HtmlElement aElement = aNodes.get(1);
+                    String url = aElement.getAttribute("href");
+                    String fromValue = td.asText();
+                    String newsDateString = StringUtils.substringAfter(StringUtils.substringBetween(fromValue, "（", "）"), " ");
+                    // subject
+                	HtmlElement subjectDomNode = (HtmlElement) trDomNodes.get(1);
+                	String subjectValue = subjectDomNode.asText().replace("(詳全文)", "");
+                	StockImportantNews stockImportantNews = new StockImportantNews();
+                	stockImportantNews.setId(IdUtils.genLongId());
+                	stockImportantNews.setCreateDate(date);
+                	stockImportantNews.setFroms(fromValue);
+                	stockImportantNews.setNewsDate(DatesUtils.YYMMDDHHMMSS2.toDate(newsDateString+":00"));
+                	stockImportantNews.setSubject(subjectValue);
+                	stockImportantNews.setUrl(url);
+                	stockImportantNewsMapper.deleteByFroms(fromValue);
+                	stockImportantNewsMapper.insert(stockImportantNews);
+                }
+        	}
         }
     }
     

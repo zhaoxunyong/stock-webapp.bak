@@ -86,6 +86,6 @@
   
   <select id="selectAll" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" />
-    from stock_data limit 10,10
+    from stock_data limit 100,100
   </select>
 </mapper>

@@ -35,6 +35,11 @@ public class FetchServiceTest {
     }
     
     @Test
+    public void fetchImportantNews() throws Exception {
+        fetchService.fetchImportantNews();
+    }
+    
+    @Test
     public void fetchHistory() throws Exception {
         String no = "2881";
         String startDate = "2017/10/01";

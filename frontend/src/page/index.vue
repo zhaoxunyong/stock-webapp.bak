@@ -1,5 +1,6 @@
 <template>
   <main-layout>
+    <MyStock></MyStock>
     <div>
       index
     </div>
@@ -7,9 +8,10 @@
 </template>
 <script>
 import MainLayout from '../layouts/Main.vue'
+import MyStock from './mystock.vue'
 export default {
   components: { 
-    MainLayout 
+    MainLayout, MyStock
   }/*,
   data () {
     return {

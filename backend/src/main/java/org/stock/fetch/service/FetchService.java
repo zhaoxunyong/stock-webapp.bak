@@ -14,6 +14,8 @@ public interface FetchService {
     
     public void fetchNews() throws Exception;
     
+    public void fetchImportantNews() throws Exception;
+    
     public void fetchHistory(String no, String startDate, String endDate) throws Exception;
     
     List<StockHistory> select(Date startDate, Date endDate);
