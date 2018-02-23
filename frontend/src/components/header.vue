@@ -1,17 +1,32 @@
 <template>
   <div>
-    <b-nav pills>
-      <b-nav-item active>Active</b-nav-item>
-      <b-nav-item>Link</b-nav-item>
-      <b-nav-item-dropdown id="nav7_ddown" text="台股" extra-toggle-classes="nav-link-custom" right>
-        <b-dropdown-item>自選股</b-dropdown-item>
-        <b-dropdown-divider></b-dropdown-divider>
-        <b-dropdown-item>
-          <router-link to="/importantNews/1">
-            重點資訊  
-          </router-link>
-        </b-dropdown-item>
-      </b-nav-item-dropdown>
-    </b-nav>
+    <b-navbar type="dark" variant="primary" toggleable>
+    <b-navbar-toggle target="nav_dropdown_collapse"></b-navbar-toggle>
+    <b-collapse is-nav id="nav_dropdown_collapse">
+      <b-navbar-nav>
+        <b-nav-item href="#">Home</b-nav-item>
+        <b-nav-item href="#">Link</b-nav-item>
+        <!-- Navbar dropdowns -->
+        <b-nav-item-dropdown text="台股" right>
+          <b-dropdown-item href="#">
+            <router-link to="/stockData">
+              自選股
+            </router-link>
+          </b-dropdown-item>
+          <b-dropdown-item href="#">
+            <router-link to="/importantNews/1">
+              重點資訊  
+            </router-link>
+          </b-dropdown-item>
+          <b-dropdown-item href="#">RU</b-dropdown-item>
+          <b-dropdown-item href="#">FA</b-dropdown-item>
+        </b-nav-item-dropdown>
+        <b-nav-item-dropdown text="User" right>
+          <b-dropdown-item href="#">Account</b-dropdown-item>
+          <b-dropdown-item href="#">Settings</b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
+    </b-collapse>
+  </b-navbar>
   </div>
 </template>
