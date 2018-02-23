@@ -31,7 +31,3 @@ export default {
   }
 }
 </script>
-
-<style>
-  .article_list {margin: auto;}
-</style>
