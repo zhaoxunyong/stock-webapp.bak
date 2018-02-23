@@ -1,7 +1,7 @@
 <template>
   <div>
     <span v-for="i in list">
-      <router-link :to="'/content/' + i.stockId">
+      <router-link :to="'/content/' + i.stockId+'/1'">
         {{ i.company }}
       </router-link><br />
     </span>

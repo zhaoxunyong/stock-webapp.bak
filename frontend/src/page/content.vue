@@ -6,12 +6,8 @@
          box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;"><stock-my-data></stock-my-data></b-col>
         <b-col xl="10" sm="10" md="10" lg="10" style="background-color: #dedef8;
          box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
-          <!-- <p>{{i.froms}}</p> -->
-          <p  v-for="i in dat">
-            <a target="_blank" :href="i.url">
-              {{ i.subject }}
-            </a>
-          </p>
+          <b-table striped hover :items="items"></b-table>
+          <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
         </b-col>
       </b-row>
   </b-container>
@@ -21,14 +17,18 @@
 import MainLayout from '../layouts/Main.vue'
 import StockMyData from './stockmydata.vue'
 import Bus from '../eventBus'
+let items = []
 export default {
   components: { 
     MainLayout, StockMyData
   },
   data () {
     return {
-      stockId: this.$route.params.stockId,
-      dat: {}
+      items: [],
+      stockId: '',
+      numberOfPages: 0,
+      currentPage: this.$route.params.pageNum,
+      pageSize: 10
     }
   },
   created () {
@@ -40,19 +40,50 @@ export default {
   mounted () {
   },
   methods: {
+    linkGen(pageNum) {
+      //alert("------------>"+'/content/' + this.stockId+'/'+pageNum)
+      return {
+        path: '/content/' + this.stockId+'/'+pageNum
+      }
+    },
     getData (stockId) {
+      items = []
       stockId = stockId == undefined ? this.$route.params.stockId : stockId
-      let url = '/api/stock/getNewsBystockId/' + stockId
-      this.$api.get(url, null, r => {
-        this.dat = r
+      this.stockId = stockId
+      let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
+      let url = '/api/stock/getNewsBystockId/' + stockId+'/'+pageNum+'/'+this.pageSize
+      // alert("url1--->"+url)
+      this.$api.get(url, null, rs => {
+        // this.dat = r
+        this.numberOfPages = rs.pageTotal
+        $(rs.rows).each(function(){
+          let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.subject+"</a>"
+          items.push({
+            '重點資訊': context
+          })
+        });
+        this.items = items
       })
     }
   },
   watch: {
     '$route' (to, from) {
+      items = []
       // alert("this.$route.params.stockId--->"+this.$route.params.stockId)
-      this.$api.get('/api/stock/getNewsBystockId/' + this.$route.params.stockId, null, r => {
-        this.dat = r
+      let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
+      let url = '/api/stock/getNewsBystockId/' + this.$route.params.stockId+'/'+pageNum+'/'+this.pageSize
+      // alert("url2--->"+url)
+      this.$api.get(url, null, rs => {
+        // this.dat = r
+        // this.items = rs
+        this.numberOfPages = rs.pageTotal
+        $(rs.rows).each(function(){
+          let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.subject+"</a>"
+          items.push({
+            '重點資訊': context
+          })
+        });
+        this.items = items
       })
       //this.$router.push('/content/' + this.getStatus(this.$route.path))
     }
