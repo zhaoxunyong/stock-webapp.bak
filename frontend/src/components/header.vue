@@ -7,7 +7,7 @@
         <b-dropdown-item>自選股</b-dropdown-item>
         <b-dropdown-divider></b-dropdown-divider>
         <b-dropdown-item>
-          <router-link to="/importantNews">
+          <router-link to="/importantNews/1">
             重點資訊  
           </router-link>
         </b-dropdown-item>
