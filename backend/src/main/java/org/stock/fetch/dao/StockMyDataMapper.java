@@ -3,6 +3,7 @@ package org.stock.fetch.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.stock.fetch.model.StockMyData;
 
 @Mapper
@@ -16,6 +17,8 @@ public interface StockMyDataMapper {
     StockMyData selectByStockId(Long stockId);
 
     List<StockMyData> selectAll();
+    
+    List<StockMyData> getStockMyDatasByType(@Param("type") Long type);
 
     int updateByPrimaryKey(StockMyData record);
 }

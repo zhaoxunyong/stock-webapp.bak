@@ -15,6 +15,9 @@ public class StockMyDataDto {
     @Transient
     private String company;
 
+    @Transient
+    private String[] selectedTypes;
+
     private String kinds;
 
     private String industry;
@@ -95,6 +98,14 @@ public class StockMyDataDto {
 
 	public void setCompany(String company) {
 		this.company = company;
+	}
+
+	public String[] getSelectedTypes() {
+		return selectedTypes;
+	}
+
+	public void setSelectedTypes(String[] selectedTypes) {
+		this.selectedTypes = selectedTypes;
 	}
     
 }

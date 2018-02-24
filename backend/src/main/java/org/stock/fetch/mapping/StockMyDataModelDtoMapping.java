@@ -7,6 +7,7 @@
 package org.stock.fetch.mapping;
 
 import org.modelmapper.PropertyMap;
+import org.modelmapper.spi.MappingContext;
 import org.springframework.stereotype.Component;
 import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.model.StockMyData;
@@ -33,6 +34,12 @@ public class StockMyDataModelDtoMapping extends PropertyMapConfigurerSupport<Sto
 
                 map().setId(ObjectsUtils.toString(source.getId()));
                 map().setStockId(ObjectsUtils.toString(source.getStockId()));
+                using((MappingContext<String, String[]> context) -> {
+                	if(context.getSource() == null) {
+                		return new String[]{};
+                	}
+                    return context.getSource().split(",");
+                }).map(source.getSelectedTypes(), destination.getSelectedTypes());
                 /*map().setUserId(ObjectsUtils.toString(source.getUserId()));
                 map().setLoanRequestNo(ObjectsUtils.toString(source.getLoanRequestNo()));
                 map().setRequestId(ObjectsUtils.toString(source.getRequestId()));

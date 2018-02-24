@@ -7,7 +7,7 @@
       <!-- Modal Component -->
       <b-modal id="modalPrevent"
                ref="modal"
-               title="xxx"
+               title="請選擇自選股"
                @ok="handleOk"
                @shown="clearName">
         <form @submit.stop.prevent="handleSubmit">
@@ -17,6 +17,10 @@
           <b-form-select v-model="selected" :options="options" class="mb-3" />
         </form>
       </b-modal>
+    </div>
+
+    <div class="selected_name">
+    當前自選股: <br />{{ myStockSelectedName }}
     </div>
 
     <span v-for="i in list">
@@ -34,6 +38,7 @@ export default {
     return {
       list: [],
       firstStockId: '',
+      myStockSelectedName: '所有',
       selected: null,
       options: []
     }
@@ -42,20 +47,22 @@ export default {
     this.getData()
     this.getStockMySelectedTypes()
     Bus.$on('getAllMyStockData', () => {
+      this.myStockSelectedName = '所有'
       this.getData()
     });Bus.$on('reGetStockMySelectedTypes', () => {
       this.getStockMySelectedTypes()
     });
-    Bus.$on('getMyStockSelected', (type) => {
+    Bus.$on('getMyStockSelected', (type, name) => {
       if(type != undefined) {
+        this.myStockSelectedName = name
         this.$api.get('/api/stock/getStockMyDatasByType/'+type, null, r => {
           this.list = r
           if(r != "") {
             this.firstStockId = r[0].stockId
             let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
             this.$router.push('/content/' + this.firstStockId+'/1')
-            // this.isSelected(stockId)
-            // Bus.$emit('setFirstStock', stockId)
+            Bus.$emit('setFirstStock', stockId)
+            Bus.$emit('deliverySelectedTypes', r[0].selectedTypes)
           }
         })
       }
@@ -82,7 +89,7 @@ export default {
       // Prevent modal from closing
       evt.preventDefault()
       if (!this.selected) {
-        alert('Ո�x�����x��!')
+        alert('Ո????x??')
       } else {
         this.handleSubmit()
       }
@@ -135,5 +142,10 @@ export default {
 
 .selected {
   color: red;
+}
+
+.selected_name {
+  color: blue;
+  padding: 5px 2px;
 }
 </style>

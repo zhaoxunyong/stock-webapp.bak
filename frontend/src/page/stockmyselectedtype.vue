@@ -6,8 +6,9 @@
     </b-button>
     </span>
     <span v-for="item in items">
-    <b-button :variant="isSelected(item.type)" :id="item.type" @click="getMyStockSelected(item.type)">
+    <b-button :variant="isSelected(item.type)" :id="item.type" @click="getMyStockSelected(item.type, item.name)">
         {{ item.name }}
+        <span @click.prevent="removeStockMySelected(item.type)" aria-hidden="true" v-if="isSelected(item.type) == 'danger'">×</span>
     </b-button>
     </span>
     <b-btn v-b-modal.modalPrevent2 variant="success">+</b-btn>
@@ -32,6 +33,7 @@ export default {
     return {
       items: [],
       selectedTypes: [],
+      firstStockId: '',
       name: ''
     }
   },
@@ -39,18 +41,33 @@ export default {
     this.getData()
     Bus.$on('deliverySelectedTypes', (selectedTypes) => {
       this.selectedTypes = selectedTypes
+      // alert(this.selectedTypes)
+
     });
     Bus.$on('deliveryOneSelectedType', (selectedType) => {
       this.selectedTypes.push(selectedType)
     });
+    Bus.$on('setFirstStock', (stockId) => {
+        // alert("--->"+stockId)
+        this.firstStockId = stockId
+      });
   },
   methods: {
     getAllMyStockData() {
+      this.selectedTypes = []
       Bus.$emit('getAllMyStockData')
     },    
-    getMyStockSelected(type) {
-      Bus.$emit('getMyStockSelected', type)
+    getMyStockSelected(type, name) {
+      Bus.$emit('getMyStockSelected', type, name)
     },
+    removeStockMySelected(selectedType) {
+      let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
+       // alert(stockId+"--->"+selectedType)
+       let url = '/api/stock/removeStockMySelected?stockId='+stockId+"&selectedType="+selectedType
+        this.$api.post(url, null, rs => {
+          // vm.$forceUpdate()
+      })
+    },    
     isSelected(type) {
        // ? 'success':'danger'
       if(this.selectedTypes != null && this.selectedTypes.indexOf(type) != -1) {
@@ -87,7 +104,7 @@ export default {
       let url = '/api/stock/saveStockMySelectedType?name='+name
       this.$api.post(url, null, rs => {
         this.getData()
-        Bus.$emit('reGetStockMySelectedTypes');
+        Bus.$emit('reGetStockMySelectedTypes')
       })
     }
   }

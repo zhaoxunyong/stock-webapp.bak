@@ -30,19 +30,8 @@ spring:
 
 mybatis:
   mapperLocations: classpath:mybatis/*.xml
+  config-location: classpath:mybatis-config.xml
 
-#攔截器需排除的路徑
-interceptor: 
-  excludePath: |
-    /,
-    /login,
-    /loginPage,
-    /logout,
-    /sessionLostError,
-    /fetch/index,
-    /fetch/index2,
-    /fetch/data
-  
 # Log
 logging:
   level:

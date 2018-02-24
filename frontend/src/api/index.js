@@ -34,10 +34,23 @@ function filterNull (o) {
 */
 
 function apiAxios (method, url, params, success, failure) {
-  if (params) {
+/*  if (params) {
     params = filterNull(params)
   }
-   axios.get(url).then(function (res) {
+  axios.get(url).then(function (res) {
+    console.log("res.data---->"+res.data)
+    success(res.data)
+    
+  })*/
+  axios({
+    method: method,
+    url: url,
+    data: method === 'POST' || method === 'PUT' ? params : null,
+    params: method === 'GET' || method === 'DELETE' ? params : null,
+    baseURL: root,
+    withCredentials: false
+  })
+  .then(function (res) {
     console.log("res.data---->"+res.data)
     success(res.data)
     
@@ -45,7 +58,7 @@ function apiAxios (method, url, params, success, failure) {
   .catch(function (err) {
     let res = err.response
     if (err) {
-      window.alert('api error, HTTP CODE: ' + res.status)
+      window.alert('api error, HTTP CODE: ' + err)
     }
   })
 }
