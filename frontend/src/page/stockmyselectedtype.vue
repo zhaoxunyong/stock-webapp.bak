@@ -75,8 +75,8 @@ export default {
           })
         }
       ).catch(function(e){
-          alert("222--->"+e)
-          console.log("点击取消")
+          alert("Exception--->"+e)
+          console.log("Exception--->"+e)
       })
     },    
     isSelected(type) {
