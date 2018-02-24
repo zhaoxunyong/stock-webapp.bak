@@ -1,5 +1,5 @@
 <template>
   <div class="copy">
-    Copy &copy; FungLeo
+    Copy &copy; wenchun
   </div>
 </template>
