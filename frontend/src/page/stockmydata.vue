@@ -63,6 +63,8 @@ export default {
             this.$router.push('/content/' + this.firstStockId+'/1')
             Bus.$emit('setFirstStock', stockId)
             Bus.$emit('deliverySelectedTypes', r[0].selectedTypes)
+          } else {
+            Bus.$emit('deliverySelectedTypes', [])
           }
         })
       }

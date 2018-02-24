@@ -8,7 +8,7 @@
     <span v-for="item in items">
     <b-button :variant="isSelected(item.type)" :id="item.type" @click="getMyStockSelected(item.type, item.name)">
         {{ item.name }}
-        <span @click.prevent="removeStockMySelected(item.type)" aria-hidden="true" v-if="isSelected(item.type) == 'danger'">×</span>
+        <span @click.prevent="removeStockMySelected(item.type, item.name)" aria-hidden="true" v-if="isSelected(item.type) == 'danger'">×</span>
     </b-button>
     </span>
     <b-btn v-b-modal.modalPrevent2 variant="success">+</b-btn>
@@ -60,12 +60,23 @@ export default {
     getMyStockSelected(type, name) {
       Bus.$emit('getMyStockSelected', type, name)
     },
-    removeStockMySelected(selectedType) {
+    removeStockMySelected(selectedType, selectedName) {
       let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
-       // alert(stockId+"--->"+selectedType)
-       let url = '/api/stock/removeStockMySelected?stockId='+stockId+"&selectedType="+selectedType
-        this.$api.post(url, null, rs => {
-          // vm.$forceUpdate()
+      let api = this.$api
+      this.$confirm("是否確定從"+selectedName+"中移除?").then(
+        function(){
+         // alert(stockId+"--->"+selectedType)
+          let url = '/api/stock/removeStockMySelected?stockId='+stockId+"&selectedType="+selectedType
+          // alert("111--->"+url)
+          api.post(url, null, rs => {
+            // vm.$forceUpdate()
+            // this.getMyStockSelected(selectedType, selectedName)
+            Bus.$emit('getMyStockSelected', selectedType, selectedName)
+          })
+        }
+      ).catch(function(e){
+          alert("222--->"+e)
+          console.log("点击取消")
       })
     },    
     isSelected(type) {

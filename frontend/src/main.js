@@ -10,6 +10,9 @@ import "bootstrap-vue/dist/bootstrap-vue.css"
 
 Vue.use(BootstrapVue)
 
+import Confirm from 'vue-confirm'
+Vue.use(Confirm)
+
 // 引用API文件
 import api from './api/index.js'
 // 将API方法绑定到全局
