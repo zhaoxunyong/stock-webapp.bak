@@ -27,6 +27,7 @@ import org.stock.fetch.model.StockMySelectedType;
 import org.stock.fetch.model.StockNews;
 import org.stock.fetch.service.StockService;
 
+import com.aeasycredit.commons.lang.exception.BusinessException;
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 
 @RestController
@@ -129,6 +130,7 @@ public class StockApiImpl implements StockApi {
 	@Override
     @RequestMapping(value = "/changeStockMySelected", method = POST)
 	public void changeStockMySelected(String stockId, String selectedType) {
+//		throw new BusinessException("中华人民共和国");
 		stockService.changeStockMySelected(Long.parseLong(stockId), Long.parseLong(selectedType));
 	}
 

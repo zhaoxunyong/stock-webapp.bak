@@ -431,11 +431,11 @@
 							<overwrite>true</overwrite>
 							<resources>
 								<resource>
-									<directory>../${project.basedir}/frontend</directory>
-									<includes>
+									<directory>../frontend/dist/</directory>
+<!--									<includes>
 										<include>dist</include>
-<!-- 										<include>index.html</include> -->
-									</includes>
+ 										<include>index.html</include>
+									</includes> -->
 								</resource>
 							</resources>
 						</configuration>

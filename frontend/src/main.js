@@ -8,6 +8,10 @@ import BootstrapVue from 'bootstrap-vue'
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap-vue/dist/bootstrap-vue.css"
 
+
+// import BootstrapDirectionalButtons from 'bootstrap-directional-buttons'
+// import "bootstrap-directional-buttons/dist/bootstrap-directional-buttons.css"
+
 Vue.use(BootstrapVue)
 
 import Confirm from 'vue-confirm'
@@ -20,6 +24,7 @@ Vue.prototype.$api = api
 
 // 引用工具文件
 import utils from './utils/index.js'
+
 // 将工具方法绑定到全局
 Vue.prototype.$utils = utils
 

@@ -3,6 +3,8 @@
 var root = '/'
 // 引用axios
 var axios = require('axios')
+import Bus from '../eventBus'
+
 // 自定义判断元素类型JS
 function toType (obj) {
   return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
@@ -42,6 +44,7 @@ function apiAxios (method, url, params, success, failure) {
     success(res.data)
     
   })*/
+  // Bus.$emit('loading', true)
   axios({
     method: method,
     url: url,
@@ -53,12 +56,23 @@ function apiAxios (method, url, params, success, failure) {
   .then(function (res) {
     console.log("res.data---->"+res.data)
     success(res.data)
-    
+    Bus.$emit('loading', false)
+    // let content = '<div class="row">'+
+    //       '<div class="span4">'+
+    //       '  <div class="alert">'+
+    //       '    <a class="close" data-dismiss="alert">×</a>'+
+    //       '    <strong>Warning!</strong> xxx.'+
+    //       '  </div>'+
+    //       '</div>'+
+    //     '</div>'
+    //   $("#error_id").remove()
+    // $("body").append(content)
   })
   .catch(function (err) {
-    let res = err.response
+    Bus.$emit('loading', false)
     if (err) {
-      window.alert('api error, HTTP CODE: ' + err)
+      // window.alert('api error, HTTP CODE: ' + err)
+      Bus.$emit('alerts', err)
     }
   })
 }

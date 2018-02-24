@@ -1,9 +1,9 @@
 <template>  
   <div>
     <div id="select_div">
-      <b-btn variant="primary"><-</b-btn>
+      <b-btn variant="primary" @click="toFront"><-</b-btn>
       <b-btn v-b-modal.modalPrevent variant="primary">+</b-btn>
-      <b-btn variant="primary">-></b-btn>
+      <b-btn variant="primary" @click="toBack">-></b-btn>
       <!-- Modal Component -->
       <b-modal id="modalPrevent"
                ref="modal"
@@ -20,11 +20,11 @@
     </div>
 
     <div class="selected_name">
-    當前自選股: <br />{{ myStockSelectedName }}
+   當前自選股 : <br />{{ myStockSelectedName }}
     </div>
 
     <span v-for="i in list">
-      <a :href="'/content/' + i.stockId+'/1'" @click.prevent="go(i.stockId,i.selectedTypes)" :class="isSelected(i.stockId)">
+      <a :href="'/content/' + i.stockId+'/1'" @click.prevent="go(i.stockId,i.selectedTypes)" :data="i.selectedTypes" :class="isSelected(i.stockId)">
         {{ i.company }}
       </a><br />
     </span>
@@ -38,7 +38,7 @@ export default {
     return {
       list: [],
       firstStockId: '',
-      myStockSelectedName: '所有',
+      myStockSelectedName: '請選擇自選股',
       selected: null,
       options: []
     }
@@ -84,6 +84,30 @@ export default {
       Bus.$emit('deliverySelectedTypes', selectedTypes)
 
     },
+    toFront () {
+      let _router = this.$router
+      $(".selected").each(function(){
+        var aObj = $(this).closest("span").prev().find("a");
+        var href = aObj.attr('href')
+        var selectedTypes = aObj.attr('data')
+        if(href != undefined) {
+          _router.push(href)
+          Bus.$emit('deliverySelectedTypes', selectedTypes)
+        }
+      });
+    },
+    toBack () {
+      let _router = this.$router
+      $(".selected").each(function(){
+        var aObj = $(this).closest("span").next().find("a");
+        var href = aObj.attr('href')
+        var selectedTypes = aObj.attr('data')
+        if(href != undefined) {
+          _router.push(href)
+          Bus.$emit('deliverySelectedTypes', selectedTypes)
+        }
+      });
+    },
     clearName () {
       this.selected = ''
     },
@@ -91,7 +115,7 @@ export default {
       // Prevent modal from closing
       evt.preventDefault()
       if (!this.selected) {
-        alert('Ո????x??')
+        alert('請選擇自選股!')
       } else {
         this.handleSubmit()
       }

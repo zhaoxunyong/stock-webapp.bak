@@ -40,7 +40,7 @@ export default {
         $(rs.rows).each(function(){
           let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.froms+"</a>"
           items.push({
-            '重點資訊': context
+            '重點新聞': context
           })
         });
         this.items = items

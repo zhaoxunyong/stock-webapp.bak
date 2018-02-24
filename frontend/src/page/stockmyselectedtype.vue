@@ -8,7 +8,7 @@
     <span v-for="item in items">
     <b-button :variant="isSelected(item.type)" :id="item.type" @click="getMyStockSelected(item.type, item.name)">
         {{ item.name }}
-        <span @click.prevent="removeStockMySelected(item.type, item.name)" aria-hidden="true" v-if="isSelected(item.type) == 'danger'">×</span>
+        <span @click.prevent="removeStockMySelected(item.type, item.name)" aria-hidden="true" v-if="isSelected(item.type) == 'warning'">×</span>
     </b-button>
     </span>
     <b-btn v-b-modal.modalPrevent2 variant="success">+</b-btn>
@@ -75,14 +75,14 @@ export default {
           })
         }
       ).catch(function(e){
-          alert("Exception--->"+e)
+          // alert("Exception--->"+e)
           console.log("Exception--->"+e)
       })
     },    
     isSelected(type) {
-       // ? 'success':'danger'
+       // ? 'success':'warning'
       if(this.selectedTypes != null && this.selectedTypes.indexOf(type) != -1) {
-        return 'danger'
+        return 'warning'
       }
       return 'success'
     },
