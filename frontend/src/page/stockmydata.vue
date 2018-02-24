@@ -20,7 +20,7 @@
     </div>
 
     <span v-for="i in list">
-      <a :href="'/content/' + i.stockId+'/1'" @click.prevent="go(i.stockId,i.selectedTypes)">
+      <a :href="'/content/' + i.stockId+'/1'" @click.prevent="go(i.stockId,i.selectedTypes)" :class="isSelected(i.stockId)">
         {{ i.company }}
       </a><br />
     </span>
@@ -53,13 +53,22 @@ export default {
           if(r != "") {
             this.firstStockId = r[0].stockId
             let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
-            Bus.$emit('setFirstStock', stockId)
+            this.$router.push('/content/' + this.firstStockId+'/1')
+            // this.isSelected(stockId)
+            // Bus.$emit('setFirstStock', stockId)
           }
         })
       }
     });
   },
   methods: {
+    isSelected(_stockId) {
+      let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
+      if(_stockId == stockId) {
+        return 'selected'
+      }
+      return ''
+    },
     go (stockId, selectedTypes) {
       // '/content/' + i.stockId+'/1'
       this.$router.push('/content/' + stockId+'/1')
@@ -122,5 +131,9 @@ export default {
 }
 
 #select_div button {
+}
+
+.selected {
+  color: red;
 }
 </style>
