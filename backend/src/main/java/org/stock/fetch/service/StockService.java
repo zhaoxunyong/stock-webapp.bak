@@ -25,6 +25,8 @@ public interface StockService {
 	
 	public List<StockMySelectedType> getStockMySelectedTypes();
 	
+	public List<StockMySelectedType> getMySelectedTypesByStockId(Long stockId);
+	
 	public void saveStockMySelectedType(StockMySelectedType stockMySelectedType);
 	
 	public void changeStockMySelected(Long stockId, Long selectedType);

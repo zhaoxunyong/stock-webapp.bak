@@ -33,35 +33,44 @@ export default {
     return {
       items: [],
       selectedTypes: [],
-      firstStockId: '',
+      // firstStockId: '',
       name: ''
     }
   },
   created () {
+    this.autoSelectedTypes()
     this.getData()
-    Bus.$on('deliverySelectedTypes', (selectedTypes) => {
-      this.selectedTypes = selectedTypes
-      // alert(this.selectedTypes)
-
-    });
-    Bus.$on('deliveryOneSelectedType', (selectedType) => {
-      this.selectedTypes.push(selectedType)
-    });
-    Bus.$on('setFirstStock', (stockId) => {
-        // alert("--->"+stockId)
-        this.firstStockId = stockId
-      });
   },
   methods: {
+    // 自动高亮显示某个股票所属的自选股名称
+    autoSelectedTypes() {
+      this.selectedTypes = []
+      let stockId = this.$route.params.stockId
+      if(stockId != undefined && stockId != "") {
+        this.$api.get('/api/stock/getMySelectedTypesByStockId/'+stockId, null, rs => {
+          if(rs != undefined && rs.length>0) {
+            for(var i=0;i<rs.length;i++) {
+              let type = rs[i].type
+              this.selectedTypes.push(type)
+            }
+          }
+        })
+      }
+    },
+    // 触发stockmydata.vue重新摘取所有的自选股
     getAllMyStockData() {
       this.selectedTypes = []
       Bus.$emit('getAllMyStockData')
-    },    
+    }, 
+
+    // 触发stockmydata.vue重新摘取某个自选股中的所有股票   
     getMyStockSelected(type, name) {
       Bus.$emit('getMyStockSelected', type, name)
     },
+
+    // 将某个股票从自选股中移除
     removeStockMySelected(selectedType, selectedName) {
-      let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
+      let stockId = this.$route.params.stockId
       let api = this.$api
       this.$confirm("是否確定從"+selectedName+"中移除?").then(
         function(){
@@ -70,7 +79,7 @@ export default {
           // alert("111--->"+url)
           api.post(url, null, rs => {
             // vm.$forceUpdate()
-            // this.getMyStockSelected(selectedType, selectedName)
+            // 触发stockmydata.vue重新摘取某个自选股中的所有股票  
             Bus.$emit('getMyStockSelected', selectedType, selectedName)
           })
         }
@@ -78,7 +87,7 @@ export default {
           // alert("Exception--->"+e)
           console.log("Exception--->"+e)
       })
-    },    
+    },
     isSelected(type) {
        // ? 'success':'warning'
       if(this.selectedTypes != null && this.selectedTypes.indexOf(type) != -1) {
@@ -117,6 +126,13 @@ export default {
         this.getData()
         Bus.$emit('reGetStockMySelectedTypes')
       })
+    }
+  },
+  // 从stockmydata.vue中的第一次之后的请求
+  watch: {
+    '$route' (to, from) {
+      this.autoSelectedTypes()
+      //this.$router.push('/content/' + this.getStatus(this.$route.path))
     }
   }
 }

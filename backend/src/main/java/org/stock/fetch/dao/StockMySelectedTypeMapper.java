@@ -15,5 +15,7 @@ public interface StockMySelectedTypeMapper {
 
     List<StockMySelectedType> selectAll();
 
+    List<StockMySelectedType> selectByStockId(Long stockId);
+
     int updateByPrimaryKey(StockMySelectedType record);
 }

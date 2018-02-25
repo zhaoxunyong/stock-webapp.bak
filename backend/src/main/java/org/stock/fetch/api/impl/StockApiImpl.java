@@ -117,6 +117,16 @@ public class StockApiImpl implements StockApi {
 	}
 
 	@Override
+    @RequestMapping(value = "/getMySelectedTypesByStockId/{stockId}", method = GET)
+	public List<StockMySelectedTypeDto> getMySelectedTypesByStockId(@PathVariable String stockId) {
+		List<StockMySelectedType> stockMySelectedTypes = stockService.getMySelectedTypesByStockId(Long.parseLong(stockId));
+		List<StockMySelectedTypeDto> dtoList = stockMySelectedTypes.stream().map(model -> {
+			return modelMapper.map(model, StockMySelectedTypeDto.class);
+		}).collect(Collectors.toList());
+		return dtoList;
+	}
+
+	@Override
     @RequestMapping(value = "/saveStockMySelectedType", method = POST)
 	public void saveStockMySelectedType(String name) {
 		StockMySelectedType stockMySelectedType = new StockMySelectedType();

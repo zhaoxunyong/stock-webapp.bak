@@ -44,6 +44,12 @@ public interface StockApi {
 	@ApiOperation(value="getStockMySelectedTypes", notes="getStockMySelectedTypes")
 	public List<StockMySelectedTypeDto> getStockMySelectedTypes();
 	
+	@ApiOperation(value="getMySelectedTypesByStockId", notes="getMySelectedTypesByStockId")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "path")
+	})
+	public List<StockMySelectedTypeDto> getMySelectedTypesByStockId(String stockId);
+	
 	@ApiOperation(value="saveStockMySelectedType", notes="saveStockMySelectedType")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "name", value = "name", required = true, dataType = "string", paramType = "query"),

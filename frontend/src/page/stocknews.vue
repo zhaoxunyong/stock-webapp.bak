@@ -1,27 +1,33 @@
 <template>
   <div>
-  <b-table striped hover :items="items"></b-table>
+  <b-table striped hover :items="items" :fields="fields"></b-table>
           <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
   </div>
 </template>
 <script>
 import Bus from '../eventBus'
-let items = []
 export default {
   data () {
     return {
-      items: [],
+      company: '',
       stockId: '',
       numberOfPages: 0,
       currentPage: this.$route.params.pageNum,
-      pageSize: 10
+      pageSize: 10,
+      fields: {
+        content_title: {
+          label: '<span id="content_id"></span>: 個股新聞與研究報告',
+          sortable: true
+        }
+      },
+      items: []
     }
   },
   created () {
-      Bus.$on('setFirstStock', (stockId) => {
-        // alert("--->"+stockId)
-        this.getData(stockId)
-      });
+    this.getData()
+    Bus.$on('emptyNews', () => {
+      this.cleanNews()
+    });
   },
   mounted () {
   },
@@ -31,45 +37,68 @@ export default {
         path: '/content/' + this.stockId+'/'+pageNum
       }
     },
-    getData (stockId) {
-      items = []
-      stockId = stockId == undefined ? this.$route.params.stockId : stockId
-      this.stockId = stockId
-      let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
-      let url = '/api/stock/getNewsBystockId/' + stockId+'/'+pageNum+'/'+this.pageSize
-      // alert("url1--->"+url)
-      this.$api.get(url, null, rs => {
-        // this.dat = r
-        this.numberOfPages = rs.pageTotal
-        $(rs.rows).each(function(){
-          let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.subject+"</a>"
-          items.push({
-            '個股新聞與研究報告': context
+    // 第一次加载数据
+    cleanNews() {
+      this.items = []
+      $("#content_id").text("")
+      this.numberOfPages = 0
+    },
+    // 第一次加载数据
+    getData () {
+      this.stockId = this.$route.params.stockId
+      if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
+        this.$api.get('/api/stock/getStockData/'+this.stockId, null, stockData => {
+          this.company = stockData.company
+          let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
+          let url = '/api/stock/getNewsBystockId/' + this.stockId+'/'+pageNum+'/'+this.pageSize
+          // alert("url1--->"+url)
+          this.$api.get(url, null, rs => {
+            // this.dat = r
+            this.numberOfPages = rs.pageTotal
+            let rsData = rs.rows
+            this.items = []
+            for(var i=0;i<rsData.length;i++) {
+              let context = "<a target=\"_blank\" href=\""+rsData[i].url+"\">"+rsData[i].subject+"</a>"
+              this.items.push({
+                content_title: context
+              }) 
+            }
           })
-        });
-        this.items = items
-      })
+          $("#content_id").text(this.company)
+        })
+      }
     }
   },
+  // 从stockmydata.vue中的第一次之后的请求
   watch: {
     '$route' (to, from) {
-      items = []
-      // alert("this.$route.params.stockId--->"+this.$route.params.stockId)
-      let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
-      let url = '/api/stock/getNewsBystockId/' + this.$route.params.stockId+'/'+pageNum+'/'+this.pageSize
-      // alert("url2--->"+url)
-      this.$api.get(url, null, rs => {
-        // this.dat = r
-        // this.items = rs
-        this.numberOfPages = rs.pageTotal
-        $(rs.rows).each(function(){
-          let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.subject+"</a>"
-          items.push({
-            '個股新聞與研究報告': context
+      this.stockId = this.$route.params.stockId
+      if(this.stockId != 0) {
+        this.$api.get('/api/stock/getStockData/'+this.stockId, null, stockData => {
+          this.company = stockData.company
+          console.log("company--->"+this.company)
+          let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
+          let url = '/api/stock/getNewsBystockId/' + this.stockId+'/'+pageNum+'/'+this.pageSize
+          // alert("url2--->"+url)
+          this.$api.get(url, null, rs => {
+            // this.dat = r
+            // this.items = rs
+            this.items = []
+            this.numberOfPages = rs.pageTotal
+            let rsData = rs.rows
+            for(var i=0;i<rsData.length;i++) {
+              let context = "<a target=\"_blank\" href=\""+rsData[i].url+"\">"+rsData[i].subject+"</a>"
+              this.items.push({
+                content_title: context
+              }) 
+            }
           })
-        });
-        this.items = items
-      })
+          $("#content_id").text(this.company)
+        })
+      } else {
+        this.cleanNews()
+      }
+      
       //this.$router.push('/content/' + this.getStatus(this.$route.path))
     }
   }

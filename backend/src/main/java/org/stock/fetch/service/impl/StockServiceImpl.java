@@ -84,6 +84,11 @@ public class StockServiceImpl implements StockService {
 	}
 
 	@Override
+	public List<StockMySelectedType> getMySelectedTypesByStockId(Long stockId) {
+		return stockMySelectedTypeMapper.selectByStockId(stockId);
+	}
+
+	@Override
 	@Transactional
 	public void saveStockMySelectedType(StockMySelectedType stockMySelectedType) {
 		stockMySelectedTypeMapper.insert(stockMySelectedType);

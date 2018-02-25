@@ -38,4 +38,15 @@
     select <include refid="BaseColumnList" />
     from stock_my_selected_type order by create_date asc
   </select>
+  <select id="selectByStockId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    SELECT
+		b.*
+	FROM
+		stock_my_selected a,
+		stock_my_selected_type b
+	WHERE
+		a.selected_type = b.type
+	AND a.stock_id = #{stockId,jdbcType=BIGINT}
+	order by a.create_date asc
+  </select>
 </mapper>

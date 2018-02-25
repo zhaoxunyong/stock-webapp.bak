@@ -24,7 +24,7 @@
     </div>
 
     <span v-for="i in list">
-      <a :href="'/content/' + i.stockId+'/1'" @click.prevent="go(i.stockId,i.selectedTypes)" :data="i.selectedTypes" :class="isSelected(i.stockId)">
+      <a :href="'/content/' + i.stockId+'/1'" @click.prevent="go(i.stockId)" :class="isSelected(i.stockId)">
         {{ i.company }}
       </a><br />
     </span>
@@ -38,39 +38,53 @@ export default {
     return {
       list: [],
       firstStockId: '',
-      myStockSelectedName: '請選擇自選股',
+      myStockSelectedName: '所有',
       selected: null,
       options: []
     }
   },
   created () {
     this.getData()
+
+    // 获取添加到自选股时的下拉选项
     this.getStockMySelectedTypes()
+
+    // 从stockmyselectedtype.vue中过来：当点击所有按扭时
     Bus.$on('getAllMyStockData', () => {
       this.myStockSelectedName = '所有'
       this.getData()
-    });Bus.$on('reGetStockMySelectedTypes', () => {
+    });
+
+    // 从stockmyselectedtype.vue中过来：当将某个股票从某个自选股中移除时
+    Bus.$on('reGetStockMySelectedTypes', () => {
       this.getStockMySelectedTypes()
     });
+
+    // 从stockmyselectedtype.vue中过来：当点击某个自选股标签时
     Bus.$on('getMyStockSelected', (type, name) => {
       if(type != undefined) {
         this.myStockSelectedName = name
         this.$api.get('/api/stock/getStockMyDatasByType/'+type, null, r => {
           this.list = r
-          if(r != "") {
+          if(r != undefined && r.length > 0) {
             this.firstStockId = r[0].stockId
-            let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
+            // let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
+            //改变路由的地址
             this.$router.push('/content/' + this.firstStockId+'/1')
-            Bus.$emit('setFirstStock', stockId)
-            Bus.$emit('deliverySelectedTypes', r[0].selectedTypes)
+            // Bus.$emit('setStock', this.firstStockId)
+            //自动将自选股类型选中
+            // Bus.$emit('deliverySelectedTypes', r[0].selectedTypes)
           } else {
-            Bus.$emit('deliverySelectedTypes', [])
+            this.$router.push('/content/0/1')
+            Bus.$emit('emptyNews')
+            // Bus.$emit('deliverySelectedTypes', [])
           }
         })
       }
     });
   },
   methods: {
+    // 将当前股票高亮显示
     isSelected(_stockId) {
       let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
       if(_stockId == stockId) {
@@ -78,33 +92,36 @@ export default {
       }
       return ''
     },
-    go (stockId, selectedTypes) {
+
+    // 点击某个股票
+    go (stockId) {
       // '/content/' + i.stockId+'/1'
       this.$router.push('/content/' + stockId+'/1')
-      Bus.$emit('deliverySelectedTypes', selectedTypes)
+      //自动将自选股类型选中
+      // Bus.$emit('deliverySelectedTypes', selectedTypes)
 
     },
+
+    // 上一个股票
     toFront () {
       let _router = this.$router
       $(".selected").each(function(){
         var aObj = $(this).closest("span").prev().find("a");
         var href = aObj.attr('href')
-        var selectedTypes = aObj.attr('data')
         if(href != undefined) {
           _router.push(href)
-          Bus.$emit('deliverySelectedTypes', selectedTypes)
         }
       });
     },
+
+    // 下一个股票
     toBack () {
       let _router = this.$router
       $(".selected").each(function(){
         var aObj = $(this).closest("span").next().find("a");
         var href = aObj.attr('href')
-        var selectedTypes = aObj.attr('data')
         if(href != undefined) {
           _router.push(href)
-          Bus.$emit('deliverySelectedTypes', selectedTypes)
         }
       });
     },
@@ -128,13 +145,14 @@ export default {
       this.clearName()
       this.$refs.modal.hide()
     },
+    // 第一次加载数据
     getData () {
       this.$api.get('/api/stock/getStockMyDatas', null, r => {
         this.list = r
         this.firstStockId = r[0].stockId
-        let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
-        Bus.$emit('setFirstStock', stockId)
-        Bus.$emit('deliverySelectedTypes', r[0].selectedTypes)
+        let stockId = this.$route.params.stockId == undefined || this.$route.params.stockId == 0 ? this.firstStockId : this.$route.params.stockId
+        //改变路由的地址
+        this.$router.push('/content/' + stockId+'/1')
       })
     },
     getStockMySelectedTypes () {
@@ -151,7 +169,8 @@ export default {
     changeStockMySelected (stockId, selectedType) {
       let url = '/api/stock/changeStockMySelected?stockId='+stockId+"&selectedType="+selectedType
       this.$api.post(url, null, rs => {
-        Bus.$emit('deliveryOneSelectedType', selectedType)
+        //改变路由的地址
+        this.$router.push('/content/' + stockId+'/1')
       })
     }
   }
