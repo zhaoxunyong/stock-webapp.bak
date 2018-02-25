@@ -16,7 +16,7 @@ export default {
       pageSize: 10,
       fields: {
         content_title: {
-          label: '<span id="content_id"></span>: 個股新聞與研究報告',
+          label: '<span id="content_id">: </span>個股新聞與研究報告',
           sortable: true
         }
       },
@@ -42,6 +42,7 @@ export default {
       this.items = []
       $("#content_id").text("")
       this.numberOfPages = 0
+      this.currentPage = 1
     },
     // 第一次加载数据
     getData () {
@@ -64,7 +65,7 @@ export default {
               }) 
             }
           })
-          $("#content_id").text(this.company)
+          $("#content_id").text(this.company+": ")
         })
       }
     }
@@ -93,7 +94,7 @@ export default {
               }) 
             }
           })
-          $("#content_id").text(this.company)
+          $("#content_id").text(this.company+": ")
         })
       } else {
         this.cleanNews()
