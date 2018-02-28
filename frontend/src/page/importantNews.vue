@@ -18,11 +18,14 @@ export default {
       items: [],
       numberOfPages: 0,
       currentPage: this.$route.params.pageNum,
-      pageSize: 10
+      pageSize: PAGE_SIZE
     }
   },
   created () {
-    this.getData()
+    this.getData()  
+    Bus.$on('initCurrentPage', (pageNum) => {
+      this.currentPage = pageNum
+    })
   },
   methods: {
     linkGen(pageNum) {

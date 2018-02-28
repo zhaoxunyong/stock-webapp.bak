@@ -13,7 +13,7 @@ export default {
       stockId: '',
       numberOfPages: 0,
       currentPage: this.$route.params.pageNum,
-      pageSize: 10,
+      pageSize: PAGE_SIZE,
       fields: {
         content_title: {
           label: '<span id="content_id">: </span>個股新聞與研究報告',
@@ -27,7 +27,10 @@ export default {
     this.getData()
     Bus.$on('emptyNews', () => {
       this.cleanNews()
-    });
+    })  
+    Bus.$on('initCurrentPage', (pageNum) => {
+      this.currentPage = pageNum
+    })
   },
   mounted () {
   },

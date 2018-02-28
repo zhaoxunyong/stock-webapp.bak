@@ -40,12 +40,12 @@ export default {
       firstStockId: '',
       myStockSelectedName: '所有',
       selected: null,
-      options: []
+      options: [],
+      selectedTypes: []
     }
   },
   created () {
     this.getData()
-
     // 获取添加到自选股时的下拉选项
     this.getStockMySelectedTypes()
 
@@ -70,12 +70,12 @@ export default {
             this.firstStockId = r[0].stockId
             // let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
             //改变路由的地址
-            this.$router.push('/content/' + this.firstStockId+'/1')
+            this.push('/content/' + this.firstStockId+'/1')
             // Bus.$emit('setStock', this.firstStockId)
             //自动将自选股类型选中
             // Bus.$emit('deliverySelectedTypes', r[0].selectedTypes)
           } else {
-            this.$router.push('/content/0/1')
+            this.push('/content/0/1')
             Bus.$emit('emptyNews')
             // Bus.$emit('deliverySelectedTypes', [])
           }
@@ -84,6 +84,10 @@ export default {
     });
   },
   methods: {
+    push(url) {
+      this.$router.push(url)
+      Bus.$emit('initCurrentPage', 1)
+    },
     // 将当前股票高亮显示
     isSelected(_stockId) {
       let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
@@ -96,7 +100,7 @@ export default {
     // 点击某个股票
     go (stockId) {
       // '/content/' + i.stockId+'/1'
-      this.$router.push('/content/' + stockId+'/1')
+      this.push('/content/' + stockId+'/1')
       //自动将自选股类型选中
       // Bus.$emit('deliverySelectedTypes', selectedTypes)
 
@@ -105,25 +109,23 @@ export default {
     // 上一个股票
     toFront () {
       let _router = this.$router
-      $(".selected").each(function(){
-        var aObj = $(this).closest("span").prev().find("a");
-        var href = aObj.attr('href')
-        if(href != undefined) {
-          _router.push(href)
-        }
-      });
+      let obj = $(".selected").get(0)
+      let aObj = $(obj).closest("span").prev().find("a");
+      let href = aObj.attr('href')
+      if(href != undefined) {
+        this.push(href)
+      }
     },
 
     // 下一个股票
     toBack () {
       let _router = this.$router
-      $(".selected").each(function(){
-        var aObj = $(this).closest("span").next().find("a");
-        var href = aObj.attr('href')
-        if(href != undefined) {
-          _router.push(href)
-        }
-      });
+      let obj = $(".selected").get(0)
+      let aObj = $(obj).closest("span").next().find("a");
+      let href = aObj.attr('href')
+      if(href != undefined) {
+        this.push(href)
+      }
     },
     clearName () {
       this.selected = ''
@@ -152,7 +154,7 @@ export default {
         this.firstStockId = r[0].stockId
         let stockId = this.$route.params.stockId == undefined || this.$route.params.stockId == 0 ? this.firstStockId : this.$route.params.stockId
         //改变路由的地址
-        this.$router.push('/content/' + stockId+'/1')
+        this.push('/content/' + stockId+'/1')
       })
     },
     getStockMySelectedTypes () {
@@ -170,7 +172,8 @@ export default {
       let url = '/api/stock/changeStockMySelected?stockId='+stockId+"&selectedType="+selectedType
       this.$api.post(url, null, rs => {
         //改变路由的地址
-        this.$router.push('/content/' + stockId+'/1')
+        Bus.$emit('triggerAutoSelectedTypes')
+        this.push('/content/' + stockId+'/1')
       })
     }
   }

@@ -30,6 +30,10 @@ Vue.prototype.$utils = utils
 
 Vue.config.productionTip = false
 
+import './utils/constant.js'
+// Vue.use(constant_)
+// Object.defineProperty(Vue.prototype, '$constant', { value: constant });
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -40,6 +40,10 @@ export default {
   created () {
     this.autoSelectedTypes()
     this.getData()
+    
+    Bus.$on('triggerAutoSelectedTypes', () => {
+      this.autoSelectedTypes()
+    });
   },
   methods: {
     // 自动高亮显示某个股票所属的自选股名称
