@@ -35,6 +35,31 @@ function filterNull (o) {
   另外，不同的项目的处理方法也是不一致的，这里出错就是简单的alert
 */
 
+function fileUpload(file, url, success, failure) {         
+  let param = new FormData() //创建form对象  
+  param.append('file',file,file.name)//通过append向form对象添加数据  
+  param.append('chunk','0')//添加form表单中其他数据  
+    
+  let config = {  
+    headers:{'Content-Type':'multipart/form-data'}  
+  }  //添加请求头  
+  axios.post(url,param,config)  
+  .then(response=>{  
+    console.log(response.data) 
+    if(success) {
+      success(response.data)
+    }
+  })
+  .catch(function (err) {
+      console.log(err)
+      let errMsg = err.response.statusText +" : "+err.response.data
+      Bus.$emit('alerts', errMsg)
+      if(failure) {
+        failure(err)
+      }
+  }) 
+}
+
 function apiAxios (method, url, params, success, failure) {
 /*  if (params) {
     params = filterNull(params)
@@ -55,7 +80,9 @@ function apiAxios (method, url, params, success, failure) {
   })
   .then(function (res) {
     console.log("res.data---->"+res.data)
-    success(res.data)
+    if(success) {
+      success(res.data)
+    }
     Bus.$emit('loading', false)
     // let content = '<div class="row">'+
     //       '<div class="span4">'+
@@ -72,7 +99,11 @@ function apiAxios (method, url, params, success, failure) {
     Bus.$emit('loading', false)
     if (err) {
       // window.alert('api error, HTTP CODE: ' + err)
-      Bus.$emit('alerts', err)
+      let errMsg = err.response.statusText +" : "+err.response.data
+      Bus.$emit('alerts', errMsg)
+      if(failure) {
+        failure(err)
+      }
     }
   })
 }
@@ -90,5 +121,8 @@ export default {
   },
   delete: function (url, params, success, failure) {
     return apiAxios('DELETE', url, params, success, failure)
+  },
+  fileUpload: function(file, url, success, failure) {
+    return fileUpload(file, url, success, failure)
   }
 }

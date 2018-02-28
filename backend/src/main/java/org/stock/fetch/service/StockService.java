@@ -2,6 +2,7 @@ package org.stock.fetch.service;
 
 import java.util.List;
 
+import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
@@ -32,4 +33,6 @@ public interface StockService {
 	public void changeStockMySelected(Long stockId, Long selectedType);
 	
 	public void removeStockMySelected(Long stockId, Long selectedType);
+	
+	public List<StockDailyTransactions> getStockDailyTransactions();
 }

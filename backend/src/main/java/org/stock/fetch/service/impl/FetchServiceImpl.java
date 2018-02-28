@@ -497,7 +497,8 @@ public class FetchServiceImpl implements FetchService {
         String fileMd5 = FileMd5Utils.getMD5(new File(excelFile));
         StockDailyTransactionsHistory sth = stockDailyTransactionsHistoryMapper.selectByMd5(fileMd5);
         if(sth != null) {
-            throw new BusinessException("Excel imported already. excelFile: " + excelFile);
+//            throw new BusinessException("Excel imported already. excelFile: " + excelFile);
+            throw new BusinessException("該文件已經導入過，無需重複導入！");
         }
         Date date = new Date();
         Table<Integer, String, Object> table = ExcelUtils.readExcel2table(excelFile, 1, 1);

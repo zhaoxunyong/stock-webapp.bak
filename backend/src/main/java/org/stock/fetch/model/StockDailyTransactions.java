@@ -11,6 +11,10 @@ public class StockDailyTransactions extends BaseModel {
     private Long id;
 
     private Long stockId;
+    
+    private String no;
+
+    private String company;
 
     private String accountNo;
 
@@ -227,4 +231,21 @@ public class StockDailyTransactions extends BaseModel {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
+	public String getNo() {
+		return no;
+	}
+
+	public void setNo(String no) {
+		this.no = no;
+	}
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
+    
 }

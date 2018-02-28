@@ -20,6 +20,8 @@ public interface StockDailyTransactionsMapper {
     StockDailyTransactions selectByPrimaryKey(Long id);
 
     List<StockDailyTransactions> selectAll();
+    
+    List<StockDailyTransactions> selectByDate(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     int updateByPrimaryKey(StockDailyTransactions record);
 }

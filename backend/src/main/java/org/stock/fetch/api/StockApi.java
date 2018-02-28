@@ -1,8 +1,11 @@
 package org.stock.fetch.api;
 
+import java.io.IOException;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
 import org.stock.fetch.api.dto.PageDto;
+import org.stock.fetch.api.dto.StockDailyTransactionsDto;
 import org.stock.fetch.api.dto.StockDataDto;
 import org.stock.fetch.api.dto.StockImportantNewsDto;
 import org.stock.fetch.api.dto.StockMyDataDto;
@@ -69,4 +72,13 @@ public interface StockApi {
 		@ApiImplicitParam(name = "selectedType", value = "selectedType", required = true, dataType = "string", paramType = "query"),
 	})
 	public void removeStockMySelected(String stockId, String  selectedType);
+	
+	@ApiOperation(value="uploadStockDailyTransactions", notes="uploadStockDailyTransactions")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "file", value = "file", required = true, dataType = "file", paramType = "form")
+	})
+	public void uploadStockDailyTransactions(MultipartFile file) throws IOException;
+	
+	@ApiOperation(value="getStockDailyTransactions", notes="getStockDailyTransactions")
+	public List<StockDailyTransactionsDto> getStockDailyTransactions();
 }

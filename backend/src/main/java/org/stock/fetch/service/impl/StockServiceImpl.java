@@ -6,12 +6,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.stock.fetch.dao.StockDailyTransactionsMapper;
 import org.stock.fetch.dao.StockDataMapper;
 import org.stock.fetch.dao.StockImportantNewsMapper;
 import org.stock.fetch.dao.StockMyDataMapper;
 import org.stock.fetch.dao.StockMySelectedMapper;
 import org.stock.fetch.dao.StockMySelectedTypeMapper;
 import org.stock.fetch.dao.StockNewsMapper;
+import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
@@ -39,6 +41,9 @@ public class StockServiceImpl implements StockService {
     
     @Autowired
     private StockMySelectedTypeMapper stockMySelectedTypeMapper;
+    
+    @Autowired
+    private StockDailyTransactionsMapper stockDailyTransactionsMapper;
     
     @Autowired
     private StockMySelectedMapper stockMySelectedMapper;
@@ -116,6 +121,11 @@ public class StockServiceImpl implements StockService {
 	@Override
 	public void removeStockMySelected(Long stockId, Long selectedType) {
 		stockMySelectedMapper.delete(stockId, selectedType);
+	}
+
+	@Override
+	public List<StockDailyTransactions> getStockDailyTransactions() {
+		return stockDailyTransactionsMapper.selectAll();
 	}
 
 }

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Content from '@/page/content'
 import ImportantNews from '@/page/importantNews'
+import StockDailyTransactions from '@/page/stockDailyTransactions'
 
 Vue.use(Router)
 
@@ -25,6 +26,10 @@ export default new Router({
     {
       path: '/importantNews/:pageNum',
       component: ImportantNews
+    }, 
+    {
+      path: '/stockDailyTransactions',
+      component: StockDailyTransactions
     }
   ]
 })

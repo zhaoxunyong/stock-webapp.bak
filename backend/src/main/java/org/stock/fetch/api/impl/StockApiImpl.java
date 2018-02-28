@@ -3,35 +3,49 @@ package org.stock.fetch.api.impl;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.stock.config.StockProperties;
 import org.stock.fetch.api.StockApi;
 import org.stock.fetch.api.dto.PageDto;
+import org.stock.fetch.api.dto.StockDailyTransactionsDto;
 import org.stock.fetch.api.dto.StockDataDto;
 import org.stock.fetch.api.dto.StockImportantNewsDto;
 import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.api.dto.StockMySelectedTypeDto;
 import org.stock.fetch.api.dto.StockNewsDto;
+import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelectedType;
 import org.stock.fetch.model.StockNews;
+import org.stock.fetch.service.FetchService;
 import org.stock.fetch.service.StockService;
 
-import com.aeasycredit.commons.lang.exception.BusinessException;
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 
 @RestController
 @RequestMapping(value = "/api/stock", produces = MediaType.APPLICATION_JSON_VALUE)
+@EnableConfigurationProperties(StockProperties.class)
 public class StockApiImpl implements StockApi {
 	
 	@Autowired
@@ -39,6 +53,12 @@ public class StockApiImpl implements StockApi {
 	
 	@Autowired
 	private StockService stockService;
+	
+	@Autowired
+	private FetchService fetchService;
+	
+	@Autowired
+	private StockProperties stockProperties;
 
 	@Override
     @RequestMapping(value = "/getStockMyDatas", method = GET)
@@ -148,6 +168,46 @@ public class StockApiImpl implements StockApi {
     @RequestMapping(value = "/removeStockMySelected", method = POST)
 	public void removeStockMySelected(String stockId, String selectedType) {
 		stockService.removeStockMySelected(Long.parseLong(stockId), Long.parseLong(selectedType));
+	}
+	
+	@PostMapping("/uploadStockDailyTransactions")  
+    public void uploadStockDailyTransactions(@RequestParam("file") MultipartFile file) throws IOException {
+		InputStream input = null;
+		OutputStream output = null;
+		try {
+			input = file.getInputStream();
+			String excelFile = stockProperties.getUploadTempFolder()+"/"+IdUtils.genLongId()+"_"+file.getOriginalFilename();
+			output = new FileOutputStream(excelFile);
+			IOUtils.copy(input, output);
+			fetchService.importBydailyTransactions(excelFile);
+		} finally {
+			IOUtils.closeQuietly(input);
+			IOUtils.closeQuietly(output);
+		}
+		
+//        try {  
+//              
+//            byte[] bytes = file.getBytes();  
+//            Path path = Paths.get(UPLOAD_FOLDER + file.getOriginalFilename());  
+//            Files.write(path, bytes);  
+//            redirectAttributes.addFlashAttribute("message", "已经将 '" + file.getOriginalFilename() + "' 的文件上传成功");  
+//              
+//        } catch (IOException e) {  
+//            // TODO Auto-generated catch block  
+//            e.printStackTrace();  
+//        }  
+          
+//        return "redirect:/uploadStatus";  
+    }
+
+	@Override
+	@GetMapping("/getStockDailyTransactions")
+	public List<StockDailyTransactionsDto> getStockDailyTransactions() {
+		List<StockDailyTransactions> stockDailyTransactionses = stockService.getStockDailyTransactions();
+		List<StockDailyTransactionsDto> dtoList = stockDailyTransactionses.stream().map(model -> {
+			return modelMapper.map(model, StockDailyTransactionsDto.class);
+		}).collect(Collectors.toList());
+		return dtoList;
 	}
 
 }

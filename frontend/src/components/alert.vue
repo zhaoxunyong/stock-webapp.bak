@@ -2,12 +2,12 @@
   <div>
     <b-alert :show="dismissCountDown"
              dismissible
-             variant="danger"
+             :variant="variant"
              title="Error"
              @dismissed="dismissCountdown=0"
              @dismiss-count-down="countDownChanged">
       <!-- Close after {{dismissCountDown}} seconds...<br /> -->
-      {{ err }}
+      {{ message }}
       
     </b-alert>
   </div>
@@ -18,14 +18,21 @@
   export default {
     data () {
       return {
-        dismissSecs: 5,
+        dismissSecs: 10,
         dismissCountDown: 0,
-        err: ''
+        message: '',
+        variant: ''
       }
     },
     created () {
-      Bus.$on('alerts', (err) => {
-        this.err = err.response.statusText +" : "+err.response.data
+      Bus.$on('alerts', (message) => {
+        this.message = message
+        this.variant = 'danger'
+        this.showAlert()
+      });
+      Bus.$on('success', (message) => {
+        this.message = message
+        this.variant = 'success'
         this.showAlert()
       });
     },

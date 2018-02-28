@@ -99,8 +99,28 @@
   </select>
   
   <select id="selectAll" resultMap="BaseResultMap" >
-    select <include refid="BaseColumnList" />
-    from stock_daily_transactions
+    SELECT
+		b.company,
+		b.`no`,
+		a.*
+	FROM
+		stock_daily_transactions a,
+		stock_data b
+	WHERE
+		a.stock_id = b.id
+  </select>
+  
+  <select id="selectByDate" resultMap="BaseResultMap" >
+    SELECT
+		b.company,
+		b.`no`,
+		a.*
+	FROM
+		stock_daily_transactions a,
+		stock_data b
+	WHERE
+		a.stock_id = b.id
+	AND tx_date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
   </select>
   
 </mapper>

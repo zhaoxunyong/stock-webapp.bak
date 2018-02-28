@@ -15,17 +15,23 @@ package org.stock.fetch.constant;
  * @since [产品/模块版本]
  */
 public enum BuyTypeEnum {
-    BUY(0),
-    SELL(1);
+    BUY(0, "買"),
+    SELL(1, "賣");
     
     int type;
+    String name;
     
-    BuyTypeEnum(int type) {
+    BuyTypeEnum(int type, String name) {
         this.type = type;
+        this.name = name;
     }
 
     public int getType() {
         return type;
+    }
+
+    public String getName() {
+        return name;
     }
     
 }
