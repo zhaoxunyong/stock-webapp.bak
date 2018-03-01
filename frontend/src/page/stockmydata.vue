@@ -9,7 +9,7 @@
                ref="modal"
                title="請選擇自選股"
                @ok="handleOk"
-               @shown="clearName">
+               @shown="openModal">
         <form @submit.stop.prevent="handleSubmit">
           <!-- <b-form-input type="text"
                         placeholder="Enter your name"
@@ -41,13 +41,16 @@ export default {
       myStockSelectedName: '所有',
       selected: null,
       options: [],
-      selectedTypes: []
+      // 所有自选股标签
+      selectedTypes: [],
+      // 某只股票的自选股标签
+      mySelectedTypes: []
     }
   },
   created () {
-    this.getData()
     // 获取添加到自选股时的下拉选项
     this.getStockMySelectedTypes()
+    this.getData()
 
     // 从stockmyselectedtype.vue中过来：当点击所有按扭时
     Bus.$on('getAllMyStockData', () => {
@@ -81,6 +84,28 @@ export default {
           }
         })
       }
+    });
+
+    // 从stockmyselectedtype.vue中过来：当点击store股标签时
+    Bus.$on('getAllStockMyStore', () => {
+      this.myStockSelectedName = '庫存股'
+      this.myStockSelectedName = name
+      this.$api.get('/api/stock/getStockMyDatasByStore', null, r => {
+        this.list = r
+        if(r != undefined && r.length > 0) {
+          this.firstStockId = r[0].stockId
+          // let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
+          //改变路由的地址
+          this.push('/content/' + this.firstStockId+'/1')
+          // Bus.$emit('setStock', this.firstStockId)
+          //自动将自选股类型选中
+          // Bus.$emit('deliverySelectedTypes', r[0].selectedTypes)
+        } else {
+          this.push('/content/0/1')
+          Bus.$emit('emptyNews')
+          // Bus.$emit('deliverySelectedTypes', [])
+        }
+      })
     });
   },
   methods: {
@@ -127,6 +152,10 @@ export default {
         this.push(href)
       }
     },
+    openModal () {
+      this.getStockMySelectedTypes()
+      this.clearName()
+    },
     clearName () {
       this.selected = ''
     },
@@ -152,27 +181,48 @@ export default {
       this.$api.get('/api/stock/getStockMyDatas', null, r => {
         this.list = r
         this.firstStockId = r[0].stockId
-        let stockId = this.$route.params.stockId == undefined || this.$route.params.stockId == 0 ? this.firstStockId : this.$route.params.stockId
+        // let stockId = this.$route.params.stockId == undefined || this.$route.params.stockId == 0 ? this.firstStockId : this.$route.params.stockId
         //改变路由的地址
-        this.push('/content/' + stockId+'/1')
+        this.push('/content/' + this.firstStockId+'/1')
       })
     },
     getStockMySelectedTypes () {
       this.options = []
-      let url = '/api/stock/getStockMySelectedTypes'
-      this.$api.get(url, null, rs => {
-        for (var i = 0; i < rs.length; i++) {
-          this.options.push({
-            value: rs[i].type, text: rs[i].name
+
+      let stockId = this.$route.params.stockId
+      if(stockId != undefined && stockId != "") {
+        this.$api.get('/api/stock/getMySelectedTypesByStockId/'+stockId, null, rs => {
+          
+          let mySelectedType = []
+          if(rs != undefined && rs.length > 0) {
+            for(var i=0;i<rs.length;i++) {
+              let type = rs[i].type
+              mySelectedType.push(type)
+            }
+          }
+
+          let url = '/api/stock/getStockMySelectedTypes'
+          this.$api.get(url, null, rs => {
+            for (var i = 0; i < rs.length; i++) {
+              let isDisabled = mySelectedType.indexOf(rs[i].type) != -1
+              if(!isDisabled) {
+                this.options.push({
+                  value: rs[i].type, text: rs[i].name, disabled:isDisabled
+                })
+              }
+            }
           })
-        }
-      })
+            // if ($.isFunction(fn)){
+            //   fn.call(this, mySelectedType)
+            // }
+        })
+      }
     },
     changeStockMySelected (stockId, selectedType) {
       let url = '/api/stock/changeStockMySelected?stockId='+stockId+"&selectedType="+selectedType
       this.$api.post(url, null, rs => {
         //改变路由的地址
-        Bus.$emit('triggerAutoSelectedTypes')
+        // Bus.$emit('triggerAutoSelectedTypes')
         this.push('/content/' + stockId+'/1')
       })
     }

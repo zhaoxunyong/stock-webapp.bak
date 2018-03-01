@@ -1,14 +1,19 @@
 <template>
   <div>
     <span>
-    <b-button variant="success" @click="getAllMyStockData">
-        所有
+    <b-button :variant="currSelectedType==''?'warning':'success'" @click="getAllMyStockData">
+      所有
     </b-button>
+
+    <b-button :variant="isSelected('0')" @click="getAllStockMyStore">
+      庫存股
+    </b-button>
+
     </span>
     <span v-for="item in items">
     <b-button :variant="isSelected(item.type)" :id="item.type" @click="getMyStockSelected(item.type, item.name)">
         {{ item.name }}
-        <span @click.prevent="removeStockMySelected(item.type, item.name)" aria-hidden="true" v-if="isSelected(item.type) == 'warning'">×</span>
+        <!-- <span @click.prevent="removeStockMySelected(item.type, item.name)" aria-hidden="true" v-if="isSelected(item.type) == 'warning'">×</span> -->
     </b-button>
     </span>
     <b-btn v-b-modal.modalPrevent2 variant="success">+</b-btn>
@@ -32,22 +37,22 @@ export default {
   data () {
     return {
       items: [],
-      selectedTypes: [],
+      currSelectedType: '',
       // firstStockId: '',
       name: ''
     }
   },
   created () {
-    this.autoSelectedTypes()
+    // this.autoSelectedTypes()
     this.getData()
     
-    Bus.$on('triggerAutoSelectedTypes', () => {
-      this.autoSelectedTypes()
-    });
+    // Bus.$on('triggerAutoSelectedTypes', () => {
+    //   this.autoSelectedTypes()
+    // });
   },
   methods: {
     // 自动高亮显示某个股票所属的自选股名称
-    autoSelectedTypes() {
+    /*autoSelectedTypes() {
       this.selectedTypes = []
       let stockId = this.$route.params.stockId
       if(stockId != undefined && stockId != "") {
@@ -60,15 +65,21 @@ export default {
           }
         })
       }
-    },
+    },*/
     // 触发stockmydata.vue重新摘取所有的自选股
     getAllMyStockData() {
       this.selectedTypes = []
       Bus.$emit('getAllMyStockData')
+    },     
+    // 触发stockmydata.vue重新摘取所有的sotre股
+    getAllStockMyStore() {
+      this.selectedTypes = []
+      this.currSelectedType = '0'
+      Bus.$emit('getAllStockMyStore')
     }, 
-
     // 触发stockmydata.vue重新摘取某个自选股中的所有股票   
     getMyStockSelected(type, name) {
+      this.currSelectedType = type
       Bus.$emit('getMyStockSelected', type, name)
     },
 
@@ -94,7 +105,8 @@ export default {
     },
     isSelected(type) {
        // ? 'success':'warning'
-      if(this.selectedTypes != null && this.selectedTypes.indexOf(type) != -1) {
+      // if(this.selectedTypes != null && this.selectedTypes.indexOf(type) != -1) {
+      if(this.currSelectedType == type) {
         return 'warning'
       }
       return 'success'
@@ -135,7 +147,7 @@ export default {
   // 从stockmydata.vue中的第一次之后的请求
   watch: {
     '$route' (to, from) {
-      this.autoSelectedTypes()
+      // this.autoSelectedTypes()
       //this.$router.push('/content/' + this.getStatus(this.$route.path))
     }
   }
