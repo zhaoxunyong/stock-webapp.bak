@@ -15,7 +15,7 @@
           </b-row>
       </b-container>
       <div id="row_title">每天買入賣出股列表：</div>
-      <b-table striped hover :items="items"></b-table>
+      <b-table striped hover :items="items" style="width: 90%"></b-table>
       </div>
     </template>
   </main-layout>
@@ -85,6 +85,9 @@ export default {
 </script>
 
 <style scoped>
+div {
+  font-size: 12px;
+}
 .bv-example-row {
   padding: 10px 5px;
 }

@@ -1,11 +1,11 @@
 <template>
   <div>
     <span>
-    <b-button :variant="currSelectedType==''?'warning':'success'" @click="getAllMyStockData">
+    <!-- <b-button :variant="currSelectedType==''?'warning':'success'" @click="getAllMyStockData">
       所有
-    </b-button>
+    </b-button> -->
 
-    <b-button :variant="isSelected('0')" @click="getAllStockMyStore">
+    <b-button :variant="currSelectedType==''?'warning':'success'" @click="getAllStockMyStore">
       庫存股
     </b-button>
 
@@ -67,10 +67,10 @@ export default {
       }
     },*/
     // 触发stockmydata.vue重新摘取所有的自选股
-    getAllMyStockData() {
+    /*getAllMyStockData() {
       this.selectedTypes = []
       Bus.$emit('getAllMyStockData')
-    },     
+    },  */   
     // 触发stockmydata.vue重新摘取所有的sotre股
     getAllStockMyStore() {
       this.selectedTypes = []
@@ -140,7 +140,7 @@ export default {
       let url = '/api/stock/saveStockMySelectedType?name='+name
       this.$api.post(url, null, rs => {
         this.getData()
-        Bus.$emit('reGetStockMySelectedTypes')
+        // Bus.$emit('reGetStockMySelectedTypes')
       })
     }
   },

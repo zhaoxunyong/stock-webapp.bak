@@ -20,7 +20,7 @@
     </div>
 
     <div class="selected_name">
-   當前自選股 : <br />{{ myStockSelectedName }}
+    <h5>{{ myStockSelectedName }}</h5>
     </div>
 
     <span v-for="i in list">
@@ -38,7 +38,7 @@ export default {
     return {
       list: [],
       firstStockId: '',
-      myStockSelectedName: '所有',
+      myStockSelectedName: '庫存股',
       selected: null,
       options: [],
       // 所有自选股标签
@@ -53,15 +53,15 @@ export default {
     this.getData()
 
     // 从stockmyselectedtype.vue中过来：当点击所有按扭时
-    Bus.$on('getAllMyStockData', () => {
+    /*Bus.$on('getAllMyStockData', () => {
       this.myStockSelectedName = '所有'
       this.getData()
-    });
+    });*/
 
     // 从stockmyselectedtype.vue中过来：当将某个股票从某个自选股中移除时
-    Bus.$on('reGetStockMySelectedTypes', () => {
+    /*Bus.$on('reGetStockMySelectedTypes', () => {
       this.getStockMySelectedTypes()
-    });
+    });*/
 
     // 从stockmyselectedtype.vue中过来：当点击某个自选股标签时
     Bus.$on('getMyStockSelected', (type, name) => {
@@ -89,7 +89,7 @@ export default {
     // 从stockmyselectedtype.vue中过来：当点击store股标签时
     Bus.$on('getAllStockMyStore', () => {
       this.myStockSelectedName = '庫存股'
-      this.myStockSelectedName = name
+      // this.myStockSelectedName = name
       this.$api.get('/api/stock/getStockMyDatasByStore', null, r => {
         this.list = r
         if(r != undefined && r.length > 0) {

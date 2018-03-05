@@ -43,7 +43,7 @@ export default {
         $(rs.rows).each(function(){
           let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.froms+"</a>"
           items.push({
-            '重點新聞': context
+            '市場重大新聞': context
           })
         });
         this.items = items
@@ -61,7 +61,7 @@ export default {
         $(rs.rows).each(function(){
           let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.froms+"</a>"
           items.push({
-            '重點資訊': context
+            '市場重大新聞': context
           })
         });
         this.items = items
