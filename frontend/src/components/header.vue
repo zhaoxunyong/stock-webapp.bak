@@ -12,11 +12,17 @@
             自選股
           </b-dropdown-item>
           <b-dropdown-item href="#" @click.prevent="go('/importantNews/1')">
-            重點新聞
+            市場重大新聞
           </b-dropdown-item>
         </b-nav-item-dropdown>
 
         <b-nav-item-dropdown text="個性化設置" right>
+          <b-dropdown-item href="#" @click.prevent="go('/editMySelectedType')">
+            新聞設置
+          </b-dropdown-item>  
+          <b-dropdown-item href="#" @click.prevent="go('/editMySelectedType')">
+            自選股
+          </b-dropdown-item>   
           <b-dropdown-item href="#" @click.prevent="go('/stockDailyTransactions')">
             每天買入賣出股
           </b-dropdown-item>

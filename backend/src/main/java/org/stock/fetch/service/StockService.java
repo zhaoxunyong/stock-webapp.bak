@@ -7,12 +7,15 @@ import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelectedType;
+import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
 
 public interface StockService {
 	public List<StockMyData> getStockMyDatas();
 	
 	public List<StockMyData> getStockMyDatasByType(Long type);
+	
+	public List<StockMyStore> getStockMyDatasByStore();
 	
 	public StockData getStockData(Long id);
 	
@@ -35,4 +38,6 @@ public interface StockService {
 	public void removeStockMySelected(Long stockId, Long selectedType);
 	
 	public List<StockDailyTransactions> getStockDailyTransactions();
+	
+	public List<StockData> search4StockData(String value);
 }

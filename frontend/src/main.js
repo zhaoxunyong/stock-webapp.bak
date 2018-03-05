@@ -8,6 +8,7 @@ import BootstrapVue from 'bootstrap-vue'
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap-vue/dist/bootstrap-vue.css"
 
+import "open-iconic/font/css/open-iconic-bootstrap.min.css"
 
 // import BootstrapDirectionalButtons from 'bootstrap-directional-buttons'
 // import "bootstrap-directional-buttons/dist/bootstrap-directional-buttons.css"
@@ -31,8 +32,9 @@ Vue.prototype.$utils = utils
 Vue.config.productionTip = false
 
 import './utils/constant.js'
-// Vue.use(constant_)
-// Object.defineProperty(Vue.prototype, '$constant', { value: constant });
+
+import axios from 'axios'
+Vue.prototype.$http = axios
 
 /* eslint-disable no-new */
 new Vue({

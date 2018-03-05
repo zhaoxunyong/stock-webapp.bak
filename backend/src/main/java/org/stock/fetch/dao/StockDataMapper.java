@@ -3,6 +3,7 @@ package org.stock.fetch.dao;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.stock.fetch.model.StockData;
 
 @Mapper
@@ -18,6 +19,8 @@ public interface StockDataMapper {
     StockData selectByNo(String no);
 
     List<StockData> selectAll();
+    
+    List<StockData> search(@Param("value") String value);
 
     int updateByPrimaryKey(StockData record);
 }

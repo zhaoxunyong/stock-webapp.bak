@@ -69,4 +69,18 @@
     select <include refid="BaseColumnList" />
     from stock_my_store
   </select>
+  
+  <select id="getStockMyDatasByStore" resultMap="BaseResultMap" >
+    SELECT
+		DISTINCT
+		b. NO,
+		b.company,
+		a.stock_id
+	FROM
+		stock_my_store a,
+		stock_data b
+	WHERE
+		a.stock_id = b.id
+	ORDER BY b.company ASC
+  </select>
 </mapper>

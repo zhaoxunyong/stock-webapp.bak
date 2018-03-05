@@ -84,6 +84,12 @@
     where no = #{no,jdbcType=VARCHAR}
   </select>
   
+  <select id="search" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select <include refid="BaseColumnList" />
+    from stock_data
+    where no like concat('%',#{value},'%') or company like concat('%',#{value},'%')
+  </select>
+  
   <select id="selectAll" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" />
     from stock_data limit 100,100

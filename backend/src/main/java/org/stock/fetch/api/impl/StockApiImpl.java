@@ -31,12 +31,14 @@ import org.stock.fetch.api.dto.StockDataDto;
 import org.stock.fetch.api.dto.StockImportantNewsDto;
 import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.api.dto.StockMySelectedTypeDto;
+import org.stock.fetch.api.dto.StockMyStoreDto;
 import org.stock.fetch.api.dto.StockNewsDto;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelectedType;
+import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
 import org.stock.fetch.service.FetchService;
 import org.stock.fetch.service.StockService;
@@ -68,6 +70,16 @@ public class StockApiImpl implements StockApi {
 			return modelMapper.map(model, StockMyDataDto.class);
 		}).collect(Collectors.toList());
 		return dtoList;
+	}
+
+    @Override
+    @RequestMapping(value = "/getStockMyDatasByStore", method = GET)
+	public List<StockMyStoreDto> getStockMyDatasByStore() {
+        List<StockMyStore> stockMyStores = stockService.getStockMyDatasByStore();
+        List<StockMyStoreDto> dtoList = stockMyStores.stream().map(model -> {
+            return modelMapper.map(model, StockMyStoreDto.class);
+        }).collect(Collectors.toList());
+        return dtoList;
 	}
 
 	@Override
@@ -209,5 +221,15 @@ public class StockApiImpl implements StockApi {
 		}).collect(Collectors.toList());
 		return dtoList;
 	}
+
+    @Override
+    @GetMapping("/search4StockData")
+    public List<StockDataDto> search4StockData(String query) {
+        List<StockData> stockDatas = stockService.search4StockData(query);
+        List<StockDataDto> dtoList = stockDatas.stream().map(model -> {
+            return modelMapper.map(model, StockDataDto.class);
+        }).collect(Collectors.toList());
+        return dtoList;
+    }
 
 }

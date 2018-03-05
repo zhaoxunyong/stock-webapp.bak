@@ -1,14 +1,14 @@
-package org.stock.fetch.model;
+package org.stock.fetch.api.dto;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 import org.springframework.data.annotation.Transient;
 
-public class StockMyStore {
-    private Long id;
+public class StockMyStoreDto {
+    private String id;
 
-    private Long stockId;
+    private String stockId;
     
     @Transient
     private String no;
@@ -30,19 +30,19 @@ public class StockMyStore {
 
     private Date updateDate;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Long getStockId() {
+    public String getStockId() {
         return stockId;
     }
 
-    public void setStockId(Long stockId) {
+    public void setStockId(String stockId) {
         this.stockId = stockId;
     }
 

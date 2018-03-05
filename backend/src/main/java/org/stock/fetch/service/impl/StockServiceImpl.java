@@ -12,6 +12,7 @@ import org.stock.fetch.dao.StockImportantNewsMapper;
 import org.stock.fetch.dao.StockMyDataMapper;
 import org.stock.fetch.dao.StockMySelectedMapper;
 import org.stock.fetch.dao.StockMySelectedTypeMapper;
+import org.stock.fetch.dao.StockMyStoreMapper;
 import org.stock.fetch.dao.StockNewsMapper;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
@@ -19,6 +20,7 @@ import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelected;
 import org.stock.fetch.model.StockMySelectedType;
+import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
 import org.stock.fetch.service.StockService;
 
@@ -47,10 +49,18 @@ public class StockServiceImpl implements StockService {
     
     @Autowired
     private StockMySelectedMapper stockMySelectedMapper;
+    
+    @Autowired
+    private StockMyStoreMapper stockMyStoreMapper;
 
 	@Override
 	public List<StockMyData> getStockMyDatas() {
 		return stockMyDataMapper.selectAll();
+	}
+
+    @Override
+	public List<StockMyStore> getStockMyDatasByStore() {
+        return stockMyStoreMapper.getStockMyDatasByStore();
 	}
 	
 	@Override
@@ -127,5 +137,10 @@ public class StockServiceImpl implements StockService {
 	public List<StockDailyTransactions> getStockDailyTransactions() {
 		return stockDailyTransactionsMapper.selectAll();
 	}
+
+    @Override
+    public List<StockData> search4StockData(String value) {
+        return stockDataMapper.search(value);
+    }
 
 }

@@ -43,7 +43,7 @@ function fileUpload(file, url, success, failure) {
   let config = {  
     headers:{'Content-Type':'multipart/form-data'}  
   }  //添加请求头  
-  axios.post(url,param,config)  
+  this.$http.post(url,param,config)  
   .then(response=>{  
     console.log(response.data) 
     if(success) {

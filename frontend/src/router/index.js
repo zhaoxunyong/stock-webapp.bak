@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Content from '@/page/content'
 import ImportantNews from '@/page/importantNews'
 import StockDailyTransactions from '@/page/stockDailyTransactions'
+import EditMySelectedType from '@/page/editMySelectedType'
 
 Vue.use(Router)
 
@@ -30,6 +31,10 @@ export default new Router({
     {
       path: '/stockDailyTransactions',
       component: StockDailyTransactions
+    }, 
+    {
+      path: '/editMySelectedType',
+      component: EditMySelectedType
     }
   ]
 })

@@ -1,1 +1,1 @@
-window.PAGE_SIZE=10
+window.PAGE_SIZE=20

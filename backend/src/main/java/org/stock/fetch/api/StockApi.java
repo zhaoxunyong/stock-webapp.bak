@@ -10,6 +10,7 @@ import org.stock.fetch.api.dto.StockDataDto;
 import org.stock.fetch.api.dto.StockImportantNewsDto;
 import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.api.dto.StockMySelectedTypeDto;
+import org.stock.fetch.api.dto.StockMyStoreDto;
 import org.stock.fetch.api.dto.StockNewsDto;
 
 import io.swagger.annotations.Api;
@@ -22,6 +23,9 @@ public interface StockApi {
 	
 	@ApiOperation(value="getStockMyDatas", notes="getStockMyDatas")
 	public List<StockMyDataDto> getStockMyDatas();
+    
+    @ApiOperation(value="getStockMyDatasByStore", notes="getStockMyDatasByStore")
+    public List<StockMyStoreDto> getStockMyDatasByStore();
 	
 	@ApiOperation(value="getStockMyDatasByType", notes="getStockMyDatasByType")
 	@ApiImplicitParams({
@@ -81,4 +85,10 @@ public interface StockApi {
 	
 	@ApiOperation(value="getStockDailyTransactions", notes="getStockDailyTransactions")
 	public List<StockDailyTransactionsDto> getStockDailyTransactions();
+
+    @ApiOperation(value="search4StockData", notes="search4StockData")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "query", value = "query", required = true, dataType = "string", paramType = "query")
+    })
+	public List<StockDataDto> search4StockData(String query);
 }

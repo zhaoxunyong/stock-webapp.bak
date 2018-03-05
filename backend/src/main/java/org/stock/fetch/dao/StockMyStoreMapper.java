@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMyStore;
 
 @Mapper
@@ -18,6 +19,8 @@ public interface StockMyStoreMapper {
 
     StockMyStore select(@Param("stockId") Long stockId, @Param("txDate") Date txDate, @Param("txKind") Integer txKind, @Param("txPrice") BigDecimal txPrice);
 
+    List<StockMyStore> getStockMyDatasByStore();
+    
     List<StockMyStore> selectAll();
 
     int updateByPrimaryKey(StockMyStore record);

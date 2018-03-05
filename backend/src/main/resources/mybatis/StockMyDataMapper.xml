@@ -53,9 +53,32 @@
   </select>
   
   <select id="selectAll" resultMap="BaseResultMap">
-    select GROUP_CONCAT(c.selected_type SEPARATOR ',') selected_types, my_data.* from (select a.id, b.no, b.company, a.stock_id, a.kinds, a.industry, a.status, a.create_date, a.update_date
-	    from stock_my_data a, stock_data b 
-	WHERE a.stock_id=b.id order by a.create_date) my_data LEFT JOIN stock_my_selected c on my_data.stock_id=c.stock_id
+    SELECT
+	GROUP_CONCAT(
+		c.selected_type SEPARATOR ','
+	) selected_types,
+	my_data.*
+	FROM
+		(
+			SELECT
+				a.id,
+				b. NO,
+				b.company,
+				a.stock_id,
+				a.kinds,
+				a.industry,
+				a. STATUS,
+				a.create_date,
+				a.update_date
+			FROM
+				stock_my_data a,
+				stock_data b
+			WHERE
+				a.stock_id = b.id
+			ORDER BY
+				b.company ASC
+		) my_data
+	LEFT JOIN stock_my_selected c ON my_data.stock_id = c.stock_id
 	GROUP BY my_data.stock_id
   </select>
   
@@ -82,5 +105,6 @@
 	AND a.stock_id = c.stock_id
 	AND c.selected_type = #{type,jdbcType=BIGINT}
 	GROUP BY a.stock_id
+	ORDER BY b.company ASC
   </select>
 </mapper>
