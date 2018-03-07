@@ -111,26 +111,31 @@ public class StockServiceImpl implements StockService {
 	
 	@Override
 	@Transactional
-	public void changeStockMySelected(Long stockId, Long selectedType) {
-		StockMySelected stockMySelected = stockMySelectedMapper.select(stockId, selectedType);
-		if(stockMySelected == null) {
-			// insert
-			stockMySelected = new StockMySelected();
-			stockMySelected.setId(IdUtils.genLongId());
-			stockMySelected.setSelectedType(selectedType);
-			stockMySelected.setStockId(stockId);
-			stockMySelected.setStatus(true);
-			stockMySelected.setCreateDate(new Date());
-			stockMySelectedMapper.insert(stockMySelected);
-		} else {
-			// update
-			stockMySelectedMapper.update(stockId, selectedType);
-		}
+	public void changeStockMySelected(List<Long> stockIds, Long selectedType) {
+	    stockMySelectedMapper.delete(selectedType);
+	    for(Long stockId : stockIds) {
+	        StockMySelected stockMySelected = stockMySelectedMapper.select(stockId, selectedType);
+	        if(stockMySelected == null) {
+	            // insert
+	            stockMySelected = new StockMySelected();
+	            stockMySelected.setId(IdUtils.genLongId());
+	            stockMySelected.setSelectedType(selectedType);
+	            stockMySelected.setStockId(stockId);
+	            stockMySelected.setStatus(true);
+	            stockMySelected.setCreateDate(new Date());
+	            stockMySelectedMapper.insert(stockMySelected);
+	        } else {
+	            // update
+	            stockMySelectedMapper.update(stockId, selectedType);
+	        }
+	    }
 	}
 
 	@Override
-	public void removeStockMySelected(Long stockId, Long selectedType) {
-		stockMySelectedMapper.delete(stockId, selectedType);
+	@Transactional
+	public void removeStockMySelected(Long selectedType) {
+		stockMySelectedMapper.delete(selectedType);
+		stockMySelectedTypeMapper.deleteByType(selectedType);
 	}
 
 	@Override

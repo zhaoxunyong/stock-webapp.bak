@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
+import org.stock.fetch.api.dto.ChangeStockMySelectedDto;
 import org.stock.fetch.api.dto.PageDto;
 import org.stock.fetch.api.dto.StockDailyTransactionsDto;
 import org.stock.fetch.api.dto.StockDataDto;
@@ -64,18 +65,13 @@ public interface StockApi {
 	public void saveStockMySelectedType(String name);
 	
 	@ApiOperation(value="changeStockMySelected", notes="changeStockMySelected")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
-		@ApiImplicitParam(name = "selectedType", value = "selectedType", required = true, dataType = "string", paramType = "query"),
-	})
-	public void changeStockMySelected(String stockId, String  selectedType);
+	public void changeStockMySelected(ChangeStockMySelectedDto changeStockMySelectedDto);
 	
 	@ApiOperation(value="removeStockMySelected", notes="removeStockMySelected")
 	@ApiImplicitParams({
-		@ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
 		@ApiImplicitParam(name = "selectedType", value = "selectedType", required = true, dataType = "string", paramType = "query"),
 	})
-	public void removeStockMySelected(String stockId, String  selectedType);
+	public void removeStockMySelected(String selectedType);
 	
 	@ApiOperation(value="uploadStockDailyTransactions", notes="uploadStockDailyTransactions")
 	@ApiImplicitParams({

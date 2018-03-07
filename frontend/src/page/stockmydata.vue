@@ -219,8 +219,14 @@ export default {
       }
     },
     changeStockMySelected (stockId, selectedType) {
-      let url = '/api/stock/changeStockMySelected?stockId='+stockId+"&selectedType="+selectedType
-      this.$api.post(url, null, rs => {
+      let url = '/api/stock/changeStockMySelected'
+      let stockIds = []
+      stockIds.push(stockId)
+      let params = {
+        "selectedType": selectedType,
+        "stockIds": stockIds
+      }
+      this.$api.post(url, params, rs => {
         //改变路由的地址
         // Bus.$emit('triggerAutoSelectedTypes')
         this.push('/content/' + stockId+'/1')

@@ -85,9 +85,9 @@
   </select>
   
   <select id="search" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select <include refid="BaseColumnList" />
-    from stock_data
-    where no like concat('%',#{value},'%') or company like concat('%',#{value},'%')
+    select DISTINCT b.*
+    from stock_my_data a, stock_data b
+    where a.stock_id=b.id and b.no like concat('%',#{value},'%') or b.company like concat('%',#{value},'%')
   </select>
   
   <select id="selectAll" resultMap="BaseResultMap" >

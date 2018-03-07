@@ -11,9 +11,9 @@
   <sql id="BaseColumnList">
     id, type, name, create_date, update_date
   </sql>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <delete id="deleteByType" parameterType="java.lang.Long" >
     delete from stock_my_selected_type
-    where id = #{id,jdbcType=BIGINT}
+    where type = #{type,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="org.stock.fetch.model.StockMySelectedType" useGeneratedKeys="true" keyProperty="id" >
     insert into stock_my_selected_type (id, type, name, create_date, 

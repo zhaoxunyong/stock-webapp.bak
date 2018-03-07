@@ -51,7 +51,7 @@ function fileUpload(file, url, success, failure) {
     }
   })
   .catch(function (err) {
-      console.log(err)
+      console.log("err--->"+err)
       let errMsg = err.response.statusText +" : "+err.response.data
       Bus.$emit('alerts', errMsg)
       if(failure) {
@@ -98,6 +98,7 @@ function apiAxios (method, url, params, success, failure) {
   .catch(function (err) {
     Bus.$emit('loading', false)
     if (err) {
+      console.log("err--->"+err)
       // window.alert('api error, HTTP CODE: ' + err)
       let errMsg = err.response.statusText +" : "+err.response.data
       Bus.$emit('alerts', errMsg)

@@ -7,7 +7,7 @@ import org.stock.fetch.model.StockMySelectedType;
 
 @Mapper
 public interface StockMySelectedTypeMapper {
-    int deleteByPrimaryKey(Long id);
+    int deleteByType(Long type);
 
     int insert(StockMySelectedType record);
 

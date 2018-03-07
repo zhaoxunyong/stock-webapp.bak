@@ -41,7 +41,7 @@
           <li
               v-for="(result, key) in results"
               :key="key"
-              @click.prevent="select(result)"
+              @click.prevent="select(result, $event)"
               class="autocomplete__results__item"
               :class="{'autocomplete__selected' : isSelected(key) }"
               v-html="formatDisplay(result)">
@@ -235,7 +235,7 @@ export default {
       this.loading = true
       this.setEventListener()
       this.request(url)
-    }, 200),
+    }, 1000),
 
     /**
      * Make an http request for results
@@ -324,7 +324,7 @@ export default {
      * Select a result
      * @param {Object}
      */
-    select (obj) {
+    select (obj, event) {
       if (!obj) {
         return
       }
@@ -335,7 +335,7 @@ export default {
         value: this.value,
         display: this.display,
         selectedObject: obj
-      })
+      }, this)
       this.$emit('input', this.value)
       this.close()
     },

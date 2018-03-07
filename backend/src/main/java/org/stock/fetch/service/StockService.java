@@ -33,9 +33,9 @@ public interface StockService {
 	
 	public void saveStockMySelectedType(StockMySelectedType stockMySelectedType);
 	
-	public void changeStockMySelected(Long stockId, Long selectedType);
+	public void changeStockMySelected(List<Long> stockIds, Long selectedType);
 	
-	public void removeStockMySelected(Long stockId, Long selectedType);
+	public void removeStockMySelected(Long selectedType);
 	
 	public List<StockDailyTransactions> getStockDailyTransactions();
 	

@@ -19,12 +19,14 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.stock.config.StockProperties;
 import org.stock.fetch.api.StockApi;
+import org.stock.fetch.api.dto.ChangeStockMySelectedDto;
 import org.stock.fetch.api.dto.PageDto;
 import org.stock.fetch.api.dto.StockDailyTransactionsDto;
 import org.stock.fetch.api.dto.StockDataDto;
@@ -171,15 +173,16 @@ public class StockApiImpl implements StockApi {
 
 	@Override
     @RequestMapping(value = "/changeStockMySelected", method = POST)
-	public void changeStockMySelected(String stockId, String selectedType) {
+	public void changeStockMySelected(@RequestBody ChangeStockMySelectedDto changeStockMySelectedDto) {
 //		throw new BusinessException("中华人民共和国");
-		stockService.changeStockMySelected(Long.parseLong(stockId), Long.parseLong(selectedType));
+	    List<Long> stokIdLongs = changeStockMySelectedDto.getStockIds().stream().map(stockId -> Long.parseLong(stockId)).collect(Collectors.toList());
+		stockService.changeStockMySelected(stokIdLongs, Long.parseLong(changeStockMySelectedDto.getSelectedType()));
 	}
 
 	@Override
     @RequestMapping(value = "/removeStockMySelected", method = POST)
-	public void removeStockMySelected(String stockId, String selectedType) {
-		stockService.removeStockMySelected(Long.parseLong(stockId), Long.parseLong(selectedType));
+	public void removeStockMySelected(String selectedType) {
+		stockService.removeStockMySelected(Long.parseLong(selectedType));
 	}
 	
 	@PostMapping("/uploadStockDailyTransactions")  

@@ -36,6 +36,7 @@ import Bus from '../eventBus'
 export default {
   data () {
     return {
+      name: '',
       items: [],
       currSelectedType: '',
       // firstStockId: '',
@@ -81,27 +82,6 @@ export default {
     getMyStockSelected(type, name) {
       this.currSelectedType = type
       Bus.$emit('getMyStockSelected', type, name)
-    },
-
-    // 将某个股票从自选股中移除
-    removeStockMySelected(selectedType, selectedName) {
-      let stockId = this.$route.params.stockId
-      let api = this.$api
-      this.$confirm("是否確定從"+selectedName+"中移除?").then(
-        function(){
-         // alert(stockId+"--->"+selectedType)
-          let url = '/api/stock/removeStockMySelected?stockId='+stockId+"&selectedType="+selectedType
-          // alert("111--->"+url)
-          api.post(url, null, rs => {
-            // vm.$forceUpdate()
-            // 触发stockmydata.vue重新摘取某个自选股中的所有股票  
-            Bus.$emit('getMyStockSelected', selectedType, selectedName)
-          })
-        }
-      ).catch(function(e){
-          // alert("Exception--->"+e)
-          console.log("Exception--->"+e)
-      })
     },
     isSelected(type) {
        // ? 'success':'warning'

@@ -18,7 +18,7 @@
   </delete>
   <delete id="delete" >
     delete from stock_my_selected
-    where stock_id = #{stockId,jdbcType=BIGINT} and selected_type = #{selectedType,jdbcType=BIGINT}
+    where selected_type = #{selectedType,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="org.stock.fetch.model.StockMySelected" useGeneratedKeys="true" keyProperty="id" >
     insert into stock_my_selected (id, stock_id, selected_type, status, 

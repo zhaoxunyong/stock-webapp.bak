@@ -18,7 +18,7 @@ public interface StockMySelectedMapper {
 
     int update(@Param("stockId") Long stockId, @Param("selectedType") Long selectedType);
     
-    int delete(@Param("stockId") Long stockId, @Param("selectedType") Long selectedType);
+    int delete(@Param("selectedType") Long selectedType);
 
     List<StockMySelected> selectAll();
     
