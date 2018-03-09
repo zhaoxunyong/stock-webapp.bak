@@ -13,13 +13,15 @@ import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.api.dto.StockMySelectedTypeDto;
 import org.stock.fetch.api.dto.StockMyStoreDto;
 import org.stock.fetch.api.dto.StockNewsDto;
+import org.stock.fetch.api.dto.StockNewsKeyDto;
+import org.stock.fetch.model.StockNewsKey;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-@Api(tags="Stock api", description="合同相關的接口", protocols="http", produces = "application/json")
+@Api(tags="Stock api", description="Stock Api", protocols="http", produces = "application/json")
 public interface StockApi {
 	
 	@ApiOperation(value="getStockMyDatas", notes="getStockMyDatas")
@@ -87,4 +89,22 @@ public interface StockApi {
         @ApiImplicitParam(name = "query", value = "query", required = true, dataType = "string", paramType = "query")
     })
 	public List<StockDataDto> search4StockData(String query);
+
+    @ApiOperation(value="search4StockMyData", notes="search4StockMyData")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "query", value = "query", required = true, dataType = "string", paramType = "query")
+    })
+    public List<StockDataDto> search4StockMyData(String query);
+    
+    @ApiOperation(value="getStockNewsKeyByInclude", notes="getStockNewsKeyByInclude")
+    public List<StockNewsKeyDto> getStockNewsKeyByInclude();
+    
+    @ApiOperation(value="getStockNewsKeyByExclude", notes="getStockNewsKeyByExclude")
+    public List<StockNewsKeyDto> getStockNewsKeyByExclude();
+    
+    @ApiOperation(value="saveStockNewsKeyByInclude", notes="saveStockNewsKeyByInclude")
+    public void saveStockNewsKeyByInclude(List<String> keys);
+    
+    @ApiOperation(value="saveStockNewsKeyByExclude", notes="saveStockNewsKeyByExclude")
+    public void saveStockNewsKeyByExclude(List<String> keys);
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.dao.StockDailyTransactionsMapper;
 import org.stock.fetch.dao.StockDataMapper;
 import org.stock.fetch.dao.StockImportantNewsMapper;
@@ -13,6 +14,7 @@ import org.stock.fetch.dao.StockMyDataMapper;
 import org.stock.fetch.dao.StockMySelectedMapper;
 import org.stock.fetch.dao.StockMySelectedTypeMapper;
 import org.stock.fetch.dao.StockMyStoreMapper;
+import org.stock.fetch.dao.StockNewsKeyMapper;
 import org.stock.fetch.dao.StockNewsMapper;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
@@ -22,6 +24,7 @@ import org.stock.fetch.model.StockMySelected;
 import org.stock.fetch.model.StockMySelectedType;
 import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
+import org.stock.fetch.model.StockNewsKey;
 import org.stock.fetch.service.StockService;
 
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
@@ -52,6 +55,9 @@ public class StockServiceImpl implements StockService {
     
     @Autowired
     private StockMyStoreMapper stockMyStoreMapper;
+    
+    @Autowired
+    private StockNewsKeyMapper stockNewsKeyMapper;
 
 	@Override
 	public List<StockMyData> getStockMyDatas() {
@@ -145,7 +151,34 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public List<StockData> search4StockData(String value) {
-        return stockDataMapper.search(value);
+        return stockDataMapper.search4StockData(value);
+    }
+
+    @Override
+    public List<StockData> search4StockMyData(String value) {
+        return stockDataMapper.search4StockMyData(value);
+    }
+
+    @Override
+    public List<StockNewsKey> getStockNewsKeyByInclude() {
+        return stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.INCLUDE.getType());
+    }
+
+    @Override
+    public List<StockNewsKey> getStockNewsKeyByexclude() {
+        return stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.EXCLUDE.getType());
+    }
+
+    @Override
+    public void saveStockNewsKeys(List<StockNewsKey> stockNewsKeys) {
+        stockNewsKeys.forEach(stockNewsKey -> {
+            stockNewsKeyMapper.insert(stockNewsKey);
+        });
+    }
+
+    @Override
+    public int deleteByType(StockNewsKeyTypeEnum stockNewsKeyTypeEnum) {
+        return stockNewsKeyMapper.deleteByType(stockNewsKeyTypeEnum.getType());
     }
 
 }

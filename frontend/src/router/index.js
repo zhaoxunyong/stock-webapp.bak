@@ -4,6 +4,7 @@ import Content from '@/page/content'
 import ImportantNews from '@/page/importantNews'
 import StockDailyTransactions from '@/page/stockDailyTransactions'
 import EditMySelectedType from '@/page/editMySelectedType'
+import NewsSettings from '@/page/newsSettings'
 
 Vue.use(Router)
 
@@ -35,6 +36,10 @@ export default new Router({
     {
       path: '/editMySelectedType',
       component: EditMySelectedType
+    }, 
+    {
+      path: '/newsSettings',
+      component: NewsSettings
     }
   ]
 })

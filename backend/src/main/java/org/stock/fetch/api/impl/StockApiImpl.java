@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -35,6 +36,8 @@ import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.api.dto.StockMySelectedTypeDto;
 import org.stock.fetch.api.dto.StockMyStoreDto;
 import org.stock.fetch.api.dto.StockNewsDto;
+import org.stock.fetch.api.dto.StockNewsKeyDto;
+import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockImportantNews;
@@ -42,10 +45,13 @@ import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelectedType;
 import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
+import org.stock.fetch.model.StockNewsKey;
 import org.stock.fetch.service.FetchService;
 import org.stock.fetch.service.StockService;
 
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
+import com.aeasycredit.commons.lang.utils.CollectionsUtils;
+import com.google.common.collect.Lists;
 
 @RestController
 @RequestMapping(value = "/api/stock", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -233,6 +239,78 @@ public class StockApiImpl implements StockApi {
             return modelMapper.map(model, StockDataDto.class);
         }).collect(Collectors.toList());
         return dtoList;
+    }
+
+    @Override
+    @GetMapping("/search4StockMyData")
+    public List<StockDataDto> search4StockMyData(String query) {
+        List<StockData> stockDatas = stockService.search4StockMyData(query);
+        List<StockDataDto> dtoList = stockDatas.stream().map(model -> {
+            return modelMapper.map(model, StockDataDto.class);
+        }).collect(Collectors.toList());
+        return dtoList;
+    }
+
+    @Override
+    @GetMapping("/getStockNewsKeyByInclude")
+    public List<StockNewsKeyDto> getStockNewsKeyByInclude() {
+        List<StockNewsKey> stockNewsKeys = stockService.getStockNewsKeyByInclude();
+        List<StockNewsKeyDto> dtoList = stockNewsKeys.stream().map(model -> {
+            return modelMapper.map(model, StockNewsKeyDto.class);
+        }).collect(Collectors.toList());
+        return dtoList;
+    }
+
+    @Override
+    @GetMapping("/getStockNewsKeyByExclude")
+    public List<StockNewsKeyDto> getStockNewsKeyByExclude() {
+        List<StockNewsKey> stockNewsKeys = stockService.getStockNewsKeyByexclude();
+        List<StockNewsKeyDto> dtoList = stockNewsKeys.stream().map(model -> {
+            return modelMapper.map(model, StockNewsKeyDto.class);
+        }).collect(Collectors.toList());
+        return dtoList;
+    }
+
+    @Override
+    @PostMapping("/saveStockNewsKeyByInclude")  
+    public void saveStockNewsKeyByInclude(@RequestParam("keys[]") List<String> keys) {
+        stockService.deleteByType(StockNewsKeyTypeEnum.INCLUDE);
+        List<StockNewsKey> stockNewsKeys = Lists.newArrayList();
+        keys.forEach(key -> {
+            if(StringUtils.isNotBlank(key)) {
+                StockNewsKey stockNewsKey = new StockNewsKey();
+                stockNewsKey.setId(IdUtils.genLongId());
+                stockNewsKey.setCreateDate(new Date());
+                stockNewsKey.setKey(key);
+                stockNewsKey.setStatus(true);
+                stockNewsKey.setType(StockNewsKeyTypeEnum.INCLUDE.getType());
+                stockNewsKeys.add(stockNewsKey);
+            }
+        });
+        if(CollectionsUtils.isNotEmpty(stockNewsKeys)) {
+            stockService.saveStockNewsKeys(stockNewsKeys);
+        }
+    }
+
+    @Override
+    @PostMapping("/saveStockNewsKeyByExclude")  
+    public void saveStockNewsKeyByExclude(@RequestParam("keys[]") List<String> keys) {
+        stockService.deleteByType(StockNewsKeyTypeEnum.EXCLUDE);
+        List<StockNewsKey> stockNewsKeys = Lists.newArrayList();
+        keys.forEach(key -> {
+            if(StringUtils.isNotBlank(key)) {
+                StockNewsKey stockNewsKey = new StockNewsKey();
+                stockNewsKey.setId(IdUtils.genLongId());
+                stockNewsKey.setCreateDate(new Date());
+                stockNewsKey.setKey(key);
+                stockNewsKey.setStatus(true);
+                stockNewsKey.setType(StockNewsKeyTypeEnum.EXCLUDE.getType());
+                stockNewsKeys.add(stockNewsKey);
+            }
+        });
+        if(CollectionsUtils.isNotEmpty(stockNewsKeys)) {
+            stockService.saveStockNewsKeys(stockNewsKeys);
+        }
     }
 
 }

@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,10 +33,13 @@ import com.aeasycredit.commons.lang.exception.BaseException;
 @RestController
 class MyExceptionHandler {
     
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    
     @ExceptionHandler(value = Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public String BaseError(HttpServletRequest request, HttpServletResponse response, Exception e) {
+        logger.error(e.getMessage(), e);
         return e.toString();
     }
     

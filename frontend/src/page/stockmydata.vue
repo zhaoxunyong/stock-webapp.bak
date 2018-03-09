@@ -1,5 +1,16 @@
 <template>  
   <div>
+    <div class="p-2">
+      <autocomplete
+        ref="autocomplete"
+        :source="getUrl"
+        input-class="form-control empty-form-control"
+        results-property="data"
+        :results-display="formattedDisplay"
+        @selected="selectedProcess">
+      </autocomplete>
+    </div>
+
     <div id="select_div">
       <b-btn variant="primary" @click="toFront"><-</b-btn>
       <b-btn v-b-modal.modalPrevent variant="primary">+</b-btn>
@@ -33,7 +44,14 @@
 
 <script>
 import Bus from '../eventBus'
+
+// https://github.com/charliekassel/vuejs-autocomplete
+// import Autocomplete from 'vuejs-auto-complete'
+import Autocomplete from '../components/Autocomplete'
 export default {
+  components: {
+    Autocomplete
+  },
   data () {
     return {
       list: [],
@@ -109,6 +127,23 @@ export default {
     });
   },
   methods: {
+    getUrl (input) {
+      return '/api/stock/search4StockData?query='+input
+    },
+    selectedProcess (result, refs) {
+      /*$(".form-control input[type='hidden']").each(function(index, data){
+        let inputValue = $(data).val()
+        // alert("value->"+result.value+"/inputValue->"+inputValue)
+        if(inputValue != "" && inputValue == result.value) {
+          refs.clear()
+          // alert(result.display+"已經存在!")
+          Bus.$emit('alerts', result.display+"已經存在!")
+        }
+      })*/
+    },
+    formattedDisplay (result) {
+      return result.no + ' ' + result.company
+    },
     push(url) {
       this.$router.push(url)
       Bus.$emit('initCurrentPage', 1)

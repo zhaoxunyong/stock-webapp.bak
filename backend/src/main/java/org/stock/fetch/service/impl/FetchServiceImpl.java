@@ -23,7 +23,6 @@ import org.stock.fetch.dao.StockHistoryMapper;
 import org.stock.fetch.dao.StockImportantNewsMapper;
 import org.stock.fetch.dao.StockMyDataMapper;
 import org.stock.fetch.dao.StockMyStoreMapper;
-import org.stock.fetch.dao.StockNewsExcludeKeyMapper;
 import org.stock.fetch.dao.StockNewsMapper;
 import org.stock.fetch.dao.StockTypeMapper;
 import org.stock.fetch.model.StockDailyTransactions;
@@ -34,7 +33,6 @@ import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
-import org.stock.fetch.model.StockNewsExcludeKey;
 import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
 import org.stock.utils.FileMd5Utils;
@@ -88,9 +86,6 @@ public class FetchServiceImpl implements FetchService {
     
     @Autowired
     private StockImportantNewsMapper stockImportantNewsMapper;
-    
-    @Autowired
-    private StockNewsExcludeKeyMapper stockNewsExcludeKeyMapper;
     
     @Autowired
     private StockDailyTransactionsHistoryMapper stockDailyTransactionsHistoryMapper;
@@ -187,10 +182,10 @@ public class FetchServiceImpl implements FetchService {
                             stockNews.setUrl(url);
                             stockNews.setCreateDate(date);
                             stockNewsMapper.deleteByStockNews(stockNews);
-                            if(!checkNewsSubject(subject)) {
-                                stockNewsMapper.insert(stockNews);
-                                logger.info(stockNews.toString());
-                            }
+//                            if(!checkNewsSubject(subject)) {
+                            stockNewsMapper.insert(stockNews);
+                            logger.info(stockNews.toString());
+//                            }
                         }
                     }
                 }
@@ -614,12 +609,12 @@ public class FetchServiceImpl implements FetchService {
         }
     }
     
-    private boolean checkNewsSubject(String subject) {
+    /*private boolean checkNewsSubject(String subject) {
         List<StockNewsExcludeKey> stockNewsExcludeKeys = stockNewsExcludeKeyMapper.selectAll(true);
         return stockNewsExcludeKeys.stream()
                 .map(StockNewsExcludeKey::getKey)
 //                .peek(System.out::println)
                 .anyMatch(p -> subject.indexOf(p) != -1);
-    }
+    }*/
     
 }

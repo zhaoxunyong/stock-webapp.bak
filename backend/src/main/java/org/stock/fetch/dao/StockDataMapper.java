@@ -20,7 +20,9 @@ public interface StockDataMapper {
 
     List<StockData> selectAll();
     
-    List<StockData> search(@Param("value") String value);
+    List<StockData> search4StockMyData(@Param("value") String value);
+    
+    List<StockData> search4StockData(@Param("value") String value);
 
     int updateByPrimaryKey(StockData record);
 }

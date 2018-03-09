@@ -17,7 +17,7 @@
         </b-nav-item-dropdown>
 
         <b-nav-item-dropdown text="個性化設置" right>
-          <b-dropdown-item href="#" @click.prevent="go('/editMySelectedType')">
+          <b-dropdown-item href="#" @click.prevent="go('/newsSettings')">
             新聞設置
           </b-dropdown-item>  
           <b-dropdown-item href="#" @click.prevent="go('/editMySelectedType')">

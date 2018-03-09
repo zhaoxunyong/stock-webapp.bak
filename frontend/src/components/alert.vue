@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-alert :show="dismissCountDown"
+    <b-alert class="position-fixed w-100" :show="dismissCountDown"
              dismissible
              :variant="variant"
              title="Error"

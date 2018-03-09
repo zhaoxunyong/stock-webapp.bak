@@ -6,7 +6,7 @@
         <b-col xl="10" sm="10" md="10" lg="10" style="box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
           <stock-my-selected-type></stock-my-selected-type>
           <Alert></Alert>
-          <!-- <Loading></Loading> -->
+          <StockDetail></StockDetail>
           <stock-news></stock-news>
         </b-col>
       </b-row>
@@ -17,12 +17,13 @@
 import MainLayout from '../layouts/Main.vue'
 import StockMyData from './StockMyData.vue'
 import StockMySelectedType from './stockMySelectedType.vue'
+import StockDetail from './stockDetail.vue'
 import StockNews from './stockNews.vue'
 import Alert from '../components/alert.vue'
 // import Loading from '../components/loading.vue'
 export default {
   components: { 
-    MainLayout, StockMyData, StockMySelectedType, StockNews, Alert//, Loading
+    MainLayout, StockMyData, StockMySelectedType, StockDetail, StockNews, Alert//, Loading
   }
 }
 </script>

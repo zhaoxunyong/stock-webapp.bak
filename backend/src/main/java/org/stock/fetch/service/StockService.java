@@ -2,6 +2,7 @@ package org.stock.fetch.service;
 
 import java.util.List;
 
+import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockImportantNews;
@@ -9,6 +10,7 @@ import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelectedType;
 import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
+import org.stock.fetch.model.StockNewsKey;
 
 public interface StockService {
 	public List<StockMyData> getStockMyDatas();
@@ -40,4 +42,15 @@ public interface StockService {
 	public List<StockDailyTransactions> getStockDailyTransactions();
 	
 	public List<StockData> search4StockData(String value);
+    
+    public List<StockData> search4StockMyData(String value);
+    
+    public List<StockNewsKey> getStockNewsKeyByInclude();
+    
+    public List<StockNewsKey> getStockNewsKeyByexclude();
+    
+    public void saveStockNewsKeys(List<StockNewsKey> stockNewsKey);
+    
+    public int deleteByType(StockNewsKeyTypeEnum stockNewsKeyTypeEnum);
+
 }

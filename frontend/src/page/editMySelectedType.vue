@@ -162,7 +162,7 @@ export default {
       return 'success'
     },
     getUrl (input) {
-      return '/api/stock/search4StockData?query='+input
+      return '/api/stock/search4StockMyData?query='+input
     },
     selectedProcess (result, refs) {
         // console.log("===>"+$(this['$el']).html())
@@ -178,15 +178,6 @@ export default {
           Bus.$emit('alerts', result.display+"已經存在!")
         }
       })
-
-
-      // this.group = group
-      // access the autocomplete component methods from the parent
-      // this.$refs.autocomplete.clear()
-      /*for(let i=0;i<this.$refs.autocomplete.length;i++) {
-        let autocompleteRefs = this.$refs.autocomplete[i]
-        autocompleteRefs.clear()
-      }*/
     },
     formattedDisplay (result) {
       return result.no + ' ' + result.company
@@ -202,9 +193,8 @@ export default {
           let url = '/api/stock/removeStockMySelected?selectedType='+selectedType
           api.post(url, null, rs => {
             $this.getData()
-            // vm.$forceUpdate()
-            // 触发stockmydata.vue重新摘取某个自选股中的所有股票  
-            // Bus.$emit('getMyStockSelected', selectedType, selectedName)
+            $this.currSelectedType = ''
+            $this.list = []
           })
         }
       ).catch(function(e){
