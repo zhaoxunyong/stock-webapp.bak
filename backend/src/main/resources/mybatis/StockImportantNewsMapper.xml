@@ -44,13 +44,45 @@
     from stock_important_news
     where id = #{id,jdbcType=BIGINT}
   </select>
+  
   <select id="selectAll" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" /> 
     from stock_important_news
     order by news_date desc limit #{startNo, jdbcType=INTEGER}, #{pageSize, jdbcType=INTEGER}
   </select>
+  
+  <select id="selectExclude" resultMap="BaseResultMap" >
+    select <include refid="BaseColumnList" /> 
+    from stock_important_news
+    where indexof_string(subject, #{keys, jdbcType=VARCHAR}) = 0
+    order by news_date desc limit #{startNo, jdbcType=INTEGER}, #{pageSize, jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectInclude" resultMap="BaseResultMap" >
+    select <include refid="BaseColumnList" /> from 
+    (select <include refid="BaseColumnList" />
+	    from stock_important_news
+	    where indexof_string(subject, #{keys, jdbcType=VARCHAR}) = 0) b
+	where indexof_string(subject, #{keys, jdbcType=VARCHAR}) = 1
+	order by news_date desc limit #{startNo, jdbcType=INTEGER}, #{pageSize, jdbcType=INTEGER}
+  </select>
+  
   <select id="count" resultType="int" >
     select count(id) 
     from stock_important_news
+  </select>
+  
+  <select id="excludeCount" resultType="int" >
+    select count(id) 
+    from stock_important_news
+    where indexof_string(subject, #{keys, jdbcType=VARCHAR}) = 0
+  </select>
+  
+  <select id="includeCount" resultType="int" >
+    select count(id) from 
+    (select <include refid="BaseColumnList" />
+	    from stock_important_news
+	    where indexof_string(subject, #{keys, jdbcType=VARCHAR}) = 0) b
+	where indexof_string(subject, #{keys, jdbcType=VARCHAR}) = 1
   </select>
 </mapper>
