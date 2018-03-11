@@ -5,7 +5,8 @@
              :variant="variant"
              title="Error"
              @dismissed="dismissCountdown=0"
-             @dismiss-count-down="countDownChanged">
+             @dismiss-count-down="countDownChanged"
+             style="z-index: 9999">
       <!-- Close after {{dismissCountDown}} seconds...<br /> -->
       {{ message }}
       

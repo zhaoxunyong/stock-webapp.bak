@@ -108,7 +108,7 @@ public class StockApiImpl implements StockApi {
 		return dto;
 	}
 
-	@Override
+	/*@Override
     @RequestMapping(value = "/getNewsBystockId/{stockId}/{curPage}/{pageSize}", method = GET)
 	public PageDto<StockNewsDto> getNewsBystockId(@PathVariable String stockId, @PathVariable int curPage, @PathVariable int pageSize) {
 		PageDto<StockNewsDto> pageDto = new PageDto<StockNewsDto>(curPage, pageSize);
@@ -125,9 +125,49 @@ public class StockApiImpl implements StockApi {
         pageDto.setRows(dtoList);
         pageDto.setTotal(total);
         return pageDto;
-	}
+	}*/
+	
 
-	@Override
+
+    @Override
+    @RequestMapping(value = "/getNewsExcludeBystockId/{stockId}/{curPage}/{pageSize}", method = GET)
+    public PageDto<StockNewsDto> getNewsExcludeBystockId(@PathVariable String stockId, @PathVariable int curPage, @PathVariable int pageSize) {
+        PageDto<StockNewsDto> pageDto = new PageDto<StockNewsDto>(curPage, pageSize);
+        
+        List<StockNews> stockNewses = stockService.getNewsExcludeBystockId(Long.parseLong(stockId), pageDto.getStart(), pageSize);
+        List<StockNewsDto> dtoList = stockNewses.stream().map(model -> {
+            return modelMapper.map(model, StockNewsDto.class);
+        }).collect(Collectors.toList());
+        
+        // 查詢列表記錄總數
+        int total = stockService.getNewsExcludeCountBystockId(Long.parseLong(stockId));
+        
+        // 設置分頁信息
+        pageDto.setRows(dtoList);
+        pageDto.setTotal(total);
+        return pageDto;
+    }
+
+    @Override
+    @RequestMapping(value = "/getNewsIncludeBystockId/{stockId}/{curPage}/{pageSize}", method = GET)
+    public PageDto<StockNewsDto> getNewsIncludeBystockId(@PathVariable String stockId, @PathVariable int curPage, @PathVariable int pageSize) {
+        PageDto<StockNewsDto> pageDto = new PageDto<StockNewsDto>(curPage, pageSize);
+        
+        List<StockNews> stockNewses = stockService.getNewsIncludeBystockId(Long.parseLong(stockId), pageDto.getStart(), pageSize);
+        List<StockNewsDto> dtoList = stockNewses.stream().map(model -> {
+            return modelMapper.map(model, StockNewsDto.class);
+        }).collect(Collectors.toList());
+        
+        // 查詢列表記錄總數
+        int total = stockService.getNewsIncludeCountBystockId(Long.parseLong(stockId));
+        
+        // 設置分頁信息
+        pageDto.setRows(dtoList);
+        pageDto.setTotal(total);
+        return pageDto;
+    }
+
+	/*@Override
     @RequestMapping(value = "/getImportantNews/{curPage}/{pageSize}", method = GET)
 	public PageDto<StockImportantNewsDto> getImportantNews(@PathVariable int curPage, @PathVariable int pageSize) {
 		PageDto<StockImportantNewsDto> pageDto = new PageDto<StockImportantNewsDto>(curPage, pageSize);
@@ -144,7 +184,45 @@ public class StockApiImpl implements StockApi {
         pageDto.setRows(dtoList);
         pageDto.setTotal(total);
         return pageDto;
-	}
+	}*/
+    
+    @Override
+    @RequestMapping(value = "/getImportantNewsExclude/{curPage}/{pageSize}", method = GET)
+    public PageDto<StockImportantNewsDto> getImportantNewsExclude(@PathVariable int curPage, @PathVariable int pageSize) {
+        PageDto<StockImportantNewsDto> pageDto = new PageDto<StockImportantNewsDto>(curPage, pageSize);
+        
+        List<StockImportantNews> stockImportantNewses = stockService.getImportantNewsExclude(pageDto.getStart(), pageSize);
+        List<StockImportantNewsDto> dtoList = stockImportantNewses.stream().map(model -> {
+            return modelMapper.map(model, StockImportantNewsDto.class);
+        }).collect(Collectors.toList());
+        
+        // 查詢列表記錄總數
+        int total = stockService.getImportantNewsExcludeCount();
+        
+        // 設置分頁信息
+        pageDto.setRows(dtoList);
+        pageDto.setTotal(total);
+        return pageDto;
+    }
+
+    @Override
+    @RequestMapping(value = "/getImportantNewsInclude/{curPage}/{pageSize}", method = GET)
+    public PageDto<StockImportantNewsDto> getImportantNewsInclude(@PathVariable int curPage, @PathVariable int pageSize) {
+        PageDto<StockImportantNewsDto> pageDto = new PageDto<StockImportantNewsDto>(curPage, pageSize);
+        
+        List<StockImportantNews> stockImportantNewses = stockService.getImportantNewsInclude(pageDto.getStart(), pageSize);
+        List<StockImportantNewsDto> dtoList = stockImportantNewses.stream().map(model -> {
+            return modelMapper.map(model, StockImportantNewsDto.class);
+        }).collect(Collectors.toList());
+        
+        // 查詢列表記錄總數
+        int total = stockService.getImportantNewsIncludeCount();
+        
+        // 設置分頁信息
+        pageDto.setRows(dtoList);
+        pageDto.setTotal(total);
+        return pageDto;
+    }
 
 	@Override
     @RequestMapping(value = "/getStockMySelectedTypes", method = GET)

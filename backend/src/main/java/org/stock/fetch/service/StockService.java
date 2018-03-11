@@ -21,13 +21,21 @@ public interface StockService {
 	
 	public StockData getStockData(Long id);
 	
-	public List<StockNews> getNewsBystockId(Long stockId, int curPage, int pageSize);
+	public List<StockNews> getNewsExcludeBystockId(Long stockId, int curPage, int pageSize);
 	
-	public int getNewsCountBystockId(Long stockId);
+	public List<StockNews> getNewsIncludeBystockId(Long stockId, int curPage, int pageSize);
 	
-	public List<StockImportantNews> getImportantNews(int curPage, int pageSize);
+	public int getNewsExcludeCountBystockId(Long stockId);
 	
-	public int getImportantNewsCount();
+	public int getNewsIncludeCountBystockId(Long stockId);
+	
+	public List<StockImportantNews> getImportantNewsExclude(int curPage, int pageSize);
+	
+	public List<StockImportantNews> getImportantNewsInclude(int curPage, int pageSize);
+	
+	public int getImportantNewsExcludeCount();
+	
+	public int getImportantNewsIncludeCount();
 	
 	public List<StockMySelectedType> getStockMySelectedTypes();
 	

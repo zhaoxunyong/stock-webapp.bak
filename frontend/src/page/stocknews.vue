@@ -1,5 +1,9 @@
 <template>
   <div>
+    <nav class="nav nav-pills nav-justified">
+    <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">所有新聞</a>
+    <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">焦點新聞</a>
+  </nav>
   <b-table striped hover :items="items" :fields="fields"></b-table>
           <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
   </div>
@@ -47,14 +51,25 @@ export default {
       this.numberOfPages = 0
       this.currentPage = 1
     },
+    showExcludeNews(event) {
+      $(".active").removeClass('active')
+      $(event.target).addClass('active')
+      this.getData(1)
+    },
+    showIncludeNews(event) {
+      $(".active").removeClass('active')
+      $(event.target).addClass('active')
+      this.getData(0)
+    },
     // 第一次加载数据
-    getData () {
+    getData (type) {
       this.stockId = this.$route.params.stockId
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
         this.$api.get('/api/stock/getStockData/'+this.stockId, null, stockData => {
           this.company = stockData.company
           let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
-          let url = '/api/stock/getNewsBystockId/' + this.stockId+'/'+pageNum+'/'+this.pageSize
+          let rootUrl = type == 0 ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
+          let url = rootUrl + this.stockId+'/'+pageNum+'/'+this.pageSize
           // alert("url1--->"+url)
           this.$api.get(url, null, rs => {
             // this.dat = r
@@ -82,7 +97,7 @@ export default {
           this.company = stockData.company
           console.log("company--->"+this.company)
           let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
-          let url = '/api/stock/getNewsBystockId/' + this.stockId+'/'+pageNum+'/'+this.pageSize
+          let url = '/api/stock/getNewsExcludeBystockId/' + this.stockId+'/'+pageNum+'/'+this.pageSize
           // alert("url2--->"+url)
           this.$api.get(url, null, rs => {
             // this.dat = r

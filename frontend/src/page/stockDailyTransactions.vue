@@ -3,19 +3,23 @@
     <template>
       <div>
         <Alert></Alert>
-        <b-container class="bv-example-row" fluid>
+        <b-container>
         <b-row>
-            <b-col id="row_title">&nbsp;&nbsp;請選擇需要導入的每天買入賣出股文件:</b-col>
-          </b-row>
-          <b-row>
-            <b-col>
-              <b-form-file id="file1" v-model="file" ref="fileinput" placeholder="Please choose a file." @change="update"></b-form-file>
-              <!-- <div class="mt-3">Selected file: {{file && file.name}}</div> -->
-            </b-col>
-          </b-row>
+          <b-col id="row_title">請選擇需要導入的每天買入賣出股文件:</b-col>
+        </b-row>
+        <b-row>
+          <b-col>
+            <b-form-file id="file1" v-model="file" ref="fileinput" placeholder="Please choose a file." @change="update"></b-form-file>
+            <!-- <div class="mt-3">Selected file: {{file && file.name}}</div> -->
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col>
+            <p class="p-3 mb-2 bg-info text-white">每天買入賣出股列表：</p>
+            <b-table hover :items="items" style="width: 90%"></b-table>
+          </b-col>
+        </b-row>
       </b-container>
-      <div id="row_title">每天買入賣出股列表：</div>
-      <b-table striped hover :items="items" style="width: 90%"></b-table>
       </div>
     </template>
   </main-layout>
@@ -85,16 +89,7 @@ export default {
 </script>
 
 <style scoped>
-div {
+/*div {
   font-size: 12px;
-}
-.bv-example-row {
-  padding: 10px 5px;
-}
-
-#row_title {
-  padding: 10px 5px;
-  margin: 10px 5px;
-  font-weight: bold;
-}
+}*/
 </style>

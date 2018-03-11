@@ -1,6 +1,6 @@
 <template>  
   <div>
-    <div class="p-2">
+    <div class="m-2">
       <autocomplete
         ref="autocomplete"
         :source="getUrl"
@@ -11,7 +11,7 @@
       </autocomplete>
     </div>
 
-    <div id="select_div">
+    <div class="p-2">
       <b-btn variant="primary" @click="toFront"><-</b-btn>
       <b-btn v-b-modal.modalPrevent variant="primary">+</b-btn>
       <b-btn variant="primary" @click="toBack">-></b-btn>
@@ -47,7 +47,8 @@ import Bus from '../eventBus'
 
 // https://github.com/charliekassel/vuejs-autocomplete
 // import Autocomplete from 'vuejs-auto-complete'
-import Autocomplete from '../components/Autocomplete'
+import Autocomplete from 'stock-auto-complete'
+// import Autocomplete from '../components/Autocomplete'
 export default {
   components: {
     Autocomplete
@@ -272,19 +273,7 @@ export default {
 </script>
 
 <style scoped>
-#select_div {
-  padding: 10px;
-}
-
-#select_div button {
-}
-
 .selected {
   color: red;
-}
-
-.selected_name {
-  color: blue;
-  padding: 5px 2px;
 }
 </style>

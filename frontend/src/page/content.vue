@@ -1,16 +1,78 @@
 <template>
   <main-layout>
-  <b-container fluid>
+    <b-container fluid class="bv-example-row border">
       <b-row>
-        <b-col xl="2" sm="2" md="2" lg="2" style="box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;"><stock-my-data></stock-my-data></b-col>
-        <b-col xl="10" sm="10" md="10" lg="10" style="box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;">
-          <stock-my-selected-type></stock-my-selected-type>
-          <Alert></Alert>
-          <StockDetail></StockDetail>
-          <stock-news></stock-news>
+        <!--left-->
+        <b-col cols="2" sm="2" class="border-right border-primary">
+          <stock-my-data></stock-my-data>
         </b-col>
+        <b-col cols="10" sm="10">
+        <!--自选股top-->
+          <b-row>
+            <b-col cols="12" sm="12">
+              <stock-my-selected-type></stock-my-selected-type>
+              <img src="../images/stock03.png" class="w-100" />
+            </b-col>
+          </b-row>
+          <!--个股详情与新闻-->
+          <b-row>
+            <!--个股左侧信息-->
+            <b-col cols="9" sm="9">
+              <!--个股详情-->
+              <b-row>
+                <b-col cols="12" sm="12">
+                  <b-row>
+                      <b-col>
+                        <img src="../images/stock01.png" class="w-100" />
+                      </b-col>
+                      <b-col>
+                        <img src="../images/stock01.png" class="w-100" />
+                      </b-col>
+                      <b-col>
+                        <img src="../images/stock01.png" class="w-100" />
+                      </b-col>
+                  </b-row>
+                  <b-row>
+                      <b-col>
+                        <img src="../images/stock01.png" class="w-100" />
+                      </b-col>
+                      <b-col>
+                        <img src="../images/stock01.png" class="w-100" />
+                      </b-col>
+                      <b-col>
+                        <img src="../images/stock01.png" class="w-100" />
+                      </b-col>
+                  </b-row>
+                  <b-row>
+                      <b-col>
+                        <img src="../images/stock01.png" class="w-100" />
+                      </b-col>
+                      <b-col>
+                        <img src="../images/stock01.png" class="w-100" />
+                      </b-col>
+                      <b-col>
+                        <img src="../images/stock01.png" class="w-100" />
+                      </b-col>
+                  </b-row>
+                </b-col>
+              </b-row>
+              <!--新闻-->
+              <b-row class="mt-3">
+                <b-col cols="12" sm="12">
+                  <stock-news></stock-news>
+                </b-col>
+              </b-row>
+            </b-col>
+            <!--个股右侧信息-->
+            <b-col cols="3" sm="3">
+              <img src="../images/stock02.png" class="w-100" />
+              <img src="../images/stock04.png" class="w-100" />
+            </b-col>
+          </b-row>
+        </b-col>
+        
       </b-row>
-  </b-container>
+    </b-container>
   </main-layout>
 </template>
 <script>

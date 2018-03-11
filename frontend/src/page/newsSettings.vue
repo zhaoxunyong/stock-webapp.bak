@@ -1,31 +1,32 @@
 <template>
   <main-layout>
-    <div class="border border-primary m-2">
+    <div class="border border-primary m-2 float-left" style="width: 45%">
       <h5 class="text-primary p-1">去重關鍵字：
       <button type="button" class="btn btn-primary" @click="saveExcludeItem($event)">保存</button>
+      <button type="button" class="btn btn-primary" @click="addExcludeItem($event)">添加</button>
       </h5>
       <div class="exclude-item w-5 float-left p-1" v-for="item in excludesItems">
           <input type="text" class="form-control" :value="item.key" />
       </div>
-      <div id="add-exclude-item" class="w-5 float-left p-1">
-          <button type="button" class="btn btn-primary" @click="addExcludeItem($event)">添加</button>
+      <div id="add-exclude-item" class="w-3 float-left p-1">
       </div>
       <div class="clearfix"></div>
     </div>
 
 
-    <div class="border border-success m-2 mt-3">
+    <div class="border border-success m-2 float-left" style="width: 45%">
       <h5 class="text-success p-1">焦點關鍵字：
       <button type="button" class="btn btn-success" @click="saveIncludeItem($event)">保存</button>
+      <button type="button" class="btn btn-success" @click="addIncludeItem($event)">添加</button>
       </h5>
       <div class="include-item w-5 float-left p-1" v-for="item in includesItems">
           <input type="text" class="form-control" :value="item.key" />
       </div>
-      <div id="add-include-item" class="w-5 float-left p-1">
-          <button type="button" class="btn btn-success" @click="addIncludeItem($event)">添加</button>
+      <div id="add-include-item" class="w-3 float-left p-1">
       </div>
       <div class="clearfix"></div>
     </div>
+    <div class="clearfix"></div>
   </main-layout>
 </template>
 <script>

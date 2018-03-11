@@ -5,7 +5,7 @@
       所有
     </b-button> -->
 
-    <b-button :variant="currSelectedType==''?'warning':'success'" @click="getAllStockMyStore">
+    <b-button :variant="currSelectedType=='' || currSelectedType=='0'?'warning':'success'" @click="getAllStockMyStore">
       庫存股
     </b-button>
 

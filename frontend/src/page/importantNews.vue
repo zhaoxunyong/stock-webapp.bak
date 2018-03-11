@@ -1,6 +1,10 @@
 <template>
   <main-layout>
     <template>
+      <nav class="mt-3 ml-3 nav nav-pills nav-justified">
+        <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">所有新聞</a>
+        <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">焦點新聞</a>
+      </nav>
       <b-table striped hover :items="items"></b-table>
       <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
     </template>
@@ -33,9 +37,20 @@ export default {
         path: '/importantNews/' + pageNum
       }
     },
-    getData () {
+    showExcludeNews(event) {
+      $(".active").removeClass('active')
+      $(event.target).addClass('active')
+      this.getData(1)
+    },
+    showIncludeNews(event) {
+      $(".active").removeClass('active')
+      $(event.target).addClass('active')
+      this.getData(0)
+    },
+    getData (type) {
       items = []
-      let url = '/api/stock/getImportantNews/'+this.$route.params.pageNum+"/"+this.pageSize
+      let rootUrl = type == 0 ? '/api/stock/getImportantNewsInclude/' : '/api/stock/getImportantNewsExclude/'
+      let url = rootUrl+this.$route.params.pageNum+"/"+this.pageSize
       // alert("url1--->"+url)
       this.$api.get(url, null, rs => {
         // this.items = rs

@@ -10,8 +10,8 @@
       </span>
 
       <div class="float-right w-25">
-        <b-btn v-b-modal.modalPrevent variant="info">+</b-btn>
-        <b-button variant="info" @click="save2StockMyData">保存</b-button>
+        <b-btn v-b-modal.modalPrevent variant="info">添加</b-btn>
+        <b-button v-if="currSelectedType != ''" variant="info" @click="save2StockMyData">保存</b-button>
         <!-- Modal Component -->
         <b-modal id="modalPrevent"
                  ref="modal"
@@ -78,7 +78,8 @@ import Sortable from 'sortablejs'
 
 // https://github.com/charliekassel/vuejs-autocomplete
 // import Autocomplete from 'vuejs-auto-complete'
-import Autocomplete from '../components/Autocomplete'
+import Autocomplete from 'stock-auto-complete'
+// import Autocomplete from '../components/Autocomplete'
 export default {
   components: { 
     MainLayout, Autocomplete, Alert 
