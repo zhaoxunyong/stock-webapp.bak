@@ -11,10 +11,10 @@
       </autocomplete>
     </div>
 
-    <div class="p-2">
-      <b-btn variant="primary" @click="toFront"><-</b-btn>
-      <b-btn v-b-modal.modalPrevent variant="primary">+</b-btn>
-      <b-btn variant="primary" @click="toBack">-></b-btn>
+    <div class="pt-2 pb-2">
+      <b-btn size="sm" variant="primary" @click="toFront"><-</b-btn>
+      <b-btn size="sm" v-b-modal.modalPrevent variant="primary">+</b-btn>
+      <b-btn size="sm" variant="primary" @click="toBack">-></b-btn>
       <!-- Modal Component -->
       <b-modal id="modalPrevent"
                ref="modal"
@@ -32,13 +32,13 @@
 
     <div class="selected_name">
     <h5>{{ myStockSelectedName }}</h5>
-    </div>
 
-    <span v-for="i in list">
+    <span v-for="i in list" class="d-none d-lg-block">
       <a :href="'/content/' + i.stockId+'/1'" @click.prevent="go(i.stockId)" :class="isSelected(i.stockId)">
         {{ i.company }}
       </a><br />
     </span>
+    </div>
   </div>
 </template>
 

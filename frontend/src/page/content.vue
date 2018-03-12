@@ -3,10 +3,10 @@
     <b-container fluid class="bv-example-row border">
       <b-row>
         <!--left-->
-        <b-col cols="2" sm="2" class="border-right border-primary">
+        <b-col lg="2" md="3" sm="3" class="border-right border-primary">
           <stock-my-data></stock-my-data>
         </b-col>
-        <b-col cols="10" sm="10">
+        <b-col lg="10" md="9" sm="9">
         <!--自选股top-->
           <b-row>
             <b-col cols="12" sm="12">
