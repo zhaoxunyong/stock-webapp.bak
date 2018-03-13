@@ -30,7 +30,7 @@
       </b-modal>
     </div>
 
-    <div class="selected_name">
+    <div class="selected_name text">
     <h5>{{ myStockSelectedName }}</h5>
 
     <span v-for="i in list" class="d-none d-lg-block">
@@ -275,5 +275,18 @@ export default {
 <style scoped>
 .selected {
   color: red;
+}
+
+.text {
+    display: block;
+    display: -webkit-box;
+    max-width: 400px;
+    height: 450px;
+    margin: 0 auto;
+    line-height: 1.2;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: auto;
+    text-overflow: ellipsis;
 }
 </style>
