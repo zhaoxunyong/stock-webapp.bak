@@ -22,11 +22,12 @@ export default {
       items: [],
       numberOfPages: 0,
       currentPage: this.$route.params.pageNum,
+      type: 1,
       pageSize: PAGE_SIZE
     }
   },
   created () {
-    this.getData()  
+    this.getData(1)  
     Bus.$on('initCurrentPage', (pageNum) => {
       this.currentPage = pageNum
     })
@@ -40,18 +41,24 @@ export default {
     showExcludeNews(event) {
       $(".active").removeClass('active')
       $(event.target).addClass('active')
+      this.type = 1
       this.getData(1)
     },
     showIncludeNews(event) {
       $(".active").removeClass('active')
       $(event.target).addClass('active')
-      this.getData(0)
+      this.type = 0
+      this.getData(1)
     },
-    getData (type) {
+    getData (pageNum) {
+      if(pageNum != undefined) {
+        this.pageNum = pageNum
+      } else {
+        this.pageNum = this.$route.params.pageNum
+      }
       items = []
-      let rootUrl = type == 0 ? '/api/stock/getImportantNewsInclude/' : '/api/stock/getImportantNewsExclude/'
-      let url = rootUrl+this.$route.params.pageNum+"/"+this.pageSize
-      // alert("url1--->"+url)
+      let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getImportantNewsInclude/' : '/api/stock/getImportantNewsExclude/'
+      let url = rootUrl+this.pageNum+"/"+this.pageSize
       this.$api.get(url, null, rs => {
         // this.items = rs
         this.numberOfPages = rs.pageTotal
@@ -67,8 +74,10 @@ export default {
   },
   watch: {
     '$route' (to, from) {
+      this.pageNum = this.$route.params.pageNum
       items = []
-      let url = '/api/stock/getImportantNews/'+this.$route.params.pageNum+"/"+this.pageSize
+      let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getImportantNewsInclude/' : '/api/stock/getImportantNewsExclude/'
+      let url = rootUrl+this.pageNum+"/"+this.pageSize
       // alert("url2--->"+url)
       this.$api.get(url, null, rs => {
         // this.items = rs

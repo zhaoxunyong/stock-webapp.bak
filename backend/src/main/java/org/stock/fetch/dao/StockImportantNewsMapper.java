@@ -16,17 +16,17 @@ public interface StockImportantNewsMapper {
 
     StockImportantNews selectByPrimaryKey(Long id);
 
-    List<StockImportantNews> selectAll(@Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize);
+//    List<StockImportantNews> selectAll(@Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize);
     
-    List<StockImportantNews> selectExclude(@Param("keys")String keys, @Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize);
+    List<StockImportantNews> selectExclude(@Param("excludeKeys")String excludeKeys, @Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize);
     
-    List<StockImportantNews> selectInclude(@Param("keys")String keys, @Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize);
+    List<StockImportantNews> selectInclude(@Param("excludeKeys")String excludeKeys, @Param("includeKeys")String includeKeys, @Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize);
     
-    int count();
+//    int count();
     
-    int excludeCount(@Param("keys")String keys);
+    int excludeCount(@Param("excludeKeys")String excludeKeys);
     
-    int includeCount(@Param("keys")String keys);
+    int includeCount(@Param("excludeKeys")String excludeKeys, @Param("includeKeys")String includeKeys);
 
     int updateByPrimaryKey(StockImportantNews record);
 }

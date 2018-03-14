@@ -105,6 +105,6 @@
 	AND a.stock_id = c.stock_id
 	AND c.selected_type = #{type,jdbcType=BIGINT}
 	GROUP BY a.stock_id
-	ORDER BY b.company ASC
+	ORDER BY c.id ASC
   </select>
 </mapper>

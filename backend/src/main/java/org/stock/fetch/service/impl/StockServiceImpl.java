@@ -127,55 +127,47 @@ public class StockServiceImpl implements StockService {
 
 	@Override
 	public List<StockImportantNews> getImportantNewsExclude(int startNo, int pageSize) {
-	    List<StockNewsKey> stockNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.INCLUDE.getType());
-        if(CollectionsUtils.isNotEmpty(stockNewsKeys)) {
-            String keys = stockNewsKeys.stream()
-                    .map(StockNewsKey::getKey)
-                    .collect(Collectors.joining(","));
-            return stockImportantNewsMapper.selectExclude(keys, startNo, pageSize);
-        } else {
-            return stockImportantNewsMapper.selectAll(startNo, pageSize);
-        }
+        List<StockNewsKey> stockNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.EXCLUDE.getType());
+        String excludeKeys = stockNewsKeys.stream()
+                .map(StockNewsKey::getKey)
+                .collect(Collectors.joining(","));
+        return stockImportantNewsMapper.selectExclude(excludeKeys, startNo, pageSize);
 	}
 
     @Override
     public List<StockImportantNews> getImportantNewsInclude(int startNo, int pageSize) {
-        List<StockNewsKey> stockNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.INCLUDE.getType());
-        if(CollectionsUtils.isNotEmpty(stockNewsKeys)) {
-            String keys = stockNewsKeys.stream()
-                    .map(StockNewsKey::getKey)
-                    .collect(Collectors.joining(","));
-            return stockImportantNewsMapper.selectInclude(keys, startNo, pageSize);
-        } else {
-            return this.getImportantNewsExclude(startNo, pageSize);
-        }
+        List<StockNewsKey> stockExcludeNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.EXCLUDE.getType());
+        List<StockNewsKey> stockIncludeNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.INCLUDE.getType());
+        String excludeKeys = stockExcludeNewsKeys.stream()
+                .map(StockNewsKey::getKey)
+                .collect(Collectors.joining(","));
+        String includeKeys = stockIncludeNewsKeys.stream()
+                .map(StockNewsKey::getKey)
+                .collect(Collectors.joining(","));
+        return stockImportantNewsMapper.selectInclude(excludeKeys, includeKeys, startNo, pageSize);
     }
 
 
     @Override
     public int getImportantNewsExcludeCount() {
-        List<StockNewsKey> stockNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.INCLUDE.getType());
-        if(CollectionsUtils.isNotEmpty(stockNewsKeys)) {
-            String keys = stockNewsKeys.stream()
-                    .map(StockNewsKey::getKey)
-                    .collect(Collectors.joining(","));
-            return stockImportantNewsMapper.excludeCount(keys);
-        } else {
-            return stockImportantNewsMapper.count();
-        }
+        List<StockNewsKey> stockNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.EXCLUDE.getType());
+        String excludeKeys = stockNewsKeys.stream()
+                .map(StockNewsKey::getKey)
+                .collect(Collectors.joining(","));
+        return stockImportantNewsMapper.excludeCount(excludeKeys);
     }
 
     @Override
     public int getImportantNewsIncludeCount() {
-        List<StockNewsKey> stockNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.INCLUDE.getType());
-        if(CollectionsUtils.isNotEmpty(stockNewsKeys)) {
-            String keys = stockNewsKeys.stream()
-                    .map(StockNewsKey::getKey)
-                    .collect(Collectors.joining(","));
-            return stockImportantNewsMapper.includeCount(keys);
-        } else {
-            return this.getImportantNewsExcludeCount();
-        }
+        List<StockNewsKey> stockExcludeNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.EXCLUDE.getType());
+        List<StockNewsKey> stockIncludeNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.INCLUDE.getType());
+        String excludeKeys = stockExcludeNewsKeys.stream()
+                .map(StockNewsKey::getKey)
+                .collect(Collectors.joining(","));
+        String includeKeys = stockIncludeNewsKeys.stream()
+                .map(StockNewsKey::getKey)
+                .collect(Collectors.joining(","));
+        return stockImportantNewsMapper.includeCount(excludeKeys, includeKeys);
     }
 
 	@Override
