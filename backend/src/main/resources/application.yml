@@ -6,7 +6,7 @@ spring:
     name: stock-webapp
     
   datasource: 
-    url: jdbc:mysql://192.168.99.100:3306/wenchun?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+    url: jdbc:mysql://127.0.0.1:3306/wenchun?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
     username: wenchun
     password: Aa123456
     driver-class-name: com.mysql.jdbc.Driver
