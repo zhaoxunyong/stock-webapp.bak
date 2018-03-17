@@ -19,17 +19,21 @@ public class ScheduledTasks {
     @Autowired
     private FetchService fetchService;
     
-//    @Scheduled(fixedRate = 5000)
-    @Scheduled(cron="*/5 * * * * *")
+//    @Scheduled(fixedRate = 999999999)
+    @Scheduled(cron="* */20 * * * *")
     public void reportCurrentTime() throws Exception {
+        System.out.println("start--->"+DatesUtils.YYMMDDHHMMSS.toString());
         // 自动取新闻第一页
         fetchService.fetchNews(1);
+        System.out.println("end--->"+DatesUtils.YYMMDDHHMMSS.toString());
+        System.out.println("start1--->"+DatesUtils.YYMMDDHHMMSS.toString());
         
         // 自動取重點新聞第一頁
         fetchService.fetchImportantNews(1);
+        System.out.println("end1--->"+DatesUtils.YYMMDDHHMMSS.toString());
         
         // 獲取所有股票
-        fetchService.fetchAll();
+//        fetchService.fetchAll();
         
         
         
