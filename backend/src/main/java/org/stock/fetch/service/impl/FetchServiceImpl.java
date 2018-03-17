@@ -481,10 +481,10 @@ public class FetchServiceImpl implements FetchService {
         }
     }
 
-    @Override
+    /*@Override
     public List<StockHistory> select(Date startDate, Date endDate) {
         return stockHistoryMapper.select(startDate, endDate);
-    }
+    }*/
 
     @Override
     @Transactional

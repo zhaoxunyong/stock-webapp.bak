@@ -19,23 +19,23 @@ public class FetchController {
     @Autowired
     private FetchService fetchService;
     
-    @RequestMapping("/index")
+    /*@RequestMapping("/index")
     public ModelAndView index(String startDate, String endDate) {
         List<StockHistory> historys = fetchService.select(DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
         ModelAndView view = new ModelAndView("fetch");
         view.addObject("historys", historys);
         return view;
-    }
+    }*/
     
-    @RequestMapping("/index2")
+    /*@RequestMapping("/index2")
     public ModelAndView index2(String startDate, String endDate) {
         List<StockHistory> historys = fetchService.select(DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
         ModelAndView view = new ModelAndView("fetch2");
         view.addObject("historys", historys);
         return view;
-    }
+    }*/
     
-    @RequestMapping("/data")
+    /*@RequestMapping("/data")
     @ResponseBody
     public String data(String startDate, String endDate) {
         List<StockHistory> historys = fetchService.select(DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
@@ -54,5 +54,5 @@ public class FetchController {
             }
         }
         return str.toString();
-    }
+    }*/
 }
