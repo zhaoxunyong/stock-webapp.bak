@@ -3,6 +3,7 @@ package org.stock.fetch.api.impl;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +50,7 @@ import org.stock.fetch.model.StockNewsKey;
 import org.stock.fetch.service.FetchService;
 import org.stock.fetch.service.StockService;
 
+import com.aeasycredit.commons.lang.exception.BusinessException;
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 import com.aeasycredit.commons.lang.utils.CollectionsUtils;
 import com.aeasycredit.commons.lang.utils.DatesUtils;
@@ -276,6 +278,12 @@ public class StockApiImpl implements StockApi {
 		OutputStream output = null;
 		try {
 			input = file.getInputStream();
+			if(StringUtils.isBlank(stockProperties.getUploadTempFolder()) || !new File(stockProperties.getUploadTempFolder()).isDirectory()) {
+			    throw new BusinessException("UploadTempFolder is empty or is not folder!");
+			}
+			if(!new File(stockProperties.getUploadTempFolder()).exists()) {
+			    new File(stockProperties.getUploadTempFolder()).mkdirs();
+			}
 			String excelFile = stockProperties.getUploadTempFolder()+"/"+IdUtils.genLongId()+"_"+file.getOriginalFilename();
 			output = new FileOutputStream(excelFile);
 			IOUtils.copy(input, output);
