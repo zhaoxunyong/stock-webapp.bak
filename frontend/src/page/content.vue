@@ -19,7 +19,7 @@
             <!--个股左侧信息-->
             <b-col cols="9" sm="9">
               <!--个股详情-->
-              <b-row>
+              <!--<b-row>
                 <b-col cols="12" sm="12">
                   <b-row>
                       <b-col>
@@ -55,7 +55,7 @@
                       </b-col>
                   </b-row>
                 </b-col>
-              </b-row>
+              </b-row>-->
               <!--新闻-->
               <b-row class="mt-3">
                 <b-col cols="12" sm="12">
@@ -70,7 +70,7 @@
             </b-col>
           </b-row>
         </b-col>
-        
+
       </b-row>
     </b-container>
   </main-layout>
@@ -84,7 +84,7 @@ import StockNews from './stockNews.vue'
 import Alert from '../components/alert.vue'
 // import Loading from '../components/loading.vue'
 export default {
-  components: { 
+  components: {
     MainLayout, StockMyData, StockMySelectedType, StockDetail, StockNews, Alert//, Loading
   }
 }

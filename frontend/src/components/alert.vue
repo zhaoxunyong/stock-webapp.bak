@@ -7,9 +7,9 @@
              @dismissed="dismissCountdown=0"
              @dismiss-count-down="countDownChanged"
              style="z-index: 9999">
-      <!-- Close after {{dismissCountDown}} seconds...<br /> -->
+       <!--Close after {{dismissCountDown}} seconds...<br />-->
       {{ message }}
-      
+
     </b-alert>
   </div>
 </template>
@@ -19,7 +19,7 @@
   export default {
     data () {
       return {
-        dismissSecs: 10,
+        dismissSecs: 2,
         dismissCountDown: 0,
         message: '',
         variant: ''

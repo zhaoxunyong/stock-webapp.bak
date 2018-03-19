@@ -18,6 +18,9 @@ Vue.use(BootstrapVue)
 import Confirm from 'vue-confirm'
 Vue.use(Confirm)
 
+import Vuelidate from 'vuelidate'
+Vue.use(Vuelidate)
+
 // 引用API文件
 import api from './api/index.js'
 // 将API方法绑定到全局

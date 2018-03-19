@@ -19,15 +19,14 @@
         <b-nav-item-dropdown text="個性化設置" right>
           <b-dropdown-item href="#" @click.prevent="go('/newsSettings')">
             新聞設置
-          </b-dropdown-item>  
+          </b-dropdown-item>
           <b-dropdown-item href="#" @click.prevent="go('/editMySelectedType')">
             自選股
-          </b-dropdown-item>   
+          </b-dropdown-item>
           <b-dropdown-item href="#" @click.prevent="go('/stockDailyTransactions')">
-            每天買入賣出股
+            交易資料導入與查詢
           </b-dropdown-item>
         </b-nav-item-dropdown>
-        </b-nav-item>
       </b-navbar-nav>
     </b-collapse>
   </b-navbar>
