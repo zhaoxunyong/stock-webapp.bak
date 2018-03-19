@@ -1,5 +1,6 @@
 package org.stock.fetch.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.stock.fetch.constant.StockNewsKeyTypeEnum;
@@ -47,7 +48,7 @@ public interface StockService {
 	
 	public void removeStockMySelected(Long selectedType);
 	
-	public List<StockDailyTransactions> getStockDailyTransactions();
+	public List<StockDailyTransactions> getStockDailyTransactions(Date startDate, Date endDate);
 	
 	public List<StockData> search4StockData(String value);
     

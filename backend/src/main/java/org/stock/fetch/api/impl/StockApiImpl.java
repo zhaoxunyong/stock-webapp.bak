@@ -51,6 +51,7 @@ import org.stock.fetch.service.StockService;
 
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 import com.aeasycredit.commons.lang.utils.CollectionsUtils;
+import com.aeasycredit.commons.lang.utils.DatesUtils;
 import com.google.common.collect.Lists;
 
 @RestController
@@ -301,8 +302,11 @@ public class StockApiImpl implements StockApi {
 
 	@Override
 	@GetMapping("/getStockDailyTransactions")
-	public List<StockDailyTransactionsDto> getStockDailyTransactions() {
-		List<StockDailyTransactions> stockDailyTransactionses = stockService.getStockDailyTransactions();
+	public List<StockDailyTransactionsDto> getStockDailyTransactions(String startDate, String endDate) {
+	    if(StringUtils.isBlank(endDate)) {
+	        endDate = DatesUtils.YYMMDD2.toString();
+	    }
+		List<StockDailyTransactions> stockDailyTransactionses = stockService.getStockDailyTransactions(DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
 		List<StockDailyTransactionsDto> dtoList = stockDailyTransactionses.stream().map(model -> {
 			return modelMapper.map(model, StockDailyTransactionsDto.class);
 		}).collect(Collectors.toList());

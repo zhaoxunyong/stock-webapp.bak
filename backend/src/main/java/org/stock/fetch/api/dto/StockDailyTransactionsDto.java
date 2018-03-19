@@ -29,31 +29,31 @@ public class StockDailyTransactionsDto extends BaseDto {
 
     private Integer quantity;
 
-    private BigDecimal txPrice;
+    private String txPrice;
 
-    private BigDecimal txAmount;
+    private String txAmount;
 
-    private BigDecimal fee;
+    private String fee;
 
-    private BigDecimal txTallage;
+    private String txTallage;
 
-    private BigDecimal zsTallage;
+    private String zsTallage;
 
-    private BigDecimal financingAmount;
+    private String financingAmount;
 
-    private BigDecimal cashDeposit;
+    private String cashDeposit;
 
-    private BigDecimal interest;
+    private String interest;
 
-    private BigDecimal debFee;
+    private String debFee;
 
-    private BigDecimal customerCharge;
+    private String customerCharge;
 
-    private BigDecimal profit;
+    private String profit;
 
-    private BigDecimal payRate;
+    private String payRate;
 
-    private BigDecimal holdingCost;
+    private String holdingCost;
 
     public String getId() {
         return id;
@@ -111,107 +111,107 @@ public class StockDailyTransactionsDto extends BaseDto {
         this.quantity = quantity;
     }
 
-    public BigDecimal getTxPrice() {
+    public String getTxPrice() {
         return txPrice;
     }
 
-    public void setTxPrice(BigDecimal txPrice) {
+    public void setTxPrice(String txPrice) {
         this.txPrice = txPrice;
     }
 
-    public BigDecimal getTxAmount() {
+    public String getTxAmount() {
         return txAmount;
     }
 
-    public void setTxAmount(BigDecimal txAmount) {
+    public void setTxAmount(String txAmount) {
         this.txAmount = txAmount;
     }
 
-    public BigDecimal getFee() {
+    public String getFee() {
         return fee;
     }
 
-    public void setFee(BigDecimal fee) {
+    public void setFee(String fee) {
         this.fee = fee;
     }
 
-    public BigDecimal getTxTallage() {
+    public String getTxTallage() {
         return txTallage;
     }
 
-    public void setTxTallage(BigDecimal txTallage) {
+    public void setTxTallage(String txTallage) {
         this.txTallage = txTallage;
     }
 
-    public BigDecimal getZsTallage() {
+    public String getZsTallage() {
         return zsTallage;
     }
 
-    public void setZsTallage(BigDecimal zsTallage) {
+    public void setZsTallage(String zsTallage) {
         this.zsTallage = zsTallage;
     }
 
-    public BigDecimal getFinancingAmount() {
+    public String getFinancingAmount() {
         return financingAmount;
     }
 
-    public void setFinancingAmount(BigDecimal financingAmount) {
+    public void setFinancingAmount(String financingAmount) {
         this.financingAmount = financingAmount;
     }
 
-    public BigDecimal getCashDeposit() {
+    public String getCashDeposit() {
         return cashDeposit;
     }
 
-    public void setCashDeposit(BigDecimal cashDeposit) {
+    public void setCashDeposit(String cashDeposit) {
         this.cashDeposit = cashDeposit;
     }
 
-    public BigDecimal getInterest() {
+    public String getInterest() {
         return interest;
     }
 
-    public void setInterest(BigDecimal interest) {
+    public void setInterest(String interest) {
         this.interest = interest;
     }
 
-    public BigDecimal getDebFee() {
+    public String getDebFee() {
         return debFee;
     }
 
-    public void setDebFee(BigDecimal debFee) {
+    public void setDebFee(String debFee) {
         this.debFee = debFee;
     }
 
-    public BigDecimal getCustomerCharge() {
+    public String getCustomerCharge() {
         return customerCharge;
     }
 
-    public void setCustomerCharge(BigDecimal customerCharge) {
+    public void setCustomerCharge(String customerCharge) {
         this.customerCharge = customerCharge;
     }
 
-    public BigDecimal getProfit() {
+    public String getProfit() {
         return profit;
     }
 
-    public void setProfit(BigDecimal profit) {
+    public void setProfit(String profit) {
         this.profit = profit;
     }
 
-    public BigDecimal getPayRate() {
+    public String getPayRate() {
         return payRate;
     }
 
-    public void setPayRate(BigDecimal payRate) {
+    public void setPayRate(String payRate) {
         this.payRate = payRate;
     }
 
-    public BigDecimal getHoldingCost() {
+    public String getHoldingCost() {
         return holdingCost;
     }
 
-    public void setHoldingCost(BigDecimal holdingCost) {
+    public void setHoldingCost(String holdingCost) {
         this.holdingCost = holdingCost;
     }
 

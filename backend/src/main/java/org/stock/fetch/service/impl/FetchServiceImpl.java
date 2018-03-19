@@ -184,7 +184,7 @@ public class FetchServiceImpl implements FetchService {
                             stockNewsMapper.deleteByStockNews(stockNews);
 //                            if(!checkNewsSubject(subject)) {
                             stockNewsMapper.insert(stockNews);
-                            logger.info(stockNews.toString());
+//                            logger.info(stockNews.toString());
 //                            }
                         }
                     }
@@ -302,94 +302,98 @@ public class FetchServiceImpl implements FetchService {
         if(stockTypes!=null && !stockTypes.isEmpty()) {
             for(StockType stockType : stockTypes) {
                 HtmlPage nextPage = webClient.getPage(stockType.getUrl());
-                List<?> domNodes = nextPage.querySelectorAll("table.yui-text-left tbody tr");
-                if(domNodes==null || domNodes.size() < 3) {
-                    System.out.print("name="+stockType.getName());
-                    System.out.println("/url="+stockType.getUrl());
-                    continue;
-                }
-                HtmlElement domNode = (HtmlElement) domNodes.get(2);
-//                System.out.println("domNode===>"+domNode.asXml());
-                
-                List<DomNode> trDomNodes = domNode.querySelectorAll("table table tbody tr");//.get(2);
-                if(trDomNodes!=null && !trDomNodes.isEmpty()) {
-                    for(int i=2;i<trDomNodes.size();i++) {
-                        HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
-//                        System.out.println("trDomNode="+trDomNode.asXml());
-//                      System.out.println("trDomNode===>"+trDomNode);
-                        List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
-                        HtmlElement tdElement = nextTds.get(1);
-//                        System.out.println("tdElement===>"+tdElement.asXml());
-                        
-                        List<HtmlElement> aNodes = tdElement.getElementsByTagName("a");
-                        if(aNodes==null || aNodes.isEmpty()) continue;
-                        HtmlElement aElement = aNodes.get(0);
-//                        System.out.println("aElement===>"+aElement.asXml());
-                        String url = ROOT_URL + aElement.getAttribute("href");
-//                        String id = StringUtils.substringAfterLast(href, " ");
-                        String value = tdElement.asText();
-                        String no = StringUtils.substringBefore(value, " ");
-                        String company = StringUtils.substringAfter(value, " ").replaceAll("\r\n", "");
-                        
-                        // tx_price closing highest lowest
-                        HtmlElement txPriceElement = nextTds.get(3);
-                        HtmlElement closingElement = nextTds.get(8);
-                        HtmlElement highestElement = nextTds.get(10);
-                        HtmlElement lowestElement = nextTds.get(11);
-                        
-//                        System.out.println("url=" + url + "/no=" + no + "/company=" + company);
-                        /*
-                        // 細產類別
-                        String kinds = "";
-                        try {
-                            String detailUrl = ROOT_URL + "/d/s/company_"+no.replaceAll("[A-Z]+$", "")+".html";
-                            HtmlPage page = webClient.getPage(detailUrl);
-                            HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'產業類別')]").get(0);
-                            DomElement domElement = htmlElement.getNextElementSibling();
-                            kinds = domElement.asText();
-                        } catch(Exception e) {
-                            logger.warn(e.getMessage());
-                        }*/
-                        if(stockType.getType().equals(StockTypeEnum.MARKET.getType()) || stockType.getType().equals(StockTypeEnum.COUNTER.getType())) {
-                            StockData stockData = new StockData();
-                            stockData.setId(IdUtils.genLongId());
-                            stockData.setNo(no);
-                            stockData.setCompany(company);
-                            stockData.setCreateDate(date);
-                            stockData.setTypeName(stockType.getName());
-                            stockData.setUrl(url);
-                            stockData.setType(stockType.getType());
-                            stockData.setTxPrice(toBigDecimal(txPriceElement.asText()));
-                            stockData.setClosing(toBigDecimal(closingElement.asText()));
-                            stockData.setHighest(toBigDecimal(highestElement.asText()));
-                            stockData.setLowest(toBigDecimal(lowestElement.asText()));
-                            stockDataMapper.deleteByNo(no);
-                            stockDataMapper.insert(stockData);
-                        } else {
-                            StockData stockData = stockDataMapper.selectByNo(no);
-                            if(stockData == null) {
-                                // not exist, insert
-                                stockData = new StockData();
+                try {
+                    List<?> domNodes = nextPage.querySelectorAll("table.yui-text-left tbody tr");
+                    if(domNodes==null || domNodes.size() < 3) {
+                        System.out.print("name="+stockType.getName());
+                        System.out.println("/url="+stockType.getUrl());
+                        continue;
+                    }
+                    HtmlElement domNode = (HtmlElement) domNodes.get(2);
+//                    System.out.println("domNode===>"+domNode.asXml());
+                    
+                    List<DomNode> trDomNodes = domNode.querySelectorAll("table table tbody tr");//.get(2);
+                    if(trDomNodes!=null && !trDomNodes.isEmpty()) {
+                        for(int i=2;i<trDomNodes.size();i++) {
+                            HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
+//                            System.out.println("trDomNode="+trDomNode.asXml());
+//                          System.out.println("trDomNode===>"+trDomNode);
+                            List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
+                            HtmlElement tdElement = nextTds.get(1);
+//                            System.out.println("tdElement===>"+tdElement.asXml());
+                            
+                            List<HtmlElement> aNodes = tdElement.getElementsByTagName("a");
+                            if(aNodes==null || aNodes.isEmpty()) continue;
+                            HtmlElement aElement = aNodes.get(0);
+//                            System.out.println("aElement===>"+aElement.asXml());
+                            String url = ROOT_URL + aElement.getAttribute("href");
+//                            String id = StringUtils.substringAfterLast(href, " ");
+                            String value = tdElement.asText();
+                            String no = StringUtils.substringBefore(value, " ");
+                            String company = StringUtils.substringAfter(value, " ").replaceAll("\r\n", "");
+                            
+                            // tx_price closing highest lowest
+                            HtmlElement txPriceElement = nextTds.get(3);
+                            HtmlElement closingElement = nextTds.get(8);
+                            HtmlElement highestElement = nextTds.get(10);
+                            HtmlElement lowestElement = nextTds.get(11);
+                            
+//                            System.out.println("url=" + url + "/no=" + no + "/company=" + company);
+                            /*
+                            // 細產類別
+                            String kinds = "";
+                            try {
+                                String detailUrl = ROOT_URL + "/d/s/company_"+no.replaceAll("[A-Z]+$", "")+".html";
+                                HtmlPage page = webClient.getPage(detailUrl);
+                                HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'產業類別')]").get(0);
+                                DomElement domElement = htmlElement.getNextElementSibling();
+                                kinds = domElement.asText();
+                            } catch(Exception e) {
+                                logger.warn(e.getMessage());
+                            }*/
+                            if(stockType.getType().equals(StockTypeEnum.MARKET.getType()) || stockType.getType().equals(StockTypeEnum.COUNTER.getType())) {
+                                StockData stockData = new StockData();
                                 stockData.setId(IdUtils.genLongId());
                                 stockData.setNo(no);
                                 stockData.setCompany(company);
                                 stockData.setCreateDate(date);
+                                stockData.setTypeName(stockType.getName());
                                 stockData.setUrl(url);
                                 stockData.setType(stockType.getType());
+                                stockData.setTxPrice(toBigDecimal(txPriceElement.asText()));
+                                stockData.setClosing(toBigDecimal(closingElement.asText()));
+                                stockData.setHighest(toBigDecimal(highestElement.asText()));
+                                stockData.setLowest(toBigDecimal(lowestElement.asText()));
+                                stockDataMapper.deleteByNo(no);
                                 stockDataMapper.insert(stockData);
                             } else {
-                                // exist, update
-                                if(stockType.getType().equals(StockTypeEnum.CONCEPT.getType())) {
-                                    stockData.setConcepts(stockType.getName());
-                                } else if(stockType.getType().equals(StockTypeEnum.GROUP.getType())) {
-                                    stockData.setGroups(stockType.getName());
-                                } else if(stockType.getType().equals(StockTypeEnum.ELECTRONIC.getType())) {
-                                    stockData.setElectronics(stockType.getName());
+                                StockData stockData = stockDataMapper.selectByNo(no);
+                                if(stockData == null) {
+                                    // not exist, insert
+                                    stockData = new StockData();
+                                    stockData.setId(IdUtils.genLongId());
+                                    stockData.setNo(no);
+                                    stockData.setCompany(company);
+                                    stockData.setCreateDate(date);
+                                    stockData.setUrl(url);
+                                    stockData.setType(stockType.getType());
+                                    stockDataMapper.insert(stockData);
+                                } else {
+                                    // exist, update
+                                    if(stockType.getType().equals(StockTypeEnum.CONCEPT.getType())) {
+                                        stockData.setConcepts(stockType.getName());
+                                    } else if(stockType.getType().equals(StockTypeEnum.GROUP.getType())) {
+                                        stockData.setGroups(stockType.getName());
+                                    } else if(stockType.getType().equals(StockTypeEnum.ELECTRONIC.getType())) {
+                                        stockData.setElectronics(stockType.getName());
+                                    }
+                                    stockDataMapper.updateByPrimaryKey(stockData);
                                 }
-                                stockDataMapper.updateByPrimaryKey(stockData);
                             }
                         }
                     }
+                } finally {
+                    nextPage.cleanUp();
                 }
             }
         }

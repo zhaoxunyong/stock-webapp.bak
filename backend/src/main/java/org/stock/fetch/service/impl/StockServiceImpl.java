@@ -216,8 +216,8 @@ public class StockServiceImpl implements StockService {
 	}
 
 	@Override
-	public List<StockDailyTransactions> getStockDailyTransactions() {
-		return stockDailyTransactionsMapper.selectAll();
+	public List<StockDailyTransactions> getStockDailyTransactions(Date startDate, Date endDate) {
+		return stockDailyTransactionsMapper.selectByDate(startDate, endDate);
 	}
 
     @Override

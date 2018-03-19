@@ -6,6 +6,7 @@ docker run -d  -p 3306:3306 --restart=always --name mysql \
 mysql:5.6 \
 --character-set-server=utf8 --collation-server=utf8_general_ci
 
+grant all privileges on *.* to root@'%' identified by 'Aa123#@!';
 grant all privileges on *.* to root@'localhost' identified by 'Aa654321';
 CREATE DATABASE `wenchun` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; 
 

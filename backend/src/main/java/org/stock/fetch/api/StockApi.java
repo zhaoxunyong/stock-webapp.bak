@@ -103,7 +103,11 @@ public interface StockApi {
 	public void uploadStockDailyTransactions(MultipartFile file) throws IOException;
 	
 	@ApiOperation(value="getStockDailyTransactions", notes="getStockDailyTransactions")
-	public List<StockDailyTransactionsDto> getStockDailyTransactions();
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "startDate", value = "startDate", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "endDate", value = "endDate", required = true, dataType = "string", paramType = "query")
+    })
+	public List<StockDailyTransactionsDto> getStockDailyTransactions(String startDate, String endDate);
 
     @ApiOperation(value="search4StockData", notes="search4StockData")
     @ApiImplicitParams({
