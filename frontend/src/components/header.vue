@@ -3,18 +3,18 @@
     <b-navbar type="dark" variant="primary" toggleable>
     <b-navbar-toggle target="nav_dropdown_collapse"></b-navbar-toggle>
     <b-collapse is-nav id="nav_dropdown_collapse">
-      <b-navbar-nav>
-        <b-nav-item href="#">Home</b-nav-item>
-        <b-nav-item href="#">Link</b-nav-item>
+      <b-navbar-nav class="pl-5">
+        <b-nav-item href="#" @click.prevent="go('/')">自選股</b-nav-item>
+        <b-nav-item href="#" @click.prevent="go('/importantNews/1')">市場重大新聞</b-nav-item>
         <!-- Navbar dropdowns -->
-        <b-nav-item-dropdown text="台股" right>
-          <b-dropdown-item href="#" @click.prevent="go('/')">
-            自選股
-          </b-dropdown-item>
-          <b-dropdown-item href="#" @click.prevent="go('/importantNews/1')">
-            市場重大新聞
-          </b-dropdown-item>
-        </b-nav-item-dropdown>
+        <!--<b-nav-item-dropdown text="台股" right>-->
+          <!--<b-dropdown-item href="#" @click.prevent="go('/')">-->
+            <!--自選股-->
+          <!--</b-dropdown-item>-->
+          <!--<b-dropdown-item href="#" @click.prevent="go('/importantNews/1')">-->
+            <!--市場重大新聞-->
+          <!--</b-dropdown-item>-->
+        <!--</b-nav-item-dropdown>-->
 
         <b-nav-item-dropdown text="個性化設置" right>
           <b-dropdown-item href="#" @click.prevent="go('/newsSettings')">

@@ -2,25 +2,19 @@
   <main-layout>
     <template>
       <div>
-        <Alert></Alert>
+        <!--<Alert></Alert>-->
         <b-container fluid>
-        <b-row>
-          <b-col id="row_title" class="pt-3"><h4>請選擇需要導入的每天買入賣出股文件:</h4></b-col>
+        <b-row class="p-3">
+          <b-col class="pt-3"><b>請選擇需要導入的每天買入賣出股文件:</b></b-col>
         </b-row>
         <b-row>
           <b-col>
-            <b-form-file id="file1" v-model="file" ref="fileinput" placeholder="Please choose a file." @change="update"></b-form-file>
+            <b-form-file class="p-3" id="file1" v-model="file" ref="fileinput" placeholder="Please choose a file." @change="update"></b-form-file>
             <!-- <div class="mt-3">Selected file: {{file && file.name}}</div> -->
           </b-col>
         </b-row>
         <b-row>
           <b-col>
-            <div class="input-group date" data-provide="datepicker">
-              <input type="text" class="form-control">
-              <div class="input-group-addon">
-                <span class="glyphicon glyphicon-th"></span>
-              </div>
-            </div>
             <form @submit.prevent="selectByDate" class="p-3">
               <!--<input type="text" class="form-control" id="validationDefault03" placeholder="City" required>-->
               <input id="startDate" class="form-control w-25 float-left" placeholder="請選擇開始日期" required type="text" autocomplete="off" @click="datePick" />
@@ -40,7 +34,7 @@
 </template>
 <script>
 import MainLayout from '../layouts/Main.vue'
-import Alert from '../components/alert.vue'
+// import Alert from '../components/alert.vue'
 
 // import '../components/datepicker/js/bootstrap-datepicker.min'
 // import '../components/datepicker/css/bootstrap-datepicker.min.css'
@@ -51,7 +45,7 @@ import Alert from '../components/alert.vue'
 import Bus from '../eventBus'
 export default {
   components: {
-    MainLayout, Alert
+    MainLayout//, Alert
   },
   data () {
     return {
@@ -66,7 +60,6 @@ export default {
     update (e) {
       let url = "/api/stock/uploadStockDailyTransactions"
       let file = e.target.files[0]
-      Bus.$emit('success', "正在導入數據, 請稍候......")
       this.$api.fileUpload(file, url, rs => {
         Bus.$emit('success', "導入成功!")
         this.getData()
@@ -85,7 +78,6 @@ export default {
       let endDate = $("#endDate").val()
       if(startDate != undefined && startDate != '') {
         let url = '/api/stock/getStockDailyTransactions?startDate='+startDate+'&endDate='+endDate
-        alert(url)
         this.$api.get(url, null, rs => {
           if(rs.length > 0) {
             for(var i=0;i<rs.length;i++) {

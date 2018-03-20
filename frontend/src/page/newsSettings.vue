@@ -31,11 +31,11 @@
 </template>
 <script>
 import MainLayout from '../layouts/Main.vue'
-import Alert from '../components/alert.vue'
+// import Alert from '../components/alert.vue'
 import Bus from '../eventBus'
 export default {
-  components: { 
-    MainLayout, Alert 
+  components: {
+    MainLayout//, Alert
   },
   data () {
     return {
@@ -48,7 +48,7 @@ export default {
     this.getIncludesItems()
   },
   mounted () {
-    
+
   },
   methods: {
     saveExcludeItem(event) {
@@ -94,7 +94,7 @@ export default {
       let inputHtml = `
       <div class="exclude-item w-5 float-left p-1">
           <input type="text" class="form-control" />
-      </div>        
+      </div>
       `
       $("#add-exclude-item").before(inputHtml)
     },
@@ -103,7 +103,7 @@ export default {
       let inputHtml = `
       <div class="include-item w-5 float-left p-1">
           <input type="text" class="form-control" />
-      </div>        
+      </div>
       `
       $("#add-include-item").before(inputHtml)
     },

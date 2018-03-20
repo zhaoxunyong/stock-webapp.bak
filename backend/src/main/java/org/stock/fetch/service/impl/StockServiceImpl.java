@@ -241,6 +241,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
+    @Transactional
     public void saveStockNewsKeys(List<StockNewsKey> stockNewsKeys) {
         stockNewsKeys.forEach(stockNewsKey -> {
             stockNewsKeyMapper.insert(stockNewsKey);
@@ -250,6 +251,12 @@ public class StockServiceImpl implements StockService {
     @Override
     public int deleteByType(StockNewsKeyTypeEnum stockNewsKeyTypeEnum) {
         return stockNewsKeyMapper.deleteByType(stockNewsKeyTypeEnum.getType());
+    }
+
+    @Override
+    @Transactional
+    public void saveCompanyStatus(Long stockId, String companyStatus) {
+        stockDataMapper.saveCompanyStatus(stockId, companyStatus);
     }
 
 }

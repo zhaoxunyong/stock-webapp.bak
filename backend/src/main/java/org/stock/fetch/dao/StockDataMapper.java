@@ -25,4 +25,6 @@ public interface StockDataMapper {
     List<StockData> search4StockData(@Param("value") String value);
 
     int updateByPrimaryKey(StockData record);
+    
+    void saveCompanyStatus(@Param("id") Long stockId, @Param("companyStatus") String companyStatus);
 }

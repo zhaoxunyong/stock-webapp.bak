@@ -35,17 +35,19 @@ function filterNull (o) {
   另外，不同的项目的处理方法也是不一致的，这里出错就是简单的alert
 */
 
-function fileUpload(file, url, success, failure) {         
-  let param = new FormData() //创建form对象  
-  param.append('file',file,file.name)//通过append向form对象添加数据  
-  param.append('chunk','0')//添加form表单中其他数据  
-    
-  let config = {  
-    headers:{'Content-Type':'multipart/form-data'}  
-  }  //添加请求头  
-  axios.post(url,param,config)  
-  .then(response=>{  
-    console.log(response.data) 
+function fileUpload(file, url, success, failure) {
+  let param = new FormData() //创建form对象
+  param.append('file',file,file.name)//通过append向form对象添加数据
+  param.append('chunk','0')//添加form表单中其他数据
+
+  let config = {
+    headers:{'Content-Type':'multipart/form-data'}
+  }
+  Bus.$emit('loading', "正在處理中, 請稍候......", true)
+  axios.post(url,param,config)
+  .then(response=>{
+    console.log(response.data)
+    Bus.$emit('loading', '加載完成', false)
     if(success) {
       success(response.data)
     }
@@ -57,7 +59,7 @@ function fileUpload(file, url, success, failure) {
       if(failure) {
         failure(err)
       }
-  }) 
+  })
 }
 
 function apiAxios (method, url, params, success, failure) {
@@ -67,9 +69,9 @@ function apiAxios (method, url, params, success, failure) {
   axios.get(url).then(function (res) {
     console.log("res.data---->"+res.data)
     success(res.data)
-    
+
   })*/
-  // Bus.$emit('loading', true)
+  Bus.$emit('loading', "正在處理中, 請稍候......", true)
   axios({
     method: method,
     url: url,
@@ -80,23 +82,13 @@ function apiAxios (method, url, params, success, failure) {
   })
   .then(function (res) {
     console.log("res.data---->"+res.data)
+    Bus.$emit('loading', '加載完成', false)
     if(success) {
       success(res.data)
     }
-    Bus.$emit('loading', false)
-    // let content = '<div class="row">'+
-    //       '<div class="span4">'+
-    //       '  <div class="alert">'+
-    //       '    <a class="close" data-dismiss="alert">×</a>'+
-    //       '    <strong>Warning!</strong> xxx.'+
-    //       '  </div>'+
-    //       '</div>'+
-    //     '</div>'
-    //   $("#error_id").remove()
-    // $("body").append(content)
   })
   .catch(function (err) {
-    Bus.$emit('loading', false)
+    // Bus.$emit('loading', false)
     if (err) {
       console.log("err--->"+err)
       // window.alert('api error, HTTP CODE: ' + err)

@@ -18,8 +18,15 @@ Vue.use(BootstrapVue)
 import Confirm from 'vue-confirm'
 Vue.use(Confirm)
 
-import Vuelidate from 'vuelidate'
-Vue.use(Vuelidate)
+// import VueAlert from '@vuejs-pt/vue-alert'
+// Vue.use(VueAlert)
+
+// import Msg from 'vue-message'
+import Msg from './components/messagebox/index'
+Vue.use(Msg, {
+  position: 'top', duration: 999999999
+})
+
 
 // 引用API文件
 import api from './api/index.js'

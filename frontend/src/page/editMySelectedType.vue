@@ -1,7 +1,7 @@
 <template>
   <main-layout>
     <div>
-      <Alert></Alert>
+      <!--<Alert></Alert>-->
       <span v-for="item in items">
         <b-button :variant="isSelected(item.type)" :id="item.type" @click="changedValue(item.type)">
             {{ item.name }}
@@ -34,7 +34,7 @@
           <b-button variant="success">保存</b-button>
         </div>
         <div class="clearfix"></div>
-        
+
       </form> -->
       <!-- List with handle -->
       <div id="listWithHandle">
@@ -72,7 +72,7 @@
 </template>
 <script>
 import MainLayout from '../layouts/Main.vue'
-import Alert from '../components/alert.vue'
+// import Alert from '../components/alert.vue'
 import Bus from '../eventBus'
 import Sortable from 'sortablejs'
 
@@ -81,8 +81,8 @@ import Sortable from 'sortablejs'
 import Autocomplete from 'stock-auto-complete'
 // import Autocomplete from '../components/Autocomplete'
 export default {
-  components: { 
-    MainLayout, Autocomplete, Alert 
+  components: {
+    MainLayout, Autocomplete//, Alert
   },
   data () {
     return {

@@ -403,4 +403,10 @@ public class StockApiImpl implements StockApi {
         }
     }
 
+    @Override
+    @RequestMapping(value = "/saveCompanyStatus", method = POST)
+    public void saveCompanyStatus(String stockId, String companyStatus) {
+        stockService.saveCompanyStatus(Long.parseLong(stockId), companyStatus);
+    }
+
 }

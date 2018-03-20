@@ -132,4 +132,9 @@ public interface StockApi {
     
     @ApiOperation(value="saveStockNewsKeyByExclude", notes="saveStockNewsKeyByExclude")
     public void saveStockNewsKeyByExclude(List<String> keys);
+
+    @ApiOperation(value="saveCompanyStatus", notes="saveCompanyStatus")
+    public void saveCompanyStatus(String stockId, String companyStatus);
+    
+    
 }

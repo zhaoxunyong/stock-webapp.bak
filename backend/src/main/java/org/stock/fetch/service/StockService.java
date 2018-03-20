@@ -62,4 +62,5 @@ public interface StockService {
     
     public int deleteByType(StockNewsKeyTypeEnum stockNewsKeyTypeEnum);
 
+    public void saveCompanyStatus(Long stockId, String companyStatus) ;
 }

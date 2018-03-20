@@ -1,4 +1,4 @@
-<template>  
+<template>
   <div>
     <div class="m-2">
       <autocomplete
@@ -33,7 +33,7 @@
     <div class="selected_name text">
     <h5>{{ myStockSelectedName }}</h5>
 
-    <span v-for="i in list" class="d-none d-lg-block">
+    <span v-for="i in list" class="d-lg-block">
       <a :href="'/content/' + i.stockId+'/1'" @click.prevent="go(i.stockId)" :class="isSelected(i.stockId)">
         {{ i.company }}
       </a><br />
@@ -132,6 +132,7 @@ export default {
       return '/api/stock/search4StockData?query='+input
     },
     selectedProcess (result, refs) {
+      this.push('/content/' + result.value+'/1')
       /*$(".form-control input[type='hidden']").each(function(index, data){
         let inputValue = $(data).val()
         // alert("value->"+result.value+"/inputValue->"+inputValue)
@@ -228,7 +229,7 @@ export default {
       let stockId = this.$route.params.stockId
       if(stockId != undefined && stockId != "") {
         this.$api.get('/api/stock/getMySelectedTypesByStockId/'+stockId, null, rs => {
-          
+
           let mySelectedType = []
           if(rs != undefined && rs.length > 0) {
             for(var i=0;i<rs.length;i++) {
@@ -281,7 +282,7 @@ export default {
     display: block;
     display: -webkit-box;
     max-width: 400px;
-    height: 450px;
+    height: 430px;
     margin: 0 auto;
     line-height: 1.2;
     -webkit-line-clamp: 3;

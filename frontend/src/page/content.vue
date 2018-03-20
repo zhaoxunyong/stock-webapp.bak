@@ -11,7 +11,8 @@
           <b-row>
             <b-col cols="12" sm="12">
               <stock-my-selected-type></stock-my-selected-type>
-              <img src="../images/stock03.png" class="w-100" />
+              <stock-detail></stock-detail>
+              <!--<img src="../images/stock03.png" class="w-100" />-->
             </b-col>
           </b-row>
           <!--个股详情与新闻-->
@@ -81,11 +82,10 @@ import StockMyData from './StockMyData.vue'
 import StockMySelectedType from './stockMySelectedType.vue'
 import StockDetail from './stockDetail.vue'
 import StockNews from './stockNews.vue'
-import Alert from '../components/alert.vue'
-// import Loading from '../components/loading.vue'
+// import Alert from '../components/alert.vue'
 export default {
   components: {
-    MainLayout, StockMyData, StockMySelectedType, StockDetail, StockNews, Alert//, Loading
+    MainLayout, StockMyData, StockMySelectedType, StockDetail, StockNews//, Alert//, Loading
   }
 }
 </script>
