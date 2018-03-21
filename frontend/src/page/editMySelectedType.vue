@@ -25,17 +25,6 @@
           </form>
         </b-modal>
       </div>
-
-      <!-- <form @submit.stop.prevent="handleSubmit">
-        <div class="p-3 float-left w-50">
-          編輯自選股: <b-form-select v-model="selected" @change="changedValue" :options="options" class="w-50" />
-        </div>
-        <div class="p-3 float-left w-25">
-          <b-button variant="success">保存</b-button>
-        </div>
-        <div class="clearfix"></div>
-
-      </form> -->
       <!-- List with handle -->
       <div id="listWithHandle">
         <div class="list-group-item float-left wd-fixed py-1 my-1" v-for="(item, index) in list">
@@ -87,7 +76,6 @@ export default {
   data () {
     return {
       name: '',
-      // selected: null,
       currSelectedType: '',
       initNumber: 50,
       options: [{value: '', text: 'Please select...'}],
@@ -124,6 +112,7 @@ export default {
       this.clearName()
       this.$refs.modal.hide()
     },
+    // 保存選擇的股票到自選股中
     save2StockMyData () {
       if(this.currSelectedType == '') {
         alert("請先選擇對應的自選股名稱!")
@@ -147,6 +136,7 @@ export default {
         }
       }
     },
+    // 保存自選股名稱
     saveData (name) {
       let url = '/api/stock/saveStockMySelectedType?name='+name
       this.$api.post(url, null, rs => {
@@ -186,13 +176,12 @@ export default {
     // 将某个股票从自选股中移除
     removeStockMySelected(selectedType, selectedName) {
       let stockId = this.$route.params.stockId
-      let api = this.$api
       let $this = this
       this.$confirm("是否確定從"+selectedName+"中移除?").then(
         function(){
          // alert(stockId+"--->"+selectedType)
           let url = '/api/stock/removeStockMySelected?selectedType='+selectedType
-          api.post(url, null, rs => {
+          $this.$api.post(url, null, rs => {
             $this.getData()
             $this.currSelectedType = ''
             $this.list = []

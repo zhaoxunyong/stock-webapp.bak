@@ -266,6 +266,7 @@ export default {
       this.$api.post(url, params, rs => {
         //改变路由的地址
         // Bus.$emit('triggerAutoSelectedTypes')
+        Bus.$emit('success', "保存成功!")
         this.push('/content/' + stockId+'/1')
       })
     }
