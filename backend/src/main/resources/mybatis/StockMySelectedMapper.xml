@@ -12,20 +12,29 @@
   <sql id="BaseColumnList">
     id, stock_id, selected_type, status, create_date, update_date
   </sql>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from stock_my_selected
     where id = #{id,jdbcType=BIGINT}
   </delete>
+  
   <delete id="delete" >
     delete from stock_my_selected
     where selected_type = #{selectedType,jdbcType=BIGINT}
   </delete>
+  
+  <delete id="removeOneStockMySelected" >
+    delete from stock_my_selected
+    where stock_id = #{stockId,jdbcType=BIGINT} and selected_type = #{selectedType,jdbcType=BIGINT}
+  </delete>
+  
   <insert id="insert" parameterType="org.stock.fetch.model.StockMySelected" useGeneratedKeys="true" keyProperty="id" >
     insert into stock_my_selected (id, stock_id, selected_type, status, 
       create_date, update_date)
     values (#{id,jdbcType=BIGINT}, #{stockId,jdbcType=BIGINT}, #{selectedType,jdbcType=BIGINT}, #{status,jdbcType=BIT}, 
       #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
   </insert>
+  
   <update id="updateByPrimaryKey" parameterType="org.stock.fetch.model.StockMySelected" >
     update stock_my_selected
     set stock_id = #{stockId,jdbcType=BIGINT},
@@ -35,28 +44,34 @@
       update_date = #{updateDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
   <update id="update" >
     update stock_my_selected
     set selected_type = #{selectedType,jdbcType=BIGINT}
     where stock_id = #{stockId,jdbcType=BIGINT} and selected_type = #{selectedType,jdbcType=BIGINT}
   </update>
+  
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select <include refid="BaseColumnList" />
     from stock_my_selected
     where id = #{id,jdbcType=BIGINT}
   </select>
+  
   <select id="selectByType" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select <include refid="BaseColumnList" />
     from stock_my_selected
     where selected_type = #{selectedType,jdbcType=BIGINT}
   </select>
+  
   <select id="select" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" />
     from stock_my_selected
     where stock_id = #{stockId,jdbcType=BIGINT} and selected_type = #{selectedType,jdbcType=BIGINT}
   </select>
+  
   <select id="selectAll" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" />
     from stock_my_selected
   </select>
+  
 </mapper>

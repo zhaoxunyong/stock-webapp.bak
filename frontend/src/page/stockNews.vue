@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav class="nav nav-pills nav-justified">
-    <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">所有新聞</a>
+    <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">個股新聞</a>
     <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">焦點新聞</a>
   </nav>
   <b-table striped hover :items="items" :fields="fields"></b-table>
@@ -31,7 +31,7 @@ export default {
     this.getData()
     Bus.$on('emptyNews', () => {
       this.cleanNews()
-    })  
+    })
     Bus.$on('initCurrentPage', (pageNum) => {
       this.currentPage = pageNum
     })
@@ -80,7 +80,7 @@ export default {
               let context = "<a target=\"_blank\" href=\""+rsData[i].url+"\">"+rsData[i].subject+"</a>"
               this.items.push({
                 content_title: context
-              }) 
+              })
             }
           })
           $("#content_id").text(this.company+": ")
@@ -109,7 +109,7 @@ export default {
               let context = "<a target=\"_blank\" href=\""+rsData[i].url+"\">"+rsData[i].subject+"</a>"
               this.items.push({
                 content_title: context
-              }) 
+              })
             }
           })
           $("#content_id").text(this.company+": ")
@@ -117,7 +117,7 @@ export default {
       } else {
         this.cleanNews()
       }
-      
+
       //this.$router.push('/content/' + this.getStatus(this.$route.path))
     }
   }

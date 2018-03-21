@@ -2,8 +2,8 @@
   <main-layout>
     <template>
       <nav class="mt-3 ml-3 nav nav-pills nav-justified">
-        <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">所有新聞</a>
-        <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">焦點新聞</a>
+        <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">市場重大新聞</a>
+        <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">市場焦點新聞</a>
       </nav>
       <b-table striped hover :items="items"></b-table>
       <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
@@ -14,7 +14,7 @@
 import MainLayout from '../layouts/Main.vue'
 let items = []
 export default {
-  components: { 
+  components: {
     MainLayout
   },
   data () {
@@ -27,7 +27,7 @@ export default {
     }
   },
   created () {
-    this.getData(1)  
+    this.getData(1)
     Bus.$on('initCurrentPage', (pageNum) => {
       this.currentPage = pageNum
     })

@@ -208,6 +208,11 @@ public class StockServiceImpl implements StockService {
 	    }
 	}
 
+    @Override
+    public void removeOneStockMySelected(Long stockId, Long selectedType) {
+        stockMySelectedMapper.removeOneStockMySelected(stockId, selectedType);
+    }
+
 	@Override
 	@Transactional
 	public void removeStockMySelected(Long selectedType) {

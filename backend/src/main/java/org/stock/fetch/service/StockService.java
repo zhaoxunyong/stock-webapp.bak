@@ -46,6 +46,8 @@ public interface StockService {
 	
 	public void changeStockMySelected(List<Long> stockIds, Long selectedType);
 	
+	public void removeOneStockMySelected(Long stockId, Long selectedType);
+	
 	public void removeStockMySelected(Long selectedType);
 	
 	public List<StockDailyTransactions> getStockDailyTransactions(Date startDate, Date endDate);

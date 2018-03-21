@@ -89,6 +89,13 @@ public interface StockApi {
 	
 	@ApiOperation(value="changeStockMySelected", notes="changeStockMySelected")
 	public void changeStockMySelected(ChangeStockMySelectedDto changeStockMySelectedDto);
+    
+    @ApiOperation(value="removeOneStockMySelected", notes="removeOneStockMySelected")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "selectedType", value = "selectedType", required = true, dataType = "string", paramType = "query"),
+    })
+    public void removeOneStockMySelected(String stockId, String selectedType);
 	
 	@ApiOperation(value="removeStockMySelected", notes="removeStockMySelected")
 	@ApiImplicitParams({
