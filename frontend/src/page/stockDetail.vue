@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="float-left">
+    <div class="float-left mt-3">
       <div><h2>{{ stockData.company }}({{stockData.no}})</h2></div>
       <div>{{stockData.typeName}} - {{stockData.electronics}}</div>
     </div>
-    <div class="float-left px-3">
+    <div class="float-left px-3 mt-3">
       <div><a href="#" v-b-modal.modalPrevent><span class="oi oi-plus"></span></a></div>
       <div><a href="#" @click.prevent="removeOneStockMySelected"><span class="oi oi-minus"></span></a></div>
     </div>

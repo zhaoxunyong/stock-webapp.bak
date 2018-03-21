@@ -1,6 +1,7 @@
 <template>
   <div>
     <nav class="nav nav-pills nav-justified">
+      <div class="pt-2 pr-2"><h5>{{this.company}}</h5></div>
     <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">個股新聞</a>
     <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">焦點新聞</a>
   </nav>
@@ -83,7 +84,7 @@ export default {
               })
             }
           })
-          $("#content_id").text(this.company+": ")
+          $("#content_id").text(this.company+": ").parent().remove()
         })
       }
     }
@@ -112,7 +113,7 @@ export default {
               })
             }
           })
-          $("#content_id").text(this.company+": ")
+          $("#content_id").text(this.company+": ").parent().hide()
         })
       } else {
         this.cleanNews()

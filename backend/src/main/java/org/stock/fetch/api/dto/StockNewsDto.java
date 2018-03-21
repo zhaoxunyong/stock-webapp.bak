@@ -2,7 +2,10 @@ package org.stock.fetch.api.dto;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.time.DateUtils;
+
 import com.aeasycredit.commons.lang.base.BaseModel;
+import com.aeasycredit.commons.lang.utils.DatesUtils;
 
 public class StockNewsDto extends BaseModel {
     private static final long serialVersionUID = 1L;
@@ -48,7 +51,15 @@ public class StockNewsDto extends BaseModel {
     }
 
     public String getSubject() {
-        return subject;
+        Date now = new Date();
+        
+        if(DatesUtils.calculateDay(now, this.getNewsDate()) == 0) {
+            return "<font color=\"red\">"+subject+"</font>";
+        } else if(DatesUtils.calculateDay(now, this.getNewsDate())  <= 3) {
+            return subject;
+        } else {
+            return "<font color=\"black\">"+subject+"</font>";
+        }
     }
 
     public void setSubject(String subject) {

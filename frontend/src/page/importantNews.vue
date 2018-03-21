@@ -5,7 +5,7 @@
         <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">市場重大新聞</a>
         <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">市場焦點新聞</a>
       </nav>
-      <b-table striped hover :items="items"></b-table>
+      <b-table striped hover :items="items" :fields="fields"></b-table>
       <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
     </template>
   </main-layout>
@@ -23,7 +23,13 @@ export default {
       numberOfPages: 0,
       currentPage: this.$route.params.pageNum,
       type: 1,
-      pageSize: PAGE_SIZE
+      pageSize: PAGE_SIZE,
+      fields: {
+        content_title: {
+          label: '<span id="content_id">: </span>市場重大新聞',
+          sortable: true
+        }
+      }
     }
   },
   created () {
@@ -65,10 +71,11 @@ export default {
         $(rs.rows).each(function(){
           let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.froms+"</a>"
           items.push({
-            '市場重大新聞': context
+            content_title: context
           })
         });
         this.items = items
+        $("#content_id").parent().remove()
       })
     }
   },
@@ -85,11 +92,12 @@ export default {
         $(rs.rows).each(function(){
           let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.froms+"</a>"
           items.push({
-            '市場重大新聞': context
+            content_title: context
           })
         });
         this.items = items
       })
+      $("#content_id").parent().remove()
       //this.$router.push('/content/' + this.getStatus(this.$route.path))
     }
   }

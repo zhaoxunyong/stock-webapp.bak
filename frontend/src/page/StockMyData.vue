@@ -266,7 +266,6 @@ export default {
       this.$api.post(url, params, rs => {
         //改变路由的地址
         // Bus.$emit('triggerAutoSelectedTypes')
-        Bus.$emit('success', "保存成功!")
         this.push('/content/' + stockId+'/1')
       })
     }
@@ -279,7 +278,7 @@ export default {
   color: red;
 }
 
-.text {
+/*.text {
     display: block;
     display: -webkit-box;
     max-width: 400px;
@@ -290,5 +289,5 @@ export default {
     -webkit-box-orient: vertical;
     overflow: auto;
     text-overflow: ellipsis;
-}
+}*/
 </style>

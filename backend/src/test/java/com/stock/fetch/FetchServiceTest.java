@@ -33,16 +33,16 @@ public class FetchServiceTest {
     public void fetchNews() throws Exception {
         fetchService.fetchNews(1);
         fetchService.fetchNews(2);
-        fetchService.fetchNews(3);
-        fetchService.fetchNews(4);
+//        fetchService.fetchNews(3);
+//        fetchService.fetchNews(4);
     }
     
     @Test
     public void fetchImportantNews() throws Exception {
         fetchService.fetchImportantNews(1);
         fetchService.fetchImportantNews(2);
-        fetchService.fetchImportantNews(3);
-        fetchService.fetchImportantNews(4);
+//        fetchService.fetchImportantNews(3);
+//        fetchService.fetchImportantNews(4);
     }
     
     @Test

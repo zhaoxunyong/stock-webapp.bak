@@ -2,6 +2,8 @@ package org.stock.fetch.api.dto;
 
 import java.util.Date;
 
+import com.aeasycredit.commons.lang.utils.DatesUtils;
+
 public class StockImportantNewsDto {
     private String id;
 
@@ -26,7 +28,15 @@ public class StockImportantNewsDto {
     }
 
     public String getFroms() {
-        return froms;
+        Date now = new Date();
+        
+        if(DatesUtils.calculateDay(now, this.getNewsDate()) == 0) {
+            return "<font color=\"red\">"+froms+"</font>";
+        } else if(DatesUtils.calculateDay(now, this.getNewsDate())  <= 3) {
+            return froms;
+        } else {
+            return "<font color=\"black\">"+froms+"</font>";
+        }
     }
 
     public void setFroms(String froms) {
