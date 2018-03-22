@@ -115,10 +115,12 @@ export default {
       }
     },
     getData (stockId) {
-      this.$api.get('/api/stock/getStockData/'+stockId, null, stockData => {
-        this.stockData = stockData
-        this.companyStatus = stockData.companyStatus
-      })
+      if(stockId != undefined && stockId != '' && stockId != 0) {
+        this.$api.get('/api/stock/getStockData/'+stockId, null, stockData => {
+          this.stockData = stockData
+          this.companyStatus = stockData.companyStatus
+        })
+      }
     }
   },
   watch: {

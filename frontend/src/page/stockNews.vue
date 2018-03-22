@@ -93,7 +93,7 @@ export default {
   watch: {
     '$route' (to, from) {
       this.stockId = this.$route.params.stockId
-      if(this.stockId != 0) {
+      if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
         this.$api.get('/api/stock/getStockData/'+this.stockId, null, stockData => {
           this.company = stockData.company
           console.log("company--->"+this.company)

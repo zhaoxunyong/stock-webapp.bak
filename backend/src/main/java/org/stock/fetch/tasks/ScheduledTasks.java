@@ -31,18 +31,12 @@ public class ScheduledTasks {
         logger.info("fetchNews start--->"+DatesUtils.YYMMDDHHMMSS.toString());
         // 自动取新闻第一页
         fetchService.fetchNews(1);
-        fetchService.fetchNews(2);
-        fetchService.fetchNews(3);
-        fetchService.fetchNews(4);
         System.out.println("fetchNews end--->"+DatesUtils.YYMMDDHHMMSS.toString());
         
         System.out.println("fetchImportantNews start--->"+DatesUtils.YYMMDDHHMMSS.toString());
         
         // 自動取重點新聞第一頁
         fetchService.fetchImportantNews(1);
-        fetchService.fetchImportantNews(2);
-        fetchService.fetchImportantNews(3);
-        fetchService.fetchImportantNews(4);
         System.out.println("fetchImportantNews end--->"+DatesUtils.YYMMDDHHMMSS.toString());
         
         // 獲取所有股票
