@@ -278,16 +278,9 @@ export default {
   color: red;
 }
 
-/*.text {
-    display: block;
-    display: -webkit-box;
-    max-width: 400px;
-    height: 430px;
+.text {
+    height: 73vh;
     margin: 0 auto;
-    line-height: 1.2;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
     overflow: auto;
-    text-overflow: ellipsis;
-}*/
+}
 </style>

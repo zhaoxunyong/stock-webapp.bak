@@ -5,13 +5,16 @@
         <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">市場重大新聞</a>
         <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">市場焦點新聞</a>
       </nav>
-      <b-table striped hover :items="items" :fields="fields"></b-table>
-      <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
+      <div class="text container-fluid">
+        <b-table striped hover :items="items" :fields="fields"></b-table>
+        <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
+      </div>
     </template>
   </main-layout>
 </template>
 <script>
 import MainLayout from '../layouts/Main.vue'
+import Bus from '../eventBus'
 let items = []
 export default {
   components: {
@@ -48,23 +51,25 @@ export default {
       $(".active").removeClass('active')
       $(event.target).addClass('active')
       this.type = 1
+      this.$router.push('/importantNews/1')
       this.getData(1)
     },
     showIncludeNews(event) {
       $(".active").removeClass('active')
       $(event.target).addClass('active')
       this.type = 0
+      this.$router.push('/importantNews/1')
       this.getData(1)
     },
     getData (pageNum) {
       if(pageNum != undefined) {
-        this.pageNum = pageNum
+        this.currentPage = pageNum
       } else {
-        this.pageNum = this.$route.params.pageNum
+        this.currentPage = this.$route.params.pageNum
       }
       items = []
       let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getImportantNewsInclude/' : '/api/stock/getImportantNewsExclude/'
-      let url = rootUrl+this.pageNum+"/"+this.pageSize
+      let url = rootUrl+this.currentPage+"/"+this.pageSize
       this.$api.get(url, null, rs => {
         // this.items = rs
         this.numberOfPages = rs.pageTotal
@@ -81,11 +86,10 @@ export default {
   },
   watch: {
     '$route' (to, from) {
-      this.pageNum = this.$route.params.pageNum
+      this.currentPage = this.$route.params.pageNum
       items = []
       let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getImportantNewsInclude/' : '/api/stock/getImportantNewsExclude/'
-      let url = rootUrl+this.pageNum+"/"+this.pageSize
-      // alert("url2--->"+url)
+      let url = rootUrl+this.currentPage+"/"+this.pageSize
       this.$api.get(url, null, rs => {
         // this.items = rs
         this.numberOfPages = rs.pageTotal
@@ -102,4 +106,13 @@ export default {
     }
   }
 }
+
 </script>
+
+<style scoped>
+  .text {
+    height: 75vh;
+    margin: 0 auto;
+    overflow: auto;
+  }
+</style>

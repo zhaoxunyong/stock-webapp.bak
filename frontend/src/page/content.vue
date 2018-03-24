@@ -1,12 +1,12 @@
 <template>
   <main-layout>
-    <b-container fluid class="bv-example-row border">
+    <b-container fluid class="border">
       <b-row>
         <!--left-->
-        <b-col lg="2" md="3" sm="3" class="border-right border-primary">
+        <b-col style="max-width: 12%" class="border-right border-primary">
           <stock-my-data></stock-my-data>
         </b-col>
-        <b-col lg="10" md="9" sm="9">
+        <b-col style="max-width: 88%">
         <!--自选股top-->
           <b-row>
             <b-col cols="12" sm="12">

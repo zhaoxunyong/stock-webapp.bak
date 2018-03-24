@@ -2,7 +2,7 @@
   <div>
     <div class="float-left mt-3">
       <div><h2>{{ stockData.company }}({{stockData.no}})</h2></div>
-      <div>{{stockData.typeName}} - {{stockData.electronics}}</div>
+      <div v-if="stockData.typeName !='' || stockData.electronics != ''">{{stockData.typeName}} - {{stockData.electronics}}</div>
     </div>
     <div class="float-left px-3 mt-3">
       <div><a href="#" v-b-modal.modalPrevent><span class="oi oi-plus"></span></a></div>
@@ -13,7 +13,7 @@
       <!--<b-btn size="sm" variant="primary" @click="toBack">-</b-btn>-->
     <!--</div>-->
 
-    <div class="float-left pl-3">
+    <div class="float-left pl-3" style="width: 65%">
       <!--<b-nav tabs>-->
         <!--<b-nav-item active>Active</b-nav-item>-->
         <!--<b-nav-item>Link</b-nav-item>-->
@@ -38,11 +38,12 @@
           <!--<br>Disabled tab!-->
         </b-tab>
         <div>
-          <textarea class="form-control" id="formControlTextarea1" rows="3" v-model="stockData.companyStatus"></textarea>
+          <input class="form-control" id="formControlTextarea1" v-model="stockData.companyStatus" />
+          <!--<textarea class="form-control" id="formControlTextarea1" rows="3" v-model="stockData.companyStatus"></textarea>-->
         </div>
       </b-tabs>
     </div>
-    <div class="float-left" style="height: 125px;padding-top: 60px;padding-left: 10px">
+    <div class="float-left" style="height: 125px;padding-top: 40px;padding-left: 10px">
       <b-button variant="success" @click="saveCompanyStatus">保存</b-button>
     </div>
   </div>

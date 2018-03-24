@@ -2,11 +2,13 @@
   <div>
     <nav class="nav nav-pills nav-justified">
       <div class="pt-2 pr-2"><h5>{{this.company}}</h5></div>
-    <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">個股新聞</a>
-    <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">焦點新聞</a>
-  </nav>
-  <b-table striped hover :items="items" :fields="fields"></b-table>
-          <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
+      <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">個股新聞</a>
+      <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">焦點新聞</a>
+    </nav>
+    <div class="text container-fluid">
+      <b-table striped hover :items="items" :fields="fields"></b-table>
+      <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
+    </div>
   </div>
 </template>
 <script>
@@ -18,6 +20,7 @@ export default {
       stockId: '',
       numberOfPages: 0,
       currentPage: this.$route.params.pageNum,
+      type: 1,
       pageSize: 15,
       fields: {
         content_title: {
@@ -55,22 +58,32 @@ export default {
     showExcludeNews(event) {
       $(".active").removeClass('active')
       $(event.target).addClass('active')
+      this.type = 1
       this.getData(1)
     },
     showIncludeNews(event) {
       $(".active").removeClass('active')
       $(event.target).addClass('active')
-      this.getData(0)
+      this.type = 0
+      this.getData(1)
     },
     // 第一次加载数据
-    getData (type) {
+    getData (pageNum) {
+      if(pageNum != undefined) {
+        this.currentPage = pageNum
+      } else {
+        this.currentPage = this.$route.params.pageNum
+      }
+
       this.stockId = this.$route.params.stockId
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
         this.$api.get('/api/stock/getStockData/'+this.stockId, null, stockData => {
           this.company = stockData.company
-          let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
-          let rootUrl = type == 0 ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
-          let url = rootUrl + this.stockId+'/'+pageNum+'/'+this.pageSize
+          // let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
+          // let rootUrl = type == 0 ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
+          // let url = rootUrl + this.stockId+'/'+pageNum+'/'+this.pageSize
+          let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
+          let url = rootUrl + this.stockId+'/'+this.currentPage+'/'+this.pageSize
           // alert("url1--->"+url)
           this.$api.get(url, null, rs => {
             // this.dat = r
@@ -124,3 +137,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .text {
+    height: 73vh;
+    margin: 0 auto;
+    overflow: auto;
+  }
+</style>
