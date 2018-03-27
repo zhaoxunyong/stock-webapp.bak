@@ -132,6 +132,7 @@ export default {
       return '/api/stock/search4StockData?query='+input
     },
     selectedProcess (result, refs) {
+      refs.clear()
       this.push('/content/' + result.value+'/1')
       /*$(".form-control input[type='hidden']").each(function(index, data){
         let inputValue = $(data).val()

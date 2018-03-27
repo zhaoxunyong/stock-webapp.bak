@@ -155,7 +155,6 @@ public class FetchServiceImpl implements FetchService {
         if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
             for(StockMyData stockMyData : stockMyDatas) {
                 String newUrl = ROOT_URL + "/q/h?s="+stockMyData.getNo().replaceAll("[A-Z]+$", "")+"&pg="+fetchPage;
-                System.out.println(newUrl);
                 HtmlPage page = webClient.getPage(newUrl);
                 
                 List<?> trDomNodes = page.querySelectorAll("tr table.yui-text-left tbody tr td table tbody tr");
