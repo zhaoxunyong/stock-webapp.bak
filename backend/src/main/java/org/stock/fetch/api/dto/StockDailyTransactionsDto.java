@@ -27,7 +27,7 @@ public class StockDailyTransactionsDto extends BaseDto {
 
     private String txKind;
 
-    private Integer quantity;
+    private String quantity;
 
     private String txPrice;
 
@@ -103,11 +103,11 @@ public class StockDailyTransactionsDto extends BaseDto {
         this.txKind = txKind;
     }
 
-    public Integer getQuantity() {
+    public String getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
 

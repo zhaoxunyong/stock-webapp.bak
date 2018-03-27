@@ -114,6 +114,11 @@ public class StockDailyTransactionsModelDtoMapping extends PropertyMapConfigurer
                     NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US); 
                     return formatter.format(context.getSource());
                 }).map(source.getFinancingAmount(), destination.getFinancingAmount());
+                
+                using((MappingContext<Integer, String> context) -> {
+                    NumberFormat formatter = NumberFormat.getNumberInstance(Locale.US); 
+                    return formatter.format(context.getSource());
+                }).map(source.getQuantity(), destination.getQuantity());
             }
         };
     }

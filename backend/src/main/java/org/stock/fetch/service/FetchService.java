@@ -39,4 +39,9 @@ public interface FetchService {
      * 導入每日買賣股票數據
      */
     void importBydailyTransactions(String excelFile) throws IOException;
+    
+    /**
+     * 導入个股
+     */
+    void importStockMyDatas(String excelFile) throws IOException;
 }

@@ -12,7 +12,7 @@ import com.aeasycredit.commons.lang.utils.DatesUtils;
 @Component
 public class ScheduledTasks {
     
-//    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");g
+//    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 //    private static ExecutorService executorService = Executors.newFixedThreadPool(3);
@@ -21,7 +21,11 @@ public class ScheduledTasks {
     private FetchService fetchService;
     
 //    @Scheduled(fixedRate = 999999999)
-    @Scheduled(cron="* */10 * * * *")
+    /**
+     * 启动时执行一次，之后每隔20分钟执行一次  
+     */
+    @Scheduled(fixedRate = 20 * 60 * 1000) 
+//    @Scheduled(cron="* */20 * * * *")
     public void reportCurrentTime() throws Exception {
        /* logger.info("fetchAll start--->"+DatesUtils.YYMMDDHHMMSS.toString());
         // 獲取所有股票的信息

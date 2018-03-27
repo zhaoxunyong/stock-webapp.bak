@@ -3,7 +3,9 @@ package org.stock.fetch.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -153,6 +155,7 @@ public class FetchServiceImpl implements FetchService {
         if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
             for(StockMyData stockMyData : stockMyDatas) {
                 String newUrl = ROOT_URL + "/q/h?s="+stockMyData.getNo().replaceAll("[A-Z]+$", "")+"&pg="+fetchPage;
+                System.out.println(newUrl);
                 HtmlPage page = webClient.getPage(newUrl);
                 
                 List<?> trDomNodes = page.querySelectorAll("tr table.yui-text-left tbody tr td table tbody tr");
@@ -500,7 +503,7 @@ public class FetchServiceImpl implements FetchService {
             throw new BusinessException("該文件已經導入過，無需重複導入！");
         }
         Date date = new Date();
-        Table<Integer, String, Object> table = ExcelUtils.readExcel2table(excelFile, 1, 1);
+        Table<Integer, String, Object> table = ExcelUtils.readExcel2table(excelFile, 1, 1, 1);
 //        System.out.println("all=>"+table);
         Set<Integer> rowKeys = table.rowKeySet();
         System.out.println("rowKeys size=>"+rowKeys.size());
@@ -594,6 +597,62 @@ public class FetchServiceImpl implements FetchService {
         sth.setFileMd5(fileMd5);
         sth.setCreateDate(date);
         stockDailyTransactionsHistoryMapper.insert(sth);
+    }
+    
+    @Override
+    @Transactional
+    public void importStockMyDatas(String excelFile) throws IOException {
+        Table<Integer, String, Object> table = ExcelUtils.readExcel2table(excelFile, 0, 0, 1);
+        Map<Integer, Map<String, Object>> map = table.rowMap();
+        Collection<Map<String,Object>> values = map.values();
+        Iterator<Map<String, Object>> iterator = values.iterator();
+        while (iterator.hasNext()) {
+             Map<String, Object> rows = iterator.next();
+             Date date = new Date();
+             // {=1.0, 概念股=台積電/半導體設備, 產品=再生晶圓, 股名=中砂, 股號=1560.0}
+             String no = rows.get("股號").toString().replaceAll("\\.0", "");
+             StockData stockData = stockDataMapper.selectByNo(no);
+             if(stockData == null) {
+                 logger.warn("Not found stock data by no: " + no);
+                 /*String  company = rows.get("股名").toString();
+                 stockData = new StockData();
+                 stockData.setId(IdUtils.genLongId());
+                 stockData.setNo(no);
+                 stockData.setCompany(company);
+                 stockData.setCreateDate(date);
+                 stockData.setTypeName(stockType.getName());
+                 stockData.setUrl(url);
+                 stockData.setType(stockType.getType());
+                 stockData.setTxPrice(toBigDecimal(txPriceElement.asText()));
+                 stockData.setClosing(toBigDecimal(closingElement.asText()));
+                 stockData.setHighest(toBigDecimal(highestElement.asText()));
+                 stockData.setLowest(toBigDecimal(lowestElement.asText()));
+                 stockDataMapper.deleteByNo(no);
+                 stockDataMapper.insert(stockData);*/
+             } else {
+                 
+                 StockMyData stockMyData = stockMyDataMapper.selectByStockId(stockData.getId());
+                 if(stockMyData == null) {
+                     String kinds = rows.get("概念股").toString();
+                     if(StringUtils.isNotBlank(kinds)) {
+                         kinds = StringUtils.substringAfter(kinds.toString(), "/");
+                     }
+                     
+                     String industry = rows.get("產品").toString();
+                     
+                     stockMyData = new StockMyData();
+                     stockMyData.setId(IdUtils.genLongId());
+                     stockMyData.setStockId(stockData.getId());
+                    stockMyData.setKinds(kinds);
+                    stockMyData.setIndustry(industry);
+                     stockMyData.setStatus(true);
+                     stockMyData.setCreateDate(date);
+                     stockMyDataMapper.insert(stockMyData);
+                 } else {
+                     logger.error("{}已經存在，無需導入！", no); 
+                 }
+             }
+        }
     }
     
     private BigDecimal toBigDecimal(String value) {

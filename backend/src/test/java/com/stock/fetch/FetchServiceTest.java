@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -12,9 +14,12 @@ import org.stock.StockApplication;
 import org.stock.fetch.service.FetchService;
 import org.stock.utils.FileMd5Utils;
 
+import com.aeasycredit.commons.lang.utils.DatesUtils;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=StockApplication.class)
 public class FetchServiceTest {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Autowired
     private FetchService fetchService;
@@ -60,9 +65,29 @@ public class FetchServiceTest {
     }
     
     @Test
+    public void importStockMyDatas() throws IOException {
+        String excelFile = "/home/zhaoxy/個股資料.xlsx";
+        fetchService.importStockMyDatas(excelFile);
+    }
+    
+    @Test
     public void fileMd5() throws IOException {
         String excelFile = "E:/wenchun/bstw.xlsx";
         String md5 = FileMd5Utils.getMD5(new File(excelFile));
         System.out.println("md5===>"+md5);
+    }
+    
+    @Test
+    public void task() throws Exception {
+        logger.info("fetchNews start--->"+DatesUtils.YYMMDDHHMMSS.toString());
+        // 自动取新闻第一页
+        fetchService.fetchNews(1);
+        System.out.println("fetchNews end--->"+DatesUtils.YYMMDDHHMMSS.toString());
+        
+        System.out.println("fetchImportantNews start--->"+DatesUtils.YYMMDDHHMMSS.toString());
+        
+        // 自動取重點新聞第一頁
+        fetchService.fetchImportantNews(1);
+        System.out.println("fetchImportantNews end--->"+DatesUtils.YYMMDDHHMMSS.toString());
     }
 }
