@@ -3,4 +3,6 @@ APPNAME=stock-webapp
 VERSION=1.0.0-SNAPSHOT
 CONFIG=/data/app/
 PROFILES=prod
-java -Xms1024m -Xmx1024m -XX:MaxNewSize=128m -XX:MaxPermSize=128m -Djava.security.egd=file:/dev/./urandom -jar /data/app/${APPNAME}-${VERSION}.jar --spring.config.location=${CONFIG} --spring.profiles.active=${PROFILES}
+java -Xms512m -Xmx512m -Xmn128m -jar /data/app/${APPNAME}-${VERSION}.jar --spring.config.location=${CONFIG} --spring.profiles.active=${PROFILES} -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:SurvivorRatio=3 -XX:CMSInitiatingOccupancyFraction=80 -XX:+PrintPromotionFailure -XX:+UseCMSCompactAtFullCollection -XX:MaxTenuringThreshold=8 -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/app/heapdump.bin -agentlib:jdwp=transport=dt_socket,address=18082,server=y,suspend=n -Djava.security.egd=file:/dev/./urandom
+
+#--spring.config.location=/works/conf/notify-server/application.yml --spring.profiles.active=test -Xms512m -Xmx512m -Xmn128m -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:SurvivorRatio=3 -XX:CMSInitiatingOccupancyFraction=80 -XX:+PrintPromotionFailure -XX:+UseCMSCompactAtFullCollection -XX:MaxTenuringThreshold=8 -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/works/log/hkcash/notify-server/heapdump.bin -agentlib:jdwp=transport=dt_socket,address=18086,server=y,suspend=n -Djava.security.egd=file:/dev/./urandom

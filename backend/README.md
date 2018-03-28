@@ -10,6 +10,9 @@ grant all privileges on *.* to root@'%' identified by 'Aa123#@!';
 grant all privileges on *.* to root@'localhost' identified by 'Aa654321';
 CREATE DATABASE `wenchun` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; 
 
+echo "* */2 * * * /data/app/sql_backup.sh" > /var/spool/cron/root  
+
+
 docker run -d -p 6379:6379 --restart=always --name redis redis
 
 http://localhost:8080/fetch/index
