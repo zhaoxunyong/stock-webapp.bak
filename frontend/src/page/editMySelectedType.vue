@@ -182,7 +182,7 @@ export default {
           }
         })
         if(stockIds.length > 0) {
-          let url = '/api/stock/changeStockMySelected'
+          let url = '/api/stock/saveAllStockMySelected'
           let params = {
             "selectedType": this.currSelectedType,
             "stockIds": stockIds

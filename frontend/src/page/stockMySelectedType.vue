@@ -46,10 +46,15 @@ export default {
   created () {
     // this.autoSelectedTypes()
     this.getData()
-    
-    // Bus.$on('triggerAutoSelectedTypes', () => {
-    //   this.autoSelectedTypes()
-    // });
+
+    // 從changeStockMySelected中trigger過來
+    // autoSelectedMyStockSelectedType (selectedType) {
+    //   alert(selectedType)
+    // },
+    Bus.$on('autoSelectedMyStockSelectedType', (selectedType, myStockSelectedName) => {
+      this.currSelectedType = selectedType
+      Bus.$emit('getMyStockSelected', selectedType, myStockSelectedName)
+    });
   },
   methods: {
     // 自动高亮显示某个股票所属的自选股名称
@@ -71,14 +76,14 @@ export default {
     /*getAllMyStockData() {
       this.selectedTypes = []
       Bus.$emit('getAllMyStockData')
-    },  */   
+    },  */
     // 触发stockmydata.vue重新摘取所有的sotre股
     getAllStockMyStore() {
       this.selectedTypes = []
       this.currSelectedType = '0'
       Bus.$emit('getAllStockMyStore')
-    }, 
-    // 触发stockmydata.vue重新摘取某个自选股中的所有股票   
+    },
+    // 触发stockmydata.vue重新摘取某个自选股中的所有股票
     getMyStockSelected(type, name) {
       this.currSelectedType = type
       Bus.$emit('getMyStockSelected', type, name)

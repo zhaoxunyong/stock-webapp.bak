@@ -74,7 +74,7 @@ export default {
       } else {
         this.currentPage = this.$route.params.pageNum
       }
-
+      pageNum = this.currentPage
       this.stockId = this.$route.params.stockId
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
         this.$api.get('/api/stock/getStockData/'+this.stockId, null, stockData => {
@@ -83,8 +83,7 @@ export default {
           // let rootUrl = type == 0 ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
           // let url = rootUrl + this.stockId+'/'+pageNum+'/'+this.pageSize
           let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
-          let url = rootUrl + this.stockId+'/'+this.currentPage+'/'+this.pageSize
-          // alert("url1--->"+url)
+          let url = rootUrl + this.stockId+'/'+pageNum+'/'+this.pageSize
           this.$api.get(url, null, rs => {
             // this.dat = r
             this.numberOfPages = rs.pageTotal

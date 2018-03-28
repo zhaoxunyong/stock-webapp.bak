@@ -25,7 +25,7 @@
           <!-- <b-form-input type="text"
                         placeholder="Enter your name"
                         v-model="name"></b-form-input> -->
-          <b-form-select v-model="selected" :options="options" class="mb-3" />
+          <b-form-select id="form-select-id" v-model="selected" :options="options" class="mb-3" />
         </form>
       </b-modal>
     </div>
@@ -203,14 +203,15 @@ export default {
       if (!this.selected) {
         alert('請選擇自選股!')
       } else {
-        this.handleSubmit()
+        this.handleSubmit(evt)
       }
     },
-    handleSubmit () {
-      //this.names.push(this.name)
+    handleSubmit (evt) {
+      //this.names.push(this.name).
+      let currentSelectedName = $("#form-select-id option:selected").html()
       let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
       // alert(stockId +'/' + this.selected)
-      this.changeStockMySelected(stockId, this.selected)
+      this.changeStockMySelected(stockId, this.selected, currentSelectedName)
       this.clearName()
       this.$refs.modal.hide()
     },
@@ -256,7 +257,7 @@ export default {
         })
       }
     },
-    changeStockMySelected (stockId, selectedType) {
+    changeStockMySelected (stockId, selectedType, myStockSelectedName) {
       let url = '/api/stock/changeStockMySelected'
       let stockIds = []
       stockIds.push(stockId)
@@ -267,8 +268,10 @@ export default {
       this.$api.post(url, params, rs => {
         //改变路由的地址
         Bus.$emit('success', "保存成功!")
+        // 自動選擇右邊的自選股
+        Bus.$emit('autoSelectedMyStockSelectedType', selectedType, myStockSelectedName)
         // this.push('/content/' + stockId+'/1')
-        location.reload()
+        // location.reload()
       })
     }
   }

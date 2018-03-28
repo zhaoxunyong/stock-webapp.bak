@@ -23,6 +23,11 @@
     where selected_type = #{selectedType,jdbcType=BIGINT}
   </delete>
   
+  <delete id="deleteByStockId" >
+    delete from stock_my_selected
+    where stock_id = #{stockId,jdbcType=BIGINT} and selected_type = #{selectedType,jdbcType=BIGINT}
+  </delete>
+  
   <delete id="removeOneStockMySelected" >
     delete from stock_my_selected
     where stock_id = #{stockId,jdbcType=BIGINT} and selected_type = #{selectedType,jdbcType=BIGINT}

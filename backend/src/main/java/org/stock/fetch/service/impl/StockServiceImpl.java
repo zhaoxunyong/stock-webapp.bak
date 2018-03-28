@@ -191,11 +191,46 @@ public class StockServiceImpl implements StockService {
 	public void renameStockMydataName(Long selectedType, String name)  {
         stockMySelectedTypeMapper.renameStockMydataName(selectedType, name);
 	}
+    
+    @Override
+    @Transactional
+    public void changeStockMySelected(List<Long> stockIds, Long selectedType) {
+        for(Long stockId : stockIds) {
+            stockMySelectedMapper.deleteByStockId(stockId, selectedType);
+            // 是否在個股中，沒有的話，需要添加
+            StockMyData stockMyData = stockMyDataMapper.selectByStockId(stockId);
+            if(stockMyData == null) {
+                stockMyData = new StockMyData();
+                stockMyData.setId(IdUtils.genLongId());
+                stockMyData.setStockId(stockId);
+//              stockMyData.setKinds(kinds);
+//              stockMyData.setIndustry(industry);
+                stockMyData.setStatus(true);
+                stockMyData.setCreateDate(new Date());
+                stockMyDataMapper.insert(stockMyData);
+            }
+            
+            StockMySelected stockMySelected = stockMySelectedMapper.select(stockId, selectedType);
+            if(stockMySelected == null) {
+                // insert
+                stockMySelected = new StockMySelected();
+                stockMySelected.setId(IdUtils.genLongId());
+                stockMySelected.setSelectedType(selectedType);
+                stockMySelected.setStockId(stockId);
+                stockMySelected.setStatus(true);
+                stockMySelected.setCreateDate(new Date());
+                stockMySelectedMapper.insert(stockMySelected);
+            } else {
+                // update
+                stockMySelectedMapper.update(stockId, selectedType);
+            }
+        }
+    }
 	
 	@Override
 	@Transactional
-	public void changeStockMySelected(List<Long> stockIds, Long selectedType) {
-//	    stockMySelectedMapper.delete(selectedType);
+	public void saveAllStockMySelected(List<Long> stockIds, Long selectedType) {
+        stockMySelectedMapper.delete(selectedType);
 	    for(Long stockId : stockIds) {
             // 是否在個股中，沒有的話，需要添加
             StockMyData stockMyData = stockMyDataMapper.selectByStockId(stockId);

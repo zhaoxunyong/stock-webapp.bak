@@ -258,12 +258,20 @@ public class StockApiImpl implements StockApi {
 		stockService.saveStockMySelectedType(stockMySelectedType);
 	}
 
-	@Override
+    @Override
     @RequestMapping(value = "/changeStockMySelected", method = POST)
-	public void changeStockMySelected(@RequestBody ChangeStockMySelectedDto changeStockMySelectedDto) {
+    public void changeStockMySelected(@RequestBody ChangeStockMySelectedDto changeStockMySelectedDto) {
+//      throw new BusinessException("中华人民共和国");
+        List<Long> stokIdLongs = changeStockMySelectedDto.getStockIds().stream().map(stockId -> Long.parseLong(stockId)).collect(Collectors.toList());
+        stockService.changeStockMySelected(stokIdLongs, Long.parseLong(changeStockMySelectedDto.getSelectedType()));
+    }
+
+	@Override
+    @RequestMapping(value = "/saveAllStockMySelected", method = POST)
+	public void saveAllStockMySelected(@RequestBody ChangeStockMySelectedDto changeStockMySelectedDto) {
 //		throw new BusinessException("中华人民共和国");
 	    List<Long> stokIdLongs = changeStockMySelectedDto.getStockIds().stream().map(stockId -> Long.parseLong(stockId)).collect(Collectors.toList());
-		stockService.changeStockMySelected(stokIdLongs, Long.parseLong(changeStockMySelectedDto.getSelectedType()));
+		stockService.saveAllStockMySelected(stokIdLongs, Long.parseLong(changeStockMySelectedDto.getSelectedType()));
 	}
 
     @Override

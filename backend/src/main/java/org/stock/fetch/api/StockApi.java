@@ -89,6 +89,9 @@ public interface StockApi {
 	
 	@ApiOperation(value="changeStockMySelected", notes="changeStockMySelected")
 	public void changeStockMySelected(ChangeStockMySelectedDto changeStockMySelectedDto);
+    
+    @ApiOperation(value="saveAllStockMySelected", notes="saveAllStockMySelected")
+    public void saveAllStockMySelected(ChangeStockMySelectedDto changeStockMySelectedDto);
 	
 	@ApiOperation(value="renameStockMydataName", notes="renameStockMydataName")
     @ApiImplicitParams({

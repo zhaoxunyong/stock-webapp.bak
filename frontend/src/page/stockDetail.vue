@@ -92,8 +92,10 @@ export default {
             let url = '/api/stock/removeOneStockMySelected?stockId='+$this.stockId+"&selectedType="+$this.currSelectedType
             $this.$api.post(url, null, rs => {
               Bus.$emit('success', "移除成功!")
-              location.reload();
+              // location.reload();
               // $this.$router.go(this.$router.currentRoute)
+              // 自動選擇自選股
+              Bus.$emit('autoSelectedMyStockSelectedType', $this.currSelectedType, $this.currSelectedName)
             })
           }
         ).catch(function(e){
