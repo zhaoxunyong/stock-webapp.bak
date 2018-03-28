@@ -25,7 +25,7 @@
           <!-- <b-form-input type="text"
                         placeholder="Enter your name"
                         v-model="name"></b-form-input> -->
-          <b-form-select id="form-select-id" v-model="selected" :options="options" class="mb-3" />
+          <b-form-select v-model="selected" :options="options" class="mb-3" />
         </form>
       </b-modal>
     </div>
@@ -203,15 +203,14 @@ export default {
       if (!this.selected) {
         alert('請選擇自選股!')
       } else {
-        this.handleSubmit(evt)
+        this.handleSubmit()
       }
     },
     handleSubmit (evt) {
-      //this.names.push(this.name).
-      let currentSelectedName = $("#form-select-id option:selected").html()
+      //this.names.push(this.name)
       let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
       // alert(stockId +'/' + this.selected)
-      this.changeStockMySelected(stockId, this.selected, currentSelectedName)
+      this.changeStockMySelected(stockId, this.selected, this.myStockSelectedName)
       this.clearName()
       this.$refs.modal.hide()
     },
