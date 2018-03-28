@@ -185,11 +185,17 @@ public class StockServiceImpl implements StockService {
 	public void saveStockMySelectedType(StockMySelectedType stockMySelectedType) {
 		stockMySelectedTypeMapper.insert(stockMySelectedType);
 	}
+
+    @Override
+    @Transactional
+	public void renameStockMydataName(Long selectedType, String name)  {
+        stockMySelectedTypeMapper.renameStockMydataName(selectedType, name);
+	}
 	
 	@Override
 	@Transactional
 	public void changeStockMySelected(List<Long> stockIds, Long selectedType) {
-	    stockMySelectedMapper.delete(selectedType);
+//	    stockMySelectedMapper.delete(selectedType);
 	    for(Long stockId : stockIds) {
             // 是否在個股中，沒有的話，需要添加
             StockMyData stockMyData = stockMyDataMapper.selectByStockId(stockId);

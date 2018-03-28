@@ -265,6 +265,12 @@ public class StockApiImpl implements StockApi {
 	    List<Long> stokIdLongs = changeStockMySelectedDto.getStockIds().stream().map(stockId -> Long.parseLong(stockId)).collect(Collectors.toList());
 		stockService.changeStockMySelected(stokIdLongs, Long.parseLong(changeStockMySelectedDto.getSelectedType()));
 	}
+
+    @Override
+    @RequestMapping(value = "/renameStockMydataName", method = POST)
+    public void renameStockMydataName(String selectedType, String name) {
+        stockService.renameStockMydataName(Long.parseLong(selectedType), name);
+    }
 	
     @Override
     @RequestMapping(value = "/removeOneStockMySelected", method = POST)

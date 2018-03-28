@@ -9,9 +9,10 @@
         </b-button>
       </span>
 
-      <div class="float-right w-25">
+      <div class="float-right w-50">
         <b-btn v-b-modal.modalPrevent variant="info">添加</b-btn>
-        <b-button v-if="currSelectedType != ''" variant="info" @click="save2StockMyData">保存</b-button>
+        <b-btn v-if="currSelectedType != ''" variant="info" v-b-modal.modalPrevent2>修改名稱</b-btn>
+        <b-btn v-if="currSelectedType != ''" variant="info" @click="save2StockMyData">保存</b-btn>
         <!-- Modal Component -->
         <b-modal id="modalPrevent"
                  ref="modal"
@@ -22,6 +23,19 @@
             <b-form-input type="text"
                           placeholder="输入自選股名称"
                           v-model="name" ref="focusThis"></b-form-input>
+          </form>
+        </b-modal>
+
+        <!-- Modal Component -->
+        <b-modal id="modalPrevent2"
+                 ref="modal2"
+                 title="请输入需要修改的自選股名称"
+                 @ok="handleOk2"
+                 @shown="clearName2">
+          <form @submit.stop.prevent="handleSubmit2">
+            <b-form-input type="text"
+                          placeholder="请输入需要修改的自選股名称"
+                          v-model="name" ref="focusThis2"></b-form-input>
           </form>
         </b-modal>
       </div>
@@ -112,6 +126,49 @@ export default {
       this.clearName()
       this.$refs.modal.hide()
     },
+    // 保存自選股名稱
+    saveData (name) {
+      let url = '/api/stock/saveStockMySelectedType?name='+name
+      this.$api.post(url, null, rs => {
+        this.getData()
+        // Bus.$emit('reGetStockMySelectedTypes')
+      })
+    },
+
+    // reame stockmydata name
+    clearName2 () {
+      this.name = ''
+      this.$refs.focusThis2.focus()
+    },
+    handleOk2 (evt) {
+      // Prevent modal from closing
+      evt.preventDefault()
+      if (!this.name) {
+        alert('请输入需要修改的自選股名称!')
+      } else {
+        this.handleSubmit2()
+      }
+    },
+    handleSubmit2 () {
+      // this.names.push(this.name)
+      this.renameStockMydataName(this.name)
+      this.clearName2()
+      this.$refs.modal2.hide()
+    },
+    // 保存自選股名稱
+    renameStockMydataName (name) {
+      if(this.currSelectedType == '') {
+        alert("請先選擇對應的自選股名稱!")
+      } else {
+        let url = '/api/stock/renameStockMydataName?selectedType='+this.currSelectedType+'&name='+name
+        // alert(url)
+        this.$api.post(url, null, rs => {
+          this.getData()
+          Bus.$emit('success', "修改名稱成功!")
+        })
+      }
+    },
+
     // 保存選擇的股票到自選股中
     save2StockMyData () {
       if(this.currSelectedType == '') {
@@ -135,14 +192,6 @@ export default {
           })
         }
       }
-    },
-    // 保存自選股名稱
-    saveData (name) {
-      let url = '/api/stock/saveStockMySelectedType?name='+name
-      this.$api.post(url, null, rs => {
-        this.getData()
-        // Bus.$emit('reGetStockMySelectedTypes')
-      })
     },
     isSelected(type) {
        // ? 'success':'warning'
