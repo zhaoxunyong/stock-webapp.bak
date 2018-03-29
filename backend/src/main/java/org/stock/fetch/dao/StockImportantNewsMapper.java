@@ -16,6 +16,8 @@ public interface StockImportantNewsMapper {
 
     StockImportantNews selectByPrimaryKey(Long id);
 
+    StockImportantNews getImportantLatestNews();
+
 //    List<StockImportantNews> selectAll(@Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize);
     
     List<StockImportantNews> selectExclude(@Param("excludeKeys")String excludeKeys, @Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize);

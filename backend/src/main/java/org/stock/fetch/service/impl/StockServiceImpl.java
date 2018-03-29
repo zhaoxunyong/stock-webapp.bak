@@ -67,6 +67,11 @@ public class StockServiceImpl implements StockService {
 	}
 
     @Override
+    public org.stock.fetch.model.StockMyData StockMyData(Long stockId) {
+        return stockMyDataMapper.selectByStockId(stockId);
+    }
+
+    @Override
 	public List<StockMyStore> getStockMyDatasByStore() {
         return stockMyStoreMapper.getStockMyDatasByStore();
 	}

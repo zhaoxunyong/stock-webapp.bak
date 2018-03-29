@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.MediaType;
@@ -49,6 +51,7 @@ import org.stock.fetch.model.StockNews;
 import org.stock.fetch.model.StockNewsKey;
 import org.stock.fetch.service.FetchService;
 import org.stock.fetch.service.StockService;
+import org.stock.fetch.tasks.ScheduledTasks;
 
 import com.aeasycredit.commons.lang.exception.BusinessException;
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
@@ -60,6 +63,8 @@ import com.google.common.collect.Lists;
 @RequestMapping(value = "/api/stock", produces = MediaType.APPLICATION_JSON_VALUE)
 @EnableConfigurationProperties(StockProperties.class)
 public class StockApiImpl implements StockApi {
+    
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
 	private ModelMapper modelMapper;
@@ -427,6 +432,74 @@ public class StockApiImpl implements StockApi {
     @RequestMapping(value = "/saveCompanyStatus", method = POST)
     public void saveCompanyStatus(String stockId, String companyStatus) {
         stockService.saveCompanyStatus(Long.parseLong(stockId), companyStatus);
+    }
+
+    @Override
+    @RequestMapping(value = "/fetchLatestNews", method = POST)
+    public void fetchLatestNews(String stockId) {
+        if(!ScheduledTasks.IS_FETCH_ING) {
+            ScheduledTasks.IS_FETCH_ING = true;
+            try {
+                fetchService.fetchLatestNews(stockService.getStockData(Long.parseLong(stockId)));
+            } catch (Exception e) {
+                throw new BusinessException(e);
+            } finally {
+                ScheduledTasks.IS_FETCH_ING = false;
+            }
+        } else {
+            logger.warn("fetchLatestNews: 後臺已經在抓取數據中...");
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/fetchNews", method = POST)
+    public void fetchNews(String stockId, int fetchPage) {
+        if(!ScheduledTasks.IS_FETCH_ING) {
+            ScheduledTasks.IS_FETCH_ING = true;
+            try {
+                fetchService.fetchNews(stockService.getStockData(Long.parseLong(stockId)), fetchPage);
+            } catch (Exception e) {
+                throw new BusinessException(e);
+            } finally {
+                ScheduledTasks.IS_FETCH_ING = false;
+            }
+        } else {
+            logger.warn("fetchNews: 後臺已經在抓取數據中...");
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/fetchImportantLatestNews", method = POST)
+    public void fetchImportantLatestNews() {
+        if(!ScheduledTasks.IS_FETCH_ING) {
+            ScheduledTasks.IS_FETCH_ING = true;
+            try {
+                fetchService.fetchImportantLatestNews();
+            } catch (Exception e) {
+                throw new BusinessException(e);
+            } finally {
+                ScheduledTasks.IS_FETCH_ING = false;
+            }
+        } else {
+            logger.warn("fetchImportantLatestNews: 後臺已經在抓取數據中...");
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/fetchImportantNews", method = POST)
+    public void fetchImportantNews(int fetchPage) {
+        if(!ScheduledTasks.IS_FETCH_ING) {
+            ScheduledTasks.IS_FETCH_ING = true;
+            try {
+                fetchService.fetchImportantNews(fetchPage);
+            } catch (Exception e) {
+                throw new BusinessException(e);
+            } finally {
+                ScheduledTasks.IS_FETCH_ING = false;
+            }
+        } else {
+            logger.warn("fetchImportantNews: 後臺已經在抓取數據中...");
+        }
     }
 
 }

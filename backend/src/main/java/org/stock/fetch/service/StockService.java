@@ -14,6 +14,8 @@ import org.stock.fetch.model.StockNews;
 import org.stock.fetch.model.StockNewsKey;
 
 public interface StockService {
+	public StockMyData StockMyData(Long stockId);
+	
 	public List<StockMyData> getStockMyDatas();
 	
 	public List<StockMyData> getStockMyDatasByType(Long type);

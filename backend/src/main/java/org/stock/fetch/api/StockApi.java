@@ -154,5 +154,25 @@ public interface StockApi {
     @ApiOperation(value="saveCompanyStatus", notes="saveCompanyStatus")
     public void saveCompanyStatus(String stockId, String companyStatus);
     
+    @ApiOperation(value="fetchLatestNews", notes="fetchLatestNews")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+    })
+    public void fetchLatestNews(String stockId);
     
+    @ApiOperation(value="fetchNews", notes="fetchNews")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "fetchPage", value = "fetchPage", required = true, dataType = "string", paramType = "query")
+    })
+    public void fetchNews(String stockId, int fetchPage);
+    
+    @ApiOperation(value="fetchImportantLatestNews", notes="fetchImportantLatestNews")
+    public void fetchImportantLatestNews();
+    
+    @ApiOperation(value="fetchImportantNews", notes="fetchImportantNews")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "fetchPage", value = "fetchPage", required = true, dataType = "string", paramType = "query")
+    })
+    public void fetchImportantNews(int fetchPage);
 }

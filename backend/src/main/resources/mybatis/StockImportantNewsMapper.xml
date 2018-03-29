@@ -45,6 +45,12 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
   
+  <select id="getImportantLatestNews" resultMap="BaseResultMap">
+    select <include refid="BaseColumnList" /> 
+    from stock_important_news
+    ORDER BY news_date desc limit 1
+  </select>
+  
 <!--   <select id="selectAll" resultMap="BaseResultMap" > -->
 <!--     select <include refid="BaseColumnList" />  -->
 <!--     from stock_important_news -->

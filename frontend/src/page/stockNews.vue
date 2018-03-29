@@ -28,7 +28,8 @@ export default {
           sortable: true
         }
       },
-      items: []
+      items: [],
+      intervalid1: null
     }
   },
   created () {
@@ -39,10 +40,32 @@ export default {
     Bus.$on('initCurrentPage', (pageNum) => {
       this.currentPage = pageNum
     })
+
+    this.timeOutsetInterval()
   },
   mounted () {
   },
   methods: {
+    timeOutsetInterval (){
+      if(this.intervalid1 != null) {
+        clearInterval(this.intervalid1)
+      }
+      let $this = this
+      this.autoFetch($this)
+      $this.intervalid1 = setInterval(() => {
+        // this.changes = ((Math.random() * 100).toFixed(2))+'%';
+        this.autoFetch($this)
+      }, 5 * 60 * 1000);
+    },
+    autoFetch($this) {
+      Bus.$emit('loading', "正在自動獲取最新的新聞中...", true)
+      let url = "/api/stock/fetchLatestNews?stockId="+this.stockId
+      // alert("fetchNews=============>"+url)
+      $this.$api.post(url, null, rs => {
+        Bus.$emit('success', "自動更新新聞成功!")
+        this.getData()
+      })
+    },
     linkGen(pageNum) {
       return {
         path: '/content/' + this.stockId+'/'+pageNum
@@ -69,12 +92,15 @@ export default {
     },
     // 第一次加载数据
     getData (pageNum) {
-      if(pageNum != undefined) {
-        this.currentPage = pageNum
-      } else {
-        this.currentPage = this.$route.params.pageNum
+      // if(pageNum != undefined) {
+      //   this.currentPage = pageNum
+      // } else {
+      //   this.currentPage = this.$route.params.pageNum
+      // }
+      if(pageNum == undefined) {
+        pageNum = this.$route.params.pageNum
       }
-      pageNum = this.currentPage
+      // pageNum = this.currentPage
       this.stockId = this.$route.params.stockId
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
         this.$api.get('/api/stock/getStockData/'+this.stockId, null, stockData => {
@@ -106,6 +132,7 @@ export default {
     '$route' (to, from) {
       this.stockId = this.$route.params.stockId
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
+        this.timeOutsetInterval()
         this.$api.get('/api/stock/getStockData/'+this.stockId, null, stockData => {
           this.company = stockData.company
           console.log("company--->"+this.company)

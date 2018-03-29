@@ -40,8 +40,25 @@ export default {
     Bus.$on('initCurrentPage', (pageNum) => {
       this.currentPage = pageNum
     })
+    this.timeOutsetInterval()
   },
   methods: {
+    timeOutsetInterval (){
+      let $this = this
+      this.autoFetch($this)
+      this.intervalid1 = setInterval(() => {
+        // this.changes = ((Math.random() * 100).toFixed(2))+'%';
+        this.autoFetch($this)
+      }, 10 * 60 * 1000);
+    },
+    autoFetch($this) {
+      Bus.$emit('loading', "正在自動獲取最新的新聞中...", true)
+      let url = "/api/stock/fetchImportantLatestNews"
+      $this.$api.post(url, null, rs => {
+        Bus.$emit('success', "自動更新新聞成功!")
+        this.getData(1)
+      })
+    },
     linkGen(pageNum) {
       return {
         path: '/importantNews/' + pageNum

@@ -3,6 +3,7 @@ package org.stock.fetch.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -44,6 +45,7 @@ import com.aeasycredit.commons.lang.exception.ParameterException;
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 import com.aeasycredit.commons.lang.utils.DatesUtils;
 import com.aeasycredit.commons.poi.excel.ExcelUtils;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
@@ -149,59 +151,132 @@ public class FetchServiceImpl implements FetchService {
 
     @Override
     @Transactional
-    public void fetchNews(int fetchPage) throws Exception {
-        Date date = new Date();
-        List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
-        if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
-            for(StockMyData stockMyData : stockMyDatas) {
-                String newUrl = ROOT_URL + "/q/h?s="+stockMyData.getNo().replaceAll("[A-Z]+$", "")+"&pg="+fetchPage;
-                HtmlPage page = webClient.getPage(newUrl);
-                
-                List<?> trDomNodes = page.querySelectorAll("tr table.yui-text-left tbody tr td table tbody tr");
-                if(trDomNodes!=null && !trDomNodes.isEmpty()) {
-                    for(int i=0;i<trDomNodes.size();i=i+2) {
-                        HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
-                        List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
-                        if(nextTds.size() == 2) {
-                            HtmlElement titleDomNode = (HtmlElement) trDomNodes.get(i+1);
-                            List<HtmlElement> titleTds = titleDomNode.getElementsByTagName("td");
-                            String title = titleTds.get(0).asText().replaceAll("^\\(|\\)$", "");
-                            String newsDate = StringUtils.substringBefore(title, " ");
-                            String froms = StringUtils.substringAfter(title, " ");
-                            
-                            HtmlElement td = nextTds.get(1);
-                            List<HtmlElement> aNodes = td.getElementsByTagName("a");
-                            if(aNodes==null || aNodes.isEmpty()) continue;
-                            HtmlElement aElement = aNodes.get(0);
-                            String url = ROOT_URL + aElement.getAttribute("href");
-                            String subject = td.asText() + "("+froms +" "+newsDate+")";
-                            StockNews stockNews = new StockNews();
-                            stockNews.setId(IdUtils.genLongId());
-                            stockNews.setFroms(froms);
-                            stockNews.setNewsDate(DatesUtils.YYMMDD2.toDate(newsDate));
-                            stockNews.setStockId(stockMyData.getStockId());
-                            stockNews.setSubject(subject);
-                            stockNews.setUrl(url);
-                            stockNews.setCreateDate(date);
-                            stockNewsMapper.deleteByStockNews(stockNews);
-//                            if(!checkNewsSubject(subject)) {
-                            stockNewsMapper.insert(stockNews);
-//                            logger.info(stockNews.toString());
-//                            }
+    public void fetchLatestNews(StockData stockData) throws Exception {
+        StockNews stockNews = stockNewsMapper.getLatestNews(stockData.getId());
+        if(stockNews == null) {
+            logger.info("fetchLatestNews: 第一次导入，只导入前4页面");
+            for(int i=1;i<=4;i++) {
+                this.fetchNews(stockData, i);
+            }
+        } else {
+            Date newDate = stockNews.getNewsDate();
+            logger.info("fetchLatestNews: 从当前日期导到"+newDate+".");
+            int i=1;
+            int maxFetchPages = 10;
+           //定义标签
+            labelA:
+            while(i<=maxFetchPages) {
+                List<StockNews> stockNewses =  this.fetchNews(stockData, i);
+                if(stockNewses!=null && !stockNewses.isEmpty()) {
+                    for(StockNews news : stockNewses) {
+                        if(news.getNewsDate().getTime() <= newDate.getTime()) {
+                            logger.info("fetchLatestNews: 已经导到了"+newDate+"，无需再导入!");
+                            break labelA;
                         }
                     }
                 }
+                i++;
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public List<StockNews> fetchNews(StockData stockData, int fetchPage) throws Exception {
+//        StockMyData stockMyData = stockMyDataMapper.selectByStockId(stockId);
+        if(stockData == null) {
+            throw new ParameterException("stockData must be not empty!");
+        }
+        String newUrl = ROOT_URL + "/q/h?s="+stockData.getNo().replaceAll("[A-Z]+$", "")+"&pg="+fetchPage;
+        HtmlPage page = webClient.getPage(newUrl);
+        List<StockNews> stockNewses =  Lists.newArrayList();
+        List<?> trDomNodes = page.querySelectorAll("tr table.yui-text-left tbody tr td table tbody tr");
+        if(trDomNodes!=null && !trDomNodes.isEmpty()) {
+            for(int i=0;i<trDomNodes.size();i=i+2) {
+                HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
+                List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
+                if(nextTds.size() == 2) {
+                    HtmlElement titleDomNode = (HtmlElement) trDomNodes.get(i+1);
+                    List<HtmlElement> titleTds = titleDomNode.getElementsByTagName("td");
+                    String title = titleTds.get(0).asText().replaceAll("^\\(|\\)$", "");
+                    String newsDate = StringUtils.substringBefore(title, " ");
+                    String froms = StringUtils.substringAfter(title, " ");
+                    
+                    HtmlElement td = nextTds.get(1);
+                    List<HtmlElement> aNodes = td.getElementsByTagName("a");
+                    if(aNodes==null || aNodes.isEmpty()) continue;
+                    HtmlElement aElement = aNodes.get(0);
+                    String url = ROOT_URL + aElement.getAttribute("href");
+                    String subject = td.asText() + "("+froms +" "+newsDate+")";
+                    StockNews stockNews = new StockNews();
+                    stockNews.setId(IdUtils.genLongId());
+                    stockNews.setFroms(froms);
+                    stockNews.setNewsDate(DatesUtils.YYMMDD2.toDate(newsDate));
+                    stockNews.setStockId(stockData.getId());
+                    stockNews.setSubject(subject);
+                    stockNews.setUrl(url);
+                    stockNews.setCreateDate(new Date());
+                    stockNewses.add(stockNews);
+                    stockNewsMapper.deleteByStockNews(stockNews);
+//                    if(!checkNewsSubject(subject)) {
+                    stockNewsMapper.insert(stockNews);
+//                    logger.info(stockNews.toString());
+//                    }
+                }
+            }
+        }
+        return stockNewses;
+    }
+
+    @Override
+    @Transactional
+    public void fetchNews(int fetchPage) throws Exception {
+        List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
+        if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
+            for(StockMyData stockMyData : stockMyDatas) {
+                this.fetchNews(stockDataMapper.selectByPrimaryKey(stockMyData.getStockId()), fetchPage);
             }
         }
     }
     
     @Override
     @Transactional
-    public void fetchImportantNews(int fetchPage) throws Exception {
+    public void fetchImportantLatestNews() throws Exception {
+        StockImportantNews stockImportantNews = stockImportantNewsMapper.getImportantLatestNews();
+        if(stockImportantNews == null) {
+            logger.info("stockImportantNews: 第一次导入，只导入前4页面");
+            for(int i=1;i<=4;i++) {
+                this.fetchImportantNews(i);
+            }
+        } else {
+            Date newDate = stockImportantNews.getNewsDate();
+            logger.info("stockImportantNews: 从当前日期导到"+newDate+".");
+            int i=1;
+            int maxFetchPages = 10;
+           //定义标签
+            labelA:
+            while(i<=maxFetchPages) {
+                List<StockImportantNews> stockImportantNewses =  this.fetchImportantNews(i);
+                if(stockImportantNewses!=null && !stockImportantNewses.isEmpty()) {
+                    for(StockImportantNews importantNews : stockImportantNewses) {
+                        if(importantNews.getNewsDate().getTime() <= newDate.getTime()) {
+                            logger.info("stockImportantNews: 已经导到了"+newDate+"，无需再导入!");
+                            break labelA;
+                        }
+                    }
+                }
+                i++;
+            }
+        }
+    }
+    
+    @Override
+    @Transactional
+    public List<StockImportantNews> fetchImportantNews(int fetchPage) throws Exception {
         Date date = new Date();
 		String newUrl = ROOT_URL + "/news_list/url/d/e/N1.html?q=&pg="+fetchPage;
 		HtmlPage page = webClient.getPage(newUrl);
-		
+		List<StockImportantNews> stockImportantNewses = Lists.newArrayList();
 		HtmlElement ele = page.getHtmlElementById("newListContainer");
 		List<?> tableDomNodes = ele.querySelectorAll("table#newListTable tbody tr td table");
         if(tableDomNodes!=null && !tableDomNodes.isEmpty()) {
@@ -228,11 +303,13 @@ public class FetchServiceImpl implements FetchService {
                 	stockImportantNews.setNewsDate(DatesUtils.YYMMDDHHMMSS2.toDate(newsDateString+":00"));
                 	stockImportantNews.setSubject(subjectValue);
                 	stockImportantNews.setUrl(url);
+                	stockImportantNewses.add(stockImportantNews);
                 	stockImportantNewsMapper.deleteByFroms(fromValue);
                 	stockImportantNewsMapper.insert(stockImportantNews);
                 }
         	}
         }
+        return stockImportantNewses;
     }
     
     private List<StockType> fetchKinds(StockTypeEnum stockTypeEnum) throws Exception {

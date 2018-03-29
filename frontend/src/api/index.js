@@ -46,7 +46,7 @@ function fileUpload(file, url, success, failure) {
   Bus.$emit('loading', "正在處理中, 請稍候......", true)
   axios.post(url,param,config)
   .then(response=>{
-    console.log(response.data)
+    // console.log(response.data)
     Bus.$emit('loading', '加載完成', false)
     if(success) {
       success(response.data)
@@ -81,7 +81,7 @@ function apiAxios (method, url, params, success, failure) {
     withCredentials: false
   })
   .then(function (res) {
-    console.log("res.data---->"+res.data)
+    // console.log("res.data---->"+res.data)
     Bus.$emit('loading', '加載完成', false)
     if(success) {
       success(res.data)

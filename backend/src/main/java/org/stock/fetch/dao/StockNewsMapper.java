@@ -16,6 +16,8 @@ public interface StockNewsMapper {
 
     StockNews selectByPrimaryKey(Long id);
 
+    StockNews getLatestNews(@Param("stockId")Long stockId);
+
     List<StockNews> selectAll();
     
 //    List<StockNews> selectByStockId(@Param("stockId")Long stockId, @Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize);
