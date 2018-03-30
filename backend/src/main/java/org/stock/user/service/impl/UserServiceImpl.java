@@ -2,7 +2,7 @@ package org.stock.user.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.stock.user.dao.UserDao;
+import org.stock.user.dao.UserMapper;
 import org.stock.user.model.User;
 import org.stock.user.service.UserService;
 
@@ -10,10 +10,10 @@ import org.stock.user.service.UserService;
 public class UserServiceImpl implements UserService {
     
     @Autowired
-    private UserDao userDao;
+    private UserMapper userMapper;
 
     public User getUserByLoginName(String loginName) {
-        return userDao.getUserByLoginName(loginName);
+        return userMapper.getUserByLoginName(loginName);
     }
 
 }

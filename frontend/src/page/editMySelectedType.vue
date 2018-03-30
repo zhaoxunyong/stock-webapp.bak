@@ -9,7 +9,7 @@
         </b-button>
       </span>
 
-      <div class="float-right w-50">
+      <div class="float-right w-25">
         <b-btn v-b-modal.modalPrevent variant="info">添加</b-btn>
         <b-btn v-if="currSelectedType != ''" variant="info" v-b-modal.modalPrevent2>修改名稱</b-btn>
         <b-btn v-if="currSelectedType != ''" variant="info" @click="save2StockMyData">保存</b-btn>

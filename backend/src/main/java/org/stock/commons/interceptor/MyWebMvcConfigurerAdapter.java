@@ -6,8 +6,7 @@
  */
 package org.stock.commons.interceptor;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -25,6 +24,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class MyWebMvcConfigurerAdapter 
         extends WebMvcConfigurerAdapter {
     
+    @Value("${interceptor.excludePath}")
+    private String[] excludePath;
+    
 //    @Autowired
 //    private MyHandlerInterceptor myHandlerInterceptor;
     
@@ -32,21 +34,8 @@ public class MyWebMvcConfigurerAdapter
 //    private ApplicationContext context;
     
     @Bean
-    @ConditionalOnProperty(prefix="app.token", name="enabled", matchIfMissing = true)
     public MyHandlerInterceptor myHandlerInterceptor() {
         return new MyHandlerInterceptor();
-    }
-    
-    @Bean
-    public MyFilter myFilter() {
-        return new MyFilter();
-    }
-    
-    @Bean
-    @ConditionalOnProperty(prefix="app.token", name="enabled", matchIfMissing = true)
-    public FilterRegistrationBean registration(MyFilter myFilter) {
-        FilterRegistrationBean registration = new FilterRegistrationBean(myFilter);
-        return registration;
     }
     
 /*    @Override
@@ -60,7 +49,7 @@ public class MyWebMvcConfigurerAdapter
         // 多个拦截器组成一个拦截器链
         // addPathPatterns 用于添加拦截规则
         // excludePathPatterns 用户排除拦截
-        registry.addInterceptor(myHandlerInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(myHandlerInterceptor()).addPathPatterns("/**").excludePathPatterns(excludePath);
         super.addInterceptors(registry);
     }
     

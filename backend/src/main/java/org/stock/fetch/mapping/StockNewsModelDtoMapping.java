@@ -33,10 +33,10 @@ public class StockNewsModelDtoMapping extends PropertyMapConfigurerSupport<Stock
             @Override
             protected void configure() {
 
-                map().setId(ObjectsUtils.toString(source.getId()));
-                /*map().setUserId(ObjectsUtils.toString(source.getUserId()));
-                map().setLoanRequestNo(ObjectsUtils.toString(source.getLoanRequestNo()));
-                map().setRequestId(ObjectsUtils.toString(source.getRequestId()));
+                map().setId(String.valueOf(source.getId()));
+                /*map().setUserId(String.valueOf(source.getUserId()));
+                map().setLoanRequestNo(String.valueOf(source.getLoanRequestNo()));
+                map().setRequestId(String.valueOf(source.getRequestId()));
                 using((MappingContext<Date, String> context) -> {
                     return DatesUtils.DDMMYYHHMMSS.toString(context.getSource());
                 }).map(source.getApplyDate(), destination.getApplyDate());

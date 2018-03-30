@@ -43,7 +43,7 @@ module.exports = {
   },
 
   build: {
-    // Template for index.html
+    // Template for login.html
     index: path.resolve(__dirname, '../dist/index.html'),
 
     // Paths

@@ -6,6 +6,9 @@
  */
 package org.stock.commons.exception;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aeasycredit.commons.lang.exception.BaseException;
+import com.aeasycredit.commons.lang.exception.SessionException;
 
 /**
  * MyExceptionHandler
@@ -41,6 +45,23 @@ class MyExceptionHandler {
     public String BaseError(HttpServletRequest request, HttpServletResponse response, Exception e) {
         logger.error(e.getMessage(), e);
         return e.toString();
+    }
+    
+
+    @ExceptionHandler(value = SessionException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public String sessionLostError(HttpServletRequest request, HttpServletResponse response, SessionException exception) {
+//        response.setStatus(900);
+//        return ReturnResponse.builderFailed(e.getCode(), e.getMessage());
+        
+        logger.info("session lost: {}", exception.getMessage());
+        return exception.getMessage();
+        
+//        Map<String, Object> resultMap = new HashMap<String, Object>();
+//        resultMap.put("result", "failure");
+//        resultMap.put("errorCode", "900001");
+//        return resultMap;
     }
     
 }

@@ -38,9 +38,9 @@ public class StockDailyTransactionsModelDtoMapping extends PropertyMapConfigurer
         return new PropertyMap<StockDailyTransactions, StockDailyTransactionsDto>() {
             @Override
             protected void configure() {
-                map().setId(ObjectsUtils.toString(source.getId()));
+                map().setId(String.valueOf(source.getId()));
                 
-                map().setStockId(ObjectsUtils.toString(source.getStockId()));
+                map().setStockId(String.valueOf(source.getStockId()));
                 
                 using((MappingContext<Date, String> context) -> {
                     return DatesUtils.YYMMDD2.toString(context.getSource());

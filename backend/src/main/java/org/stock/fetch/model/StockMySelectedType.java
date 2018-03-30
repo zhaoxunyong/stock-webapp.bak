@@ -2,7 +2,12 @@ package org.stock.fetch.model;
 
 import java.util.Date;
 
-public class StockMySelectedType {
+import com.aeasycredit.commons.lang.base.BaseModel;
+
+public class StockMySelectedType extends BaseModel {
+    /** 注释内容 */
+    private static final long serialVersionUID = 3820976885220254349L;
+
     private Long id;
 
     private Long type;

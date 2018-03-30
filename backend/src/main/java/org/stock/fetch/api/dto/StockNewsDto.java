@@ -4,11 +4,13 @@ import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
 
+import com.aeasycredit.commons.lang.base.BaseDto;
 import com.aeasycredit.commons.lang.base.BaseModel;
 import com.aeasycredit.commons.lang.utils.DatesUtils;
 
-public class StockNewsDto extends BaseModel {
-    private static final long serialVersionUID = 1L;
+public class StockNewsDto extends BaseDto {
+    /** 注释内容 */
+    private static final long serialVersionUID = -3032843623033610822L;
 
     private String id;
 

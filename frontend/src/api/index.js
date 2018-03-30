@@ -47,12 +47,13 @@ function fileUpload(file, url, success, failure) {
   axios.post(url,param,config)
   .then(response=>{
     // console.log(response.data)
-    Bus.$emit('loading', '加載完成', false)
+    Bus.$emit('loading', '', false)
     if(success) {
       success(response.data)
     }
   })
   .catch(function (err) {
+      Bus.$emit('loading', '', false)
       console.log("err--->"+err)
       let errMsg = err.response.statusText +" : "+err.response.data
       Bus.$emit('alerts', errMsg)
@@ -74,6 +75,9 @@ function apiAxios (method, url, params, success, failure) {
   Bus.$emit('loading', "正在處理中, 請稍候......", true)
   axios({
     method: method,
+    headers : {
+      'X-Requested-With' : 'XMLHttpRequest'
+    },
     url: url,
     data: method === 'POST' || method === 'PUT' ? params : null,
     params: method === 'GET' || method === 'DELETE' ? params : null,
@@ -82,20 +86,30 @@ function apiAxios (method, url, params, success, failure) {
   })
   .then(function (res) {
     // console.log("res.data---->"+res.data)
-    Bus.$emit('loading', '加載完成', false)
+    Bus.$emit('loading', '', false)
     if(success) {
       success(res.data)
     }
   })
   .catch(function (err) {
-    // Bus.$emit('loading', false)
+    Bus.$emit('loading', '', false)
     if (err) {
-      console.log("err--->"+err)
-      // window.alert('api error, HTTP CODE: ' + err)
-      let errMsg = err.response.statusText +" : "+err.response.data
-      Bus.$emit('alerts', errMsg)
+        console.log("err--->"+err)
+        console.log("failure--->"+failure)
+        console.log("err.response.statusText--->"+err.response.statusText)
+        console.log("err.response.data--->"+err.response.data)
       if(failure) {
+        console.log("1--->")
         failure(err)
+      } else if('Unauthorized' == err.response.statusText || err.response.data.indexOf("code: 906,") != -1) {
+        console.log("2--->")
+        Bus.$emit('alerts', '會話超時，請重新登錄！')
+        window.location.href = "/#/login"
+      } else {
+        console.log("3--->")
+        // window.alert('api error, HTTP CODE: ' + err)
+        let errMsg = err.response.statusText +" : "+err.response.data
+        Bus.$emit('alerts', errMsg)
       }
     }
   })

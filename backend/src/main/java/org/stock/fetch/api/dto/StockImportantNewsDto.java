@@ -2,9 +2,13 @@ package org.stock.fetch.api.dto;
 
 import java.util.Date;
 
+import com.aeasycredit.commons.lang.base.BaseDto;
 import com.aeasycredit.commons.lang.utils.DatesUtils;
 
-public class StockImportantNewsDto {
+public class StockImportantNewsDto extends BaseDto {
+    /** 注释内容 */
+    private static final long serialVersionUID = -6054497780590905398L;
+
     private String id;
 
     private String froms;

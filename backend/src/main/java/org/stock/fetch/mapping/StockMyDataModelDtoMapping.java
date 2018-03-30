@@ -32,17 +32,17 @@ public class StockMyDataModelDtoMapping extends PropertyMapConfigurerSupport<Sto
             @Override
             protected void configure() {
 
-                map().setId(ObjectsUtils.toString(source.getId()));
-                map().setStockId(ObjectsUtils.toString(source.getStockId()));
+                map().setId(String.valueOf(source.getId()));
+                map().setStockId(String.valueOf(source.getStockId()));
                 using((MappingContext<String, String[]> context) -> {
                 	if(context.getSource() == null) {
                 		return new String[]{};
                 	}
                     return context.getSource().split(",");
                 }).map(source.getSelectedTypes(), destination.getSelectedTypes());
-                /*map().setUserId(ObjectsUtils.toString(source.getUserId()));
-                map().setLoanRequestNo(ObjectsUtils.toString(source.getLoanRequestNo()));
-                map().setRequestId(ObjectsUtils.toString(source.getRequestId()));
+                /*map().setUserId(String.valueOf(source.getUserId()));
+                map().setLoanRequestNo(String.valueOf(source.getLoanRequestNo()));
+                map().setRequestId(String.valueOf(source.getRequestId()));
                 using((MappingContext<Date, String> context) -> {
                     return DatesUtils.DDMMYYHHMMSS.toString(context.getSource());
                 }).map(source.getApplyDate(), destination.getApplyDate());

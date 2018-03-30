@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Login from '@/sign-in/index'
 import Content from '@/page/content'
 import ImportantNews from '@/page/importantNews'
 import StockDailyTransactions from '@/page/stockDailyTransactions'
@@ -15,7 +16,15 @@ export default new Router({
     {
       path: '/',
       component: Content
-    }, 
+    },
+    {
+      path: '/login',
+      component: Login
+    },
+    {
+      path: '/index',
+      component: Content
+    },
     {
       path: '/content/:stockId',
       component: Content,
@@ -24,19 +33,19 @@ export default new Router({
         // when /user/:stockId/:pageNum is matched
         { path: ':pageNum', component: Content }
       ]
-    }, 
+    },
     {
       path: '/importantNews/:pageNum',
       component: ImportantNews
-    }, 
+    },
     {
       path: '/stockDailyTransactions',
       component: StockDailyTransactions
-    }, 
+    },
     {
       path: '/editMySelectedType',
       component: EditMySelectedType
-    }, 
+    },
     {
       path: '/newsSettings',
       component: NewsSettings

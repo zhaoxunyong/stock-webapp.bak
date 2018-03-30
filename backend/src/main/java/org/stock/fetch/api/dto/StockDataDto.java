@@ -3,7 +3,12 @@ package org.stock.fetch.api.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class StockDataDto {
+import com.aeasycredit.commons.lang.base.BaseDto;
+
+public class StockDataDto extends BaseDto {
+    /** 注释内容 */
+    private static final long serialVersionUID = 2756379468464185438L;
+
     private String id;
 
     private String no;

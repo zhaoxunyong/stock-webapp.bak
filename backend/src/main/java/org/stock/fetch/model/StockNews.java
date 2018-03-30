@@ -5,7 +5,9 @@ import java.util.Date;
 import com.aeasycredit.commons.lang.base.BaseModel;
 
 public class StockNews extends BaseModel {
-    private static final long serialVersionUID = 1L;
+
+    /** 注释内容 */
+    private static final long serialVersionUID = -2333562815853675636L;
 
     private Long id;
 

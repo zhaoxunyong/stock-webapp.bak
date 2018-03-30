@@ -432,10 +432,10 @@
 							<resources>
 								<resource>
 									<directory>../frontend/dist/</directory>
-<!--									<includes>
-										<include>dist</include>
- 										<include>index.html</include>
-									</includes> -->
+<!-- 								<includes> -->
+<!-- 										<include>static</include> -->
+<!--  										<include>index.html</include> -->
+<!-- 									</includes> -->
 								</resource>
 							</resources>
 						</configuration>

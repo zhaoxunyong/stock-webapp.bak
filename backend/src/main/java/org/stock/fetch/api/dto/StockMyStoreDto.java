@@ -5,7 +5,12 @@ import java.util.Date;
 
 import org.springframework.data.annotation.Transient;
 
-public class StockMyStoreDto {
+import com.aeasycredit.commons.lang.base.BaseDto;
+
+public class StockMyStoreDto extends BaseDto {
+    /** 注释内容 */
+    private static final long serialVersionUID = -3658586864122843954L;
+
     private String id;
 
     private String stockId;

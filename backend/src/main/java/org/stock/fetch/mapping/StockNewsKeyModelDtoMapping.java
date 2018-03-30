@@ -25,7 +25,7 @@ public class StockNewsKeyModelDtoMapping extends PropertyMapConfigurerSupport<St
         return new PropertyMap<StockNewsKey, StockNewsKeyDto>() {
             @Override
             protected void configure() {
-                map().setId(ObjectsUtils.toString(source.getId()));
+                map().setId(String.valueOf(source.getId()));
             }
         };
     }

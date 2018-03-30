@@ -1,6 +1,14 @@
 server:
   port: 8082
+  # Session timeout in seconds.
+  session:
+    # 24h
+    timeout: 86400
 
+#攔截器需排除的路徑
+interceptor: 
+  excludePath: /api/login
+  
 spring:
   application:
     name: stock-webapp

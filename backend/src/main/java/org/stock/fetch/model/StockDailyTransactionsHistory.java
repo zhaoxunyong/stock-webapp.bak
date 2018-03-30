@@ -2,7 +2,12 @@ package org.stock.fetch.model;
 
 import java.util.Date;
 
-public class StockDailyTransactionsHistory {
+import com.aeasycredit.commons.lang.base.BaseModel;
+
+public class StockDailyTransactionsHistory extends BaseModel {
+    /** 注释内容 */
+    private static final long serialVersionUID = -6436270467129296001L;
+
     private Long id;
 
     private String fileMd5;

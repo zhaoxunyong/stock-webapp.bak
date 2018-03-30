@@ -3,7 +3,12 @@ package org.stock.fetch.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class StockData {
+import com.aeasycredit.commons.lang.base.BaseModel;
+
+public class StockData extends BaseModel {
+    /** 注释内容 */
+    private static final long serialVersionUID = -986749782120172855L;
+
     private Long id;
 
     private String no;

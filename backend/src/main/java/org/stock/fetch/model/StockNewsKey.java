@@ -2,7 +2,12 @@ package org.stock.fetch.model;
 
 import java.util.Date;
 
-public class StockNewsKey {
+import com.aeasycredit.commons.lang.base.BaseModel;
+
+public class StockNewsKey extends BaseModel {
+    /** 注释内容 */
+    private static final long serialVersionUID = -4254209826992583393L;
+
     private Long id;
 
     private String key;

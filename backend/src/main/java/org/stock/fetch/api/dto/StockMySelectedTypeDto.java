@@ -2,7 +2,12 @@ package org.stock.fetch.api.dto;
 
 import java.util.Date;
 
-public class StockMySelectedTypeDto {
+import com.aeasycredit.commons.lang.base.BaseDto;
+
+public class StockMySelectedTypeDto extends BaseDto {
+    /** 注释内容 */
+    private static final long serialVersionUID = -8525636804532784524L;
+
     private String id;
 
     private String type;

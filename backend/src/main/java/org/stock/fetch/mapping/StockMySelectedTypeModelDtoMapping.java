@@ -32,8 +32,8 @@ public class StockMySelectedTypeModelDtoMapping extends PropertyMapConfigurerSup
 
             @Override
             protected void configure() {
-            	map().setId(ObjectsUtils.toString(source.getId()));
-            	map().setType(ObjectsUtils.toString(source.getType()));
+            	map().setId(String.valueOf(source.getId()));
+            	map().setType(String.valueOf(source.getType()));
                 /*map().setUserId(LongUtils.string2Long(source.getUserId()));
                 map().setLoanRequestNo(LongUtils.string2Long(source.getLoanRequestNo()));
                 map().setRequestId(LongUtils.string2Long(source.getRequestId()));

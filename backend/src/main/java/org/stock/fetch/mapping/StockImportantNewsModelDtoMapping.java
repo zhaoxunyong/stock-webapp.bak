@@ -32,7 +32,7 @@ public class StockImportantNewsModelDtoMapping extends PropertyMapConfigurerSupp
 
             @Override
             protected void configure() {
-            	map().setId(ObjectsUtils.toString(source.getId()));
+            	map().setId(String.valueOf(source.getId()));
                 /*map().setUserId(LongUtils.string2Long(source.getUserId()));
                 map().setLoanRequestNo(LongUtils.string2Long(source.getLoanRequestNo()));
                 map().setRequestId(LongUtils.string2Long(source.getRequestId()));
