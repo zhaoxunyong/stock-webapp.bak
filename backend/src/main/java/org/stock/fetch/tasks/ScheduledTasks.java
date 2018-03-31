@@ -27,7 +27,7 @@ public class ScheduledTasks {
      * 启动时执行一次，之后每隔20分钟执行一次  
      */
 //    @Scheduled(fixedRate = 20 * 60 * 1000) 
-    @Scheduled(cron="* */20 * * * *")
+    @Scheduled(cron="* */30 8-23 * * *")
     public void reportCurrentTime() throws Exception {
         if(!IS_FETCH_ING) {
             try {
@@ -38,14 +38,12 @@ public class ScheduledTasks {
                 System.out.println("fetchAll end--->"+DatesUtils.YYMMDDHHMMSS.toString());*/
                 
                 logger.info("fetchNews start--->"+DatesUtils.YYMMDDHHMMSS.toString());
-                // 自动取新闻第一页
-                fetchService.fetchNews(1);
+                fetchService.fetchLatestNews();
                 System.out.println("fetchNews end--->"+DatesUtils.YYMMDDHHMMSS.toString());
                 
                 System.out.println("fetchImportantNews start--->"+DatesUtils.YYMMDDHHMMSS.toString());
                 
-                // 自動取重點新聞第一頁
-                fetchService.fetchImportantNews(1);
+                fetchService.fetchImportantLatestNews();
                 System.out.println("fetchImportantNews end--->"+DatesUtils.YYMMDDHHMMSS.toString());
                 
                 // 獲取所有股票

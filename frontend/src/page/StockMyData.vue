@@ -216,7 +216,7 @@ export default {
     },
     // 第一次加载数据
     getData () {
-      this.$api.get('/api/stock/getStockMyDatas', null, r => {
+      this.$api.get('/api/stock/getStockMyDatasByStore', null, r => {
         this.list = r
         this.firstStockId = r[0].stockId
         // let stockId = this.$route.params.stockId == undefined || this.$route.params.stockId == 0 ? this.firstStockId : this.$route.params.stockId

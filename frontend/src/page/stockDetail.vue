@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="float-left mt-3">
-      <div><h2>{{ stockData.company }}({{stockData.no}})</h2></div>
-      <div v-if="stockData.typeName !='' || stockData.electronics != ''">{{stockData.typeName}} - {{stockData.electronics}}</div>
+      <div><h2>{{ company }}({{no}})</h2></div>
+      <div v-if="typeName !='' || electronics != ''">{{typeName}} - {{electronics}}</div>
     </div>
     <div class="float-left px-3 mt-3">
       <div><a href="#" v-b-modal.modalPrevent><span class="oi oi-plus"></span></a></div>
@@ -38,7 +38,7 @@
           <!--<br>Disabled tab!-->
         </b-tab>
         <div>
-          <input class="form-control" id="formControlTextarea1" v-model="stockData.companyStatus" />
+          <input class="form-control" id="formControlTextarea1" v-model="companyStatus" />
           <!--<textarea class="form-control" id="formControlTextarea1" rows="3" v-model="stockData.companyStatus"></textarea>-->
         </div>
       </b-tabs>
@@ -54,7 +54,11 @@ export default {
   data () {
     return {
       stockId: '',
-      stockData: null,
+      // stockData: null,
+      company: '',
+      no: '',
+      typeName: '',
+      electronics: '',
       currSelectedType: '',
       currSelectedName: '',
       companyStatus: ''
@@ -120,8 +124,14 @@ export default {
     getData (stockId) {
       if(stockId != undefined && stockId != '' && stockId != 0) {
         this.$api.get('/api/stock/getStockData/'+stockId, null, stockData => {
-          this.stockData = stockData
-          this.companyStatus = stockData.companyStatus
+          if(stockData != '' && stockData != undefined) {
+            // this.stockData = stockData
+            this.company = stockData.company
+            this.no = stockData.no
+            this.typeName = stockData.typeName
+            this.electronics = stockData.electronics
+            this.companyStatus = stockData.companyStatus
+          }
         })
       }
     }

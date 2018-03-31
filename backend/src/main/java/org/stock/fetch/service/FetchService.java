@@ -28,6 +28,7 @@ public interface FetchService {
     public List<StockNews> fetchNews(StockData stockData, int fetchPage) throws Exception;
     public void fetchLatestNews(StockData stockData) throws Exception;
     public void fetchNews(int fetchPage) throws Exception;
+    public void fetchLatestNews() throws Exception;
     
     /**
      * 獲取重點新聞

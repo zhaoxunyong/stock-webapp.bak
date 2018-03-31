@@ -34,10 +34,12 @@ import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
+import org.stock.fetch.model.StockMySelectedType;
 import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
 import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
+import org.stock.fetch.service.StockService;
 import org.stock.utils.FileMd5Utils;
 
 import com.aeasycredit.commons.lang.exception.BusinessException;
@@ -96,6 +98,9 @@ public class FetchServiceImpl implements FetchService {
     
     @Autowired
     private StockDailyTransactionsMapper stockDailyTransactionsMapper;
+    
+    @Autowired
+    private StockService stockService;
 
     @Override
     @Transactional
@@ -235,6 +240,30 @@ public class FetchServiceImpl implements FetchService {
         if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
             for(StockMyData stockMyData : stockMyDatas) {
                 this.fetchNews(stockDataMapper.selectByPrimaryKey(stockMyData.getStockId()), fetchPage);
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void fetchLatestNews() throws Exception {
+        /*List<StockMyStore> stockMyDatasByStore = stockService.getStockMyDatasByStore();
+        if(stockMyDatasByStore != null && !stockMyDatasByStore.isEmpty()) {
+            
+        }
+        
+        List<StockMySelectedType> stockMySelectedTypes = stockService.getStockMySelectedTypes();
+        if(stockMySelectedTypes != null && !stockMySelectedTypes.isEmpty()) {
+            for(StockMySelectedType stockMySelectedType : stockMySelectedTypes) {
+                List<StockMyData> stockMyDatas = stockService.getStockMyDatasByType(stockMySelectedType.getType());
+            }
+        }*/
+        
+        List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
+        if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
+            for(StockMyData stockMyData : stockMyDatas) {
+//                this.fetchNews(stockDataMapper.selectByPrimaryKey(stockMyData.getStockId()), fetchPage);
+                this.fetchLatestNews(stockDataMapper.selectByPrimaryKey(stockMyData.getStockId()));
             }
         }
     }

@@ -19,7 +19,7 @@ export default {
       company: '',
       stockId: '',
       numberOfPages: 0,
-      currentPage: this.$route.params.pageNum,
+      currentPage: 1,
       type: 1,
       pageSize: 15,
       fields: {
@@ -59,12 +59,17 @@ export default {
     },
     autoFetch($this) {
       Bus.$emit('loading', "正在自動獲取最新的新聞中...", true)
-      let url = "/api/stock/fetchLatestNews?stockId="+this.stockId
-      // alert("fetchNews=============>"+url)
-      $this.$api.post(url, null, rs => {
-        Bus.$emit('success', "自動更新新聞成功!")
-        this.getData()
-      })
+      this.stockId = this.$route.params.stockId
+      if(this.stockId != undefined) {
+        console.log("News autoFetch started......"+this.stockId)
+        let url = "/api/stock/fetchLatestNews?stockId="+this.stockId
+        // alert("fetchNews=============>"+url)
+        $this.$api.post(url, null, rs => {
+          Bus.$emit('success', "自動更新新聞成功!")
+          this.getData()
+          console.log("News autoFetch end......"+this.stockId)
+        })
+      }
     },
     linkGen(pageNum) {
       return {
