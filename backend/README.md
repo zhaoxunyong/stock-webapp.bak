@@ -12,7 +12,12 @@ CREATE DATABASE `wenchun` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 echo "0 */2 * * * /works/app/stock-webapp/sql_backup.sh" > /var/spool/cron/root  
 
-cp -a stock.service /usr/lib/systemd/system/
+#cp -a stock.service /usr/lib/systemd/system/
+
+git config --global core.autocrlf false
+git config --global core.safecrlf warn
+git config --global core.filemode false
+git config --global core.whitespace cr-at-eol
 
 docker run -d -p 6379:6379 --restart=always --name redis redis
 
