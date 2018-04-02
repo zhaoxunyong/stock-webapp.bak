@@ -31,7 +31,7 @@ import com.aeasycredit.commons.modelmapper.PropertyMapConfigurerSupport;
  * @since [产品/模块版本]
  */
 @Component
-public class StockDailyTransactionsModelDtoMapping extends PropertyMapConfigurerSupport<StockDailyTransactions, StockDailyTransactionsDto> {
+public class StockDailyTransactionsModel2DtoMapping extends PropertyMapConfigurerSupport<StockDailyTransactions, StockDailyTransactionsDto> {
 
     @Override
     public PropertyMap<StockDailyTransactions, StockDailyTransactionsDto> mapping() {

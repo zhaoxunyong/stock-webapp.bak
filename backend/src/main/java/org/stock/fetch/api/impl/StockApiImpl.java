@@ -31,6 +31,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.stock.config.StockProperties;
 import org.stock.fetch.api.StockApi;
 import org.stock.fetch.api.dto.ChangeStockMySelectedDto;
+import org.stock.fetch.api.dto.ChangeStockMySelectedTypeDto;
+import org.stock.fetch.api.dto.ChangeStockMySelectedTypeParams;
 import org.stock.fetch.api.dto.PageDto;
 import org.stock.fetch.api.dto.StockDailyTransactionsDto;
 import org.stock.fetch.api.dto.StockDataDto;
@@ -41,6 +43,7 @@ import org.stock.fetch.api.dto.StockMyStoreDto;
 import org.stock.fetch.api.dto.StockNewsDto;
 import org.stock.fetch.api.dto.StockNewsKeyDto;
 import org.stock.fetch.constant.StockNewsKeyTypeEnum;
+import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockImportantNews;
@@ -269,6 +272,16 @@ public class StockApiImpl implements StockApi {
 //      throw new BusinessException("中华人民共和国");
         List<Long> stokIdLongs = changeStockMySelectedDto.getStockIds().stream().map(stockId -> Long.parseLong(stockId)).collect(Collectors.toList());
         stockService.changeStockMySelected(stokIdLongs, Long.parseLong(changeStockMySelectedDto.getSelectedType()));
+    }
+
+    @Override
+    @RequestMapping(value = "/changeStockMySelectedType", method = POST)
+    public void changeStockMySelectedType(@RequestBody ChangeStockMySelectedTypeParams changeStockMySelectedTypeParams) {
+        List<ChangeStockMySelectedTypeDto> changeStockMySelectedTypeDtos = changeStockMySelectedTypeParams.getChangeStockMySelectedTypeDtos();
+        List<ChangeStockMySelectedType> changeStockMySelectedTypes = changeStockMySelectedTypeDtos.stream().map(model -> {
+            return modelMapper.map(model, ChangeStockMySelectedType.class);
+        }).collect(Collectors.toList());
+        stockService.changeStockMySelectedType(changeStockMySelectedTypes);
     }
 
 	@Override

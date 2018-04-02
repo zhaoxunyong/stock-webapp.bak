@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.stock.fetch.constant.StockNewsKeyTypeEnum;
+import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockImportantNews;
@@ -47,6 +48,8 @@ public interface StockService {
 	public void saveStockMySelectedType(StockMySelectedType stockMySelectedType);
 	
 	public void changeStockMySelected(List<Long> stockIds, Long selectedType);
+    
+    public void changeStockMySelectedType(List<ChangeStockMySelectedType> changeStockMySelectedTypes);
 	
 	public void saveAllStockMySelected(List<Long> stockIds, Long selectedType);
 	

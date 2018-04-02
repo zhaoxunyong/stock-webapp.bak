@@ -2,12 +2,14 @@
   <main-layout>
     <div>
       <!--<Alert></Alert>-->
-      <span v-for="item in items">
-        <b-button :variant="isSelected(item.type)" :id="item.type" @click="changedValue(item.type)">
-            {{ item.name }}
-        <span @click.prevent="removeStockMySelected(item.type, item.name)" aria-hidden="true">×</span>
-        </b-button>
-      </span>
+      <div id="stockMySelectedItem">
+        <span v-for="item in items" class="move-item">
+          <b-button :variant="isSelected(item.type)" :id="item.type" :data="item.name" @click="changedValue(item.type)">
+              {{ item.name }}
+          <span @click.prevent="removeStockMySelected(item.type, item.name)" aria-hidden="true">×</span>
+          </b-button>
+        </span>
+      </div>
 
       <div class="float-right w-25">
         <b-btn v-b-modal.modalPrevent variant="info">添加</b-btn>
@@ -101,6 +103,35 @@ export default {
     this.getData()
   },
   mounted () {
+    let _api = this.$api
+    Sortable.create(stockMySelectedItem, {
+      handle: '.move-item',
+      animation: 150,
+      onUpdate: function (evt){
+         var item = evt.item; // the current dragged HTMLElement
+         // alert(item.outerHTML)
+         let changeStockMySelectedTypeParams = []
+        $("#stockMySelectedItem button").each(function(index, data){
+          // alert($(data).attr("id")+"/"+$(data).attr("data"))
+          let param = {
+            "type": $(data).attr("id"),
+            "name": $(data).attr("data")
+          }
+          changeStockMySelectedTypeParams.push(param)
+        })
+        if(changeStockMySelectedTypeParams.length > 0) {
+          let url = '/api/stock/changeStockMySelectedType'
+          let params = {
+            "changeStockMySelectedTypeDtos": changeStockMySelectedTypeParams
+          }
+          _api.post(url, params, rs => {
+            Bus.$emit('success', "調整自選股顯示順序成功!")
+          })
+        }
+      }
+    })
+
+
     Sortable.create(listWithHandle, {
       handle: '.oi-move',
       animation: 150

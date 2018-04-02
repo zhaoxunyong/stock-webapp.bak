@@ -17,6 +17,7 @@ import org.stock.fetch.dao.StockMySelectedTypeMapper;
 import org.stock.fetch.dao.StockMyStoreMapper;
 import org.stock.fetch.dao.StockNewsKeyMapper;
 import org.stock.fetch.dao.StockNewsMapper;
+import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockImportantNews;
@@ -228,6 +229,22 @@ public class StockServiceImpl implements StockService {
             } else {
                 // update
                 stockMySelectedMapper.update(stockId, selectedType);
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void changeStockMySelectedType(List<ChangeStockMySelectedType> changeStockMySelectedTypes) {
+        if(changeStockMySelectedTypes != null && !changeStockMySelectedTypes.isEmpty()) {
+            stockMySelectedTypeMapper.deleteAll();
+            for(ChangeStockMySelectedType changeStockMySelectedType : changeStockMySelectedTypes) {
+                StockMySelectedType record = new StockMySelectedType();
+                record.setId(IdUtils.genLongId());
+                record.setName(changeStockMySelectedType.getName());
+                record.setType(changeStockMySelectedType.getType());
+                record.setCreateDate(new Date());
+                stockMySelectedTypeMapper.insert(record);
             }
         }
     }

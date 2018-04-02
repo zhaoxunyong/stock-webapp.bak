@@ -8,19 +8,27 @@
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
   </resultMap>
+  
   <sql id="BaseColumnList">
     id, type, name, create_date, update_date
   </sql>
+  
   <delete id="deleteByType" parameterType="java.lang.Long" >
     delete from stock_my_selected_type
     where type = #{type,jdbcType=BIGINT}
   </delete>
+  
+  <delete id="deleteAll">
+    delete from stock_my_selected_type
+  </delete>
+  
   <insert id="insert" parameterType="org.stock.fetch.model.StockMySelectedType" useGeneratedKeys="true" keyProperty="id" >
     insert into stock_my_selected_type (id, type, name, create_date, 
       update_date)
     values (#{id,jdbcType=BIGINT}, #{type,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
       #{updateDate,jdbcType=TIMESTAMP})
   </insert>
+  
   <update id="updateByPrimaryKey" parameterType="org.stock.fetch.model.StockMySelectedType" >
     update stock_my_selected_type
     set type = #{type,jdbcType=BIGINT},
@@ -41,10 +49,12 @@
     from stock_my_selected_type
     where id = #{id,jdbcType=BIGINT}
   </select>
+  
   <select id="selectAll" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" />
-    from stock_my_selected_type order by id asc
+    from stock_my_selected_type order by create_date asc
   </select>
+  
   <select id="selectByStockId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     SELECT
 		b.*
@@ -56,4 +66,5 @@
 	AND a.stock_id = #{stockId,jdbcType=BIGINT}
 	order by a.id asc
   </select>
+  
 </mapper>

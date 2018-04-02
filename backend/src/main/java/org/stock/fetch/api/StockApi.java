@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.stock.fetch.api.dto.ChangeStockMySelectedDto;
+import org.stock.fetch.api.dto.ChangeStockMySelectedTypeDto;
+import org.stock.fetch.api.dto.ChangeStockMySelectedTypeParams;
 import org.stock.fetch.api.dto.PageDto;
 import org.stock.fetch.api.dto.StockDailyTransactionsDto;
 import org.stock.fetch.api.dto.StockDataDto;
@@ -14,7 +16,6 @@ import org.stock.fetch.api.dto.StockMySelectedTypeDto;
 import org.stock.fetch.api.dto.StockMyStoreDto;
 import org.stock.fetch.api.dto.StockNewsDto;
 import org.stock.fetch.api.dto.StockNewsKeyDto;
-import org.stock.fetch.model.StockNewsKey;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -89,6 +90,9 @@ public interface StockApi {
 	
 	@ApiOperation(value="changeStockMySelected", notes="changeStockMySelected")
 	public void changeStockMySelected(ChangeStockMySelectedDto changeStockMySelectedDto);
+	
+	@ApiOperation(value="changeStockMySelectedType", notes="changeStockMySelectedType")
+	public void changeStockMySelectedType(ChangeStockMySelectedTypeParams changeStockMySelectedTypeParams);
     
     @ApiOperation(value="saveAllStockMySelected", notes="saveAllStockMySelected")
     public void saveAllStockMySelected(ChangeStockMySelectedDto changeStockMySelectedDto);

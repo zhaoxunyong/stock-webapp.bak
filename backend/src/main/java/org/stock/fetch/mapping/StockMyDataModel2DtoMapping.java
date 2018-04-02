@@ -24,7 +24,7 @@ import com.aeasycredit.commons.modelmapper.PropertyMapConfigurerSupport;
  * @since [产品/模块版本]
  */
 @Component
-public class StockMyDataModelDtoMapping extends PropertyMapConfigurerSupport<StockMyData, StockMyDataDto> {
+public class StockMyDataModel2DtoMapping extends PropertyMapConfigurerSupport<StockMyData, StockMyDataDto> {
 
     @Override
     public PropertyMap<StockMyData, StockMyDataDto> mapping() {
