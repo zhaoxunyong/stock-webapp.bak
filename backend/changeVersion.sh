@@ -1,4 +1,5 @@
 #!/bin/sh
+export PATH="/usr/local/bin:/usr/bin:$JAVA_HOME/bin:$MVN_HOME/bin:$PATH"
 
 sedi() {
   case $(uname) in
