@@ -6,7 +6,9 @@
         <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">市場焦點新聞</a>
       </nav>
       <div class="text container-fluid">
-        <b-table striped hover :items="items" :fields="fields"></b-table>
+        <b-table striped hover :items="items" :fields="fields">
+          <span slot="content_title" slot-scope="data" v-html="data.value" />
+        </b-table>
         <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
       </div>
     </template>
