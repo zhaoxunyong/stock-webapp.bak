@@ -51,6 +51,11 @@ export default {
   },
   mounted () {
   },
+  destroyed:function(){
+    if(this.intervalid1 != null) {
+      clearInterval(this.intervalid1)
+    }
+  },
   methods: {
     timeOutsetInterval (){
       if(this.intervalid1 != null) {
@@ -61,19 +66,19 @@ export default {
       $this.intervalid1 = setInterval(() => {
         // this.changes = ((Math.random() * 100).toFixed(2))+'%';
         this.autoFetch($this)
-      }, 5 * 60 * 1000);
+      }, 5 * 1000);
     },
     autoFetch($this) {
       Bus.$emit('loading', "正在自動獲取最新的新聞中...", true)
       this.stockId = this.$route.params.stockId
       if(this.stockId != undefined) {
-        console.log("News autoFetch started......"+this.stockId)
+        console.log("News autoFetch stockNews started......"+this.stockId)
         let url = "/api/stock/fetchLatestNews?stockId="+this.stockId
         // alert("fetchNews=============>"+url)
         $this.$api.post(url, null, rs => {
           Bus.$emit('success', "自動更新新聞成功!")
           this.getData()
-          console.log("News autoFetch end......"+this.stockId)
+          console.log("News autoFetch stockNews end......"+this.stockId)
         })
       }
     },

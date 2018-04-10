@@ -44,21 +44,31 @@ export default {
     })
     this.timeOutsetInterval()
   },
+  destroyed:function(){
+    if(this.intervalid1 != null) {
+      clearInterval(this.intervalid1)
+    }
+  },
   methods: {
     timeOutsetInterval (){
+      if(this.intervalid1 != null) {
+        clearInterval(this.intervalid1)
+      }
       let $this = this
       this.autoFetch($this)
       this.intervalid1 = setInterval(() => {
         // this.changes = ((Math.random() * 100).toFixed(2))+'%';
         this.autoFetch($this)
-      }, 10 * 60 * 1000);
+      }, 5 * 1000);
     },
     autoFetch($this) {
       Bus.$emit('loading', "正在自動獲取最新的新聞中...", true)
+      console.log("News autoFetch importantNews started......")
       let url = "/api/stock/fetchImportantLatestNews"
       $this.$api.post(url, null, rs => {
         Bus.$emit('success', "自動更新新聞成功!")
         this.getData(1)
+        console.log("News autoFetch importantNews end......")
       })
     },
     linkGen(pageNum) {
