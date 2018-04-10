@@ -4,6 +4,9 @@
       <div class="pt-2 pr-2"><h5>{{this.company}}</h5></div>
       <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">個股新聞</a>
       <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">焦點新聞</a>
+      <span style="padding-left: 300px"></span>
+      <a class="nav-link" href="#" @click.prevent="showExcludeNewsAll($event)">自選股全新聞</a>
+      <a class="nav-link" href="#" @click.prevent="showIncludeNewsAll($event)">自選股全焦點</a>
     </nav>
     <div class="text container-fluid">
       <b-table striped hover :items="items" :fields="fields">
@@ -22,6 +25,7 @@ export default {
       stockId: '',
       numberOfPages: 0,
       currentPage: 1,
+      displayAll: 0,
       type: 1,
       pageSize: 15,
       fields: {
@@ -89,12 +93,28 @@ export default {
       $(".active").removeClass('active')
       $(event.target).addClass('active')
       this.type = 1
+      this.displayAll = 0
       this.getData(1)
     },
     showIncludeNews(event) {
       $(".active").removeClass('active')
       $(event.target).addClass('active')
       this.type = 0
+      this.displayAll = 0
+      this.getData(1)
+    },
+    showExcludeNewsAll(event) {
+      $(".active").removeClass('active')
+      $(event.target).addClass('active')
+      this.type = 1
+      this.displayAll = 1
+      this.getData(1)
+    },
+    showIncludeNewsAll(event) {
+      $(".active").removeClass('active')
+      $(event.target).addClass('active')
+      this.type = 0
+      this.displayAll = 1
       this.getData(1)
     },
     // 第一次加载数据
@@ -104,6 +124,7 @@ export default {
       // } else {
       //   this.currentPage = this.$route.params.pageNum
       // }
+
       if(pageNum == undefined) {
         pageNum = this.$route.params.pageNum
       }
@@ -115,8 +136,11 @@ export default {
           // let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
           // let rootUrl = type == 0 ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
           // let url = rootUrl + this.stockId+'/'+pageNum+'/'+this.pageSize
+          let paramStockId = this.displayAll == 1 ? 0 : this.stockId
           let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
-          let url = rootUrl + this.stockId+'/'+pageNum+'/'+this.pageSize
+          let orderby = 0
+          let url = rootUrl + paramStockId+'/'+pageNum+'/'+this.pageSize+'/'+orderby
+          // alert("url1--->"+url)
           this.$api.get(url, null, rs => {
             // this.dat = r
             this.numberOfPages = rs.pageTotal
@@ -144,7 +168,10 @@ export default {
           this.company = stockData.company
           console.log("company--->"+this.company)
           let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
-          let url = '/api/stock/getNewsExcludeBystockId/' + this.stockId+'/'+pageNum+'/'+this.pageSize
+          let orderby = 0
+          let paramStockId = this.displayAll == 1 ? 0 : this.stockId
+          let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
+          let url = rootUrl + paramStockId+'/'+pageNum+'/'+this.pageSize+'/'+orderby
           // alert("url2--->"+url)
           this.$api.get(url, null, rs => {
             // this.dat = r

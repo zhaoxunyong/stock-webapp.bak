@@ -22,9 +22,9 @@ public interface StockNewsMapper {
     
 //    List<StockNews> selectByStockId(@Param("stockId")Long stockId, @Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize);
     
-    List<StockNews> selectExcludeByStockId(@Param("stockId")Long stockId, @Param("excludeKeys")String excludeKeys, @Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize);
+    List<StockNews> selectExcludeByStockId(@Param("stockId")Long stockId, @Param("excludeKeys")String excludeKeys, @Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize, @Param("orderby")Integer orderby);
     
-    List<StockNews> selectIncludeByStockId(@Param("stockId")Long stockId, @Param("excludeKeys")String excludeKeys, @Param("includeKeys")String includeKeys, @Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize);
+    List<StockNews> selectIncludeByStockId(@Param("stockId")Long stockId, @Param("excludeKeys")String excludeKeys, @Param("includeKeys")String includeKeys, @Param("startNo")Integer startNo, @Param("pageSize")Integer pageSize, @Param("orderby")Integer orderby);
 
 //    int count(@Param("stockId")Long stockId);
     

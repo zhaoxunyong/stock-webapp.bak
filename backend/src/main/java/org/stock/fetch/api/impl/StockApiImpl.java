@@ -138,14 +138,12 @@ public class StockApiImpl implements StockApi {
         return pageDto;
 	}*/
 	
-
-
     @Override
-    @RequestMapping(value = "/getNewsExcludeBystockId/{stockId}/{curPage}/{pageSize}", method = GET)
-    public PageDto<StockNewsDto> getNewsExcludeBystockId(@PathVariable String stockId, @PathVariable int curPage, @PathVariable int pageSize) {
+    @RequestMapping(value = "/getNewsExcludeBystockId/{stockId}/{curPage}/{pageSize}/{orderby}", method = GET)
+    public PageDto<StockNewsDto> getNewsExcludeBystockId(@PathVariable String stockId, @PathVariable int curPage, @PathVariable int pageSize, @PathVariable int orderby) {
         PageDto<StockNewsDto> pageDto = new PageDto<StockNewsDto>(curPage, pageSize);
         
-        List<StockNews> stockNewses = stockService.getNewsExcludeBystockId(Long.parseLong(stockId), pageDto.getStart(), pageSize);
+        List<StockNews> stockNewses = stockService.getNewsExcludeBystockId(Long.parseLong(stockId), pageDto.getStart(), pageSize, orderby);
         List<StockNewsDto> dtoList = stockNewses.stream().map(model -> {
             return modelMapper.map(model, StockNewsDto.class);
         }).collect(Collectors.toList());
@@ -160,11 +158,11 @@ public class StockApiImpl implements StockApi {
     }
 
     @Override
-    @RequestMapping(value = "/getNewsIncludeBystockId/{stockId}/{curPage}/{pageSize}", method = GET)
-    public PageDto<StockNewsDto> getNewsIncludeBystockId(@PathVariable String stockId, @PathVariable int curPage, @PathVariable int pageSize) {
+    @RequestMapping(value = "/getNewsIncludeBystockId/{stockId}/{curPage}/{pageSize}/{orderby}", method = GET)
+    public PageDto<StockNewsDto> getNewsIncludeBystockId(@PathVariable String stockId, @PathVariable int curPage, @PathVariable int pageSize, @PathVariable int orderby) {
         PageDto<StockNewsDto> pageDto = new PageDto<StockNewsDto>(curPage, pageSize);
         
-        List<StockNews> stockNewses = stockService.getNewsIncludeBystockId(Long.parseLong(stockId), pageDto.getStart(), pageSize);
+        List<StockNews> stockNewses = stockService.getNewsIncludeBystockId(Long.parseLong(stockId), pageDto.getStart(), pageSize, orderby);
         List<StockNewsDto> dtoList = stockNewses.stream().map(model -> {
             return modelMapper.map(model, StockNewsDto.class);
         }).collect(Collectors.toList());

@@ -25,9 +25,9 @@ public interface StockService {
 	
 	public StockData getStockData(Long id);
 	
-	public List<StockNews> getNewsExcludeBystockId(Long stockId, int curPage, int pageSize);
+	public List<StockNews> getNewsExcludeBystockId(Long stockId, int curPage, int pageSize, int orderby);
 	
-	public List<StockNews> getNewsIncludeBystockId(Long stockId, int curPage, int pageSize);
+	public List<StockNews> getNewsIncludeBystockId(Long stockId, int curPage, int pageSize, int orderby);
 	
 	public int getNewsExcludeCountBystockId(Long stockId);
 	
