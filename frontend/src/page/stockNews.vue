@@ -4,7 +4,7 @@
       <div class="pt-2 pr-2"><h5>{{this.company}}</h5></div>
       <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">個股新聞</a>
       <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">焦點新聞</a>
-      <span style="padding-left: 200px"></span>
+      <span style="padding-left: 250px"></span>
       <a class="nav-link" href="#" @click.prevent="showExcludeNewsAll($event)">自選股全新聞</a>
       <a class="nav-link" href="#" @click.prevent="showIncludeNewsAll($event)">自選股全焦點</a>
     </nav>
