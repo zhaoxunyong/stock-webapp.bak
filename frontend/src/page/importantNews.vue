@@ -59,7 +59,7 @@ export default {
       this.intervalid1 = setInterval(() => {
         // this.changes = ((Math.random() * 100).toFixed(2))+'%';
         this.autoFetch($this)
-      }, 5 * 1000);
+      }, 10 * 60 * 1000);
     },
     autoFetch($this) {
       Bus.$emit('loading', "正在自動獲取最新的新聞中...", true)
