@@ -28,6 +28,7 @@ export default {
       currentPage: 1,
       displayAll: 0,
       type: 1,
+      fromSelectedProcess: 0,
       pageSize: 15,
       fields: {
         content_title: {
@@ -46,6 +47,10 @@ export default {
     })
     Bus.$on('initCurrentPage', (pageNum) => {
       this.currentPage = pageNum
+    })
+    // 从左侧搜索后触发
+    Bus.$on('selectedProcess', () => {
+      this.fromSelectedProcess = 1
     })
     // 从stockmyselectedtype.vue中过来：当点击某个自选股标签时
     Bus.$on('getMyStockSelected', (selectedType, selectedName) => {
@@ -155,10 +160,16 @@ export default {
           // let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
           // let rootUrl = type == 0 ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
           // let url = rootUrl + this.stockId+'/'+pageNum+'/'+this.pageSize
-          let paramStockId = this.displayAll == 1 ? 0 : this.stockId
-          let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
-          let orderby = 0
-          let url = rootUrl + paramStockId+'/'+this.selectedType+'/'+pageNum+'/'+this.pageSize+'/'+orderby
+          let url = ''
+          if(this.displayAll == 1) {
+            let paramStockId = 0
+            let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
+            url = rootUrl + paramStockId+'/'+this.selectedType+'/'+pageNum+'/'+this.pageSize
+          } else {
+            let paramStockId = this.stockId
+            let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId4All/' : '/api/stock/getNewsExcludeBystockId4All/'
+            url = rootUrl + paramStockId+'/'+pageNum+'/'+this.pageSize
+          }
           // alert("url1--->"+url)
           this.$api.get(url, null, rs => {
             // this.dat = r
@@ -187,10 +198,18 @@ export default {
           this.company = stockData.company
           console.log("company--->"+this.company)
           let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
-          let orderby = 0
-          let paramStockId = this.displayAll == 1 ? 0 : this.stockId
-          let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
-          let url = rootUrl + paramStockId+'/'+this.selectedType+'/'+pageNum+'/'+this.pageSize+'/'+orderby
+
+          let url = ''
+          if(this.displayAll == 1) {
+            let paramStockId = 0
+            let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
+            url = rootUrl + paramStockId+'/'+this.selectedType+'/'+pageNum+'/'+this.pageSize
+            // alert("url1--->"+url)
+          } else {
+            let paramStockId = this.stockId
+            let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId4All/' : '/api/stock/getNewsExcludeBystockId4All/'
+            url = rootUrl + paramStockId+'/'+pageNum+'/'+this.pageSize
+          }
           // alert("url2--->"+url)
           this.$api.get(url, null, rs => {
             // this.dat = r

@@ -42,6 +42,22 @@ public interface StockApi {
         @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "string", paramType = "path"),
       })
 	public StockDataDto getStockData(String id);
+    
+    @ApiOperation(value="getNewsExcludeBystockId4All", notes="getNewsExcludeBystockId4All")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "path"),
+        @ApiImplicitParam(name = "curPage", value = "curPage", required = true, dataType = "int", paramType = "path"),
+        @ApiImplicitParam(name = "pageSize", value = "pageSize", required = true, dataType = "int", paramType = "path"),
+    })
+    public PageDto<StockNewsDto> getNewsExcludeBystockId4All(String stockId, int curPage, int pageSize);
+    
+    @ApiOperation(value="getNewsIncludeBystockId4All", notes="getNewsIncludeBystockId4All")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "path"),
+        @ApiImplicitParam(name = "curPage", value = "curPage", required = true, dataType = "int", paramType = "path"),
+        @ApiImplicitParam(name = "pageSize", value = "pageSize", required = true, dataType = "int", paramType = "path"),
+    })
+    public PageDto<StockNewsDto> getNewsIncludeBystockId4All(String stockId, int curPage, int pageSize);
 	
 	@ApiOperation(value="getNewsExcludeBystockId", notes="getNewsExcludeBystockId")
 	@ApiImplicitParams({
@@ -49,9 +65,8 @@ public interface StockApi {
 		@ApiImplicitParam(name = "selectedType", value = "selectedType", required = true, dataType = "string", paramType = "path"),
 		@ApiImplicitParam(name = "curPage", value = "curPage", required = true, dataType = "int", paramType = "path"),
 		@ApiImplicitParam(name = "pageSize", value = "pageSize", required = true, dataType = "int", paramType = "path"),
-        @ApiImplicitParam(name = "orderby", value = "orderby", required = true, dataType = "int", paramType = "path"),
 	})
-	public PageDto<StockNewsDto> getNewsExcludeBystockId(String stockId, String selectedType, int curPage, int pageSize, int orderby);
+	public PageDto<StockNewsDto> getNewsExcludeBystockId(String stockId, String selectedType, int curPage, int pageSize);
     
     @ApiOperation(value="getNewsIncludeBystockId", notes="getNewsIncludeBystockId")
     @ApiImplicitParams({
@@ -59,9 +74,8 @@ public interface StockApi {
         @ApiImplicitParam(name = "selectedType", value = "selectedType", required = true, dataType = "string", paramType = "path"),
         @ApiImplicitParam(name = "curPage", value = "curPage", required = true, dataType = "int", paramType = "path"),
         @ApiImplicitParam(name = "pageSize", value = "pageSize", required = true, dataType = "int", paramType = "path"),
-        @ApiImplicitParam(name = "orderby", value = "orderby", required = true, dataType = "int", paramType = "path"),
     })
-    public PageDto<StockNewsDto> getNewsIncludeBystockId(String stockId, String selectedType, int curPage, int pageSize, int orderby);
+    public PageDto<StockNewsDto> getNewsIncludeBystockId(String stockId, String selectedType, int curPage, int pageSize);
 	
 	@ApiOperation(value="getImportantNewsExclude", notes="getImportantNewsExclude")
 	@ApiImplicitParams({

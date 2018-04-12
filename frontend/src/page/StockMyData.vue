@@ -12,9 +12,12 @@
     </div>
 
     <div class="pt-2 pb-2">
-      <b-btn size="sm" variant="primary" @click="toFront"><-</b-btn>
-      <b-btn size="sm" v-b-modal.modalPrevent variant="primary">+</b-btn>
-      <b-btn size="sm" variant="primary" @click="toBack">-></b-btn>
+      <!-- <b-btn size="sm" variant="primary" @click="toFront"><-</b-btn> -->
+      <!-- <b-btn size="sm" v-b-modal.modalPrevent variant="primary">+</b-btn> -->
+      <!-- <b-btn size="sm" variant="primary" @click="toBack">-></b-btn> -->
+      <img src="static/image/left.png" style="width: 30px; height: 30px; cursor: pointer;"  @click="toFront" />
+      <span style="padding: 0px 3px"></span>
+      <img src="static/image/right.png" style="width: 30px; height: 30px; cursor: pointer;" @click="toBack" />
       <!-- Modal Component -->
       <b-modal id="modalPrevent"
                ref="modal"
@@ -134,6 +137,7 @@ export default {
     selectedProcess (result, refs) {
       refs.clear()
       this.push('/content/' + result.value+'/1')
+      Bus.$emit('selectedProcess')
       /*$(".form-control input[type='hidden']").each(function(index, data){
         let inputValue = $(data).val()
         // alert("value->"+result.value+"/inputValue->"+inputValue)
