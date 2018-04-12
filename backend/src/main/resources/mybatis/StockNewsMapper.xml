@@ -69,8 +69,13 @@
 <!--   </select> -->
   
   <select id="selectExcludeByStockId" resultMap="BaseResultMap" >
-    select a.*
-    from stock_news a, stock_my_selected b
+    select DISTINCT a.*
+        <if test="selectedType == 0">
+	    	from stock_news a, stock_my_store b
+	    </if>
+        <if test="selectedType != 0">
+	    	from stock_news a, stock_my_selected b
+	    </if>
     <where>
         and a.stock_id = b.stock_id
         <if test="selectedType != 0">
@@ -96,8 +101,13 @@
   </select>
   
   <select id="excludeCount" resultType="int" >
-  	select count(a.id) 
-    from stock_news a, stock_my_selected b
+  	select count(DISTINCT a.id) 
+    <if test="selectedType == 0">
+	    	from stock_news a, stock_my_store b
+	    </if>
+        <if test="selectedType != 0">
+	    	from stock_news a, stock_my_selected b
+	    </if>
     <where>
         and a.stock_id = b.stock_id
         <if test="selectedType != 0">
@@ -117,8 +127,13 @@
   
   <select id="selectIncludeByStockId" resultMap="BaseResultMap" >
     select x.* from 
-    (select a.*
-	    from stock_news a, stock_my_selected b
+    (select DISTINCT a.*
+	    <if test="selectedType == 0">
+	    	from stock_news a, stock_my_store b
+	    </if>
+        <if test="selectedType != 0">
+	    	from stock_news a, stock_my_selected b
+	    </if>
     <where>
         and a.stock_id = b.stock_id
         <if test="selectedType != 0">
@@ -155,8 +170,13 @@
   
   <select id="includeCount" resultType="int" >
     select count(x.id) from 
-    (select a.*
-	    from stock_news a, stock_my_selected b
+    (select DISTINCT a.*
+	    <if test="selectedType == 0">
+	    	from stock_news a, stock_my_store b
+	    </if>
+        <if test="selectedType != 0">
+	    	from stock_news a, stock_my_selected b
+	    </if>
     <where>
         and a.stock_id = b.stock_id
         <if test="selectedType != 0">
