@@ -4,7 +4,7 @@
       <div class="pt-2 pr-2"><h5>{{this.company}}</h5></div>
       <a class="nav-link active" href="#" @click.prevent="showExcludeNews($event)">個股新聞</a>
       <a class="nav-link" href="#" @click.prevent="showIncludeNews($event)">焦點新聞</a>
-      <span style="padding-left: 250px"></span>
+      <span style="padding-left: 80px"></span>
       <a class="nav-link" href="#" @click.prevent="showExcludeNewsAll($event)">自選股全新聞</a>
       <a class="nav-link" href="#" @click.prevent="showIncludeNewsAll($event)">自選股全焦點</a>
     </nav>
@@ -23,6 +23,7 @@ export default {
     return {
       company: '',
       stockId: '',
+      selectedType: '0',
       numberOfPages: 0,
       currentPage: 1,
       displayAll: 0,
@@ -46,6 +47,19 @@ export default {
     Bus.$on('initCurrentPage', (pageNum) => {
       this.currentPage = pageNum
     })
+    // 从stockmyselectedtype.vue中过来：当点击某个自选股标签时
+    Bus.$on('getMyStockSelected', (selectedType, selectedName) => {
+      if(selectedType == undefined) {
+        this.selectedType = '0'
+      } else {
+        this.selectedType = selectedType
+      }
+    });
+
+    // 从stockmyselectedtype.vue中过来：当点击store股标签时
+    Bus.$on('getAllStockMyStore', () => {
+      this.selectedType = '0'
+    });
 
     this.timeOutsetInterval()
   },
@@ -144,7 +158,7 @@ export default {
           let paramStockId = this.displayAll == 1 ? 0 : this.stockId
           let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
           let orderby = 0
-          let url = rootUrl + paramStockId+'/'+pageNum+'/'+this.pageSize+'/'+orderby
+          let url = rootUrl + paramStockId+'/'+this.selectedType+'/'+pageNum+'/'+this.pageSize+'/'+orderby
           // alert("url1--->"+url)
           this.$api.get(url, null, rs => {
             // this.dat = r
@@ -176,7 +190,7 @@ export default {
           let orderby = 0
           let paramStockId = this.displayAll == 1 ? 0 : this.stockId
           let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
-          let url = rootUrl + paramStockId+'/'+pageNum+'/'+this.pageSize+'/'+orderby
+          let url = rootUrl + paramStockId+'/'+this.selectedType+'/'+pageNum+'/'+this.pageSize+'/'+orderby
           // alert("url2--->"+url)
           this.$api.get(url, null, rs => {
             // this.dat = r

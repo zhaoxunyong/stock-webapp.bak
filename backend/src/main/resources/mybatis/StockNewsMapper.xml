@@ -69,33 +69,61 @@
 <!--   </select> -->
   
   <select id="selectExcludeByStockId" resultMap="BaseResultMap" >
-    select <include refid="BaseColumnList" />
-    from stock_news
+    select a.*
+    from stock_news a, stock_my_selected b
     <where>
+        and a.stock_id = b.stock_id
+        <if test="selectedType != 0">
+	    	and b.selected_type = #{selectedType,jdbcType=BIGINT}
+	    </if>
         <if test="stockId != 0">
-	    	and stock_id = #{stockId,jdbcType=BIGINT}
+	    	and a.stock_id = #{stockId,jdbcType=BIGINT}
 	    </if>
         <if test="stockId == 0">
-	    	and to_days(news_date) >= TO_DAYS(NOW())
+	    	and to_days(a.news_date) >= TO_DAYS(NOW())
 	    </if>
         <if test="excludeKeys!=null and excludeKeys!=''">
-	    	and indexof_string(subject, #{excludeKeys, jdbcType=VARCHAR}) = 0
+	    	and indexof_string(a.subject, #{excludeKeys, jdbcType=VARCHAR}) = 0
 	    </if>
     </where>
        <if test="stockId != 0">
-    	order by news_date desc 
+    	order by a.news_date desc 
     </if>
        <if test="stockId == 0">
-    	order by stock_id asc, news_date desc 
+    	order by a.stock_id asc, a.news_date desc 
     </if>
     limit #{startNo, jdbcType=INTEGER}, #{pageSize, jdbcType=INTEGER}
   </select>
   
-  <select id="selectIncludeByStockId" resultMap="BaseResultMap" >
-    select b.* from 
-    (select a.*
-	    from stock_news a
+  <select id="excludeCount" resultType="int" >
+  	select count(a.id) 
+    from stock_news a, stock_my_selected b
     <where>
+        and a.stock_id = b.stock_id
+        <if test="selectedType != 0">
+	    	and b.selected_type = #{selectedType,jdbcType=BIGINT}
+	    </if>
+        <if test="stockId != 0">
+	    	and a.stock_id = #{stockId,jdbcType=BIGINT}
+	    </if>
+        <if test="stockId == 0">
+	    	and to_days(a.news_date) >= TO_DAYS(NOW())
+	    </if>
+        <if test="excludeKeys!=null and excludeKeys!=''">
+	    	and indexof_string(a.subject, #{excludeKeys, jdbcType=VARCHAR}) = 0
+	    </if>
+    </where>
+  </select>
+  
+  <select id="selectIncludeByStockId" resultMap="BaseResultMap" >
+    select x.* from 
+    (select a.*
+	    from stock_news a, stock_my_selected b
+    <where>
+        and a.stock_id = b.stock_id
+        <if test="selectedType != 0">
+	    	and b.selected_type = #{selectedType,jdbcType=BIGINT}
+	    </if>
         <if test="stockId != 0">
 	    	and a.stock_id = #{stockId,jdbcType=BIGINT} 
 	    </if>
@@ -112,9 +140,9 @@
        <if test="stockId == 0">
     	order by a.stock_id asc,a.news_date desc 
     </if>
-    ) b
+    ) x
 	<if test="includeKeys!=null and includeKeys!=''">
-    	where indexof_string(b.subject, #{includeKeys, jdbcType=VARCHAR}) = 1
+    	where indexof_string(x.subject, #{includeKeys, jdbcType=VARCHAR}) = 1
     </if>
 	limit #{startNo, jdbcType=INTEGER}, #{pageSize, jdbcType=INTEGER}
   </select>
@@ -125,40 +153,28 @@
 <!--     where stock_id = #{stockId,jdbcType=BIGINT} -->
 <!--   </select> -->
   
-  <select id="excludeCount" resultType="int" >
-    select count(id) 
-    from stock_news
-    <where>
-        <if test="stockId != 0">
-	    	and stock_id = #{stockId,jdbcType=BIGINT} 
-	    </if>
-        <if test="stockId == 0">
-	    	and to_days(news_date) >= TO_DAYS(NOW())
-	    </if>
-        <if test="excludeKeys!=null and excludeKeys!=''">
-	    	and indexof_string(subject, #{excludeKeys, jdbcType=VARCHAR}) = 0
-	    </if>
-    </where>
-  </select>
-  
   <select id="includeCount" resultType="int" >
-    select count(b.id) from 
+    select count(x.id) from 
     (select a.*
-	    from stock_news a
-	    <where>
+	    from stock_news a, stock_my_selected b
+    <where>
+        and a.stock_id = b.stock_id
+        <if test="selectedType != 0">
+	    	and b.selected_type = #{selectedType,jdbcType=BIGINT}
+	    </if>
         <if test="stockId != 0">
 	    	and a.stock_id = #{stockId,jdbcType=BIGINT} 
 	    </if>
         <if test="stockId == 0">
-	    	and to_days(a.news_date) >= TO_DAYS(NOW())
+	    	and to_days(a.news_date) >= TO_DAYS(NOW()) 
 	    </if>
         <if test="excludeKeys!=null and excludeKeys!=''">
 	    	and indexof_string(a.subject, #{excludeKeys, jdbcType=VARCHAR}) = 0
 	    </if>
     </where>
-	) b
+    ) x
 	<if test="includeKeys!=null and includeKeys!=''">
-    	where indexof_string(b.subject, #{includeKeys, jdbcType=VARCHAR}) = 1
+    	where indexof_string(x.subject, #{includeKeys, jdbcType=VARCHAR}) = 1
     </if>
   </select>
   

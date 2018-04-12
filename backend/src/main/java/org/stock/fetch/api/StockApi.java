@@ -46,20 +46,22 @@ public interface StockApi {
 	@ApiOperation(value="getNewsExcludeBystockId", notes="getNewsExcludeBystockId")
 	@ApiImplicitParams({
 		@ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "path"),
+		@ApiImplicitParam(name = "selectedType", value = "selectedType", required = true, dataType = "string", paramType = "path"),
 		@ApiImplicitParam(name = "curPage", value = "curPage", required = true, dataType = "int", paramType = "path"),
 		@ApiImplicitParam(name = "pageSize", value = "pageSize", required = true, dataType = "int", paramType = "path"),
         @ApiImplicitParam(name = "orderby", value = "orderby", required = true, dataType = "int", paramType = "path"),
 	})
-	public PageDto<StockNewsDto> getNewsExcludeBystockId(String stockId, int curPage, int pageSize, int orderby);
+	public PageDto<StockNewsDto> getNewsExcludeBystockId(String stockId, String selectedType, int curPage, int pageSize, int orderby);
     
     @ApiOperation(value="getNewsIncludeBystockId", notes="getNewsIncludeBystockId")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "path"),
+        @ApiImplicitParam(name = "selectedType", value = "selectedType", required = true, dataType = "string", paramType = "path"),
         @ApiImplicitParam(name = "curPage", value = "curPage", required = true, dataType = "int", paramType = "path"),
         @ApiImplicitParam(name = "pageSize", value = "pageSize", required = true, dataType = "int", paramType = "path"),
         @ApiImplicitParam(name = "orderby", value = "orderby", required = true, dataType = "int", paramType = "path"),
     })
-    public PageDto<StockNewsDto> getNewsIncludeBystockId(String stockId, int curPage, int pageSize, int orderby);
+    public PageDto<StockNewsDto> getNewsIncludeBystockId(String stockId, String selectedType, int curPage, int pageSize, int orderby);
 	
 	@ApiOperation(value="getImportantNewsExclude", notes="getImportantNewsExclude")
 	@ApiImplicitParams({

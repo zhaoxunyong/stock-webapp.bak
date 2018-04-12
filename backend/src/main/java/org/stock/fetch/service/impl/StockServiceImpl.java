@@ -88,16 +88,16 @@ public class StockServiceImpl implements StockService {
 	}
 
 	@Override
-	public List<StockNews> getNewsExcludeBystockId(Long stockId, int startNo, int pageSize, int orderby) {
+	public List<StockNews> getNewsExcludeBystockId(Long stockId, Long selectedType, int startNo, int pageSize, int orderby) {
 	    List<StockNewsKey> stockNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.EXCLUDE.getType());
         String excludeKeys = stockNewsKeys.stream()
                 .map(StockNewsKey::getKey)
                 .collect(Collectors.joining(","));
-        return stockNewsMapper.selectExcludeByStockId(stockId, excludeKeys, startNo, pageSize, orderby);
+        return stockNewsMapper.selectExcludeByStockId(stockId, selectedType, excludeKeys, startNo, pageSize, orderby);
 	}
 
     @Override
-    public List<StockNews> getNewsIncludeBystockId(Long stockId, int startNo, int pageSize, int orderby) {
+    public List<StockNews> getNewsIncludeBystockId(Long stockId, Long selectedType, int startNo, int pageSize, int orderby) {
         List<StockNewsKey> stockExcludeNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.EXCLUDE.getType());
         List<StockNewsKey> stockIncludeNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.INCLUDE.getType());
         String excludeKeys = stockExcludeNewsKeys.stream()
@@ -106,20 +106,20 @@ public class StockServiceImpl implements StockService {
         String includeKeys = stockIncludeNewsKeys.stream()
                 .map(StockNewsKey::getKey)
                 .collect(Collectors.joining(","));
-        return stockNewsMapper.selectIncludeByStockId(stockId, excludeKeys, includeKeys, startNo, pageSize, orderby);
+        return stockNewsMapper.selectIncludeByStockId(stockId, selectedType, excludeKeys, includeKeys, startNo, pageSize, orderby);
     }
 
     @Override
-    public int getNewsExcludeCountBystockId(Long stockId) {
+    public int getNewsExcludeCountBystockId(Long stockId, Long selectedType) {
         List<StockNewsKey> stockNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.EXCLUDE.getType());
         String excludeKeys = stockNewsKeys.stream()
                 .map(StockNewsKey::getKey)
                 .collect(Collectors.joining(","));
-        return stockNewsMapper.excludeCount(stockId, excludeKeys);
+        return stockNewsMapper.excludeCount(stockId, selectedType, excludeKeys);
     }
 
     @Override
-    public int getNewsIncludeCountBystockId(Long stockId) {
+    public int getNewsIncludeCountBystockId(Long stockId, Long selectedType) {
         List<StockNewsKey> stockExcludeNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.EXCLUDE.getType());
         List<StockNewsKey> stockIncludeNewsKeys = stockNewsKeyMapper.selectByType(StockNewsKeyTypeEnum.INCLUDE.getType());
         String excludeKeys = stockExcludeNewsKeys.stream()
@@ -128,7 +128,7 @@ public class StockServiceImpl implements StockService {
         String includeKeys = stockIncludeNewsKeys.stream()
                 .map(StockNewsKey::getKey)
                 .collect(Collectors.joining(","));
-        return stockNewsMapper.includeCount(stockId, excludeKeys, includeKeys);
+        return stockNewsMapper.includeCount(stockId, selectedType, excludeKeys, includeKeys);
     }
 
 	@Override
