@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div class="float-left mt-3">
+    <div class="float-left mt-4">
       <div><h2>{{ company }}({{no}})</h2></div>
-      <div v-if="typeName !='' || electronics != ''">{{typeName}} - {{electronics}}</div>
+      <!-- <div v-if="typeName !='' || electronics != ''">{{typeName}} - {{electronics}}</div> -->
     </div>
-    <div class="float-left px-3 mt-3">
+    <div class="float-left pl-2 mt-4">
       <div><a href="#" v-b-modal.modalPrevent><span class="oi oi-plus"></span></a></div>
       <div><a href="#" @click.prevent="removeOneStockMySelected"><span class="oi oi-minus"></span></a></div>
     </div>
@@ -13,7 +13,7 @@
       <!--<b-btn size="sm" variant="primary" @click="toBack">-</b-btn>-->
     <!--</div>-->
 
-    <div class="float-left pl-3" style="width: 65%">
+    <div class="float-left pl-2" style="width: 80%">
       <!--<b-nav tabs>-->
         <!--<b-nav-item active>Active</b-nav-item>-->
         <!--<b-nav-item>Link</b-nav-item>-->
@@ -38,14 +38,15 @@
           <!--<br>Disabled tab!-->
         </b-tab>
         <div>
-          <input class="form-control" id="formControlTextarea1" v-model="companyStatus" />
+          <input class="float-left form-control my-3" style="width: 80%" id="formControlTextarea1" v-model="companyStatus" />
+          <b-button class="float-left ml-3 my-3" variant="success" @click="saveCompanyStatus">保存</b-button>
           <!--<textarea class="form-control" id="formControlTextarea1" rows="3" v-model="stockData.companyStatus"></textarea>-->
         </div>
       </b-tabs>
     </div>
-    <div class="float-left" style="height: 125px;padding-top: 40px;padding-left: 10px">
+    <!-- <div class="float-left border" style="height: 125px;padding-top: 40px;padding-left: 10px">
       <b-button variant="success" @click="saveCompanyStatus">保存</b-button>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -144,3 +145,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.mt-4 {
+  margin-top: 38px !important;
+}
+</style>

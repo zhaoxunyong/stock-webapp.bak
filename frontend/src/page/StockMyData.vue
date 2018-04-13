@@ -15,9 +15,9 @@
       <!-- <b-btn size="sm" variant="primary" @click="toFront"><-</b-btn> -->
       <!-- <b-btn size="sm" v-b-modal.modalPrevent variant="primary">+</b-btn> -->
       <!-- <b-btn size="sm" variant="primary" @click="toBack">-></b-btn> -->
-      <img src="static/image/left.png" style="width: 30px; height: 30px; cursor: pointer;"  @click="toFront" />
+      <img src="static/image/left.png" style="width: 35px; height: 35px; cursor: pointer;"  @click="toFront" />
       <span style="padding: 0px 3px"></span>
-      <img src="static/image/right.png" style="width: 30px; height: 30px; cursor: pointer;" @click="toBack" />
+      <img src="static/image/right.png" style="width: 35px; height: 35px; cursor: pointer;" @click="toBack" />
       <!-- Modal Component -->
       <b-modal id="modalPrevent"
                ref="modal"

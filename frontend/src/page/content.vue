@@ -3,10 +3,10 @@
     <b-container fluid class="border">
       <b-row>
         <!--left-->
-        <b-col style="max-width: 12%" class="border-right border-primary">
+        <b-col style="max-width: 15%" class="border-right border-primary">
           <stock-my-data></stock-my-data>
         </b-col>
-        <b-col style="max-width: 88%">
+        <b-col style="max-width: 85%">
         <!--自选股top-->
           <b-row>
             <b-col cols="12" sm="12">
