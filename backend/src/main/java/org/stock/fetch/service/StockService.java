@@ -2,6 +2,7 @@ package org.stock.fetch.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.model.ChangeStockMySelectedType;
@@ -24,10 +25,18 @@ public interface StockService {
 	public List<StockMyStore> getStockMyDatasByStore();
 	
 	public StockData getStockData(Long id);
+
+    public List<StockNews> getNewsExcludeBystockId4All(Long stockId, int startNo, int pageSize);
+
+    public List<StockNews> getNewsIncludeBystockId4All(Long stockId, int startNo, int pageSize);
+
+    public int getNewsExcludeCountBystockId4All(Long stockId);
+
+    public int getNewsIncludeCountBystockId4All(Long stockId);
 	
-	public List<StockNews> getNewsExcludeBystockId(Long stockId, Long selectedType, int curPage, int pageSize, int orderby);
+	public List<StockNews> getNewsExcludeBystockId(Long stockId, Long selectedType, int curPage, int pageSize);
 	
-	public List<StockNews> getNewsIncludeBystockId(Long stockId, Long selectedType,  int curPage, int pageSize, int orderby);
+	public List<StockNews> getNewsIncludeBystockId(Long stockId, Long selectedType,  int curPage, int pageSize);
 	
 	public int getNewsExcludeCountBystockId(Long stockId, Long selectedType);
 	
