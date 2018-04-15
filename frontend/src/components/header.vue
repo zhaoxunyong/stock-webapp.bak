@@ -21,7 +21,7 @@
             新聞設置
           </b-dropdown-item>
           <b-dropdown-item href="#" @click.prevent="go('/editMySelectedType')">
-            自選股
+            自選股設置
           </b-dropdown-item>
           <b-dropdown-item href="#" @click.prevent="go('/stockDailyTransactions')">
             交易資料導入與查詢
