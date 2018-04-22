@@ -36,6 +36,12 @@ public interface StockApi {
         @ApiImplicitParam(name = "type", value = "type", required = true, dataType = "string", paramType = "path"),
       })
 	public List<StockMyDataDto> getStockMyDatasByType(String type);
+    
+//    @ApiOperation(value="getStockMyDatasByTypeReverse", notes="getStockMyDatasByTypeReversal")
+//    @ApiImplicitParams({
+//        @ApiImplicitParam(name = "type", value = "type", required = true, dataType = "string", paramType = "path"),
+//      })
+//    public List<StockMyDataDto> getStockMyDatasByTypeReverse(String type);
 	
 	@ApiOperation(value="getStockData", notes="getStockData")
 	@ApiImplicitParams({

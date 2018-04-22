@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -100,6 +102,34 @@ public class StockApiImpl implements StockApi {
         }).collect(Collectors.toList());
         return dtoList;
 	}
+    
+    /**
+     * 用于左侧股票列表时降序显示，因为在自行股列表中是升序，两个用的是同一个方法
+    
+    @Override
+    @RequestMapping(value = "/getStockMyDatasByTypeReverse/{type}", method = GET)
+    public List<StockMyDataDto> getStockMyDatasByTypeReverse(@PathVariable String type) {
+        List<StockMyData> stockDatas = stockService.getStockMyDatasByType(Long.parseLong(type));
+        Collections.sort(stockDatas, new Comparator<StockMyData>() {
+
+            @Override
+            public int compare(StockMyData o1, StockMyData o2) {
+                if(o2.getId() > o1.getId()) {
+                    return 1;
+                } else  if(o2.getId() < o1.getId()) {
+                    return 1;
+                }
+                return 0;
+            }
+            
+        });
+        List<StockMyDataDto> dtoList = stockDatas.stream().map(model -> {
+            return modelMapper.map(model, StockMyDataDto.class);
+        })
+//        .sorted(Collections.reverseOrder())
+        .collect(Collectors.toList());
+        return dtoList;
+    } */
 
 	@Override
     @RequestMapping(value = "/getStockMyDatasByType/{type}", method = GET)
