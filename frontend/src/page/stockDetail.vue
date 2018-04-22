@@ -2,7 +2,7 @@
   <div>
     <div class="float-left mt-1 text-center">
       <div>
-        <h3>{{ company }}</h3>
+        <h4>{{ company }}</h4>
         <h6>({{no}})</h6>
         <h6 v-if="type!=''">({{type}} - {{typeName}})</h6>
       </div>
