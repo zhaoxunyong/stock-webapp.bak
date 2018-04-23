@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="m-2">
+    <!-- <div class="m-2">
       <autocomplete
         ref="autocomplete"
         :source="getUrl"
@@ -9,27 +9,29 @@
         :results-display="formattedDisplay"
         @selected="selectedProcess">
       </autocomplete>
-    </div>
+    </div> -->
 
     <div class="pt-2 pb-2">
       <!-- <b-btn size="sm" variant="primary" @click="toFront"><-</b-btn> -->
       <!-- <b-btn size="sm" v-b-modal.modalPrevent variant="primary">+</b-btn> -->
       <!-- <b-btn size="sm" variant="primary" @click="toBack">-></b-btn> -->
       <img src="static/image/left.png" style="width: 35px; height: 35px; cursor: pointer;"  @click="toFront" />
-      <span style="padding: 0px 3px"></span>
+      <!-- <b-btn size="sm" v-b-modal.modalPrevent variant="primary">+</b-btn> -->
+      <span style="padding: 0px 0px"></span>
       <img src="static/image/right.png" style="width: 35px; height: 35px; cursor: pointer;" @click="toBack" />
       <!-- Modal Component -->
       <b-modal id="modalPrevent"
                ref="modal"
                title="請選擇自選股"
+               hide-footer
                @ok="handleOk"
                @shown="openModal">
-        <form @submit.stop.prevent="handleSubmit">
-          <!-- <b-form-input type="text"
-                        placeholder="Enter your name"
-                        v-model="name"></b-form-input> -->
+        <!-- <form @submit.stop.prevent="handleSubmit">
           <b-form-select v-model="selected" :options="options" class="mb-3" />
-        </form>
+        </form> -->
+        <span v-for="item in items">
+          <b-button class="m-1" variant="success" @click="changeType(item.type, item.name)">{{ item.name }}</b-button>
+    </span>
       </b-modal>
     </div>
 
@@ -61,12 +63,13 @@ export default {
       list: [],
       firstStockId: '',
       myStockSelectedName: '庫存股',
-      selected: null,
-      options: [],
+      // selected: null,
+      // options: [],
       // 所有自选股标签
       selectedTypes: [],
       // 某只股票的自选股标签
-      mySelectedTypes: []
+      mySelectedTypes: [],
+      items: []
     }
   },
   created () {
@@ -131,26 +134,6 @@ export default {
     });
   },
   methods: {
-    getUrl (input) {
-      return '/api/stock/search4StockData?query='+input
-    },
-    selectedProcess (result, refs) {
-      refs.clear()
-      this.push('/content/' + result.value+'/1')
-      Bus.$emit('selectedProcess')
-      /*$(".form-control input[type='hidden']").each(function(index, data){
-        let inputValue = $(data).val()
-        // alert("value->"+result.value+"/inputValue->"+inputValue)
-        if(inputValue != "" && inputValue == result.value) {
-          refs.clear()
-          // alert(result.display+"已經存在!")
-          Bus.$emit('alerts', result.display+"已經存在!")
-        }
-      })*/
-    },
-    formattedDisplay (result) {
-      return result.no + ' ' + result.company
-    },
     push(url) {
       this.$router.push(url)
       Bus.$emit('initCurrentPage', 1)
@@ -196,27 +179,27 @@ export default {
     },
     openModal () {
       this.getStockMySelectedTypes()
-      this.clearName()
+      // this.clearName()
     },
-    clearName () {
-      this.selected = ''
-    },
+    // clearName () {
+    //   this.selected = ''
+    // },
     handleOk (evt) {
-      // Prevent modal from closing
-      evt.preventDefault()
-      if (!this.selected) {
-        alert('請選擇自選股!')
-      } else {
-        this.handleSubmit()
-      }
+      // // Prevent modal from closing
+      // evt.preventDefault()
+      // if (!this.selected) {
+      //   alert('請選擇自選股!')
+      // } else {
+      //   this.handleSubmit()
+      // }
     },
-    handleSubmit (evt) {
+    // handleSubmit (evt) {
+    changeType (selectedType, selectedName) {
       //this.names.push(this.name)
       let stockId = this.$route.params.stockId == undefined ? this.firstStockId : this.$route.params.stockId
       // alert(stockId +'/' + this.selected)
-      this.changeStockMySelected(stockId, this.selected, this.myStockSelectedName)
-      this.clearName()
-      this.$refs.modal.hide()
+      this.changeStockMySelected(stockId, selectedType, selectedName)
+      // this.clearName()
     },
     // 第一次加载数据
     getData () {
@@ -229,8 +212,8 @@ export default {
       })
     },
     getStockMySelectedTypes () {
-      this.options = []
-
+      // this.options = []
+      this.items = []
       let stockId = this.$route.params.stockId
       if(stockId != undefined && stockId != "") {
         this.$api.get('/api/stock/getMySelectedTypesByStockId/'+stockId, null, rs => {
@@ -244,19 +227,20 @@ export default {
           }
 
           let url = '/api/stock/getStockMySelectedTypes'
+          // this.$api.get(url, null, rs => {
+          //   this.items = rs
+          // })
           this.$api.get(url, null, rs => {
             for (var i = 0; i < rs.length; i++) {
               let isDisabled = mySelectedType.indexOf(rs[i].type) != -1
               if(!isDisabled) {
-                this.options.push({
-                  value: rs[i].type, text: rs[i].name, disabled:isDisabled
-                })
+                // this.options.push({
+                //   value: rs[i].type, text: rs[i].name, disabled:isDisabled
+                // })
+                this.items.push(rs[i])
               }
             }
           })
-            // if ($.isFunction(fn)){
-            //   fn.call(this, mySelectedType)
-            // }
         })
       }
     },
@@ -275,6 +259,7 @@ export default {
         Bus.$emit('autoSelectedMyStockSelectedType', selectedType, myStockSelectedName)
         // this.push('/content/' + stockId+'/1')
         // location.reload()
+        this.$refs.modal.hide()
       })
     }
   }

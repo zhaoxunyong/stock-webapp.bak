@@ -288,7 +288,7 @@ public class FetchServiceImpl implements FetchService {
                 List<StockImportantNews> stockImportantNewses =  this.fetchImportantNews(i);
                 if(stockImportantNewses!=null && !stockImportantNewses.isEmpty()) {
                     for(StockImportantNews importantNews : stockImportantNewses) {
-                        if(importantNews.getNewsDate().getTime() <= newDate.getTime()) {
+                        if(importantNews != null && importantNews.getNewsDate()!=null && importantNews.getNewsDate().getTime() <= newDate.getTime()) {
                             logger.info("stockImportantNews: 已经导到了"+newDate+"，无需再导入!");
                             break labelA;
                         }
@@ -321,7 +321,9 @@ public class FetchServiceImpl implements FetchService {
                     HtmlElement aElement = aNodes.get(1);
                     String url = aElement.getAttribute("href");
                     String fromValue = td.asText();
-                    String newsDateString = StringUtils.substringAfter(StringUtils.substringBetween(fromValue, "（", "）"), " ");
+                    String a1 = StringUtils.substringAfterLast(fromValue, "（");
+                    String a2 = StringUtils.substringBeforeLast(a1, "）");
+                    String newsDateString = StringUtils.substringAfter(a2, " ");
                     // subject
                 	HtmlElement subjectDomNode = (HtmlElement) trDomNodes.get(1);
                 	String subjectValue = subjectDomNode.asText().replace("(詳全文)", "");
@@ -329,7 +331,9 @@ public class FetchServiceImpl implements FetchService {
                 	stockImportantNews.setId(IdUtils.genLongId());
                 	stockImportantNews.setCreateDate(date);
                 	stockImportantNews.setFroms(fromValue);
-                	stockImportantNews.setNewsDate(DatesUtils.YYMMDDHHMMSS2.toDate(newsDateString+":00"));
+//                    System.out.println("fromValue--->"+fromValue);
+//                    System.out.println("newsDateString--->"+newsDateString);
+                    stockImportantNews.setNewsDate(DatesUtils.YYMMDDHHMMSS2.toDate(newsDateString+":00"));
                 	stockImportantNews.setSubject(subjectValue);
                 	stockImportantNews.setUrl(url);
                 	stockImportantNewses.add(stockImportantNews);
