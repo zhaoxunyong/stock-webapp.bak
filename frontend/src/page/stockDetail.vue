@@ -1,7 +1,11 @@
 <template>
   <div>
-    <div class="float-left mt-3">
-      <div><h2>{{ company }}</h2><h5>({{no}})</h5></div>
+    <div class="float-left mt-1 text-center">
+      <div>
+        <h4>{{ company }}</h4>
+        <h6>({{no}})</h6>
+        <h6 v-if="type!=''">({{type}} - {{typeName}})</h6>
+      </div>
       <!-- <div v-if="typeName !='' || electronics != ''">{{typeName}} - {{electronics}}</div> -->
     </div>
     <div class="float-left pl-2 mt-4">
@@ -58,6 +62,7 @@ export default {
       // stockData: null,
       company: '',
       no: '',
+      type: '',
       typeName: '',
       electronics: '',
       currSelectedType: '',
@@ -123,6 +128,13 @@ export default {
       }
     },
     getData (stockId) {
+      this.company = ''
+      this.no = ''
+      this.typeName = ''
+      this.electronics = ''
+      this.companyStatus = ''
+      this.typeName = ''
+      this.type = ''
       if(stockId != undefined && stockId != '' && stockId != 0) {
         this.$api.get('/api/stock/getStockData/'+stockId, null, stockData => {
           if(stockData != '' && stockData != undefined) {
@@ -132,6 +144,12 @@ export default {
             this.typeName = stockData.typeName
             this.electronics = stockData.electronics
             this.companyStatus = stockData.companyStatus
+            this.typeName = stockData.typeName
+            if(stockData.type == 0) {
+              this.type = '上市'
+            } else if(stockData.type == 1) {
+              this.type = "上櫃"
+            }
           }
         })
       }

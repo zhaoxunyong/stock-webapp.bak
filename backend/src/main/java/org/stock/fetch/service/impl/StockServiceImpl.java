@@ -297,6 +297,7 @@ public class StockServiceImpl implements StockService {
 	@Transactional
 	public void saveAllStockMySelected(List<Long> stockIds, Long selectedType) {
         stockMySelectedMapper.delete(selectedType);
+        long id = IdUtils.genLongId();
 	    for(Long stockId : stockIds) {
             // 是否在個股中，沒有的話，需要添加
             StockMyData stockMyData = stockMyDataMapper.selectByStockId(stockId);
@@ -315,7 +316,7 @@ public class StockServiceImpl implements StockService {
 	        if(stockMySelected == null) {
 	            // insert
 	            stockMySelected = new StockMySelected();
-	            stockMySelected.setId(IdUtils.genLongId());
+	            stockMySelected.setId(id--);
 	            stockMySelected.setSelectedType(selectedType);
 	            stockMySelected.setStockId(stockId);
 	            stockMySelected.setStatus(true);

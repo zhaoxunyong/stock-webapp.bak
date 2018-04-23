@@ -9,7 +9,7 @@
         <b-table striped hover :items="items" :fields="fields">
           <span slot="content_title" slot-scope="data" v-html="data.value" />
         </b-table>
-        <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" v-model="currentPage" :link-gen="linkGen" />
+        <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" :link-gen="linkGen" />
       </div>
     </template>
   </main-layout>
