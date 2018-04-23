@@ -159,13 +159,13 @@ public class FetchServiceImpl implements FetchService {
     public void fetchLatestNews(StockData stockData) throws Exception {
         StockNews stockNews = stockNewsMapper.getLatestNews(stockData.getId());
         if(stockNews == null) {
-            logger.info("fetchLatestNews: 第一次导入，只导入前4页面");
+            logger.info("fetchLatestNews: {}-{}第一次导入，只导入前4页面", stockData.getNo(), stockData.getCompany());
             for(int i=1;i<=4;i++) {
                 this.fetchNews(stockData, i);
             }
         } else {
             Date newDate = stockNews.getNewsDate();
-            logger.info("fetchLatestNews: 从当前日期导到"+newDate+".");
+            logger.info("fetchLatestNews: {}-{}从当前日期导到{}.", stockData.getNo(), stockData.getCompany(), DatesUtils.YYMMDDHHMMSS.toString(newDate));
             int i=1;
             int maxFetchPages = 10;
            //定义标签
@@ -175,7 +175,7 @@ public class FetchServiceImpl implements FetchService {
                 if(stockNewses!=null && !stockNewses.isEmpty()) {
                     for(StockNews news : stockNewses) {
                         if(news.getNewsDate().getTime() <= newDate.getTime()) {
-                            logger.info("fetchLatestNews: 已经导到了"+newDate+"，无需再导入!");
+                            logger.info("fetchLatestNews: {}-{}已经导到了{}，无需再导入!", stockData.getNo(), stockData.getCompany(),  DatesUtils.YYMMDDHHMMSS.toString(newDate));
                             break labelA;
                         }
                     }
