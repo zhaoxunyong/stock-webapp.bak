@@ -30,7 +30,7 @@
       </b-navbar-nav>
 
       <!-- Right aligned nav items -->
-    <b-navbar-nav class="ml-auto">
+    <b-navbar-nav>
         <autocomplete
         ref="autocomplete"
         :source="getUrl"

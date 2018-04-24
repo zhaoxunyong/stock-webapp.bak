@@ -4,13 +4,13 @@
       <div>
         <h4>{{ company }}</h4>
         <h6>({{no}})</h6>
-        <h6 v-if="type!=''">({{type}} - {{typeName}})</h6>
+        <h6 v-if="type!=''">{{type}} - {{typeName}}</h6>
       </div>
       <!-- <div v-if="typeName !='' || electronics != ''">{{typeName}} - {{electronics}}</div> -->
     </div>
-    <div class="float-left pl-2 mt-4">
-      <div><a href="#" v-b-modal.modalPrevent><span class="oi oi-plus"></span></a></div>
-      <div><a href="#" @click.prevent="removeOneStockMySelected"><span class="oi oi-minus"></span></a></div>
+    <div class="float-left pl-2 mt-3">
+      <div class="py-2"><a href="#" v-b-modal.modalPrevent><span class="oi oi-plus"></span></a></div>
+      <div class="py-2"><a href="#" @click.prevent="removeOneStockMySelected"><span class="oi oi-minus"></span></a></div>
     </div>
     <!--<div class="float-left">-->
       <!--<b-btn size="sm" v-b-modal.modalPrevent variant="primary">+</b-btn><br/>-->
