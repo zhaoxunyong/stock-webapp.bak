@@ -516,14 +516,14 @@ public class StockApiImpl implements StockApi {
     @Override
     @RequestMapping(value = "/fetchLatestNews", method = POST)
     public void fetchLatestNews(String stockId) {
-        if(!ScheduledTasks.IS_FETCH_ING) {
-            ScheduledTasks.IS_FETCH_ING = true;
+        if(!ScheduledTasks.IS_FETCH_NEW) {
+            ScheduledTasks.IS_FETCH_NEW = true;
             try {
                 fetchService.fetchLatestNews(stockService.getStockData(Long.parseLong(stockId)));
             } catch (Exception e) {
                 throw new BusinessException(e);
             } finally {
-                ScheduledTasks.IS_FETCH_ING = false;
+                ScheduledTasks.IS_FETCH_NEW = false;
             }
         } else {
             logger.warn("fetchLatestNews: 後臺已經在抓取數據中...");
@@ -533,14 +533,14 @@ public class StockApiImpl implements StockApi {
     @Override
     @RequestMapping(value = "/fetchNews", method = POST)
     public void fetchNews(String stockId, int fetchPage) {
-        if(!ScheduledTasks.IS_FETCH_ING) {
-            ScheduledTasks.IS_FETCH_ING = true;
+        if(!ScheduledTasks.IS_FETCH_NEW) {
+            ScheduledTasks.IS_FETCH_NEW = true;
             try {
                 fetchService.fetchNews(stockService.getStockData(Long.parseLong(stockId)), fetchPage);
             } catch (Exception e) {
                 throw new BusinessException(e);
             } finally {
-                ScheduledTasks.IS_FETCH_ING = false;
+                ScheduledTasks.IS_FETCH_NEW = false;
             }
         } else {
             logger.warn("fetchNews: 後臺已經在抓取數據中...");
@@ -550,14 +550,14 @@ public class StockApiImpl implements StockApi {
     @Override
     @RequestMapping(value = "/fetchImportantLatestNews", method = POST)
     public void fetchImportantLatestNews() {
-        if(!ScheduledTasks.IS_FETCH_ING) {
-            ScheduledTasks.IS_FETCH_ING = true;
+        if(!ScheduledTasks.IS_FETCH_IMPORTANT_NEW) {
+            ScheduledTasks.IS_FETCH_IMPORTANT_NEW = true;
             try {
                 fetchService.fetchImportantLatestNews();
             } catch (Exception e) {
                 throw new BusinessException(e);
             } finally {
-                ScheduledTasks.IS_FETCH_ING = false;
+                ScheduledTasks.IS_FETCH_IMPORTANT_NEW = false;
             }
         } else {
             logger.warn("fetchImportantLatestNews: 後臺已經在抓取數據中...");
@@ -567,14 +567,14 @@ public class StockApiImpl implements StockApi {
     @Override
     @RequestMapping(value = "/fetchImportantNews", method = POST)
     public void fetchImportantNews(int fetchPage) {
-        if(!ScheduledTasks.IS_FETCH_ING) {
-            ScheduledTasks.IS_FETCH_ING = true;
+        if(!ScheduledTasks.IS_FETCH_IMPORTANT_NEW) {
+            ScheduledTasks.IS_FETCH_IMPORTANT_NEW = true;
             try {
                 fetchService.fetchImportantNews(fetchPage);
             } catch (Exception e) {
                 throw new BusinessException(e);
             } finally {
-                ScheduledTasks.IS_FETCH_ING = false;
+                ScheduledTasks.IS_FETCH_IMPORTANT_NEW = false;
             }
         } else {
             logger.warn("fetchImportantNews: 後臺已經在抓取數據中...");

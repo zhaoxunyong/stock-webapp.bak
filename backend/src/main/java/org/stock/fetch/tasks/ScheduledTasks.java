@@ -12,7 +12,9 @@ import com.aeasycredit.commons.lang.utils.DatesUtils;
 @Component
 public class ScheduledTasks {
     
-    public static volatile boolean IS_FETCH_ING = false;
+    public static volatile boolean IS_FETCH_IMPORTANT_NEW = false;
+    
+    public static volatile boolean IS_FETCH_NEW = false;
     
 //    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -22,34 +24,47 @@ public class ScheduledTasks {
     @Autowired
     private FetchService fetchService;
     
+    @Scheduled(cron="* */8 8-23 * * *")
+    public void fetchImportantNews() throws Exception {
+        if(!IS_FETCH_IMPORTANT_NEW) {
+            try {
+                IS_FETCH_IMPORTANT_NEW = true;
+                logger.info("fetchImportantNews start--->"+DatesUtils.YYMMDDHHMMSS.toString());
+                
+                fetchService.fetchImportantLatestNews();
+                logger.info("fetchImportantNews end--->"+DatesUtils.YYMMDDHHMMSS.toString());
+                
+                // 獲取所有股票
+//                fetchService.fetchAll();
+            } finally {
+                IS_FETCH_IMPORTANT_NEW = false;
+            }
+        }
+    }
+    
 //    @Scheduled(fixedRate = 999999999)
     /**
      * 启动时执行一次，之后每隔20分钟执行一次  
      */
 //    @Scheduled(fixedRate = 20 * 60 * 1000) 
-    @Scheduled(cron="* */8 8-23 * * *")
-    public void reportCurrentTime() throws Exception {
-        if(!IS_FETCH_ING) {
+    @Scheduled(cron="* */15 8-23 * * *")
+    public void fetchNews() throws Exception {
+        if(!IS_FETCH_NEW) {
             try {
-                IS_FETCH_ING = true;
+                IS_FETCH_NEW = true;
                 /* logger.info("fetchAll start--->"+DatesUtils.YYMMDDHHMMSS.toString());
                 // 獲取所有股票的信息
                 fetchService.fetchAll();
-                System.out.println("fetchAll end--->"+DatesUtils.YYMMDDHHMMSS.toString());*/
+                logger.info("fetchAll end--->"+DatesUtils.YYMMDDHHMMSS.toString());*/
                 
                 logger.info("fetchNews start--->"+DatesUtils.YYMMDDHHMMSS.toString());
                 fetchService.fetchLatestNews();
-                System.out.println("fetchNews end--->"+DatesUtils.YYMMDDHHMMSS.toString());
-                
-                System.out.println("fetchImportantNews start--->"+DatesUtils.YYMMDDHHMMSS.toString());
-                
-                fetchService.fetchImportantLatestNews();
-                System.out.println("fetchImportantNews end--->"+DatesUtils.YYMMDDHHMMSS.toString());
+                logger.info("fetchNews end--->"+DatesUtils.YYMMDDHHMMSS.toString());
                 
                 // 獲取所有股票
 //                fetchService.fetchAll();
             } finally {
-                IS_FETCH_ING = false;
+                IS_FETCH_NEW = false;
             }
         }
     }
