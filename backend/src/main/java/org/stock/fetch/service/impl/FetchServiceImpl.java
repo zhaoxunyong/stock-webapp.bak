@@ -165,18 +165,19 @@ public class FetchServiceImpl implements FetchService {
             }
         } else {
             Date newDate = stockNews.getNewsDate();
-            logger.info("fetchLatestNews: {}-{}从当前日期导到{}.", stockData.getNo(), stockData.getCompany(), DatesUtils.YYMMDDHHMMSS.toString(newDate));
+//            logger.info("fetchLatestNews: {}-{}从当前日期导到{}.", stockData.getNo(), stockData.getCompany(), DatesUtils.YYMMDDHHMMSS.toString(newDate));
             int i=1;
             int maxFetchPages = 10;
            //定义标签
-            labelA:
+//            labelA:
             while(i<=maxFetchPages) {
                 List<StockNews> stockNewses =  this.fetchNews(stockData, i);
                 if(stockNewses!=null && !stockNewses.isEmpty()) {
                     for(StockNews news : stockNewses) {
                         if(news.getNewsDate().getTime() <= newDate.getTime()) {
-                            logger.info("fetchLatestNews: {}-{}已经导到了{}，无需再导入!", stockData.getNo(), stockData.getCompany(),  DatesUtils.YYMMDDHHMMSS.toString(newDate));
-                            break labelA;
+                            // 用system.out.println，可以在nohup.out文件中查看
+                            System.out.println("fetchLatestNews: "+stockData.getNo()+"-"+stockData.getCompany()+"已经导到了"+DatesUtils.YYMMDDHHMMSS.toString(newDate)+"，无需再导入!");
+                            return ;
                         }
                     }
                 }
@@ -279,18 +280,19 @@ public class FetchServiceImpl implements FetchService {
             }
         } else {
             Date newDate = stockImportantNews.getNewsDate();
-            logger.info("stockImportantNews: 从当前日期导到"+newDate+".");
+//            logger.info("stockImportantNews: 从当前日期导到"+newDate+".");
             int i=1;
             int maxFetchPages = 10;
            //定义标签
-            labelA:
+//            labelA:
             while(i<=maxFetchPages) {
                 List<StockImportantNews> stockImportantNewses =  this.fetchImportantNews(i);
                 if(stockImportantNewses!=null && !stockImportantNewses.isEmpty()) {
                     for(StockImportantNews importantNews : stockImportantNewses) {
                         if(importantNews != null && importantNews.getNewsDate()!=null && importantNews.getNewsDate().getTime() <= newDate.getTime()) {
-                            logger.info("stockImportantNews: 已经导到了"+newDate+"，无需再导入!");
-                            break labelA;
+                            System.out.println("stockImportantNews: 已经导到了"+newDate+"，无需再导入!");
+//                            break labelA;
+                            return;
                         }
                     }
                 }
@@ -304,6 +306,7 @@ public class FetchServiceImpl implements FetchService {
     public List<StockImportantNews> fetchImportantNews(int fetchPage) throws Exception {
         Date date = new Date();
 		String newUrl = ROOT_URL + "/news_list/url/d/e/N1.html?q=&pg="+fetchPage;
+		logger.info("fetchImportantNews newUrl--->" + newUrl);
 		HtmlPage page = webClient.getPage(newUrl);
 		List<StockImportantNews> stockImportantNewses = Lists.newArrayList();
 		HtmlElement ele = page.getHtmlElementById("newListContainer");
