@@ -139,7 +139,7 @@ public class FetchServiceImpl implements FetchService {
                 String kinds = "";
                 try {
                     String detailUrl = ROOT_URL + "/d/s/company_"+stockMyData.getNo().replaceAll("[A-Z]+$", "")+".html";
-                    HtmlPage page = webClient.getPage(detailUrl);
+                    HtmlPage page = processGuceOathCom(webClient.getPage(detailUrl));
                     HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'產業類別')]").get(0);
                     DomElement domElement = htmlElement.getNextElementSibling();
                     kinds = domElement.asText();
@@ -185,6 +185,28 @@ public class FetchServiceImpl implements FetchService {
             }
         }
     }
+    
+   private HtmlPage processGuceOathCom(HtmlPage page) {
+       List<HtmlForm> forms = page.getForms();
+       if (forms != null && !forms.isEmpty()) {
+           for (HtmlForm form : forms) {
+               HtmlElement ele = null;
+               try {
+                   ele = form.getOneHtmlElementByAttribute("input", "name", "agree");
+               } catch (Exception e) {
+//                   e.printStackTrace();
+               }
+               if (ele != null) {
+                   try {
+                    page = ele.click();
+                } catch (IOException e) {
+//                    e.printStackTrace();
+                }
+               }
+           }
+       }
+       return page;
+   }
 
     @Override
     @Transactional
@@ -194,7 +216,7 @@ public class FetchServiceImpl implements FetchService {
             throw new ParameterException("stockData must be not empty!");
         }
         String newUrl = ROOT_URL + "/q/h?s="+stockData.getNo().replaceAll("[A-Z]+$", "")+"&pg="+fetchPage;
-        HtmlPage page = webClient.getPage(newUrl);
+        HtmlPage page = processGuceOathCom(webClient.getPage(newUrl));
         List<StockNews> stockNewses =  Lists.newArrayList();
         List<?> trDomNodes = page.querySelectorAll("tr table.yui-text-left tbody tr td table tbody tr");
         if(trDomNodes!=null && !trDomNodes.isEmpty()) {
@@ -307,7 +329,7 @@ public class FetchServiceImpl implements FetchService {
         Date date = new Date();
 		String newUrl = ROOT_URL + "/news_list/url/d/e/N1.html?q=&pg="+fetchPage;
 		logger.info("fetchImportantNews newUrl--->" + newUrl);
-		HtmlPage page = webClient.getPage(newUrl);
+		HtmlPage page = processGuceOathCom(webClient.getPage(newUrl));
 		List<StockImportantNews> stockImportantNewses = Lists.newArrayList();
 		HtmlElement ele = page.getHtmlElementById("newListContainer");
 		List<?> tableDomNodes = ele.querySelectorAll("table#newListTable tbody tr td table");
@@ -369,7 +391,7 @@ public class FetchServiceImpl implements FetchService {
             default:
                 throw new ParameterException("stockTypeEnum must be not empty!");
         }
-        HtmlPage page = webClient.getPage(ROOT_URL + "/h/getclass.php");
+        HtmlPage page = processGuceOathCom(webClient.getPage(ROOT_URL + "/h/getclass.php"));
         //        HtmlElement element = page.getHtmlElementById("table7");
         DomElement element = page.getElementById(eleId);
         DomElement ele = element.getNextElementSibling();
@@ -416,7 +438,7 @@ public class FetchServiceImpl implements FetchService {
         Date date = new Date();
         if(stockTypes!=null && !stockTypes.isEmpty()) {
             for(StockType stockType : stockTypes) {
-                HtmlPage nextPage = webClient.getPage(stockType.getUrl());
+                HtmlPage nextPage = processGuceOathCom(webClient.getPage(stockType.getUrl()));
                 try {
                     List<?> domNodes = nextPage.querySelectorAll("table.yui-text-left tbody tr");
                     if(domNodes==null || domNodes.size() < 3) {
@@ -526,7 +548,7 @@ public class FetchServiceImpl implements FetchService {
             throw new BusinessException("Not found stock data by no: " + no);
         }
         long stockId = stockData.getId();
-        HtmlPage page = webClient.getPage("https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo());
+        HtmlPage page = processGuceOathCom(webClient.getPage("https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo()));
         page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
         page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
         HtmlForm form = page.getHtmlElementById("aspnetForm");
