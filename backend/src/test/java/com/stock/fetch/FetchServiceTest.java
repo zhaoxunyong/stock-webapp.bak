@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.stock.StockApplication;
+import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
 import org.stock.utils.FileMd5Utils;
 
@@ -25,11 +26,27 @@ public class FetchServiceTest {
     private FetchService fetchService;
     
     @Test
+    public void fetchStocks() throws Exception {
+        StockType stockType = new StockType();
+        /*stockType.setName("生技醫療");
+        stockType.setUrl("https://tw.stock.yahoo.com/s/list.php?c=%A5%CD%A7%DE%C2%E5%C0%F8&rr=0.24135000 1515630301");
+        stockType.setType(0);*/
+        /*stockType.setName("生技");
+        stockType.setUrl("https://tw.stock.yahoo.com/s/list.php?c=%C2d%A5%CD%A7%DE&rr=0.95059900 1515630443");
+        stockType.setType(1);*/
+        stockType.setName("電器電纜");
+        stockType.setUrl("https://tw.stock.yahoo.com/s/list.php?c=%B9q%BE%B9%B9q%C6l&rr=0.24134700 1515630301");
+        stockType.setType(0);
+        fetchService.fetchStocks(stockType);
+    }
+    
+    @Test
     public void fetchAll() throws Exception {
         fetchService.fetchAll();
     }
     
     @Test
+    @Deprecated
     public void fetchDetail() throws Exception {
         fetchService.fetchDetail();
     }

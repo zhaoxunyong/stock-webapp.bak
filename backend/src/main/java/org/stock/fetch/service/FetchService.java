@@ -9,8 +9,11 @@ import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockNews;
+import org.stock.fetch.model.StockType;
 
 public interface FetchService {
+    
+    public void fetchStocks(StockType stockType) throws Exception;
     
     /**
      * 獲取所有股票的信息
@@ -20,6 +23,7 @@ public interface FetchService {
     /**
      * 細產類別
      */
+    @Deprecated
     public void fetchDetail() throws Exception;
     
     /**
