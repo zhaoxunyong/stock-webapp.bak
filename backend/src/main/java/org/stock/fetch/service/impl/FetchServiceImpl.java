@@ -384,7 +384,7 @@ public class FetchServiceImpl implements FetchService {
                         String url = ROOT_URL + aElement.getAttribute("href");
 //                        String id = StringUtils.substringAfterLast(href, " ");
                         String name = td.asText();
-                        System.out.println("url--->" + url + "/name=" + name);
+//                        System.out.println("url--->" + url + "/name=" + name);
                         StockType stockType = new StockType();
                         stockType.setId(IdUtils.genLongId());
                         stockType.setName(name);
@@ -410,7 +410,7 @@ public class FetchServiceImpl implements FetchService {
         HtmlPage nextPage = webClient.getPage(stockType.getUrl());
         try {
             List<?> domNodes = nextPage.querySelectorAll("table.yui-text-left tbody tr");
-            System.out.println("url="+stockType.getUrl()+"/name="+stockType.getName());
+//            System.out.println("url="+stockType.getUrl()+"/name="+stockType.getName());
             if(domNodes==null || domNodes.size() < 3) {
                 System.out.println("domNodes异常，跳过导入：url2="+stockType.getUrl()+"/name="+stockType.getName());
             } 
