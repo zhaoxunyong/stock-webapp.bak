@@ -27,8 +27,8 @@ public class ScheduledTasks {
      * 启动时执行一次，之后每隔20分钟执行一次  
      */
 //    @Scheduled(fixedRate = 20 * 60 * 1000) 
-//    @Scheduled(cron="* */30 8-23 * * *")
-    public void reportCurrentTime() throws Exception {
+    @Scheduled(cron="* */30 8-23 * * *")
+    public void fetch() throws Exception {
         if(!IS_FETCH_ING) {
             try {
                 IS_FETCH_ING = true;
