@@ -19,44 +19,8 @@
           <b-row>
             <!--个股左侧信息-->
             <b-col cols="9" sm="9" class="pl-1">
-              <!--个股详情-->
-              <!--<b-row>
-                <b-col cols="12" sm="12">
-                  <b-row>
-                      <b-col>
-                        <img src="../images/stock01.png" class="w-100" />
-                      </b-col>
-                      <b-col>
-                        <img src="../images/stock01.png" class="w-100" />
-                      </b-col>
-                      <b-col>
-                        <img src="../images/stock01.png" class="w-100" />
-                      </b-col>
-                  </b-row>
-                  <b-row>
-                      <b-col>
-                        <img src="../images/stock01.png" class="w-100" />
-                      </b-col>
-                      <b-col>
-                        <img src="../images/stock01.png" class="w-100" />
-                      </b-col>
-                      <b-col>
-                        <img src="../images/stock01.png" class="w-100" />
-                      </b-col>
-                  </b-row>
-                  <b-row>
-                      <b-col>
-                        <img src="../images/stock01.png" class="w-100" />
-                      </b-col>
-                      <b-col>
-                        <img src="../images/stock01.png" class="w-100" />
-                      </b-col>
-                      <b-col>
-                        <img src="../images/stock01.png" class="w-100" />
-                      </b-col>
-                  </b-row>
-                </b-col>
-              </b-row>-->
+              <!--个股K线图-->
+              <StockKLineChart></StockKLineChart>
               <!--新闻-->
               <b-row class="mt-3">
                 <b-col cols="12" sm="12" class="pl-0 pr-0">
@@ -82,10 +46,11 @@ import StockMyData from './StockMyData.vue'
 import StockMySelectedType from './stockMySelectedType.vue'
 import StockDetail from './stockDetail.vue'
 import StockNews from './stockNews.vue'
+import StockKLineChart from './stockKLineChart.vue'
 // import Alert from '../components/alert.vue'
 export default {
   components: {
-    MainLayout, StockMyData, StockMySelectedType, StockDetail, StockNews//, Alert//, Loading
+    MainLayout, StockMyData, StockMySelectedType, StockDetail, StockNews, StockKLineChart//, Alert//, Loading
   }
 }
 </script>
