@@ -12,6 +12,7 @@ target/
 
 .DS_Store
 node_modules/
+frontend/node/
 /dist/
 npm-debug.log*
 yarn-debug.log*
