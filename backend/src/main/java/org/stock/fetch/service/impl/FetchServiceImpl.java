@@ -109,20 +109,21 @@ public class FetchServiceImpl implements FetchService {
     @Override
     @Transactional
     public void fetchAll() throws Exception {
-//        List<StockType> marketTypes = fetchNewsKinds(StockTypeEnum.MARKET);
-//        fetchNewStocks(marketTypes);
-     // 上柜
-      List<StockType> counterTypes = fetchNewsKinds(StockTypeEnum.COUNTER);
-      fetchNewStocks(counterTypes);
-//      // 電子行業
-//      List<StockType> electronicTypes = fetchKinds(StockTypeEnum.ELECTRONIC);
-//      fetchStocks(electronicTypes);
-//      // 概念
-//      List<StockType> conceptTypes = fetchKinds(StockTypeEnum.CONCEPT);
-//      fetchStocks(conceptTypes);
-//      // 集團
-//      List<StockType> groupTypes = fetchKinds(StockTypeEnum.GROUP);
-//      fetchStocks(groupTypes);
+        // 上市
+        List<StockType> marketTypes = fetchNewsKinds(StockTypeEnum.MARKET);
+        fetchNewStocks(marketTypes);
+        // 上柜
+        List<StockType> counterTypes = fetchNewsKinds(StockTypeEnum.COUNTER);
+        fetchNewStocks(counterTypes);
+        // 電子行業
+        List<StockType> electronicTypes = fetchKinds(StockTypeEnum.ELECTRONIC);
+        fetchStocks(electronicTypes);
+        // 概念
+        List<StockType> conceptTypes = fetchKinds(StockTypeEnum.CONCEPT);
+        fetchStocks(conceptTypes);
+        // 集團
+        List<StockType> groupTypes = fetchKinds(StockTypeEnum.GROUP);
+        fetchStocks(groupTypes);
       
         /*// 上市
 //        List<StockType> marketTypes = fetchKinds(StockTypeEnum.MARKET);
