@@ -24,7 +24,7 @@ public class ScheduledTasks {
     @Autowired
     private FetchService fetchService;
     
-    @Scheduled(cron="* */8 8-23 * * *")
+//    @Scheduled(cron="* */8 8-23 * * *")
     public void fetchImportantNews() throws Exception {
         if(!IS_FETCH_IMPORTANT_NEW) {
             try {
@@ -47,7 +47,7 @@ public class ScheduledTasks {
      * 启动时执行一次，之后每隔20分钟执行一次  
      */
 //    @Scheduled(fixedRate = 20 * 60 * 1000) 
-    @Scheduled(cron="* */15 8-23 * * *")
+//    @Scheduled(cron="* */15 8-23 * * *")
     public void fetchNews() throws Exception {
         if(!IS_FETCH_NEW) {
             try {

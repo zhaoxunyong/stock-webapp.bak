@@ -29,10 +29,10 @@ public class FetchServiceTest {
         fetchService.fetchAll();
     }
     
-    @Test
+    /*@Test
     public void fetchDetail() throws Exception {
         fetchService.fetchDetail();
-    }
+    }*/
     
     @Test
     public void fetchNews() throws Exception {

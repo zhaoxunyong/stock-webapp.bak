@@ -109,12 +109,15 @@ public class FetchServiceImpl implements FetchService {
     @Override
     @Transactional
     public void fetchAll() throws Exception {
+        long s = System.currentTimeMillis();
         // 上市
         List<StockType> marketTypes = fetchNewsKinds(StockTypeEnum.MARKET);
         fetchNewStocks(marketTypes);
         // 上柜
         List<StockType> counterTypes = fetchNewsKinds(StockTypeEnum.COUNTER);
         fetchNewStocks(counterTypes);
+        System.out.println("fetchNewsKinds---->"+(System.currentTimeMillis()-s)+"ms.");
+        s = System.currentTimeMillis();
         // 電子行業
         List<StockType> electronicTypes = fetchKinds(StockTypeEnum.ELECTRONIC);
         fetchStocks(electronicTypes);
@@ -124,6 +127,7 @@ public class FetchServiceImpl implements FetchService {
         // 集團
         List<StockType> groupTypes = fetchKinds(StockTypeEnum.GROUP);
         fetchStocks(groupTypes);
+        System.out.println("fetchKinds---->"+(System.currentTimeMillis()-s)+"ms.");
       
         /*// 上市
 //        List<StockType> marketTypes = fetchKinds(StockTypeEnum.MARKET);
@@ -172,15 +176,23 @@ public class FetchServiceImpl implements FetchService {
                               String name = anchor.asText();
                               if(stockTypeEnum == StockTypeEnum.MARKET || (stockTypeEnum == StockTypeEnum.COUNTER && !"上市".equals(name))) {
                                     String aHref = anchor.getHrefAttribute();
-                                    System.out.println("name--->" + name + "/aHref--->" + aHref);
+//                                    System.out.println("name--->" + name + "/aHref--->" + aHref);
                                     StockType stockType = new StockType();
-                                    stockType.setId(IdUtils.genLongId());
                                     stockType.setName(name);
                                     stockType.setType(stockTypeEnum.getType());
                                     stockType.setUrl(aHref);
                                     stockType.setStatus(true);
                                     stockType.setCreateDate(date);
                                     stockTypes.add(stockType);
+                                    StockType existStockType = stockTypeMapper.selectByName(name, stockTypeEnum.getType());
+                                    if(existStockType == null) {
+                                        stockType.setId(IdUtils.genLongId());
+                                        stockTypeMapper.insert(stockType);
+                                    } else {
+                                        // 如果存在的话，用原来的id记录
+                                        stockType.setId(existStockType.getId());
+                                        stockTypeMapper.updateByPrimaryKey(stockType);
+                                    }
                                   
                               }
                           }
@@ -213,46 +225,53 @@ public class FetchServiceImpl implements FetchService {
                             if(StringUtils.isNotBlank(text)) {
                                 String no = StringUtils.substringBefore(text, " ");
                                 String company = StringUtils.substringAfter(text, " ");
-                              System.out.println("no--->"+no+"/"+company);
-                              if(stockType.getType().equals(StockTypeEnum.MARKET.getType()) || stockType.getType().equals(StockTypeEnum.COUNTER.getType())) {
-                                  StockData stockData = new StockData();
-                                  stockData.setId(IdUtils.genLongId());
-                                  stockData.setNo(no);
-                                  stockData.setCompany(company);
-                                  stockData.setCreateDate(date);
-                                  stockData.setTypeName(stockType.getName());
-                                  stockData.setType(stockType.getType());
-//                                  stockData.setUrl(url);
-//                                  stockData.setTxPrice(toBigDecimal(txPriceElement.asText()));
-//                                  stockData.setClosing(toBigDecimal(closingElement.asText()));
-//                                  stockData.setHighest(toBigDecimal(highestElement.asText()));
-//                                  stockData.setLowest(toBigDecimal(lowestElement.asText()));
-                                  stockDataMapper.deleteByNo(no);
-                                  stockDataMapper.insert(stockData);
-                              } else {
-                                  StockData stockData = stockDataMapper.selectByNo(no);
-                                  if(stockData == null) {
-                                      // not exist, insert
-                                      stockData = new StockData();
-                                      stockData.setId(IdUtils.genLongId());
-                                      stockData.setNo(no);
-                                      stockData.setCompany(company);
-                                      stockData.setCreateDate(date);
-                                      stockData.setType(stockType.getType());
-                                      stockDataMapper.insert(stockData);
-//                                      stockData.setUrl(url);
-                                  } else {
-                                      // exist, update
-                                      if(stockType.getType().equals(StockTypeEnum.CONCEPT.getType())) {
-                                          stockData.setConcepts(stockType.getName());
-                                      } else if(stockType.getType().equals(StockTypeEnum.GROUP.getType())) {
-                                          stockData.setGroups(stockType.getName());
-                                      } else if(stockType.getType().equals(StockTypeEnum.ELECTRONIC.getType())) {
-                                          stockData.setElectronics(stockType.getName());
-                                      }
-                                      stockDataMapper.updateByPrimaryKey(stockData);
-                                  }
-                              }
+//                              System.out.println("no--->"+no+"/"+company);
+                                if(stockType.getType().equals(StockTypeEnum.MARKET.getType()) || stockType.getType().equals(StockTypeEnum.COUNTER.getType())) {
+                                    // 如果該股票存在時，一定要復用之前的id，不然所有的其他的記錄關聯id，這樣會有問題
+                                    StockData existStockData = stockDataMapper.selectByNo(no);
+                                    StockData stockData = new StockData();
+                                    stockData.setNo(no);
+                                    stockData.setCompany(company);
+                                    stockData.setCreateDate(date);
+                                    stockData.setTypeName(stockType.getName());
+                                    stockData.setType(stockType.getType());
+                                    if(existStockData != null) {
+                                        stockData.setId(existStockData.getId());
+                                        stockDataMapper.updateByPrimaryKey(stockData);
+                                    } else {
+                                        stockData.setId(IdUtils.genLongId());
+//                                        stockDataMapper.deleteByNo(no);
+                                        stockDataMapper.insert(stockData);
+                                    }
+                                    /*stockData.setUrl(url);
+                                    stockData.setTxPrice(toBigDecimal(txPriceElement.asText()));
+                                    stockData.setClosing(toBigDecimal(closingElement.asText()));
+                                    stockData.setHighest(toBigDecimal(highestElement.asText()));
+                                    stockData.setLowest(toBigDecimal(lowestElement.asText()));*/
+                                } else {
+                                    StockData stockData = stockDataMapper.selectByNo(no);
+                                    if(stockData == null) {
+                                        // not exist, insert
+                                        stockData = new StockData();
+                                        stockData.setId(IdUtils.genLongId());
+                                        stockData.setNo(no);
+                                        stockData.setCompany(company);
+                                        stockData.setCreateDate(date);
+                                        stockData.setType(stockType.getType());
+                                        stockDataMapper.insert(stockData);
+//                                        stockData.setUrl(url);
+                                    } else {
+                                        // exist, update
+                                        if(stockType.getType().equals(StockTypeEnum.CONCEPT.getType())) {
+                                            stockData.setConcepts(stockType.getName());
+                                        } else if(stockType.getType().equals(StockTypeEnum.GROUP.getType())) {
+                                            stockData.setGroups(stockType.getName());
+                                        } else if(stockType.getType().equals(StockTypeEnum.ELECTRONIC.getType())) {
+                                            stockData.setElectronics(stockType.getName());
+                                        }
+                                        stockDataMapper.updateByPrimaryKey(stockData);
+                                    }
+                                }
                             }
                         }
                     }
@@ -263,18 +282,18 @@ public class FetchServiceImpl implements FetchService {
         }
     }
 
-    @Override
+    /*@Override
     @Transactional
     public void fetchDetail() throws Exception {
         List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
         if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
             for(StockMyData stockMyData : stockMyDatas) {
                 // 
-                /*HtmlPage page = webClient.getPage("https://www.cmoney.tw/finance/f00026.aspx?s="+stockMyData.getNo());
+                HtmlPage page = webClient.getPage("https://www.cmoney.tw/finance/f00026.aspx?s="+stockMyData.getNo());
                 HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'細產業別')]").get(0);
                 DomElement domElement = htmlElement.getNextElementSibling();
                 String kinds = domElement.asText();
-                System.out.println("kinds--->"+kinds);*/
+                System.out.println("kinds--->"+kinds);
                 
                 // 細產類別
                 String kinds = "";
@@ -293,7 +312,7 @@ public class FetchServiceImpl implements FetchService {
                 }
             }
         }
-    }
+    }*/
 
     @Override
     @Transactional
@@ -532,7 +551,7 @@ public class FetchServiceImpl implements FetchService {
             default:
                 throw new ParameterException("stockTypeEnum must be not empty!");
         }
-        HtmlPage page = processGuceOathCom(webClient.getPage(ROOT_URL + "/h/getclass.php"));
+        HtmlPage page = webClient.getPage(ROOT_URL + "/h/getclass.php");
         //        HtmlElement element = page.getHtmlElementById("table7");
         DomElement element = page.getElementById(eleId);
         DomElement ele = element.getNextElementSibling();
@@ -553,7 +572,7 @@ public class FetchServiceImpl implements FetchService {
                         String url = ROOT_URL + aElement.getAttribute("href");
 //                        String id = StringUtils.substringAfterLast(href, " ");
                         String name = td.asText();
-                        System.out.println("url=" + url + "/name=" + name);
+//                        System.out.println("url--->" + url + "/name=" + name);
                         StockType stockType = new StockType();
                         stockType.setId(IdUtils.genLongId());
                         stockType.setName(name);
@@ -575,104 +594,128 @@ public class FetchServiceImpl implements FetchService {
     
 
     
-    private void fetchStocks(List<StockType> stockTypes) throws Exception {
+    @Override
+    public void fetchStocks(StockType stockType) throws Exception {
         Date date = new Date();
-        if(stockTypes!=null && !stockTypes.isEmpty()) {
-            for(StockType stockType : stockTypes) {
-                HtmlPage nextPage = processGuceOathCom(webClient.getPage(stockType.getUrl()));
-                try {
-                    List<?> domNodes = nextPage.querySelectorAll("table.yui-text-left tbody tr");
-                    if(domNodes==null || domNodes.size() < 3) {
-                        System.out.print("name="+stockType.getName());
-                        System.out.println("/url="+stockType.getUrl());
-                        continue;
-                    }
-                    HtmlElement domNode = (HtmlElement) domNodes.get(2);
-//                    System.out.println("domNode===>"+domNode.asXml());
+        HtmlPage nextPage = webClient.getPage(stockType.getUrl());
+        try {
+            List<?> domNodes = nextPage.querySelectorAll("table.yui-text-left tbody tr");
+//            System.out.println("url="+stockType.getUrl()+"/name="+stockType.getName());
+            if(domNodes==null || domNodes.size() < 3) {
+                System.out.println("domNodes异常，跳过导入：url2="+stockType.getUrl()+"/name="+stockType.getName());
+            } 
+            // 存託憑證，市認購，市認售，指數類，收益證劵
+            // 在櫃買部份，指數類，認購，認售
+            else if("存託憑證".equals(stockType.getName())
+                    || "市認購".equals(stockType.getName())
+                    || "市認售".equals(stockType.getName())
+                    || "指數類".equals(stockType.getName())
+                    || "收益證劵".equals(stockType.getName())
                     
-                    List<DomNode> trDomNodes = domNode.querySelectorAll("table table tbody tr");//.get(2);
-                    if(trDomNodes!=null && !trDomNodes.isEmpty()) {
-                        for(int i=2;i<trDomNodes.size();i++) {
-                            HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
-//                            System.out.println("trDomNode="+trDomNode.asXml());
-//                          System.out.println("trDomNode===>"+trDomNode);
-                            List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
-                            HtmlElement tdElement = nextTds.get(1);
-//                            System.out.println("tdElement===>"+tdElement.asXml());
-                            
-                            List<HtmlElement> aNodes = tdElement.getElementsByTagName("a");
-                            if(aNodes==null || aNodes.isEmpty()) continue;
-                            HtmlElement aElement = aNodes.get(0);
-//                            System.out.println("aElement===>"+aElement.asXml());
-                            String url = ROOT_URL + aElement.getAttribute("href");
-//                            String id = StringUtils.substringAfterLast(href, " ");
-                            String value = tdElement.asText();
-                            String no = StringUtils.substringBefore(value, " ");
-                            String company = StringUtils.substringAfter(value, " ").replaceAll("\r\n", "");
-                            
-                            // tx_price closing highest lowest
-                            HtmlElement txPriceElement = nextTds.get(3);
-                            HtmlElement closingElement = nextTds.get(8);
-                            HtmlElement highestElement = nextTds.get(10);
-                            HtmlElement lowestElement = nextTds.get(11);
-                            
-//                            System.out.println("url=" + url + "/no=" + no + "/company=" + company);
-                            /*
-                            // 細產類別
-                            String kinds = "";
-                            try {
-                                String detailUrl = ROOT_URL + "/d/s/company_"+no.replaceAll("[A-Z]+$", "")+".html";
-                                HtmlPage page = webClient.getPage(detailUrl);
-                                HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'產業類別')]").get(0);
-                                DomElement domElement = htmlElement.getNextElementSibling();
-                                kinds = domElement.asText();
-                            } catch(Exception e) {
-                                logger.warn(e.getMessage());
-                            }*/
-                            if(stockType.getType().equals(StockTypeEnum.MARKET.getType()) || stockType.getType().equals(StockTypeEnum.COUNTER.getType())) {
-                                StockData stockData = new StockData();
+                    || "指數類".equals(stockType.getName())
+                    || "認購".equals(stockType.getName())
+                    || "認售".equals(stockType.getName())) {
+                System.out.println("不需要导入：url2="+stockType.getUrl()+"/name="+stockType.getName());
+            } else {
+                HtmlElement domNode = (HtmlElement) domNodes.get(2);
+    //            System.out.println("domNode===>"+domNode.asXml());
+                
+                List<DomNode> trDomNodes = domNode.querySelectorAll("table table tbody tr");//.get(2);
+                if(trDomNodes!=null && !trDomNodes.isEmpty()) {
+                    for(int i=2;i<trDomNodes.size();i++) {
+                        HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
+    //                    System.out.println("trDomNode="+trDomNode.asXml());
+    //                  System.out.println("trDomNode===>"+trDomNode);
+                        List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
+                        HtmlElement tdElement = nextTds.get(1);
+    //                    System.out.println("tdElement===>"+tdElement.asXml());
+                        
+                        List<HtmlElement> aNodes = tdElement.getElementsByTagName("a");
+                        if(aNodes==null || aNodes.isEmpty()) continue;
+                        HtmlElement aElement = aNodes.get(0);
+    //                    System.out.println("aElement===>"+aElement.asXml());
+                        String url = ROOT_URL + aElement.getAttribute("href");
+    //                    String id = StringUtils.substringAfterLast(href, " ");
+                        String value = tdElement.asText();
+                        String no = StringUtils.substringBefore(value, " ");
+                        String company = StringUtils.substringAfter(value, " ").replaceAll("\r\n", "");
+                        
+                        // tx_price closing highest lowest
+                        HtmlElement txPriceElement = nextTds.get(3);
+                        HtmlElement closingElement = nextTds.get(8);
+                        HtmlElement highestElement = nextTds.get(10);
+                        HtmlElement lowestElement = nextTds.get(11);
+                        
+    //                    System.out.println("url=" + url + "/no=" + no + "/company=" + company);
+                        /*
+                        // 細產類別
+                        String kinds = "";
+                        try {
+                            String detailUrl = ROOT_URL + "/d/s/company_"+no.replaceAll("[A-Z]+$", "")+".html";
+                            HtmlPage page = webClient.getPage(detailUrl);
+                            HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'產業類別')]").get(0);
+                            DomElement domElement = htmlElement.getNextElementSibling();
+                            kinds = domElement.asText();
+                        } catch(Exception e) {
+                            logger.warn(e.getMessage());
+                        }*/
+                        if(stockType.getType().equals(StockTypeEnum.MARKET.getType()) || stockType.getType().equals(StockTypeEnum.COUNTER.getType())) {
+                            // 如果該股票存在時，一定要復用之前的id，不然所有的其他的記錄關聯id，這樣會有問題
+                            StockData existStockData = stockDataMapper.selectByNo(no);
+                            StockData stockData = new StockData();
+                            if(existStockData != null) {
+                                stockData.setId(existStockData.getId());
+                            } else {
+                                stockData.setId(IdUtils.genLongId());
+                            }
+                            stockData.setNo(no);
+                            stockData.setCompany(company);
+                            stockData.setCreateDate(date);
+                            stockData.setTypeName(stockType.getName());
+                            stockData.setUrl(url);
+                            stockData.setType(stockType.getType());
+                            stockData.setTxPrice(toBigDecimal(txPriceElement.asText()));
+                            stockData.setClosing(toBigDecimal(closingElement.asText()));
+                            stockData.setHighest(toBigDecimal(highestElement.asText()));
+                            stockData.setLowest(toBigDecimal(lowestElement.asText()));
+                            stockDataMapper.deleteByNo(no);
+                            stockDataMapper.insert(stockData);
+                        } else {
+                            StockData stockData = stockDataMapper.selectByNo(no);
+                            if(stockData == null) {
+                                // not exist, insert
+                                stockData = new StockData();
                                 stockData.setId(IdUtils.genLongId());
                                 stockData.setNo(no);
                                 stockData.setCompany(company);
                                 stockData.setCreateDate(date);
-                                stockData.setTypeName(stockType.getName());
                                 stockData.setUrl(url);
                                 stockData.setType(stockType.getType());
-                                stockData.setTxPrice(toBigDecimal(txPriceElement.asText()));
-                                stockData.setClosing(toBigDecimal(closingElement.asText()));
-                                stockData.setHighest(toBigDecimal(highestElement.asText()));
-                                stockData.setLowest(toBigDecimal(lowestElement.asText()));
-                                stockDataMapper.deleteByNo(no);
                                 stockDataMapper.insert(stockData);
                             } else {
-                                StockData stockData = stockDataMapper.selectByNo(no);
-                                if(stockData == null) {
-                                    // not exist, insert
-                                    stockData = new StockData();
-                                    stockData.setId(IdUtils.genLongId());
-                                    stockData.setNo(no);
-                                    stockData.setCompany(company);
-                                    stockData.setCreateDate(date);
-                                    stockData.setUrl(url);
-                                    stockData.setType(stockType.getType());
-                                    stockDataMapper.insert(stockData);
-                                } else {
-                                    // exist, update
-                                    if(stockType.getType().equals(StockTypeEnum.CONCEPT.getType())) {
-                                        stockData.setConcepts(stockType.getName());
-                                    } else if(stockType.getType().equals(StockTypeEnum.GROUP.getType())) {
-                                        stockData.setGroups(stockType.getName());
-                                    } else if(stockType.getType().equals(StockTypeEnum.ELECTRONIC.getType())) {
-                                        stockData.setElectronics(stockType.getName());
-                                    }
-                                    stockDataMapper.updateByPrimaryKey(stockData);
+                                // exist, update
+                                if(stockType.getType().equals(StockTypeEnum.CONCEPT.getType())) {
+                                    stockData.setConcepts(stockType.getName());
+                                } else if(stockType.getType().equals(StockTypeEnum.GROUP.getType())) {
+                                    stockData.setGroups(stockType.getName());
+                                } else if(stockType.getType().equals(StockTypeEnum.ELECTRONIC.getType())) {
+                                    stockData.setElectronics(stockType.getName());
                                 }
+                                stockDataMapper.updateByPrimaryKey(stockData);
                             }
                         }
                     }
-                } finally {
-                    nextPage.cleanUp();
                 }
+            }
+        } finally {
+            nextPage.cleanUp();
+        }
+    }
+    
+    private void fetchStocks(List<StockType> stockTypes) throws Exception {
+        if(stockTypes!=null && !stockTypes.isEmpty()) {
+            for(StockType stockType : stockTypes) {
+                this.fetchStocks(stockType);
             }
         }
         
