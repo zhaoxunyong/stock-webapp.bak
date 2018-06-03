@@ -20,6 +20,10 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   
+  <delete id="deleteAll" >
+    delete from stock_type
+  </delete>
+  
   <delete id="deleteByName" parameterType="org.stock.fetch.model.StockType" >
     delete from stock_type
     where name = #{name,jdbcType=VARCHAR} and type = #{type,jdbcType=INTEGER}
