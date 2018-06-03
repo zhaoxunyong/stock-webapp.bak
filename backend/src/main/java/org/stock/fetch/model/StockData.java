@@ -39,6 +39,8 @@ public class StockData extends BaseModel {
     
     private BigDecimal lowest;
 
+    private Boolean status;
+
     private Date createDate;
 
     private Date updateDate;
@@ -177,6 +179,14 @@ public class StockData extends BaseModel {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
     }
 
 }

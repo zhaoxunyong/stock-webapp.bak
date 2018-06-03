@@ -17,6 +17,7 @@
     <result column="closing" property="closing" jdbcType="DECIMAL" />
     <result column="highest" property="highest" jdbcType="DECIMAL" />
     <result column="lowest" property="lowest" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="BIT" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
     
@@ -24,7 +25,7 @@
   
   <sql id="BaseColumnList">
     id, no, company, url, type, type_name, concepts, groups, electronics, manage_item, company_status, 
-    tx_price, closing, highest, lowest, create_date, update_date
+    tx_price, closing, highest, lowest, status, create_date, update_date
   </sql>
   
   
@@ -42,14 +43,19 @@
   <insert id="insert" parameterType="org.stock.fetch.model.StockData" useGeneratedKeys="true" keyProperty="id" >
     insert into stock_data (id, no, company, url, type, type_name, 
       concepts, groups, electronics, 
-      manage_item, company_status, tx_price, closing, highest, lowest, create_date, 
+      manage_item, company_status, tx_price, closing, highest, lowest, status, create_date, 
       update_date)
     values (#{id,jdbcType=BIGINT}, #{no,jdbcType=VARCHAR}, #{company,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
       #{typeName,jdbcType=VARCHAR}, #{concepts,jdbcType=VARCHAR}, #{groups,jdbcType=VARCHAR}, #{electronics,jdbcType=VARCHAR}, 
       #{manageItem,jdbcType=VARCHAR}, #{companyStatus,jdbcType=VARCHAR}, 
       #{txPrice,jdbcType=DECIMAL}, #{closing,jdbcType=DECIMAL}, #{highest,jdbcType=DECIMAL}, #{lowest,jdbcType=DECIMAL}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
+      #{status,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
   </insert>
+  
+  <update id="updateAllStatus" >
+    update stock_data
+    set status = #{status,jdbcType=BIT}
+  </update>
   
   <update id="updateByPrimaryKey" parameterType="org.stock.fetch.model.StockData" >
     update stock_data
@@ -67,6 +73,7 @@
       closing = #{closing,jdbcType=DECIMAL}, 
       highest = #{highest,jdbcType=DECIMAL}, 
       lowest = #{lowest,jdbcType=DECIMAL}, 
+      status = #{status,jdbcType=BIT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
@@ -93,17 +100,17 @@
   <select id="search4StockMyData" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select DISTINCT b.*
     from stock_my_data a, stock_data b
-    where a.stock_id=b.id and b.no like concat('%',#{value},'%') or b.company like concat('%',#{value},'%')
+    where a.stock_id=b.id and b.no like concat('%',#{value},'%') or b.company like concat('%',#{value},'%') and b.status = 1
   </select>
   
   <select id="search4StockData" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select <include refid="BaseColumnList" />
     from stock_data
-    where no like concat('%',#{value},'%') or company like concat('%',#{value},'%')
+    where no like concat('%',#{value},'%') or company like concat('%',#{value},'%') and status = 1
   </select>
   
   <select id="selectAll" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" />
-    from stock_data limit 100,100
+    from stock_data where status = 1 limit 100,100
   </select>
 </mapper>

@@ -110,6 +110,8 @@ public class FetchServiceImpl implements FetchService {
     @Transactional
     public void fetchAll() throws Exception {
         long s = System.currentTimeMillis();
+        // 先将所有的股票status修改为0
+        stockDataMapper.updateAllStatus(false);
         // 上市
         List<StockType> marketTypes = fetchNewsKinds(StockTypeEnum.MARKET);
         fetchNewStocks(marketTypes);
@@ -235,6 +237,7 @@ public class FetchServiceImpl implements FetchService {
                                     stockData.setCreateDate(date);
                                     stockData.setTypeName(stockType.getName());
                                     stockData.setType(stockType.getType());
+                                    stockData.setStatus(true);
                                     if(existStockData != null) {
                                         stockData.setId(existStockData.getId());
                                         stockDataMapper.updateByPrimaryKey(stockData);
@@ -258,9 +261,11 @@ public class FetchServiceImpl implements FetchService {
                                         stockData.setCompany(company);
                                         stockData.setCreateDate(date);
                                         stockData.setType(stockType.getType());
+                                        stockData.setStatus(true);
                                         stockDataMapper.insert(stockData);
 //                                        stockData.setUrl(url);
                                     } else {
+                                        stockData.setStatus(true);
                                         // exist, update
                                         if(stockType.getType().equals(StockTypeEnum.CONCEPT.getType())) {
                                             stockData.setConcepts(stockType.getName());
