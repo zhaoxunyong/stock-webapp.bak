@@ -38,7 +38,7 @@ export default {
     }
   },
   created () {
-    this.getData(1)
+    // this.getData(1)
     Bus.$on('initCurrentPage', (pageNum) => {
       this.currentPage = pageNum
     })

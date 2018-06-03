@@ -19,8 +19,8 @@
           <b-row>
             <!--个股左侧信息-->
             <b-col cols="9" sm="9" class="pl-1">
-              <!--个股K线图-->
-              <StockKLineChart></StockKLineChart>
+              <!--个股K线图
+              <StockKLineChart></StockKLineChart>-->
               <!--新闻-->
               <b-row class="mt-3">
                 <b-col cols="12" sm="12" class="pl-0 pr-0">
