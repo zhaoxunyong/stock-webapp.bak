@@ -4,7 +4,7 @@ docker run -d  -p 3306:3306 --restart=always --name mysql \
 -e MYSQL_USER=wenchun \
 -e MYSQL_PASSWORD=Aa123456 \
 mysql:5.6 \
---character-set-server=utf8 --collation-server=utf8_general_ci
+--character-set-server=utf8 --collation-server=utf8_general_ci --lower_case_table_names=1
 
 grant all privileges on *.* to root@'%' identified by 'Aa123#@!';
 grant all privileges on *.* to root@'localhost' identified by 'Aa654321';
