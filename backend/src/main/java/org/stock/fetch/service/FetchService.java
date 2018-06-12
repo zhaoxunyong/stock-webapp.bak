@@ -42,6 +42,7 @@ public interface FetchService {
     /**
      * 獲取某只股票的歷史交易數據
      */
+    public void fetchAllHistory() throws Exception;
     public void fetchHistory(String no, String startDate, String endDate) throws Exception;
     
 //    List<StockHistory> select(Date startDate, Date endDate);

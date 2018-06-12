@@ -747,6 +747,18 @@ public class FetchServiceImpl implements FetchService {
         }
         
     }
+    
+    @Override
+    @Transactional
+    public void fetchAllHistory() throws Exception {
+        List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
+        if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
+            for(StockMyData stockMyData : stockMyDatas) {
+//                this.fetchNews(stockDataMapper.selectByPrimaryKey(stockMyData.getStockId()), fetchPage);
+                this.fetchHistory(stockMyData.getNo(), );
+            }
+        }
+    }
 
     /**
      * 日期格式為：yyyy/MM/dd
