@@ -8,6 +8,7 @@ import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
+import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelectedType;
@@ -82,5 +83,7 @@ public interface StockService {
     
     public int deleteByType(StockNewsKeyTypeEnum stockNewsKeyTypeEnum);
 
-    public void saveCompanyStatus(Long stockId, String companyStatus) ;
+    public void saveCompanyStatus(Long stockId, String companyStatus);
+    
+    public List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate);
 }

@@ -7,7 +7,14 @@ server:
 
 #攔截器需排除的路徑
 interceptor: 
-  excludePath: /api/login
+  includePath: /api/.*
+  # 不需要token与url签名校验的路径，多个用逗号分隔，每个路径为正则表达式匹配
+  excludePath: |
+    #登录
+    /api/login, 
+    #monitor
+    /myhealth,
+    /ops/.*
   
 spring:
   application:

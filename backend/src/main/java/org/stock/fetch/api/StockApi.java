@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.stock.fetch.api.dto.ChangeStockMySelectedDto;
-import org.stock.fetch.api.dto.ChangeStockMySelectedTypeDto;
 import org.stock.fetch.api.dto.ChangeStockMySelectedTypeParams;
 import org.stock.fetch.api.dto.PageDto;
 import org.stock.fetch.api.dto.StockDailyTransactionsDto;
 import org.stock.fetch.api.dto.StockDataDto;
+import org.stock.fetch.api.dto.StockHistoryDto;
 import org.stock.fetch.api.dto.StockImportantNewsDto;
 import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.api.dto.StockMySelectedTypeDto;
@@ -203,4 +203,20 @@ public interface StockApi {
         @ApiImplicitParam(name = "fetchPage", value = "fetchPage", required = true, dataType = "string", paramType = "query")
     })
     public void fetchImportantNews(int fetchPage);
+    
+    @ApiOperation(value="selectHistory", notes="selectHistory")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "startDate", value = "startDate", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "endDate", value = "endDate", required = true, dataType = "string", paramType = "query")
+    })
+    public List<StockHistoryDto> selectHistory(String stockId, String startDate, String endDate);
+    
+    @ApiOperation(value="data", notes="data")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "startDate", value = "startDate", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "endDate", value = "endDate", required = true, dataType = "string", paramType = "query")
+    })
+    public String data(String stockId, String startDate, String endDate);
 }

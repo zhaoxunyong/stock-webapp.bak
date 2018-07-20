@@ -4,7 +4,7 @@ swagger:
 #  # try it out的host,不配置默认取本机ip
 #  host: localhost
 #  # try it out的port,不配置默认为80
-#  port: 8062
+#  port: 8082
   # try it out的basePath
   basepath: /
   #basePackage
@@ -22,7 +22,7 @@ swagger:
   # 文档的联系人url
   #url: http://gitlab.xxx.com/zhaoxunyong
   # 文档的版本
-  version: 1.0.0-SNAPSHOT
+  version: 1.0.1-SNAPSHOT
   #排除的url，多个用逗号分隔
   # excludes: /api/captcha/.*
 

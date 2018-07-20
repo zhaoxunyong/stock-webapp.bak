@@ -18,7 +18,7 @@
 		<project.build.sourceEncoding>${file_encoding}</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>${file_encoding}</project.reporting.outputEncoding>
 		
-		<aeasycredit_commons_version>1.0.5-SNAPSHOT</aeasycredit_commons_version>
+		<aeasycredit_commons_version>1.0.5</aeasycredit_commons_version>
 	</properties>
 	
 	<dependencyManagement>
@@ -105,6 +105,11 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>aeasycredit-commons-modelmapper</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>aeasycredit-commons-httpclient</artifactId>
 		</dependency>
 		
 		<dependency>  
@@ -223,12 +228,6 @@
 	    	<artifactId>spring-restdocs-mockmvc</artifactId>
 			<scope>test</scope>
     	</dependency>
-		
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-staticdocs</artifactId>
-			<scope>test</scope>
-		</dependency>
 		
 		<dependency>
 			<groupId>org.asciidoctor</groupId>

@@ -25,8 +25,8 @@ public class FetchServiceTest {
     private FetchService fetchService;
     
     @Test
-    public void fetchAll() throws Exception {
-        fetchService.fetchAll();
+    public void fetchAllMyStock() throws Exception {
+        fetchService.fetchAllMyStock();
     }
     
     /*@Test
@@ -52,10 +52,17 @@ public class FetchServiceTest {
     }
     
     @Test
+    public void fetchAllHistory() throws Exception {
+        String startDate = "2018/07/18";
+        String endDate = "2018/07/20";
+        fetchService.fetchAllHistory(startDate, endDate);
+    }
+    
+    @Test
     public void fetchHistory() throws Exception {
-        String no = "2881";
-        String startDate = "2017/10/01";
-        String endDate = "2017/11/01";
+        String no = "2426";
+        String startDate = "2018/07/18";
+        String endDate = "2018/07/20";
         fetchService.fetchHistory(no, startDate, endDate);
     }
     

@@ -106,7 +106,7 @@ public class FetchServiceImpl implements FetchService {
 
     @Override
     @Transactional
-    public void fetchAll() throws Exception {
+    public void fetchAllMyStock() throws Exception {
         long s = System.currentTimeMillis();
         // 先将所有的股票status修改为0
         stockDataMapper.updateAllStatus(false);
@@ -750,12 +750,15 @@ public class FetchServiceImpl implements FetchService {
     
     @Override
     @Transactional
-    public void fetchAllHistory() throws Exception {
+    public void fetchAllHistory(String startDate, String endDate) throws Exception {
+        Date nowDate = new Date();
         List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
         if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
             for(StockMyData stockMyData : stockMyDatas) {
-//                this.fetchNews(stockDataMapper.selectByPrimaryKey(stockMyData.getStockId()), fetchPage);
-                this.fetchHistory(stockMyData.getNo(), );
+//                String startDate = "2017/07/18";
+//                String endDate = "2017/11/01";
+//                String endDate = DatesUtils.YYMMDD2.toString(nowDate);
+                this.fetchHistory(stockMyData.getNo(), startDate, endDate);
             }
         }
     }
@@ -771,77 +774,83 @@ public class FetchServiceImpl implements FetchService {
             throw new BusinessException("Not found stock data by no: " + no);
         }
         long stockId = stockData.getId();
-        HtmlPage page = processGuceOathCom(webClient.getPage("https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo()));
-        page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
-        page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
-        HtmlForm form = page.getHtmlElementById("aspnetForm");
-        HtmlPage page2 = form.getOneHtmlElementByAttribute("input", "id", "ctl00_ContentPlaceHolder1_submitBut").click();
-        HtmlForm form2 = page2.getHtmlElementById("aspnetForm");
-        HtmlElement element = form2.getOneHtmlElementByAttribute("table", "enableviewstate", "false");
-//        System.out.println("1===>"+element.asXml());
-        List<HtmlElement> trs = element.getElementsByTagName("tr");
-//        System.out.println("2===>"+trs);
-        if(trs!=null && !trs.isEmpty()) {
-            stockHistoryMapper.deleteByDate(stockId, DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
-            for(HtmlElement tr : trs) {
-//                System.out.println("3===>"+tr.asXml());
-                List<HtmlElement> tds = tr.getElementsByTagName("td");
-                if(tds!=null && !tds.isEmpty()) {
-                    int i=0;
-                    StockHistory stockHistory = new StockHistory();
-                    stockHistory.setId(IdUtils.genLongId());
-                    stockHistory.setStockId(stockId);
-                    stockHistory.setCreateDate(new Date());
-                    for(HtmlElement td : tds) {
-//                        System.out.println("===>"+td.asXml());
-                        switch(i) {
-                            case 0:
-                              // 日期
-                                stockHistory.setDate(DatesUtils.YYMMDD2.toDate(td.asText()));
-                            break;
-                            case 1:
-                              // 開盤
-                                stockHistory.setOpening(new BigDecimal(td.asText()));
-                              break;
-                            case 2:
-                                // 最高    
-                                stockHistory.setHighest(new BigDecimal(td.asText()));
+        String url = "https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo();
+        try {
+            HtmlPage page = processGuceOathCom(webClient.getPage(url));
+            page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
+            page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
+            HtmlForm form = page.getHtmlElementById("aspnetForm");
+            HtmlPage page2 = form.getOneHtmlElementByAttribute("input", "id", "ctl00_ContentPlaceHolder1_submitBut").click();
+            HtmlForm form2 = page2.getHtmlElementById("aspnetForm");
+            HtmlElement element = form2.getOneHtmlElementByAttribute("table", "enableviewstate", "false");
+//            System.out.println("1===>"+element.asXml());
+            List<HtmlElement> trs = element.getElementsByTagName("tr");
+//            System.out.println("2===>"+trs);
+            if(trs!=null && !trs.isEmpty()) {
+                stockHistoryMapper.deleteByDate(stockId, DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
+                for(HtmlElement tr : trs) {
+//                    System.out.println("3===>"+tr.asXml());
+                    List<HtmlElement> tds = tr.getElementsByTagName("td");
+                    if(tds!=null && !tds.isEmpty()) {
+                        int i=0;
+                        StockHistory stockHistory = new StockHistory();
+                        stockHistory.setId(IdUtils.genLongId());
+                        stockHistory.setStockId(stockId);
+                        stockHistory.setCreateDate(new Date());
+                        for(HtmlElement td : tds) {
+//                            System.out.println("===>"+td.asXml());
+                            switch(i) {
+                                case 0:
+                                  // 日期
+                                    stockHistory.setDate(DatesUtils.YYMMDD2.toDate(td.asText()));
                                 break;
-                            case 3:
-                                // 最低    
-                                stockHistory.setLowest(new BigDecimal(td.asText()));
-                                break;
-                            case 4:
-                                // 收盤    
-                                stockHistory.setClosing(new BigDecimal(td.asText()));
-                                break;
-                            case 5:
-                                // 漲跌    
-                                stockHistory.setUpsDowns(new BigDecimal(td.asText()));
-                                break;
-                            case 6:
-                                // 漲%    
-                                stockHistory.setRiseRate(td.asText());
-                                break;
-                            case 7:
-                                // 成交量    
-                                stockHistory.setVol(td.asText());
-                                break;
-                            case 8:
-                                // 成交金額    
-                                stockHistory.setAmount(td.asText());
-                                break;
-                            case 9:
-                                // 本益比
-                                stockHistory.setPer(td.asText());
-                                break;
+                                case 1:
+                                  // 開盤
+                                    stockHistory.setOpening(new BigDecimal(td.asText()));
+                                  break;
+                                case 2:
+                                    // 最高    
+                                    stockHistory.setHighest(new BigDecimal(td.asText()));
+                                    break;
+                                case 3:
+                                    // 最低    
+                                    stockHistory.setLowest(new BigDecimal(td.asText()));
+                                    break;
+                                case 4:
+                                    // 收盤    
+                                    stockHistory.setClosing(new BigDecimal(td.asText()));
+                                    break;
+                                case 5:
+                                    // 漲跌    
+                                    stockHistory.setUpsDowns(new BigDecimal(td.asText()));
+                                    break;
+                                case 6:
+                                    // 漲%    
+                                    stockHistory.setRiseRate(td.asText());
+                                    break;
+                                case 7:
+                                    // 成交量    
+                                    stockHistory.setVol(td.asText());
+                                    break;
+                                case 8:
+                                    // 成交金額    
+                                    stockHistory.setAmount(td.asText());
+                                    break;
+                                case 9:
+                                    // 本益比
+                                    stockHistory.setPer(td.asText());
+                                    break;
+                            }
+                            i++;
                         }
-                        i++;
+//                        System.out.println("===>"+stockHistory);
+                        stockHistoryMapper.insert(stockHistory);
                     }
-                    System.out.println("===>"+stockHistory);
-                    stockHistoryMapper.insert(stockHistory);
                 }
             }
+        } catch (Exception e) {
+            System.out.println("error url------>"+url+"--->"+startDate+"--->"+endDate);
+//            logger.error(e.getMessage(), e);
         }
     }
 

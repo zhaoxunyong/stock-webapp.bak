@@ -35,6 +35,9 @@ import com.aeasycredit.commons.lang.utils.RegexUtils;
 public class MyHandlerInterceptor implements HandlerInterceptor {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
+    @Value("${interceptor.includePath}")
+    private String includePath;
+    
     @Value("${interceptor.excludePath}")
     private String excludePath;
     
@@ -50,12 +53,31 @@ public class MyHandlerInterceptor implements HandlerInterceptor {
         // do nothing
     }
     
-    /**
-     * 获取访问资源的path
-     * 
-     * @param request
-     * @return
-     */
+    private boolean isNeedFilter(String path) {
+        if(StringUtils.isNotBlank(includePath)) {
+            includePath = includePath.replace("\n", "");
+        }
+        if(StringUtils.isBlank(includePath)) {
+            includePath = ".*";
+        }
+        boolean needFilter = Arrays.stream(includePath.split("[,]")).map(p -> p.trim()).anyMatch(p -> RegexUtils.match(p, path));
+
+        if(StringUtils.isNotBlank(excludePath)) {
+            excludePath = excludePath.replaceAll("#.*\n", "").replace("\n", "");
+        }
+        if(needFilter && StringUtils.isNotBlank(excludePath)) {
+//            List<String> excludePaths = Splitter.on(",").trimResults().splitToList(excludePath);
+//            return Arrays.stream(excludePath.split("[,]")).map(p -> p.trim()).anyMatch(p -> p.equalsIgnoreCase(path));
+            needFilter = !Arrays.stream(
+                excludePath.split("[,]"))
+                .map(p -> p.trim())
+//                .peek(System.out::println)
+                .anyMatch(p -> RegexUtils.match(p, path)
+            );
+        }
+        return needFilter;
+    }
+    
     private String getServletPath(HttpServletRequest request) {
         String path = request.getRequestURI();
         String contextPath = request.getContextPath();
@@ -65,31 +87,13 @@ public class MyHandlerInterceptor implements HandlerInterceptor {
         return path;
     }
     
-    private boolean isNeedFilter(String path) {
-        boolean needFilter = false;
-        if(StringUtils.isNotBlank(excludePath)) {
-            excludePath = excludePath.replaceAll("#.*\n", "").replace("\n", "");
-        }
-        if(StringUtils.isNotBlank(excludePath)) {
-//            List<String> excludePaths = Splitter.on(",").trimResults().splitToList(excludePath);
-//            return Arrays.stream(excludePath.split("[,]")).map(p -> p.trim()).anyMatch(p -> p.equalsIgnoreCase(path));
-            needFilter = !Arrays.stream(
-                excludePath.split("[,]"))
-                .map(p -> p.trim().replaceAll("\\.html(?)$", ""))
-                .peek(System.out::println)
-                .anyMatch(p -> RegexUtils.match(p, path)
-            );
-        }
-        return needFilter;
-    }
-    
     // 在请求处理之前进行调用（Controller方法调用之前）
     // 只有返回true才会继续向下执行，返回false取消当前请求
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
         String path = this.getServletPath(request);
         
-//        if(isNeedFilter(path)) {
+        if(isNeedFilter(path)) {
             //判斷是否為Ajax請求 X-Requested-With:XMLHttpRequest
             boolean isAjax = false;
             String requestedWith = request.getHeader("X-Requested-With");
@@ -111,7 +115,7 @@ public class MyHandlerInterceptor implements HandlerInterceptor {
                     return false;
                 }
             }
-//        }
+        }
         return true;
     }
     

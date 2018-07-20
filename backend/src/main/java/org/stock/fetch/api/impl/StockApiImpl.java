@@ -38,6 +38,7 @@ import org.stock.fetch.api.dto.ChangeStockMySelectedTypeParams;
 import org.stock.fetch.api.dto.PageDto;
 import org.stock.fetch.api.dto.StockDailyTransactionsDto;
 import org.stock.fetch.api.dto.StockDataDto;
+import org.stock.fetch.api.dto.StockHistoryDto;
 import org.stock.fetch.api.dto.StockImportantNewsDto;
 import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.api.dto.StockMySelectedTypeDto;
@@ -48,6 +49,7 @@ import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
+import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelectedType;
@@ -579,6 +581,38 @@ public class StockApiImpl implements StockApi {
         } else {
             logger.warn("fetchImportantNews: 後臺已經在抓取數據中...");
         }
+    }
+
+    @Override
+    @GetMapping(value = "/selectHistory")
+    public List<StockHistoryDto> selectHistory(String stockId, String startDate, String endDate) {
+        List<StockHistory> stockHistorys = stockService.selectHistory(Long.parseLong(stockId), DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
+        
+        List<StockHistoryDto> dtoList = stockHistorys.stream().map(model -> {
+            return modelMapper.map(model, StockHistoryDto.class);
+        }).collect(Collectors.toList());
+        return dtoList;
+    }
+
+    @Override
+    @GetMapping(value = "/data")
+    public String data(String stockId, String startDate, String endDate) {
+        List<StockHistoryDto> dtoList = selectHistory(stockId, startDate, endDate);
+        StringBuilder str = new StringBuilder();
+        str.append("Date,Open,High,Low,Close,Volume").append("\n");
+//        Date,Open,High,Low,Close,Volume
+//        9-Jun-14,62.40,63.34,61.79,62.88,37617413
+        if(dtoList != null && !dtoList.isEmpty()) {
+            for(StockHistoryDto history : dtoList) {
+                str.append(history.getDate()).append(",")
+                   .append(history.getOpening()).append(",")
+                   .append(history.getHighest()).append(",")
+                   .append(history.getLowest()).append(",")
+                   .append(history.getClosing()).append(",")
+                   .append(history.getVol().replace(",", "")).append("\n");
+            }
+        }
+        return str.toString();
     }
 
 }

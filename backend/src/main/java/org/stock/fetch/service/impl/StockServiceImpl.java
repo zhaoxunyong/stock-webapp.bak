@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.dao.StockDailyTransactionsMapper;
 import org.stock.fetch.dao.StockDataMapper;
+import org.stock.fetch.dao.StockHistoryMapper;
 import org.stock.fetch.dao.StockImportantNewsMapper;
 import org.stock.fetch.dao.StockMyDataMapper;
 import org.stock.fetch.dao.StockMySelectedMapper;
@@ -20,6 +21,7 @@ import org.stock.fetch.dao.StockNewsMapper;
 import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
+import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelected;
@@ -61,6 +63,9 @@ public class StockServiceImpl implements StockService {
     
     @Autowired
     private StockNewsKeyMapper stockNewsKeyMapper;
+    
+    @Autowired
+    private StockHistoryMapper stockHistoryMapper;
 
 	@Override
 	public List<StockMyData> getStockMyDatas() {
@@ -383,6 +388,11 @@ public class StockServiceImpl implements StockService {
     @Transactional
     public void saveCompanyStatus(Long stockId, String companyStatus) {
         stockDataMapper.saveCompanyStatus(stockId, companyStatus);
+    }
+
+    @Override
+    public List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate) {
+        return stockHistoryMapper.selectStockHistory(stockId, startDate, endDate);
     }
 
 }

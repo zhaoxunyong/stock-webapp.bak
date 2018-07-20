@@ -17,13 +17,13 @@ public class ScheduledTasks {
     public static volatile boolean IS_FETCH_NEW = false;
     
 //    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-    private Logger logger = LoggerFactory.getLogger(this.getClass());?
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 //    private static ExecutorService executorService = Executors.newFixedThreadPool(3);
     
     @Autowired
     private FetchService fetchService;
     
-    @Scheduled(cron="0 */8 8-23 * * ?")
+//    @Scheduled(cron="0 */8 8-23 * * ?")
     public void fetchImportantNews() throws Exception {
         if(!IS_FETCH_IMPORTANT_NEW) {
             try {
@@ -46,7 +46,7 @@ public class ScheduledTasks {
      * 启动时执行一次，之后每隔20分钟执行一次  
      */
 //    @Scheduled(fixedRate = 20 * 60 * 1000) 
-    @Scheduled(cron="0 */15 8-23 * * ?")
+//    @Scheduled(cron="0 */15 8-23 * * ?")
     public void fetchNews() throws Exception {
         if(!IS_FETCH_NEW) {
             try {
@@ -71,8 +71,8 @@ public class ScheduledTasks {
     /**
      * 凌晨1点执行
      */
-  @Scheduled(cron="0 0 1 * * ?")
-  public void fetchAll() throws Exception {
-      fetchService.fetchAll();
-      }
+//  @Scheduled(cron="0 0 1 * * ?")
+    public void fetchAllMyStock() throws Exception {
+        fetchService.fetchAllMyStock();
+    }
 }

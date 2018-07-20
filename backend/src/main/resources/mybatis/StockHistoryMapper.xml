@@ -73,10 +73,10 @@
     from stock_history
   </select>
   
-  <select id="select" resultMap="BaseResultMap" >
+  <select id="selectStockHistory" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" /> 
     from stock_history
-    where date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
+    where stock_id = #{stockId,jdbcType=BIGINT} and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
     ORDER BY date asc
   </select>
 </mapper>
