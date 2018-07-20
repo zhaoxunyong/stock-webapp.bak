@@ -11,6 +11,7 @@ cnpm install stock-auto-complete
 cnpm install stylus stylus-loader style-loader --save-dev
 #cnpm i wc-messagebox --save
 cnpm install sortablejs --save
+cnpm install techan --save
 
 npm install --save vue-message
 

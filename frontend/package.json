@@ -19,6 +19,7 @@
     "style-loader": "^0.20.3",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "techan": "^0.8.0",
     "vue": "^2.5.2",
     "vue-confirm": "^1.2.1",
     "vue-message": "^1.3.0",
