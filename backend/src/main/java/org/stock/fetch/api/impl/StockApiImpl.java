@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -613,6 +614,12 @@ public class StockApiImpl implements StockApi {
             }
         }
         return str.toString();
+    	/*try {
+			return FileUtils.readFileToString(new File("d:/sh/data.csv"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	return "";*/
     }
 
 }

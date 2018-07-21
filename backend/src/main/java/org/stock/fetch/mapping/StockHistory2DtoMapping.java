@@ -8,6 +8,7 @@ package org.stock.fetch.mapping;
 
 import java.util.Date;
 
+import org.apache.http.impl.cookie.DateUtils;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.stereotype.Component;
@@ -36,8 +37,9 @@ public class StockHistory2DtoMapping extends PropertyMapConfigurerSupport<StockH
 
                 map().setId(String.valueOf(source.getId()));
                 map().setStockId(String.valueOf(source.getStockId()));
-                
+                // d-MMM-yy 9-Jun-14
                 using((MappingContext<Date, String> context) -> {
+//                	return DateUtils.formatDate(context.getSource(), "d-MMM-yy");
                     return DatesUtils.YYMMDD2.toString(context.getSource());
                 }).map(source.getDate(), destination.getDate());
             }

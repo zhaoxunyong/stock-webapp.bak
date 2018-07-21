@@ -6,7 +6,14 @@ import ImportantNews from '@/page/importantNews'
 import StockDailyTransactions from '@/page/stockDailyTransactions'
 import EditMySelectedType from '@/page/editMySelectedType'
 import NewsSettings from '@/page/newsSettings'
-import KlineDetail from '@/page/klineDetail'
+import KDay from '@/page/kDay'
+import KWeek from '@/page/kWeek'
+import RsiDay from '@/page/rsiDay'
+import RsiWeek from '@/page/rsiWeek'
+import DmiDay from '@/page/dmiDay'
+import DmiWeek from '@/page/dmiWeek'
+import MacdDay from '@/page/macdDay'
+import MacdWeek from '@/page/macdWeek'
 
 Vue.use(Router)
 
@@ -52,8 +59,36 @@ export default new Router({
       component: NewsSettings
     },
     {
-      path: '/klineDetail',
-      component: KlineDetail
+      path: '/kday',
+      component: KDay
+    },
+    {
+      path: '/kweek',
+      component: KWeek
+    },
+    {
+      path: '/rsiday',
+      component: RsiDay
+    },
+    {
+      path: '/rsiweek',
+      component: RsiWeek
+    },
+    {
+      path: '/dmiday',
+      component: DmiDay
+    },
+    {
+      path: '/dmiweek',
+      component: DmiWeek
+    },
+    {
+      path: '/macdday',
+      component: MacdDay
+    },
+    {
+      path: '/macdweek',
+      component: MacdWeek
     }
   ]
 })
