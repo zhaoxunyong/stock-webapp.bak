@@ -21,82 +21,7 @@ export default {
     }
   },
   mounted () {
-    var api = "/api/stock/data?stockId=402378924086857728&startDate=2017/07/18&endDate=2018/08/20";
-    var margin = {top: 20, right: 20, bottom: 30, left: 50},
-            width = 960 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
 
-    var parseDate = d3.timeParse("%Y/%m/%d");
-
-    var x = techan.scale.financetime()
-            .range([0, width]);
-
-    var y = d3.scaleLinear()
-            .range([height, 0]);
-
-    var macd = techan.plot.macd()
-            .xScale(x)
-            .yScale(y);
-
-    var xAxis = d3.axisBottom(x);
-
-    var yAxis = d3.axisLeft(y)
-            .tickFormat(d3.format(",.3s"));
-
-    var svg = d3.select("body").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    d3.csv(api, function(error, data) {
-        var accessor = macd.accessor();
-
-        data = data.slice(0, 200).map(function(d) {
-            // Open, high, low, close generally not required, is being used here to demonstrate colored volume
-            // bars
-            return {
-                date: parseDate(d.Date),
-                volume: +d.Volume,
-                open: +d.Open,
-                high: +d.High,
-                low: +d.Low,
-                close: +d.Close
-            };
-        }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
-
-        svg.append("g")
-                .attr("class", "macd");
-
-        svg.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")");
-
-        svg.append("g")
-                .attr("class", "y axis")
-            .append("text")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", ".71em")
-                .style("text-anchor", "end")
-                .text("MACD");
-
-        // Data to display initially
-        draw(data.slice(0, data.length-20));
-        // Only want this button to be active if the data has loaded
-        d3.select("button").on("click", function() { draw(data); }).style("display", "inline");
-    });
-
-    function draw(data) {
-        var macdData = techan.indicator.macd()(data);
-        x.domain(macdData.map(macd.accessor().d));
-        y.domain(techan.scale.plot.macd(macdData).domain());
-
-        svg.selectAll("g.macd").datum(macdData).call(macd);
-        svg.selectAll("g.x.axis").call(xAxis);
-        svg.selectAll("g.y.axis").call(yAxis);
-    }
-    
   },
   created () {
 
@@ -108,44 +33,7 @@ export default {
 </script>
 
 <style>
-    body {
-        font: 10px sans-serif;
-    }
 
-    text {
-        fill: #000;
-    }
-
-    button {
-        position: absolute;
-        right: 20px;
-        top: 440px;
-        display: none;
-    }
-
-    path {
-        fill: none;
-        stroke-width: 1;
-    }
-
-    path.macd {
-        stroke: #0000AA;
-    }
-
-    path.signal {
-        stroke: #FF9999;
-    }
-
-    path.zero {
-        stroke: #BBBBBB;
-        stroke-dasharray: 0;
-        stroke-opacity: 0.5;
-    }
-
-    path.difference {
-        fill: #BBBBBB;
-        opacity: 0.5;
-    }
 </style>
 
 <!-- <style lang="scss">

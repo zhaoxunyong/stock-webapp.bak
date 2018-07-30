@@ -1,163 +1,27 @@
 <template>
-    <div class="hello">
-      <h1>TechanJS</h1>
-    </div>
+  <chart :options="polar"></chart>
 </template>
 <script>
 // https://github.com/chovy/techan-vue/blob/master/src/components/Hello.vue
 // import MainLayout from '../layouts/Main.vue'
 // import Alert from '../components/alert.vue'
 import Bus from '../eventBus'
-
+import polar from '../data/polar'
 // http://bl.ocks.org/andredumas/2da5cf683eb1e0589fa10418d442479c
     
 export default {
-  components: {
-    // MainLayout//, Alert
-  },
-  data () {
+  data: function () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      polar
     }
-  },
-  mounted () {
-	var api = "/api/stock/data?stockId=402378924086857728&startDate=2017/07/18&endDate=2018/08/20";
-    var margin = {top: 20, right: 20, bottom: 30, left: 50},
-            width = 500 - margin.left - margin.right,
-            height = 300 - margin.top - margin.bottom;
-
-    var parseDate = d3.timeParse("%Y/%m/%d");
-
-    var x = techan.scale.financetime()
-            .range([0, width]);
-
-    var y = d3.scaleLinear()
-            .range([height, 0]);
-
-    var ohlc = techan.plot.ohlc()
-            .xScale(x)
-            .yScale(y);
-
-    var bollinger = techan.plot.bollinger()
-            .xScale(x)
-            .yScale(y);
-
-    var xAxis = d3.axisBottom(x);
-
-    var yAxis = d3.axisLeft(y)
-            .tickFormat(d3.format(",.3s"));
-
-    var svg = d3.select("body").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    d3.csv(api, function(error, data) {
-        var accessor = bollinger.accessor();
-
-        data = data.map(function(d) {
-            // Open, high, low, close generally not required, is being used here to demonstrate colored volume
-            // bars
-            return {
-                date: parseDate(d.Date),
-                volume: +d.Volume,
-                open: +d.Open,
-                high: +d.High,
-                low: +d.Low,
-                close: +d.Close
-            };
-        }).sort(function(a, b) { return d3.ascending(accessor.d(a), accessor.d(b)); });
-
-        svg.append("g")
-                .attr("class", "ohlc");
-
-        svg.append("g")
-                .attr("class", "bollinger");
-
-        svg.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")");
-
-        svg.append("g")
-                .attr("class", "y axis")
-            .append("text")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", ".71em")
-                .style("text-anchor", "end")
-                .text("Bollinger Bands");
-
-        // Data to display initially
-        draw(data.slice(0, data.length-20));
-        // Only want this button to be active if the data has loaded
-        d3.select("button").on("click", function() { draw(data); }).style("display", "inline");
-    });
-
-    function draw(data) {
-        var bollingerData = techan.indicator.bollinger()(data);
-        x.domain(bollingerData.map(bollinger.accessor().d));
-        y.domain(techan.scale.plot.bollinger(bollingerData).domain());
-
-        svg.selectAll("g.ohlc").datum(data.slice(20, data.length)).call(ohlc);
-        svg.selectAll("g.bollinger").datum(bollingerData).call(bollinger);
-        svg.selectAll("g.x.axis").call(xAxis);
-        svg.selectAll("g.y.axis").call(yAxis);
-    }
-    
-  },
-  created () {
-
   },
   methods: {
-
+ 
   }
 }
 </script>
 
 <style>
-    body {
-        font: 10px sans-serif;
-    }
-
-    text {
-        fill: #000;
-    }
-
-    button {
-        position: absolute;
-        right: 20px;
-        top: 440px;
-        display: none;
-    }
-
-    .ohlc path.up {
-        stroke: #00AA00;
-    }
-
-    .ohlc path.down {
-        stroke: #FF0000;
-    }
-
-    .bollinger path {
-        fill: none;
-        stroke-width: 1;
-    }
-
-    .bollinger path.upper {
-        stroke: #0000AA;
-    }
-
-    .bollinger path.lower {
-        stroke: #FF9999;
-    }
-
-    .bollinger path.middle {
-        stroke: #BBBBBB;
-    }
-</style>
-
-<!-- <style lang="scss">
-  @import "../style/style";
-
-</style> -->
+.echarts {
+  height: 300px;
+}

@@ -16,6 +16,9 @@ npm install vue-message --save
 npm uninstall bootstrap --save
 npm install bootstrap@4.1.0 --save
 
+#npm install vue-echarts
+npm install echarts --save
+
 npm install http-server -g
 
 npm install stylus stylus-loader style-loader --save-dev
