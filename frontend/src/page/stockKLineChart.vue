@@ -8,9 +8,9 @@
           <b-col>
             <KWeek></KWeek>
           </b-col>
-          <b-col>
+          <!-- <b-col>
             <img src="../images/stock01.png" class="w-100" />
-          </b-col>
+          </b-col> -->
       </b-row>
       <b-row>
           <b-col>
@@ -19,9 +19,9 @@
           <b-col>
             <RsiWeek></RsiWeek>
           </b-col>
-          <b-col>
+          <!-- <b-col>
             <img src="../images/stock01.png" class="w-100" />
-          </b-col>
+          </b-col> -->
       </b-row>
       <b-row>
           <b-col>
@@ -30,9 +30,9 @@
           <b-col>
             <DmiWeek></DmiWeek>
           </b-col>
-          <b-col>
+          <!-- <b-col>
             <img src="../images/stock01.png" class="w-100" />
-          </b-col>
+          </b-col> -->
       </b-row>
       <b-row>
           <b-col>
@@ -41,9 +41,9 @@
           <b-col>
             <MacdWeek></MacdWeek>
           </b-col>
-          <b-col>
+          <!-- <b-col>
             <img src="../images/stock01.png" class="w-100" />
-          </b-col>
+          </b-col> -->
       </b-row>
     </b-col>
   </b-row>

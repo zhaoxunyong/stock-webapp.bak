@@ -32,7 +32,10 @@ export default {
 </script>
 
 <style>
-
+.echarts {
+  width: 300px;
+  height: 300px;
+}
 </style>
 
 <!-- <style lang="scss">
