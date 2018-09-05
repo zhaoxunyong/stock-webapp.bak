@@ -212,11 +212,11 @@ public interface StockApi {
     })
     public List<StockHistoryDto> selectHistory(String stockId, String startDate, String endDate);
     
-    @ApiOperation(value="data", notes="data")
+    /*@ApiOperation(value="data", notes="data")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
         @ApiImplicitParam(name = "startDate", value = "startDate", required = true, dataType = "string", paramType = "query"),
         @ApiImplicitParam(name = "endDate", value = "endDate", required = true, dataType = "string", paramType = "query")
     })
-    public String data(String stockId, String startDate, String endDate);
+    public String data(String stockId, String startDate, String endDate);*/
 }

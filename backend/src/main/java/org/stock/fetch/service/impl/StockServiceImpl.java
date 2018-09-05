@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.stock.fetch.constant.StockHistoryEnum;
 import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.dao.StockDailyTransactionsMapper;
 import org.stock.fetch.dao.StockDataMapper;
@@ -32,7 +33,6 @@ import org.stock.fetch.model.StockNewsKey;
 import org.stock.fetch.service.StockService;
 
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
-import com.aeasycredit.commons.lang.utils.CollectionsUtils;
 
 @Service
 public class StockServiceImpl implements StockService {
@@ -393,6 +393,14 @@ public class StockServiceImpl implements StockService {
     @Override
     public List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate) {
         return stockHistoryMapper.selectStockHistory(stockId, startDate, endDate);
+    }
+
+    /* (non-Javadoc)
+     * @see org.stock.fetch.service.StockService#average(java.lang.Long, java.util.Date)
+     */
+    @Override
+    public StockHistory average(Long stockId, Date date, StockHistoryEnum stockHistoryEnum) {
+         return stockHistoryMapper.average(stockId, date, stockHistoryEnum.getType());
     }
 
 }

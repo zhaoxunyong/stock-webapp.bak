@@ -2,8 +2,9 @@ package org.stock.fetch.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.apache.ibatis.annotations.Param;
+import org.stock.fetch.constant.StockHistoryEnum;
 import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;
@@ -17,73 +18,75 @@ import org.stock.fetch.model.StockNews;
 import org.stock.fetch.model.StockNewsKey;
 
 public interface StockService {
-	public StockMyData StockMyData(Long stockId);
+	StockMyData StockMyData(Long stockId);
 	
-	public List<StockMyData> getStockMyDatas();
+	List<StockMyData> getStockMyDatas();
 	
-	public List<StockMyData> getStockMyDatasByType(Long type);
+	List<StockMyData> getStockMyDatasByType(Long type);
 	
-	public List<StockMyStore> getStockMyDatasByStore();
+	List<StockMyStore> getStockMyDatasByStore();
 	
-	public StockData getStockData(Long id);
+	StockData getStockData(Long id);
 
-    public List<StockNews> getNewsExcludeBystockId4All(Long stockId, int startNo, int pageSize);
+    List<StockNews> getNewsExcludeBystockId4All(Long stockId, int startNo, int pageSize);
 
-    public List<StockNews> getNewsIncludeBystockId4All(Long stockId, int startNo, int pageSize);
+    List<StockNews> getNewsIncludeBystockId4All(Long stockId, int startNo, int pageSize);
 
-    public int getNewsExcludeCountBystockId4All(Long stockId);
+    int getNewsExcludeCountBystockId4All(Long stockId);
 
-    public int getNewsIncludeCountBystockId4All(Long stockId);
+    int getNewsIncludeCountBystockId4All(Long stockId);
 	
-	public List<StockNews> getNewsExcludeBystockId(Long stockId, Long selectedType, int curPage, int pageSize);
+	List<StockNews> getNewsExcludeBystockId(Long stockId, Long selectedType, int curPage, int pageSize);
 	
-	public List<StockNews> getNewsIncludeBystockId(Long stockId, Long selectedType,  int curPage, int pageSize);
+	List<StockNews> getNewsIncludeBystockId(Long stockId, Long selectedType,  int curPage, int pageSize);
 	
-	public int getNewsExcludeCountBystockId(Long stockId, Long selectedType);
+	int getNewsExcludeCountBystockId(Long stockId, Long selectedType);
 	
-	public int getNewsIncludeCountBystockId(Long stockId, Long selectedType);
+	int getNewsIncludeCountBystockId(Long stockId, Long selectedType);
 	
-	public List<StockImportantNews> getImportantNewsExclude(int curPage, int pageSize);
+	List<StockImportantNews> getImportantNewsExclude(int curPage, int pageSize);
 	
-	public List<StockImportantNews> getImportantNewsInclude(int curPage, int pageSize);
+	List<StockImportantNews> getImportantNewsInclude(int curPage, int pageSize);
 	
-	public int getImportantNewsExcludeCount();
+	int getImportantNewsExcludeCount();
 	
-	public int getImportantNewsIncludeCount();
+	int getImportantNewsIncludeCount();
 	
-	public List<StockMySelectedType> getStockMySelectedTypes();
+	List<StockMySelectedType> getStockMySelectedTypes();
 	
-	public List<StockMySelectedType> getMySelectedTypesByStockId(Long stockId);
+	List<StockMySelectedType> getMySelectedTypesByStockId(Long stockId);
 	
-	public void saveStockMySelectedType(StockMySelectedType stockMySelectedType);
+	void saveStockMySelectedType(StockMySelectedType stockMySelectedType);
 	
-	public void changeStockMySelected(List<Long> stockIds, Long selectedType);
+	void changeStockMySelected(List<Long> stockIds, Long selectedType);
     
-    public void changeStockMySelectedType(List<ChangeStockMySelectedType> changeStockMySelectedTypes);
+    void changeStockMySelectedType(List<ChangeStockMySelectedType> changeStockMySelectedTypes);
 	
-	public void saveAllStockMySelected(List<Long> stockIds, Long selectedType);
+	void saveAllStockMySelected(List<Long> stockIds, Long selectedType);
 	
-	public void renameStockMydataName(Long selectedType, String name) ;
+	void renameStockMydataName(Long selectedType, String name) ;
 	
-	public void removeOneStockMySelected(Long stockId, Long selectedType);
+	void removeOneStockMySelected(Long stockId, Long selectedType);
 	
-	public void removeStockMySelected(Long selectedType);
+	void removeStockMySelected(Long selectedType);
 	
-	public List<StockDailyTransactions> getStockDailyTransactions(Date startDate, Date endDate);
+	List<StockDailyTransactions> getStockDailyTransactions(Date startDate, Date endDate);
 	
-	public List<StockData> search4StockData(String value);
+	List<StockData> search4StockData(String value);
     
-    public List<StockData> search4StockMyData(String value);
+    List<StockData> search4StockMyData(String value);
     
-    public List<StockNewsKey> getStockNewsKeyByInclude();
+    List<StockNewsKey> getStockNewsKeyByInclude();
     
-    public List<StockNewsKey> getStockNewsKeyByexclude();
+    List<StockNewsKey> getStockNewsKeyByexclude();
     
-    public void saveStockNewsKeys(List<StockNewsKey> stockNewsKey);
+    void saveStockNewsKeys(List<StockNewsKey> stockNewsKey);
     
-    public int deleteByType(StockNewsKeyTypeEnum stockNewsKeyTypeEnum);
+    int deleteByType(StockNewsKeyTypeEnum stockNewsKeyTypeEnum);
 
-    public void saveCompanyStatus(Long stockId, String companyStatus);
+    void saveCompanyStatus(Long stockId, String companyStatus);
     
-    public List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate);
+    List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate);
+    
+    StockHistory average(@Param("stockId") Long stockId, @Param("date") Date date, StockHistoryEnum stockHistoryEnum);
 }

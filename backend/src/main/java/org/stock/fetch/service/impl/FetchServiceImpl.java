@@ -3,7 +3,6 @@ package org.stock.fetch.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.stock.fetch.constant.BuyTypeEnum;
+import org.stock.fetch.constant.StockHistoryEnum;
 import org.stock.fetch.constant.StockTypeEnum;
 import org.stock.fetch.dao.StockDailyTransactionsHistoryMapper;
 import org.stock.fetch.dao.StockDailyTransactionsMapper;
@@ -34,7 +34,6 @@ import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
-import org.stock.fetch.model.StockMySelectedType;
 import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
 import org.stock.fetch.model.StockType;
@@ -47,7 +46,6 @@ import com.aeasycredit.commons.lang.exception.ParameterException;
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 import com.aeasycredit.commons.lang.utils.DatesUtils;
 import com.aeasycredit.commons.poi.excel.ExcelUtils;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
@@ -776,6 +774,7 @@ public class FetchServiceImpl implements FetchService {
         long stockId = stockData.getId();
         String url = "https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo();
         try {
+            List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
             HtmlPage page = processGuceOathCom(webClient.getPage(url));
             page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
             page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
@@ -844,8 +843,23 @@ public class FetchServiceImpl implements FetchService {
                             i++;
                         }
 //                        System.out.println("===>"+stockHistory);
-                        stockHistoryMapper.insert(stockHistory);
+                        stockHistory.setType(StockHistoryEnum.DAY.getType());
+                        stockHistory4Inserts.add(stockHistory);
                     }
+                }
+            }
+            if(!stockHistory4Inserts.isEmpty()) {
+                stockHistory4Inserts = Lists.reverse(stockHistory4Inserts);
+                for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
+                    StockHistory average = stockHistoryMapper.average(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
+                    if(average!=null) {
+                        stockHistory4Insert.setAverage5(average.getAverage5());
+                        stockHistory4Insert.setAverage10(average.getAverage10());
+                        stockHistory4Insert.setAverage20(average.getAverage20());
+                        stockHistory4Insert.setAverage60(average.getAverage60());
+                    }
+                    stockHistoryMapper.insert(stockHistory4Insert);
+
                 }
             }
         } catch (Exception e) {

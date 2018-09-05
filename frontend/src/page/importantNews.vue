@@ -116,7 +116,8 @@ export default {
   },
   watch: {
     '$route' (to, from) {
-      this.currentPage = this.$route.params.pageNum
+      this.getData()
+      /* this.currentPage = this.$route.params.pageNum
       this.items = []
       items = []
       let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getImportantNewsInclude/' : '/api/stock/getImportantNewsExclude/'
@@ -132,7 +133,7 @@ export default {
         });
         this.items = items
       })
-      $("#content_id").parent().remove()
+      $("#content_id").parent().remove() */
       //this.$router.push('/content/' + this.getStatus(this.$route.path))
     }
   }

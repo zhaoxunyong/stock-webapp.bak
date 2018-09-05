@@ -595,7 +595,7 @@ public class StockApiImpl implements StockApi {
         return dtoList;
     }
 
-    @Override
+    /*@Override
     @GetMapping(value = "/data")
     public String data(String stockId, String startDate, String endDate) {
         List<StockHistoryDto> dtoList = selectHistory(stockId, startDate, endDate);
@@ -614,12 +614,6 @@ public class StockApiImpl implements StockApi {
             }
         }
         return str.toString();
-    	/*try {
-			return FileUtils.readFileToString(new File("d:/sh/data.csv"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    	return "";*/
-    }
+    }*/
 
 }

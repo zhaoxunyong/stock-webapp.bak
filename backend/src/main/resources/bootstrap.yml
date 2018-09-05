@@ -1,0 +1,5 @@
+# logback在加载时，获取不到application.yml中的变更，所以要放在bootstrap.yml中
+# logging
+logging:
+  path: /works/log/stock-webapp/${spring.application.name}
+  file: ${logging.path}/${spring.application.name}.log

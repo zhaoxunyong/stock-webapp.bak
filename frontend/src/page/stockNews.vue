@@ -31,7 +31,7 @@ export default {
       displayAll: 0,
       type: 1,
       fromSelectedProcess: 0,
-      pageSize: 15,
+      pageSize: PAGE_SIZE,
       fields: {
         content_title: {
           label: '<span id="content_id">: </span>個股新聞與研究報告',
@@ -207,39 +207,7 @@ export default {
     '$route' (to, from) {
       this.stockId = this.$route.params.stockId
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
-        // this.timeOutsetInterval()
-        this.$api.get('/api/stock/getStockData/'+this.stockId, null, stockData => {
-          this.company = stockData.company
-          console.log("company--->"+this.company)
-          let pageNum = this.$route.params.pageNum == undefined ? 1 : this.$route.params.pageNum
-
-          let url = ''
-          if(this.displayAll == 1) {
-            let paramStockId = 0
-            let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId/' : '/api/stock/getNewsExcludeBystockId/'
-            url = rootUrl + paramStockId+'/'+this.selectedType+'/'+pageNum+'/'+this.pageSize
-            // alert("url1--->"+url)
-          } else {
-            let paramStockId = this.stockId
-            let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getNewsIncludeBystockId4All/' : '/api/stock/getNewsExcludeBystockId4All/'
-            url = rootUrl + paramStockId+'/'+pageNum+'/'+this.pageSize
-          }
-          // alert("url2--->"+url)
-          this.$api.get(url, null, rs => {
-            // this.dat = r
-            // this.items = rs
-            this.items = []
-            this.numberOfPages = rs.pageTotal
-            let rsData = rs.rows
-            for(var i=0;i<rsData.length;i++) {
-              let context = "<a target=\"_blank\" href=\""+rsData[i].url+"\">"+rsData[i].subject+"</a>"
-              this.items.push({
-                content_title: context
-              })
-            }
-          })
-          $("#content_id").text(this.company+": ").parent().hide()
-        })
+        this.getData()
       } else {
         this.cleanNews()
       }

@@ -2,6 +2,8 @@ package com.stock.fetch;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Date;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,18 +13,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.stock.StockApplication;
+import org.stock.fetch.constant.StockHistoryEnum;
+import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.service.FetchService;
+import org.stock.fetch.service.StockService;
 import org.stock.utils.FileMd5Utils;
 
 import com.aeasycredit.commons.lang.utils.DatesUtils;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=StockApplication.class)
-public class FetchServiceTest {
+public class StockServiceTest {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     
     @Autowired
     private FetchService fetchService;
+    
+    @Autowired
+    private StockService stockService;
     
     @Test
     public void fetchAllMyStock() throws Exception {
@@ -97,5 +105,13 @@ public class FetchServiceTest {
         // 自動取重點新聞第一頁
         fetchService.fetchImportantNews(1);
         System.out.println("fetchImportantNews end--->"+DatesUtils.YYMMDDHHMMSS.toString());
+    }
+    
+    @Test
+    public void average() {
+        long stockId = 402396117293928448L;
+        Date date = DatesUtils.YYMMDD2.toDate("2018/07/12");
+        StockHistory stockHistory = stockService.average(stockId, date, StockHistoryEnum.DAY);
+        System.out.println(stockHistory);
     }
 }

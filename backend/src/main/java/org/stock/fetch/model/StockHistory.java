@@ -13,6 +13,8 @@ public class StockHistory extends BaseModel {
     private Long stockId;
 
     private Date date;
+    
+    private int type;
 
     private BigDecimal opening;
 
@@ -31,6 +33,14 @@ public class StockHistory extends BaseModel {
     private String amount;
 
     private String per;
+    
+    private BigDecimal average5;
+    
+    private BigDecimal average10;
+    
+    private BigDecimal average20;
+    
+    private BigDecimal average60;
 
     private Date createDate;
 
@@ -131,6 +141,38 @@ public class StockHistory extends BaseModel {
     public void setPer(String per) {
         this.per = per;
     }
+    
+    public BigDecimal getAverage5() {
+        return average5;
+    }
+
+    public void setAverage5(BigDecimal average5) {
+        this.average5 = average5;
+    }
+
+    public BigDecimal getAverage10() {
+        return average10;
+    }
+
+    public void setAverage10(BigDecimal average10) {
+        this.average10 = average10;
+    }
+
+    public BigDecimal getAverage20() {
+        return average20;
+    }
+
+    public void setAverage20(BigDecimal average20) {
+        this.average20 = average20;
+    }
+
+    public BigDecimal getAverage60() {
+        return average60;
+    }
+
+    public void setAverage60(BigDecimal average60) {
+        this.average60 = average60;
+    }
 
     public Date getCreateDate() {
         return createDate;
@@ -148,4 +190,12 @@ public class StockHistory extends BaseModel {
         this.updateDate = updateDate;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+    
 }
