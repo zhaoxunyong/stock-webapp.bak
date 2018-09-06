@@ -90,5 +90,7 @@ public interface StockService {
     
     StockHistory selectWeekOrMonthStockHistory(long stockId, Date startDate, Date endDate, int type);
     
-    StockHistory average(@Param("stockId") Long stockId, @Param("date") Date date, int type);
+    StockHistory averageClosing(@Param("stockId") Long stockId, @Param("date") Date date, int type);
+    
+    StockHistory averageVol(@Param("stockId") Long stockId, @Param("date") Date date, int type);
 }

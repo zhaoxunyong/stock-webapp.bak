@@ -108,10 +108,18 @@ public class StockServiceTest {
     }
     
     @Test
-    public void average() {
+    public void averageClosing() {
         long stockId = 402396117293928448L;
         Date date = DatesUtils.YYMMDD2.toDate("2018/07/12");
-        StockHistory stockHistory = stockService.average(stockId, date, StockHistoryEnum.DAY.getType());
+        StockHistory stockHistory = stockService.averageClosing(stockId, date, StockHistoryEnum.DAY.getType());
+        System.out.println(stockHistory);
+    }
+    
+    @Test
+    public void averageVol() {
+        long stockId = 402396117293928448L;
+        Date date = DatesUtils.YYMMDD2.toDate("2018/07/12");
+        StockHistory stockHistory = stockService.averageVol(stockId, date, StockHistoryEnum.DAY.getType());
         System.out.println(stockHistory);
     }
 }

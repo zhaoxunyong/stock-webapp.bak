@@ -39,7 +39,7 @@ public interface StockHistoryMapper {
     int updateAverage(StockHistory record);
     
     /**
-     * 计算几日均线。只用到其中的几个字段：
+     * 计算收盘均线。只用到其中的几个字段：
      * StockHistory对象中只有average5、average10、average20、average60会赋值
      * 
      * @param stockId stockId
@@ -47,5 +47,16 @@ public interface StockHistoryMapper {
      * @param type type
      * @return
      */
-    StockHistory average(@Param("stockId") Long stockId, @Param("date") Date date, @Param("type") int type);
+    StockHistory averageClosing(@Param("stockId") Long stockId, @Param("date") Date date, @Param("type") int type);
+    
+    /**
+     * 计算成立量均线。只用到其中的几个字段：
+     * StockHistory对象中只有average5、average10、average20、average60会赋值
+     * 
+     * @param stockId stockId
+     * @param date date
+     * @param type type
+     * @return
+     */
+    StockHistory averageVol(@Param("stockId") Long stockId, @Param("date") Date date, @Param("type") int type);
 }

@@ -401,8 +401,13 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public StockHistory average(Long stockId, Date date, int type) {
-         return stockHistoryMapper.average(stockId, date, type);
+    public StockHistory averageClosing(Long stockId, Date date, int type) {
+         return stockHistoryMapper.averageClosing(stockId, date, type);
+    }
+
+    @Override
+    public StockHistory averageVol(Long stockId, Date date, int type) {
+         return stockHistoryMapper.averageVol(stockId, date, type);
     }
 
 }

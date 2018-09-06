@@ -859,10 +859,13 @@ public class FetchServiceImpl implements FetchService {
                     stockHistory4Insert.setCreateDate(new Date());
                     stockHistoryMapper.insert(stockHistory4Insert);
                     // 日
-                    StockHistory averageOfDay = stockHistoryMapper.average(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
-                    if(averageOfDay!=null) {
+                    StockHistory averageOfDay = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
+                    StockHistory averageVolOfDay = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
+                    if(averageOfDay!=null && averageVolOfDay!=null) {
                         averageOfDay.setId(stockHistory4Insert.getId());
                         averageOfDay.setUpdateDate(new Date());
+                        // 设置5日成立量均线
+                        averageOfDay.setAveragevol5(averageVolOfDay.getAveragevol5());
                         stockHistoryMapper.updateAverage(averageOfDay);
                     }
 
@@ -890,10 +893,13 @@ public class FetchServiceImpl implements FetchService {
                         history4Week.setType(StockHistoryEnum.WEEK.getType());
                         history4Week.setCreateDate(new Date());
                         stockHistoryMapper.insert(history4Week);
-                        StockHistory averageOfWeek = stockHistoryMapper.average(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
-                        if(averageOfWeek!=null) {
+                        StockHistory averageOfWeek = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
+                        StockHistory averageVolOfWeek = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
+                        if(averageOfWeek != null && averageVolOfWeek != null) {
                             averageOfWeek.setId(history4Week.getId());
                             averageOfWeek.setUpdateDate(new Date());
+                            // 设置5周成立量均线
+                            averageOfWeek.setAveragevol5(averageVolOfWeek.getAveragevol5());
                             stockHistoryMapper.updateAverage(averageOfWeek);
                         }
                     }
@@ -917,10 +923,13 @@ public class FetchServiceImpl implements FetchService {
                         history4Month.setType(StockHistoryEnum.MONTH.getType());
                         history4Month.setCreateDate(new Date());
                         stockHistoryMapper.insert(history4Month);
-                        StockHistory averageOfMonth = stockHistoryMapper.average(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
-                        if(averageOfMonth!=null) {
+                        StockHistory averageOfMonth = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
+                        StockHistory averageVolOfMonth = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
+                        if(averageOfMonth!=null && averageVolOfMonth!=null) {
                             averageOfMonth.setId(history4Month.getId());
                             averageOfMonth.setUpdateDate(new Date());
+                            // 设置5月成立量均线
+                            averageOfMonth.setAveragevol5(averageVolOfMonth.getAveragevol5());
                             stockHistoryMapper.updateAverage(averageOfMonth);
                         }
                     }

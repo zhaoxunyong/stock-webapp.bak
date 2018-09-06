@@ -34,6 +34,8 @@ public class StockHistory extends BaseModel {
 
     private String per;
     
+    private BigDecimal averagevol5;
+    
     private BigDecimal average5;
     
     private BigDecimal average10;
@@ -142,6 +144,14 @@ public class StockHistory extends BaseModel {
         this.per = per;
     }
     
+    public BigDecimal getAveragevol5() {
+        return averagevol5;
+    }
+
+    public void setAveragevol5(BigDecimal averagevol5) {
+        this.averagevol5 = averagevol5;
+    }
+
     public BigDecimal getAverage5() {
         return average5;
     }
