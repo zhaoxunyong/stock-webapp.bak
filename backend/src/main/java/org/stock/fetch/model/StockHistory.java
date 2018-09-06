@@ -28,9 +28,9 @@ public class StockHistory extends BaseModel {
 
     private String riseRate;
 
-    private String vol;
+    private BigDecimal vol;
 
-    private String amount;
+    private BigDecimal amount;
 
     private String per;
     
@@ -118,19 +118,19 @@ public class StockHistory extends BaseModel {
         this.riseRate = riseRate;
     }
 
-    public String getVol() {
+    public BigDecimal getVol() {
         return vol;
     }
 
-    public void setVol(String vol) {
+    public void setVol(BigDecimal vol) {
         this.vol = vol;
     }
 
-    public String getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

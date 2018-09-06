@@ -69,8 +69,8 @@ public class StockServiceTest {
     @Test
     public void fetchHistory() throws Exception {
         String no = "2426";
-        String startDate = "2018/07/18";
-        String endDate = "2018/07/20";
+        String startDate = "2018/01/01";
+        String endDate = "2018/09/01";
         fetchService.fetchHistory(no, startDate, endDate);
     }
     
@@ -111,7 +111,7 @@ public class StockServiceTest {
     public void average() {
         long stockId = 402396117293928448L;
         Date date = DatesUtils.YYMMDD2.toDate("2018/07/12");
-        StockHistory stockHistory = stockService.average(stockId, date, StockHistoryEnum.DAY);
+        StockHistory stockHistory = stockService.average(stockId, date, StockHistoryEnum.DAY.getType());
         System.out.println(stockHistory);
     }
 }

@@ -86,7 +86,9 @@ public interface StockService {
 
     void saveCompanyStatus(Long stockId, String companyStatus);
     
-    List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate);
+    List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate, int type);
     
-    StockHistory average(@Param("stockId") Long stockId, @Param("date") Date date, StockHistoryEnum stockHistoryEnum);
+    StockHistory selectWeekOrMonthStockHistory(long stockId, Date startDate, Date endDate, int type);
+    
+    StockHistory average(@Param("stockId") Long stockId, @Param("date") Date date, int type);
 }

@@ -43,7 +43,7 @@ export default {
       let dateRange = this.getRecentDate()
       this.stockId = this.$route.params.stockId
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
-        let url = `/api/stock/selectHistory?stockId=${this.stockId}&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`
+        let url = `/api/stock/selectHistory?stockId=${this.stockId}&type=0&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`
         this.$api.get(url, null, rs => {
           if(rs != undefined && rs.length > 0) {
             

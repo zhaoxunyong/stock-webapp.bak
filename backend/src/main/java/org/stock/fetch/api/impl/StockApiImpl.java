@@ -586,8 +586,8 @@ public class StockApiImpl implements StockApi {
 
     @Override
     @GetMapping(value = "/selectHistory")
-    public List<StockHistoryDto> selectHistory(String stockId, String startDate, String endDate) {
-        List<StockHistory> stockHistorys = stockService.selectHistory(Long.parseLong(stockId), DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
+    public List<StockHistoryDto> selectHistory(String stockId, String startDate, String endDate, int type) {
+        List<StockHistory> stockHistorys = stockService.selectHistory(Long.parseLong(stockId), DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate), type);
         
         List<StockHistoryDto> dtoList = stockHistorys.stream().map(model -> {
             return modelMapper.map(model, StockHistoryDto.class);

@@ -12,8 +12,8 @@
     <result column="closing" property="closing" jdbcType="DECIMAL" />
     <result column="ups_downs" property="upsDowns" jdbcType="DECIMAL" />
     <result column="rise_rate" property="riseRate" jdbcType="VARCHAR" />
-    <result column="vol" property="vol" jdbcType="VARCHAR" />
-    <result column="amount" property="amount" jdbcType="VARCHAR" />
+    <result column="vol" property="vol" jdbcType="DECIMAL" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
     <result column="per" property="per" jdbcType="VARCHAR" />
     <result column="average5" property="average5" jdbcType="DECIMAL" />
     <result column="average10" property="average10" jdbcType="DECIMAL" />
@@ -37,6 +37,11 @@
     where stock_id = #{stockId,jdbcType=BIGINT} and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
   </delete>
   
+  <delete id="deleteByWeekOrMonth" >
+    delete from stock_history
+    where stock_id = #{stockId,jdbcType=BIGINT} and date = #{date,jdbcType=TIMESTAMP} AND type = #{type,jdbcType=INTEGER}
+  </delete>
+  
   <insert id="insert" parameterType="org.stock.fetch.model.StockHistory">
     insert into stock_history (id, stock_id, type, date, opening, 
       highest, lowest, closing, 
@@ -45,8 +50,8 @@
       update_date)
     values (#{id,jdbcType=BIGINT}, #{stockId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, #{date,jdbcType=VARCHAR}, #{opening,jdbcType=DECIMAL}, 
       #{highest,jdbcType=DECIMAL}, #{lowest,jdbcType=DECIMAL}, #{closing,jdbcType=DECIMAL}, 
-      #{upsDowns,jdbcType=DECIMAL}, #{riseRate,jdbcType=VARCHAR}, #{vol,jdbcType=VARCHAR}, 
-      #{amount,jdbcType=VARCHAR}, #{per,jdbcType=VARCHAR}, 
+      #{upsDowns,jdbcType=DECIMAL}, #{riseRate,jdbcType=VARCHAR}, #{vol,jdbcType=DECIMAL}, 
+      #{amount,jdbcType=DECIMAL}, #{per,jdbcType=VARCHAR}, 
       #{average5,jdbcType=DECIMAL}, #{average10,jdbcType=DECIMAL}, #{average20,jdbcType=DECIMAL}, #{average60,jdbcType=DECIMAL}, 
       #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
   </insert>
@@ -62,14 +67,24 @@
       closing = #{closing,jdbcType=DECIMAL},
       ups_downs = #{upsDowns,jdbcType=DECIMAL},
       rise_rate = #{riseRate,jdbcType=VARCHAR},
-      vol = #{vol,jdbcType=VARCHAR},
-      amount = #{amount,jdbcType=VARCHAR},
+      vol = #{vol,jdbcType=DECIMAL},
+      amount = #{amount,jdbcType=DECIMAL},
       per = #{per,jdbcType=VARCHAR},
       average5 = #{average5,jdbcType=DECIMAL}, 
       average10 = #{average10,jdbcType=DECIMAL}, 
       average20 = #{average20,jdbcType=DECIMAL}, 
       average60 = #{average60,jdbcType=DECIMAL}, 
       create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateAverage" parameterType="org.stock.fetch.model.StockHistory" >
+    update stock_history
+    set average5 = #{average5,jdbcType=DECIMAL}, 
+      average10 = #{average10,jdbcType=DECIMAL}, 
+      average20 = #{average20,jdbcType=DECIMAL}, 
+      average60 = #{average60,jdbcType=DECIMAL}, 
       update_date = #{updateDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -88,24 +103,32 @@
   <select id="selectStockHistory" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" /> 
     from stock_history
-    where stock_id = #{stockId,jdbcType=BIGINT} and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
+    where stock_id = #{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
     ORDER BY date desc
   </select>
   
-  <select id="selectSumStockHistory" resultMap="BaseResultMap" >
-    select 
-    sum(opening) opening, sum(highest) highest, sum(lowest) lowest, 
-    sum(closing) closing, sum(vol) vol
-    where stock_id = #{stockId,jdbcType=BIGINT} and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
-    ORDER BY date desc
+  <select id="selectWeekOrMonthStockHistory" resultMap="BaseResultMap" >
+    SELECT
+	  SUBSTRING_INDEX(GROUP_CONCAT(CAST(date AS DATE) ORDER BY date desc), ',', 1 ) as date,
+	  SUBSTRING_INDEX(GROUP_CONCAT(CAST(opening AS CHAR) ORDER BY date), ',', 1 ) as opening,
+	  SUBSTRING_INDEX(GROUP_CONCAT(CAST(closing AS CHAR) ORDER BY date DESC), ',', 1 ) as closing,
+	  MAX(highest) as highest,
+	  MIN(lowest) as lowest,
+	  SUM(vol) as vol
+	FROM
+	  stock_history 
+	WHERE stock_id = #{stockId,jdbcType=BIGINT}  and type=#{type,jdbcType=INTEGER} and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
   </select>
   
   <select id="average" resultMap="BaseResultMap" >
+  <![CDATA[
     SELECT 
-		(SELECT sum(closing) from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date BETWEEN DATE_ADD(#{date,jdbcType=TIMESTAMP}, INTERVAL -5 DAY) and #{date,jdbcType=TIMESTAMP}) as average5,
-		(SELECT sum(closing) from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date BETWEEN DATE_ADD(#{date,jdbcType=TIMESTAMP}, INTERVAL -10 DAY) and #{date,jdbcType=TIMESTAMP}) as average10,
-		(SELECT sum(closing) from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date BETWEEN DATE_ADD(#{date,jdbcType=TIMESTAMP}, INTERVAL -20 DAY) and #{date,jdbcType=TIMESTAMP}) as average20,
-		(SELECT sum(closing) from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date BETWEEN DATE_ADD(#{date,jdbcType=TIMESTAMP}, INTERVAL -60 DAY) and #{date,jdbcType=TIMESTAMP}) as average60
+		(SELECT sum(closing) FROM (SELECT closing from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 5) as atable) as average5,
+		(SELECT sum(closing) FROM (SELECT closing from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 10) as atable) as average10,
+		(SELECT sum(closing) FROM (SELECT closing from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 20) as atable) as average20,
+		(SELECT sum(closing) FROM (SELECT closing from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 60) as atable) as average60
 	FROM DUAL
+  ]]>
   </select>
+  
 </mapper>

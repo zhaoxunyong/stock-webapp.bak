@@ -391,16 +391,18 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate) {
-        return stockHistoryMapper.selectStockHistory(stockId, startDate, endDate);
+    public List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate, int type) {
+        return stockHistoryMapper.selectStockHistory(stockId, startDate, endDate, type);
+    }
+    
+    @Override
+    public StockHistory selectWeekOrMonthStockHistory(long stockId, Date startDate, Date endDate, int type) {
+        return stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDate, endDate, type);
     }
 
-    /* (non-Javadoc)
-     * @see org.stock.fetch.service.StockService#average(java.lang.Long, java.util.Date)
-     */
     @Override
-    public StockHistory average(Long stockId, Date date, StockHistoryEnum stockHistoryEnum) {
-         return stockHistoryMapper.average(stockId, date, stockHistoryEnum.getType());
+    public StockHistory average(Long stockId, Date date, int type) {
+         return stockHistoryMapper.average(stockId, date, type);
     }
 
 }

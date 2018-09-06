@@ -43,9 +43,11 @@ public class Test {
         // DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         // LocalDate localDate = LocalDate.parse("2018-06-07 17:30:30", pattern);
         // 取上一周
-        LocalDate localDate = LocalDate.now().plusWeeks(-1);
-        System.out.println("localDate: " + localDate);
+//        LocalDate localDate = LocalDate.now().plusWeeks(-1);
+        LocalDate localDate = LocalDate.now();
+//        System.out.println("localDate: " + localDate);
 //        System.out.println("ISO_LOCAL_DATE: " + localDate.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        
         System.out.println("当周第一天：" + localDate.with(WeekFields.of(Locale.CHINA).dayOfWeek(), 1));
         System.out.println("当周第7天：" + localDate.with(WeekFields.of(Locale.CHINA).dayOfWeek(), 7));
         System.out.println("当月第一天：" + localDate.with(TemporalAdjusters.firstDayOfMonth()));
