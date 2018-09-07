@@ -64,6 +64,8 @@ public class StockServiceTest {
 //        String startDate = "2015/01/01";
 //        String endDate = "2018/09/01";
 //        fetchService.fetchAllHistory(startDate, endDate);
+        // 每支大概耗时:90秒左右
+        // 5年数据耗时共大概18分钟
         fetchService.fetchAllHistory();
     }
     

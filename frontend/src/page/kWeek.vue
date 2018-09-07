@@ -15,6 +15,9 @@
 import Bus from '../eventBus'
 import candlestick from '../data/candlestick'
 import dateAdd from '../utils/dates'
+// 引用alert文件, alerts.error('xxx')
+// import * as alerts from '../utils/alert.js'
+// import {success, error} from '../utils/alert.js'
 
 // http://gallery.echartsjs.com/editor.html?c=candlestick-sh
     
@@ -40,6 +43,8 @@ export default {
     openNewKline(params) {
       console.log(params.componentType+","+params.name)
     },
+    showZoomKline() {
+    },
     getRecentDate() {
       var now = new Date();
       var newDate = dateAdd("d ", -RECENT_DATE, now);
@@ -50,6 +55,7 @@ export default {
 
     },
     getData() {
+      let this_ = this
       let datas = []
       let dateRange = this.getRecentDate()
       // this.stockId = '402396117293928448'
@@ -64,9 +70,9 @@ export default {
               // console.log(stockHistorys)
               datas.push(stockHistorys)
             }
-            this.kline = candlestick(datas, '周')
+            this.kline = candlestick(datas, '日')
           } else {
-            Bus.$emit('alerts', "找不到數據!")
+            this_.$alerts.error("找不到數據:"+this.stockId)
           }
         })
       }
@@ -86,6 +92,9 @@ export default {
 .echarts {
   width: 100%;
   height: 400px;
+}
+.kline-height {
+  height: 25px;
 }
 </style>
 

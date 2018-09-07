@@ -27,7 +27,6 @@ Vue.use(Msg, {
   position: 'top', duration: 999999999
 })
 
-
 // 引用API文件
 import api from './api/index.js'
 // 将API方法绑定到全局
@@ -35,6 +34,10 @@ Vue.prototype.$api = api
 
 // 引用工具文件
 import utils from './utils/index.js'
+
+// 引用alert文件, 使用时：alerts.error('xxx')
+import * as alerts from './utils/alert.js'
+Vue.prototype.$alerts = alerts
 
 // 将工具方法绑定到全局
 Vue.prototype.$utils = utils

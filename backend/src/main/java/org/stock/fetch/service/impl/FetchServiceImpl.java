@@ -751,9 +751,9 @@ public class FetchServiceImpl implements FetchService {
     }
     
     @Override
-    @Transactional
+//    @Transactional
     public void fetchAllHistory() throws Exception {
-        LocalDate startDate = LocalDate.now();
+        LocalDate endDate = LocalDate.now();
         List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
         if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
             for(StockMyData stockMyData : stockMyDatas) {
@@ -762,12 +762,15 @@ public class FetchServiceImpl implements FetchService {
 //                String endDate = DatesUtils.YYMMDD2.toString(nowDate);
                 StockHistory lastStockHistory = stockHistoryMapper.selectLastStockHistory(stockMyData.getNo());
                 // 一开始默认抓取最近5年的数据
-                LocalDate endDate = startDate.plusYears(-5L);
+                LocalDate startDate = endDate.plusYears(-5L);
                 if(lastStockHistory != null) {
-                    endDate = MyDateUtils.date2LoalDate(lastStockHistory.getDate());
+                    startDate = MyDateUtils.date2LoalDate(lastStockHistory.getDate());
                 }
                 try {
+                    long s = System.currentTimeMillis();
+                    System.out.println("股号: "+stockMyData.getNo()+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取开始......");
                     this.fetchHistory(stockMyData.getNo(), DatesUtils.YYMMDD2.toString(MyDateUtils.localDate2Date(startDate)), DatesUtils.YYMMDD2.toString(MyDateUtils.localDate2Date(endDate)));
+                    System.out.println("股号: "+stockMyData.getNo()+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
                 } catch(Exception e) {
                     logger.error("股号: {}, 开始日期: {}, 结束日期: {}, 抓取异常: ", stockMyData.getNo(), startDate, endDate, e);
                     StockHistoryError stockHistoryError = new StockHistoryError();
@@ -783,8 +786,8 @@ public class FetchServiceImpl implements FetchService {
         }
     }
     
-    @Override
-    @Transactional
+    /*@Override
+//    @Transactional
     public void fetchAllHistory(String startDate, String endDate) throws Exception {
         List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
         if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
@@ -793,7 +796,10 @@ public class FetchServiceImpl implements FetchService {
 //                String endDate = "2017/11/01";
 //                String endDate = DatesUtils.YYMMDD2.toString(nowDate);
                 try {
+                    long s = System.currentTimeMillis();
+                    System.out.println("股号: "+stockMyData.getNo()+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取开始.");
                     this.fetchHistory(stockMyData.getNo(), startDate, endDate);
+                    System.out.println("股号: "+stockMyData.getNo()+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
                 } catch(Exception e) {
                     logger.error("股号: {}, 开始日期: {}, 结束日期: {}, 抓取异常：", stockMyData.getNo(), startDate, endDate, e);
                     StockHistoryError stockHistoryError = new StockHistoryError();
@@ -807,7 +813,7 @@ public class FetchServiceImpl implements FetchService {
                 }
             }
         }
-    }
+    }*/
 
     /**
      * 日期格式為：yyyy/MM/dd

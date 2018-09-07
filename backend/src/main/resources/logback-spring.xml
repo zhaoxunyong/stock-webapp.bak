@@ -56,13 +56,12 @@
 	    </encoder>
 	</appender>
 	
-	<!-- 本地调试 -->
-    <root level="info">
+    <root level="ERROR">
         <appender-ref ref="console" />
         <appender-ref ref="error_file" />
     </root>
     
     <!-- 不顯示eureka-server的info信息 -->
-    <logger name="org.stock.fetch.dao" level="DEBUG" />
+    <logger name="org.stock.fetch.dao" level="ERROR" />
     
 </configuration>

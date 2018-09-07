@@ -42,7 +42,7 @@ public interface FetchService {
     /**
      * 獲取某只股票的歷史交易數據
      */
-    public void fetchAllHistory(String startDate, String endDate) throws Exception;
+//    public void fetchAllHistory(String startDate, String endDate) throws Exception;
     public void fetchAllHistory() throws Exception;
     public void fetchHistory(String no, String startDate, String endDate) throws Exception;
     
