@@ -130,10 +130,10 @@
   <select id="averageClosing" resultMap="BaseResultMap" >
   <![CDATA[
     SELECT 
-		(SELECT sum(closing) FROM (SELECT closing from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 5) as atable) as average5,
-		(SELECT sum(closing) FROM (SELECT closing from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 10) as atable) as average10,
-		(SELECT sum(closing) FROM (SELECT closing from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 20) as atable) as average20,
-		(SELECT sum(closing) FROM (SELECT closing from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 60) as atable) as average60
+		(SELECT sum(closing)/5 FROM (SELECT closing from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 5) as atable) as average5,
+		(SELECT sum(closing)/10 FROM (SELECT closing from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 10) as atable) as average10,
+		(SELECT sum(closing)/20 FROM (SELECT closing from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 20) as atable) as average20,
+		(SELECT sum(closing)/60 FROM (SELECT closing from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 60) as atable) as average60
 	FROM DUAL
   ]]>
   </select>
@@ -141,7 +141,7 @@
   <select id="averageVol" resultMap="BaseResultMap" >
   <![CDATA[
     SELECT 
-		(SELECT sum(vol) FROM (SELECT vol from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 5) as atable) as averagevol5
+		(SELECT sum(vol)/5 FROM (SELECT vol from stock_history WHERE stock_id=#{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date <= #{date,jdbcType=TIMESTAMP} order by date desc limit 5) as atable) as averagevol5
 	FROM DUAL
   ]]>
   </select>

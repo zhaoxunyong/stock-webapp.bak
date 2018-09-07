@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
 import org.stock.fetch.service.StockService;
 import org.stock.utils.FileMd5Utils;
+import org.stock.utils.MyDateUtils;
 
 import com.aeasycredit.commons.lang.exception.BusinessException;
 import com.aeasycredit.commons.lang.exception.ParameterException;
@@ -873,10 +875,10 @@ public class FetchServiceImpl implements FetchService {
                 // 需要上面处理完才能往下处理
                 for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
                     
-                    LocalDate localDate = stockHistory4Insert.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate localDate = MyDateUtils.date2LoalDate(stockHistory4Insert.getDate());
                     // 周
-                    LocalDate firstDateOfWeek = localDate.with(WeekFields.of(Locale.CHINA).dayOfWeek(), 1);
-                    Date startDateOfWeek = Date.from(firstDateOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    LocalDate firstDateOfWeek = MyDateUtils.getFirstDayOfWeek(localDate);
+                    Date startDateOfWeek = MyDateUtils.localDate2Date(firstDateOfWeek);
                     
 //                    LocalDate lastDateOfWeek = localDate.with(WeekFields.of(Locale.CHINA).dayOfWeek(), 7);
 //                    Date endDateOfWeek = Date.from(lastDateOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -885,11 +887,12 @@ public class FetchServiceImpl implements FetchService {
                     
                     StockHistory history4Week = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfWeek, endDateOfWeek, StockHistoryEnum.DAY.getType());
                     if(history4Week != null) {
-                        // 以startDateOfWeek作为周的唯一判断,一周只能有一和记录
-                        stockHistoryMapper.deleteByWeekOrMonth(stockId, startDateOfWeek, StockHistoryEnum.WEEK.getType());
+                        // 以startDateOfWeek(（取下一个自然工作日）)作为周的唯一判断,一周只能有一和记录
+                        Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfWeek);
+                        stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.WEEK.getType());
                         history4Week.setId(IdUtils.genLongId());
                         history4Week.setStockId(stockId);
-                        history4Week.setDate(startDateOfWeek);
+                        history4Week.setDate(uniqeDate);
                         history4Week.setType(StockHistoryEnum.WEEK.getType());
                         history4Week.setCreateDate(new Date());
                         stockHistoryMapper.insert(history4Week);
@@ -905,8 +908,8 @@ public class FetchServiceImpl implements FetchService {
                     }
                     
                     // 月
-                    LocalDate firstDateOfMonth = localDate.with(TemporalAdjusters.firstDayOfMonth());
-                    Date startDateOfMonth = Date.from(firstDateOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    LocalDate firstDateOfMonth = MyDateUtils.getFirstDayOfMonth(localDate);
+                    Date startDateOfMonth = MyDateUtils.localDate2Date(firstDateOfMonth);
                     
 //                    LocalDate lastDateOfMonth = localDate.with(TemporalAdjusters.lastDayOfMonth());
 //                    Date endDateOfMonth = Date.from(lastDateOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -915,11 +918,12 @@ public class FetchServiceImpl implements FetchService {
                     
                     StockHistory history4Month = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfMonth, endDateOfMonth, StockHistoryEnum.DAY.getType());
                     if(history4Month != null) {
-                        // 以startDateOfMonth作为周的唯一判断,一月只能有一和记录
-                        stockHistoryMapper.deleteByWeekOrMonth(stockId, startDateOfMonth, StockHistoryEnum.MONTH.getType());
+                        // 以startDateOfMonth作为月（取下一个自然工作日）的唯一判断,一月只能有一和记录
+                        Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfMonth);
+                        stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.MONTH.getType());
                         history4Month.setId(IdUtils.genLongId());
                         history4Month.setStockId(stockId);
-                        history4Month.setDate(startDateOfMonth);
+                        history4Month.setDate(uniqeDate);
                         history4Month.setType(StockHistoryEnum.MONTH.getType());
                         history4Month.setCreateDate(new Date());
                         stockHistoryMapper.insert(history4Month);

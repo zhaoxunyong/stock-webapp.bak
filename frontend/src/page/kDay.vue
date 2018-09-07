@@ -43,18 +43,19 @@ export default {
       let dateRange = this.getRecentDate()
       this.stockId = this.$route.params.stockId
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
+        // type 0: 日 1: 周 2: 月
         let url = `/api/stock/selectHistory?stockId=${this.stockId}&type=0&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`
         this.$api.get(url, null, rs => {
           if(rs != undefined && rs.length > 0) {
             
             for(let i=0;i<rs.length;i++) {
               let stockHistorys = [rs[i].date, rs[i].opening, rs[i].highest, rs[i].lowest, rs[i].closing, rs[i].vol]
-              console.log(stockHistorys)
+              // console.log(stockHistorys)
               datas.push(stockHistorys)
             }
             this.kline = candlestick(datas, '日')
           } else {
-            alert("找不到數據!")
+            Bus.$emit('alerts', "找不到數據!")
           }
         })
       }

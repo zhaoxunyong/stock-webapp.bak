@@ -1,5 +1,5 @@
 <template>
- <chart :options="kline"></chart>
+ <chart :options="kline" :auto-resize="resize" @click="openNewKline"></chart>
 </template>
 <script>
 // https://github.com/chovy/techan-vue/blob/master/src/components/Hello.vue
@@ -18,7 +18,8 @@ export default {
   data () {
     return {
       stockId: '',
-      kline: null
+      kline: null,
+      resize: true
     }
   },
   mounted () {
@@ -29,6 +30,9 @@ export default {
     this.getRecentDate()
   },
   methods: {
+    openNewKline(params) {
+      console.log(params.componentType+","+params.name)
+    },
     getRecentDate() {
       var now = new Date();
       var newDate = dateAdd("d ", -RECENT_DATE, now);
@@ -41,20 +45,20 @@ export default {
     getData() {
       let datas = []
       let dateRange = this.getRecentDate()
-      this.stockId = this.$route.params.stockId
+      this.stockId = '402396117293928448'
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
-        let url = `/api/stock/selectHistory?stockId=${this.stockId}&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`
+        // type 0: 日 1: 周 2: 月
+        let url = `/api/stock/selectHistory?stockId=${this.stockId}&type=0&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`
         this.$api.get(url, null, rs => {
           if(rs != undefined && rs.length > 0) {
-            
             for(let i=0;i<rs.length;i++) {
               let stockHistorys = [rs[i].date, rs[i].opening, rs[i].highest, rs[i].lowest, rs[i].closing, rs[i].vol]
-              console.log(stockHistorys)
+              // console.log(stockHistorys)
               datas.push(stockHistorys)
             }
-            this.kline = candlestick(datas)
+            this.kline = candlestick(datas, '周')
           } else {
-            alert("找不到數據!")
+            Bus.$emit('alerts', "找不到數據!")
           }
         })
       }
@@ -70,10 +74,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .echarts {
   width: 100%;
-  height: 100%;
+  height: 600px;
 }
 </style>
 
