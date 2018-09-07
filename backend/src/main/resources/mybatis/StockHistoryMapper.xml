@@ -127,6 +127,15 @@
 	WHERE stock_id = #{stockId,jdbcType=BIGINT}  and type=#{type,jdbcType=INTEGER} and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
   </select>
   
+  <select id="selectLastStockHistory" resultMap="BaseResultMap" >
+    SELECT
+		a.*
+	FROM
+		stock_history a, stock_data b
+	WHERE
+		a.stock_id = b.id and b.no = #{no,jdbcType=VARCHAR} order by date desc limit 1
+  </select>
+  
   <select id="averageClosing" resultMap="BaseResultMap" >
   <![CDATA[
     SELECT 

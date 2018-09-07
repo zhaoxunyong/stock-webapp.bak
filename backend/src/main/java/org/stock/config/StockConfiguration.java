@@ -17,7 +17,7 @@ public class StockConfiguration {
         webClient.getOptions().setCssEnabled(false);//设置css是否生效  
         webClient.getOptions().setJavaScriptEnabled(false);//设置js是否生效  
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());//设置ajax请求  
-        webClient.getOptions().setTimeout(10000);
+        webClient.getOptions().setTimeout(30000);
         webClient.waitForBackgroundJavaScript(3000);
         return webClient;
     }

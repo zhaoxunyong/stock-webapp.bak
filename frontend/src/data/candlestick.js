@@ -253,8 +253,8 @@ export default function getData (datasets, kDisplay) {
             // y: '#ffefef'
         },
         // bg: '#000',
-        st: 10,
-        ed: 40
+        st: 0,
+        ed: 100
     }
 
     return {

@@ -23,6 +23,8 @@ public interface StockHistoryMapper {
 
     List<StockHistory> selectStockHistory(@Param("stockId") Long stockId, @Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("type") int type);
     
+    StockHistory selectLastStockHistory(@Param("no") String no);
+    
     /**
      * 计算周、月线。只用到其中的几个字段：
      * StockHistory对象中只有date、opening、closing、highest、lowest、vol会赋值
