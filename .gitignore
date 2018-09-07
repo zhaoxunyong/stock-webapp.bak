@@ -25,3 +25,4 @@ package.json
 *.njsproj
 *.sln
 frontend/node/
+/frontend/package.json

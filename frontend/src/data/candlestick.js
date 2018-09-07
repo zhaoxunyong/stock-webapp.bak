@@ -1,37 +1,80 @@
 // https://github.com/apache/incubator-echarts/issues/6583
 // http://gallery.echartsjs.com/editor.html?c=candlestick-sh
+
+// 获取对应的数据格式
 function splitData(rawData) {
-    var categoryData = [];
-    var values = []
+    var categoryData = [],
+        values = [],
+        nows = [];
     for (var i = 0; i < rawData.length; i++) {
-        categoryData.push(rawData[i].splice(0, 1)[0]);
-        values.push(rawData[i])
+        categoryData.push(rawData[i].splice(0, 1)[0]); //日期
+        nows.push(rawData[i][3]-0.23); //日期
+        values.push(rawData[i]) //开，收，低，高
     }
     return {
         categoryData: categoryData,
+        now: nows,
         values: values
     };
 }
-
-function calculateMA(data0, dayCount) {
+// 平均值
+function calculateMA(datas,dayCount) {
     var result = [];
-    for (var i = 0, len = data0.values.length; i < len; i++) {
+    for (var i = 0, len = datas.values.length; i < len; i++) {
         if (i < dayCount) {
             result.push('-');
             continue;
         }
         var sum = 0;
         for (var j = 0; j < dayCount; j++) {
-            sum += data0.values[i - j][1];
+            sum += datas.values[i - j][1];
         }
-        result.push(sum / dayCount);
+        result.push((sum / dayCount).toFixed(2));
     }
     return result;
 }
+// 下面折线图的数据
+function calculateSA(datas) {
+    var result = [];
+    result.push(0);
+    for (var i = 0, len = datas.values.length; i < len; i++) {
+        if (i > 0) {
+            var k = Math.abs(datas.values[i][3] - datas.values[i][2]) / datas.values[i - 1][1] * 100;
+            result.push(k.toFixed(2));
+        }
+    }
+    return result;
+}
+// 下面柱状图的数据
+function calculateUD(datas) {
+    var result = [];
+    result.push(0);
+    for (var i = 0, len = datas.values.length; i < len; i++) {
+        if (i > 0) {
+            var k = (datas.values[i][1] - datas.values[i - 1][1]) / datas.values[i - 1][1] * 100;
+            result.push(k.toFixed(2));
+        }
+    }
+    return result;
+}
+var config = {
+    // barWidth: 10,//指定柱宽度
+    col: {
+        up: 'rgb(153, 14, 14)',
+        down: '#19b34c',
+        m5: '#f00',
+        m10: 'yellow',
+        m30: '#dd1ce0',
+        // y: '#ffefef'
+    },
+    // bg: '#000',
+    st: 10,
+    ed: 40
+}
 
-export default function getData (datas, kDisplay) {
-//   let data0 = splitData(datas)
-let data0 = splitData([
+export default function getData (datasets, kDisplay) {
+  let datas = splitData(datasets)
+/* let datas = splitData([
     ['2017-1-3', 21.37, 20.99, 20.9, 21.37],
     ['2017-1-4', 20.92, 21.17, 20.84, 21.24],
     ['2017-1-5', 21.15, 20.99, 20.95, 21.18],
@@ -197,174 +240,312 @@ let data0 = splitData([
     ['2017-8-31', 18.37, 18.42, 18.06, 18.92],
     ['2017-9-1', 18.76, 18.28, 18.07, 18.78],
     ['2017-9-4', 18.15, 18.1, 18.08, 18.64]
-]);
-  return {
-    // backgroundColor: '#2c343c',
-    // 下面日期文字颜色
-    textStyle: {
-        color: 'black'
-    },
-    title: {
-        text: kDisplay+'線',
-        left: 0
-    },
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            type: 'line'
-        }
-    },
-    /* kline: {
-        center: ['50%', '54%']
-    }, */
-    legend: {
-        data: [kDisplay+'K', 'MA5', 'MA10', 'MA20', 'MA60']
-    },
-    grid: {
-        left: '10%',
-        right: '10%',
-        bottom: '15%'
-    },
-    xAxis: {
-        type: 'category',
-        data: data0.categoryData,
-        scale: true,
-        boundaryGap : false,
-        axisLine: {onZero: false},
-        splitLine: {show: false},
-        splitNumber: 20,
-        min: 'dataMin',
-        max: 'dataMax'
-    },
-    yAxis: {
-        scale: true,
-        splitArea: {
-            show: true
-        }
-    },
-    dataZoom: [
-        {
-            type: 'inside',
-            start: 0,
-            end: 50
+]); */
+    const config = {
+        // barWidth: 10,//指定柱宽度
+        col: {
+            up: 'rgb(153, 14, 14)',
+            down: '#19b34c',
+            m5: '#f00',
+            m10: 'yellow',
+            m20: '#dd1ce0',
+            m60: 'purple',
+            // y: '#ffefef'
         },
-        {
-            show: true,
-            type: 'slider',
-            y: '90%',
-            start: 0,
-            end: 50
-        }
-    ],
-    series: [
-        {
-            name: kDisplay+'K',
-            type: 'candlestick',
-            data: data0.values,
-            itemStyle: {
-                normal: {
-                    // 阳线：红
-                    // color: "#fa6464",
-                    color: "red",
-                    // 阴线：绿
-                    // color0: "#32C896",
-                    color0: "green",
-                    borderColor: "#fa6464",
-                    borderColor0: "#32C896"
+        // bg: '#000',
+        st: 10,
+        ed: 40
+    }
+
+    return {
+        // backgroundColor: config.bg,
+        // color: '#fff',
+        /* title: {
+            text: kDisplay+'k线'
+        }, */
+
+        // 提示框浮层的位置
+        tooltip: {
+            trigger: 'axis',
+            position: [10, '70%'],
+            formatter: '{a0}:{c0}  {a1}:{c1} {a2}:{c2}',
+            // formatter:function(params){
+            //     return params.data
+            // },
+            // backgroundColor: '#fff',
+            borderWidth: 1,
+            textStyle: {
+                color: '#fff',
+                width: '100%'
+            },
+            // 坐标轴指示器配置项
+            axisPointer: {
+                type: 'cross',
+                label: {
+                    show: true,
+                    color: '#ff0',
+                    rich: {
+                        a: {
+                            // 没有设置 `lineHeight`，则 `lineHeight` 为 56
+                        }
+                    }
+                    // formatter: function(params) {
+                    //     // 假设此轴的 type 为 'time'。
+                    //     return 'some text' + params.value;
+                    // },
+                },
+                crossStyle: {
+                    type: 'solid'
+                },
+
+            }
+        },
+        legend: {
+            data: ['分时', kDisplay+'K', '5'+kDisplay+'平均线', '10'+kDisplay+'平均线', '20'+kDisplay+'平均线', '60'+kDisplay+'平均线', '振幅', '增加']
+        },
+        grid: [{
+            top: '10%',
+            // show:true,
+            left: '5%', //grid 组件离容器左侧的距离。
+            right: '5%',
+            height: '60%',
+            // borderColor:'#ccc',
+        }, {
+            top: '75%',
+            left: '5%',
+            right: '5%',
+            height: '18%',
+        }],
+        axisPointer: {
+
+            link: {
+                xAxisIndex: 'all'
+            },
+            label: {
+                backgroundColor: '#777'
+            },
+            // triggerOn:'click'
+        },
+        // 上下两个图表的x轴数据
+        xAxis: [{
+            type: 'category',
+            // scale: true,
+            // 坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
+            // boundaryGap: false,
+            axisLine: {
+                // show: false,
+                onZero: false
+            },
+            axisLabel: {
+                show: false
+            },
+            axisTick: {
+                show: false
+            },
+            splitLine: {
+                show: false
+            },
+            data: datas.categoryData
+        }, {
+            type: 'category',
+            //boundaryGap: false,
+            gridIndex: 1,
+            axisTick: {
+                show: false
+            },
+            axisLabel: {
+                show: false
+            },
+            data: datas.categoryData
+        }],
+        // 
+        yAxis: [{
+            axisLabel: {
+                color: config.col.y
+            },
+            scale: true,
+            // position: 'right',
+            // splitArea: {
+            //     show: false
+            // },
+            splitLine: {
+                show: true,
+                lineStyle: {
+                    color: ['#888'],
+                    type: 'dotted'
                 }
             },
-            /* markPoint: {
-                label: {
+
+            // splitNumber: 10
+        }, {
+            gridIndex: 1,
+            // position: 'right',
+            xAxisIndex: 1,
+            //splitNumber: 3,
+            splitArea: {
+                show: false
+            },
+            splitLine: {
+                show: true,
+                lineStyle: {
+                    color: ['#888'],
+                    type: 'dotted'
+                }
+            },
+            axisLabel: {
+                show: true,
+                color: config.col.y
+            }
+        }],
+
+        dataZoom: [{
+            type: 'inside',
+            xAxisIndex: [0, 1],
+            start: config.st,
+            end: config.ed
+        }, {
+            show: false,
+            type: 'slider',
+            xAxisIndex: [0, 1],
+            y: '94%',
+            start: config.st,
+            end: config.ed
+        }],
+        series: [
+            /* {
+                type: 'line',
+                name: '分时',
+                data: datas.now
+            }, */
+            {
+                type: 'line',
+                name: '5'+kDisplay+'平均线',
+                data: calculateMA(datas, 5),
+                lineStyle: {
                     normal: {
-                        formatter: function (param) {
-                            return param != null ? Math.round(param.value) : '';
-                        }
+                        color: config.col.m5
                     }
                 },
-                data: [
-                    {
-                        name: 'XX标点',
-                        coord: ['2013/5/31', 2300],
-                        value: 2300,
-                        itemStyle: {
-                            normal: {color: 'green'}
-                        }
-                    },
-                    {
-                        name: 'highest value',
-                        type: 'max',
-                        valueDim: 'highest'
-                    },
-                    {
-                        name: 'lowest value',
-                        type: 'min',
-                        valueDim: 'lowest'
-                    },
-                    {
-                        name: 'average value on close',
-                        type: 'average',
-                        valueDim: 'close'
+                itemStyle: {
+                    normal: {
+                        color: config.col.m5
                     }
-                ],
-                tooltip: {
-                    formatter: function (param) {
-                        return param.name + '<br>' + (param.data.coord || '');
+                }
+            }, {
+                type: 'line',
+                name: '10'+kDisplay+'平均线',
+                data: calculateMA(datas, 10),
+                lineStyle: {
+                    normal: {
+                        color: config.col.m10
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: config.col.m10
+                    }
+                }
+            }, {
+                type: 'line',
+                name: '20'+kDisplay+'平均线',
+                data: calculateMA(datas, 20),
+                lineStyle: {
+                    normal: {
+                        color: config.col.m20
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: config.col.m20
+                    }
+                }
+            }, {
+                type: 'line',
+                name: '60'+kDisplay+'平均线',
+                data: calculateMA(datas, 60),
+                lineStyle: {
+                    normal: {
+                        color: config.col.m60
+                    }
+                },
+                itemStyle: {
+                    normal: {
+                        color: config.col.m60
+                    }
+                }
+            }, {
+                type: 'line',
+                name: '振幅', //下面的折线图
+                xAxisIndex: 1,
+                yAxisIndex: 1,
+                data: calculateSA(datas)
+            }, {
+                type: 'bar',
+                name: '增加', //下面的柱状图
+                // barWidth: config.barWidth,
+                xAxisIndex: 1,
+                yAxisIndex: 1,
+                data: calculateUD(datas),
+                itemStyle: {
+                    normal: {
+                        color: function(params) {
+                            var col;
+                            if (params.data >= 0) {
+                                col = config.col.up;
+                            } else {
+                                col = config.col.down;
+                            }
+                            return col;
+                        }
                     }
                 }
             },
-            markLine: {
-                symbol: ['none', 'none'],
-                data: [
-                    {
-                        name: 'min line on close',
-                        type: 'min',
-                        valueDim: 'close'
-                    },
-                    {
-                        name: 'max line on close',
-                        type: 'max',
-                        valueDim: 'close'
+            {
+                type: 'k', //Candlestick 
+                name: '日K',
+                // barWidth: config.barWidth, //指定柱宽度
+                itemStyle: {
+                    normal: {
+                        color: config.col.up, //阳线填充色
+                        color0: config.col.down,
+                        borderColor: config.col.up, //阳线边框色
+                        borderColor0: config.col.down
                     }
-                ]
-            } */
-        },
-        {
-            name: 'MA5',
-            type: 'line',
-            data: calculateMA(data0, 5),
-            smooth: true,
-            lineStyle: {
-                normal: {opacity: 0.5}
+                },
+                // markPoint: {
+                //     symbol: 'arrow',
+                //     symbolSize: 4,
+                //     label: {
+                //         normal: {
+                //             show: true,
+                //             formatter: function(param) {
+                //                 return param.value
+                //             },
+                //             color: '#2b8fa6',
+                //             fontWeight: 'bold'
+                //         }
+                //     },
+                //     itemStyle: {
+                //         normal: {
+                //             color: '#f221d6'
+                //         }
+                //     },
+                //     data: [{
+                //         name: '最高',
+                //         type: 'max',
+                //         valueDim: 'highest'
+                //     }, {
+                //         name: '最低',
+                //         type: 'min',
+                //         valueDim: 'lowest'
+                //     }, {
+                //         name: '平均',
+                //         type: 'average',
+                //         valueDim: 'close'
+                //     }],
+                // }, 
+                data: datas.values
             }
-        },
-        {
-            name: 'MA10',
-            type: 'line',
-            data: calculateMA(data0, 10),
-            smooth: true,
-            lineStyle: {
-                normal: {opacity: 0.5}
-            }
-        },
-        {
-            name: 'MA20',
-            type: 'line',
-            data: calculateMA(data0, 20),
-            smooth: true,
-            lineStyle: {
-                normal: {opacity: 0.5}
-            }
-        },
-        {
-            name: 'MA60',
-            type: 'line',
-            data: calculateMA(data0, 60),
-            smooth: true,
-            lineStyle: {
-                normal: {opacity: 0.5}
-            }
-        }
-
-    ]
-  }
+        ]
+    }
 }

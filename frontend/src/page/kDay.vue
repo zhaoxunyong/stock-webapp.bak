@@ -1,5 +1,12 @@
 <template>
- <chart :options="kline"></chart>
+  <div>
+    <div class="w-100 px-1 mx-1 kline-height">
+      <p class="font-weight-bold text-center align-middle px-1 mx-1" href="#" @click.prevent="showZoomKline">
+        日線
+      </p>
+    </div>
+    <chart :options="kline" :auto-resize="resize" @click="openNewKline" class="pl-2"></chart>
+  </div>
 </template>
 <script>
 // https://github.com/chovy/techan-vue/blob/master/src/components/Hello.vue
@@ -18,7 +25,8 @@ export default {
   data () {
     return {
       stockId: '',
-      kline: null
+      kline: null,
+      resize: true
     }
   },
   mounted () {
@@ -29,6 +37,11 @@ export default {
     this.getRecentDate()
   },
   methods: {
+    openNewKline(params) {
+      console.log(params.componentType+","+params.name)
+    },
+    showZoomKline() {
+    },
     getRecentDate() {
       var now = new Date();
       var newDate = dateAdd("d ", -RECENT_DATE, now);
@@ -41,13 +54,13 @@ export default {
     getData() {
       let datas = []
       let dateRange = this.getRecentDate()
+      // this.stockId = '402396117293928448'
       this.stockId = this.$route.params.stockId
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
         // type 0: 日 1: 周 2: 月
         let url = `/api/stock/selectHistory?stockId=${this.stockId}&type=0&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`
         this.$api.get(url, null, rs => {
           if(rs != undefined && rs.length > 0) {
-            
             for(let i=0;i<rs.length;i++) {
               let stockHistorys = [rs[i].date, rs[i].opening, rs[i].highest, rs[i].lowest, rs[i].closing, rs[i].vol]
               // console.log(stockHistorys)
@@ -71,10 +84,13 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .echarts {
   width: 100%;
   height: 400px;
+}
+.kline-height {
+  height: 25px;
 }
 </style>
 
