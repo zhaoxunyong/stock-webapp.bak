@@ -14,6 +14,11 @@
     delete from stock_history_error
     where id = #{id,jdbcType=BIGINT}
   </delete>
+  
+  <delete id="deleteByDate" parameterType="org.stock.fetch.model.StockHistoryError" >
+    delete from stock_history_error
+    where no = #{no,jdbcType=VARCHAR} and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
+  </delete>
   <insert id="insert" parameterType="org.stock.fetch.model.StockHistoryError" useGeneratedKeys="true" keyProperty="id" >
     insert into stock_history_error (id, no, start_date, end_date, 
       status, create_date, update_date
@@ -38,8 +43,8 @@
     from stock_history_error
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectAll" resultMap="BaseResultMap" >
+  <select id="selectAllByStatus" resultMap="BaseResultMap" >
     select id, no, start_date, end_date, status, create_date, update_date
-    from stock_history_error
+    from stock_history_error where status = #{status,jdbcType=TINYINT}
   </select>
 </mapper>

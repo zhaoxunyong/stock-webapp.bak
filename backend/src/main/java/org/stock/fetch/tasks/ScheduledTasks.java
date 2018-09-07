@@ -23,7 +23,7 @@ public class ScheduledTasks {
     @Autowired
     private FetchService fetchService;
     
-//    @Scheduled(cron="0 */8 8-23 * * ?")
+    @Scheduled(cron="0 */8 8-23 * * ?")
     public void fetchImportantNews() throws Exception {
         if(!IS_FETCH_IMPORTANT_NEW) {
             try {
@@ -45,8 +45,8 @@ public class ScheduledTasks {
     /**
      * 启动时执行一次，之后每隔20分钟执行一次  
      */
-//    @Scheduled(fixedRate = 20 * 60 * 1000) 
-//    @Scheduled(cron="0 */15 8-23 * * ?")
+//    @Scheduled(fixedRate = 20 * 60 * 1000)
+    @Scheduled(cron="0 */15 8-23 * * ?")
     public void fetchNews() throws Exception {
         if(!IS_FETCH_NEW) {
             try {
@@ -69,10 +69,26 @@ public class ScheduledTasks {
     }
     
     /**
-     * 凌晨1点执行
+     * 每天凌晨1点执行
      */
-//  @Scheduled(cron="0 0 1 * * ?")
+    /*@Scheduled(cron="0 0 1 * * ?")
     public void fetchAllMyStock() throws Exception {
         fetchService.fetchAllMyStock();
+    }*/
+    
+    /**
+     * 每天17点执行
+     */
+    @Scheduled(cron="0 0 17 * * ?")
+    public void fetchAllHistory() throws Exception {
+        fetchService.fetchAllHistory();
+    }
+    
+    /**
+     * 重新导失败的日期数据
+     */
+    @Scheduled(cron="0 */15 8-23 * * ?")
+    public void refetchAllHistory() throws Exception {
+        fetchService.refetchAllHistory();
     }
 }

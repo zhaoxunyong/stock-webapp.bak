@@ -8,13 +8,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -593,6 +590,24 @@ public class StockApiImpl implements StockApi {
             return modelMapper.map(model, StockHistoryDto.class);
         }).collect(Collectors.toList());
         return dtoList;
+    }
+
+    /* (non-Javadoc)
+     * @see org.stock.fetch.api.StockApi#fetchAllHistory()
+     */
+    @Override
+    @PostMapping(value = "/fetchAllHistory")
+    public String fetchAllHistory() {
+        new Thread() {
+            public void run() {
+                try {
+                    fetchService.fetchAllHistory();
+                } catch (Exception e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }.start();
+        return "ok";
     }
 
     /*@Override

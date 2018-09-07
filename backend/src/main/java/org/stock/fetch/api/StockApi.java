@@ -213,6 +213,8 @@ public interface StockApi {
     })
     public List<StockHistoryDto> selectHistory(String stockId, String startDate, String endDate, int type);
     
+    @ApiOperation(value="fetchAllHistory", notes="fetchAllHistory")
+    public String fetchAllHistory();
     /*@ApiOperation(value="data", notes="data")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),

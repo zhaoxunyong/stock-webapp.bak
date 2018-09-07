@@ -44,6 +44,7 @@ public interface FetchService {
      */
 //    public void fetchAllHistory(String startDate, String endDate) throws Exception;
     public void fetchAllHistory() throws Exception;
+    public void refetchAllHistory() throws Exception;
     public void fetchHistory(String no, String startDate, String endDate) throws Exception;
     
 //    List<StockHistory> select(Date startDate, Date endDate);

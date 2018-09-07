@@ -70,6 +70,11 @@ public class StockServiceTest {
     }
     
     @Test
+    public void refetchAllHistory() throws Exception {
+        fetchService.refetchAllHistory();
+    }
+    
+    @Test
     public void fetchHistory() throws Exception {
         String no = "2426";
         String startDate = "2015/01/01";

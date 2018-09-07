@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
-import org.stock.fetch.constant.StockHistoryEnum;
 import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;

@@ -751,6 +751,18 @@ public class FetchServiceImpl implements FetchService {
     }
     
     @Override
+    @Transactional
+    public void refetchAllHistory() throws Exception {
+        List<StockHistoryError> stockHistoryErrors = stockHistoryErrorMapper.selectAllByStatus(0);
+        if(stockHistoryErrors!=null && !stockHistoryErrors.isEmpty()) {
+            for(StockHistoryError stockHistoryError : stockHistoryErrors) {
+                this.fetchHistory(stockHistoryError.getNo(), DatesUtils.YYMMDD2.toString(stockHistoryError.getStartDate()), DatesUtils.YYMMDD2.toString(stockHistoryError.getEndDate()));
+                stockHistoryErrorMapper.deleteByPrimaryKey(stockHistoryError.getId());
+            }
+        }
+    }
+    
+    @Override
 //    @Transactional
     public void fetchAllHistory() throws Exception {
         LocalDate endDate = LocalDate.now();
