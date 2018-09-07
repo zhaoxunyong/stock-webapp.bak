@@ -2,7 +2,7 @@
   <div>
     <div class="w-100 px-1 mx-1 kline-height">
       <p class="font-weight-bold text-center align-middle px-1 mx-1" href="#" @click.prevent="showZoomKline">
-        月線
+        周線
       </p>
     </div>
     <chart :options="kline" :auto-resize="resize" @click="openNewKline" class="pl-2"></chart>
