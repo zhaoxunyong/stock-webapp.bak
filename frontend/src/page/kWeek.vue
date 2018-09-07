@@ -66,7 +66,7 @@ export default {
         this.$api.get(url, null, rs => {
           if(rs != undefined && rs.length > 0) {
             for(let i=0;i<rs.length;i++) {
-              let stockHistorys = [rs[i].date, rs[i].opening, rs[i].highest, rs[i].lowest, rs[i].closing, rs[i].vol]
+              let stockHistorys = [rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest]
               // console.log(stockHistorys)
               datas.push(stockHistorys)
             }

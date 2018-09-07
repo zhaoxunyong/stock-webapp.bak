@@ -589,7 +589,7 @@ public class StockApiImpl implements StockApi {
         List<StockHistoryDto> dtoList = stockHistorys.stream().map(model -> {
             return modelMapper.map(model, StockHistoryDto.class);
         }).collect(Collectors.toList());
-        return dtoList;
+        return Lists.reverse(dtoList);
     }
 
     /* (non-Javadoc)

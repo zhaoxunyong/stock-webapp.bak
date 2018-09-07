@@ -62,6 +62,6 @@
     </root>
     
     <!-- 不顯示eureka-server的info信息 -->
-    <logger name="org.stock.fetch.dao" level="ERROR" />
+    <logger name="org.stock.fetch.dao" level="debug" />
     
 </configuration>
