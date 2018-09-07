@@ -12,6 +12,7 @@ interceptor:
   excludePath: |
     #登录
     /api/login, 
+    /api/stock/fetchAllHistory, 
     #monitor
     /myhealth,
     /ops/.*

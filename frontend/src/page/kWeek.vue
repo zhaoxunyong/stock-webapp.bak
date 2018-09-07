@@ -73,6 +73,8 @@ export default {
             this.kline = candlestick(datas, '日')
           } else {
             this_.$alerts.error("找不到數據:"+this.stockId)
+            // alert("找不到數據:"+this.stockId)
+            this.kline = null
           }
         })
       }
@@ -90,7 +92,7 @@ export default {
 
 <style>
 .echarts {
-  width: 100%;
+  width: 90%;
   height: 400px;
 }
 .kline-height {
