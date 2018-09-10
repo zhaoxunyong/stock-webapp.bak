@@ -208,12 +208,12 @@ export default function getData (datas, kDisplay) {
         text: kDisplay+'線',
         left: 0
     },*/
-    tooltip: {
+    /* tooltip: {
         trigger: 'axis',
         axisPointer: {
             type: 'line'
         }
-    },
+    }, */
     /* kline: {
         center: ['50%', '54%']
     }, */
@@ -333,6 +333,7 @@ export default function getData (datas, kDisplay) {
             type: 'line',
             data: calculateMA(data0, 5),
             smooth: true,
+            showSymbol: false,
             lineStyle: {
                 normal: {opacity: 0.5}
             }
@@ -342,6 +343,7 @@ export default function getData (datas, kDisplay) {
             type: 'line',
             data: calculateMA(data0, 10),
             smooth: true,
+            showSymbol: false,
             lineStyle: {
                 normal: {opacity: 0.5}
             }
@@ -351,6 +353,7 @@ export default function getData (datas, kDisplay) {
             type: 'line',
             data: calculateMA(data0, 20),
             smooth: true,
+            showSymbol: false,
             lineStyle: {
                 normal: {opacity: 0.5}
             }
@@ -360,6 +363,7 @@ export default function getData (datas, kDisplay) {
             type: 'line',
             data: calculateMA(data0, 60),
             smooth: true,
+            showSymbol: false,
             lineStyle: {
                 normal: {opacity: 0.5}
             }
