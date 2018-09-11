@@ -19,42 +19,42 @@ newDate = dateAdd("y ", 1, now);
 alert(newDate.toLocaleDateString()) */
 export default function dateAdd(interval, number, date) {
   switch (interval) {
-    case "y ": {
+    case "y": {
         date.setFullYear(date.getFullYear() + number);
         return date;
         break;
     }
-    case "q ": {
+    case "q": {
         date.setMonth(date.getMonth() + number * 3);
         return date;
         break;
     }
-    case "m ": {
+    case "M": {
         date.setMonth(date.getMonth() + number);
         return date;
         break;
     }
-    case "w ": {
+    case "w": {
         date.setDate(date.getDate() + number * 7);
         return date;
         break;
     }
-    case "d ": {
+    case "d": {
         date.setDate(date.getDate() + number);
         return date;
         break;
     }
-    case "h ": {
+    case "h": {
         date.setHours(date.getHours() + number);
         return date;
         break;
     }
-    case "m ": {
+    case "m": {
         date.setMinutes(date.getMinutes() + number);
         return date;
         break;
     }
-    case "s ": {
+    case "s": {
         date.setSeconds(date.getSeconds() + number);
         return date;
         break;

@@ -47,7 +47,7 @@ export default {
     },
     getRecentDate() {
       var now = new Date();
-      var newDate = dateAdd("d ", -RECENT_DATE, now);
+      var newDate = dateAdd("w", -RECENT_DATE, now);
       return {
         startDate: newDate.toLocaleDateString(),
         endDate: new Date().toLocaleDateString()
@@ -92,7 +92,7 @@ export default {
 
 <style>
 .echarts {
-  width: 90%;
+  width: 85%;
   height: 400px;
 }
 .kline-height {
