@@ -51,6 +51,7 @@ import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 import com.aeasycredit.commons.lang.utils.DatesUtils;
 import com.aeasycredit.commons.poi.excel.ExcelUtils;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebWindow;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
@@ -175,64 +176,72 @@ public class FetchServiceImpl implements FetchService {
     }
     
     private List<StockType> fetchNewsKinds(StockTypeEnum stockTypeEnum) throws Exception {
-        List<StockType> stockTypes = Lists.newArrayList();
-        Date date = new Date();
-        // 上市
-        String url = "";
-        DomNode domNode = null;
-        if(stockTypeEnum == StockTypeEnum.MARKET) {
-            url = ROOT_URL+"/h/kimosel.php?tse=1&cat=%A5b%BE%C9%C5%E9&form=menu&form_id=stock_id&form_name=stock_name&domain=0";
-            HtmlPage page = processGuceOathCom(webClient.getPage(url));
-            HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'上市')]").get(0);
-            domNode = htmlElement.getParentNode().getParentNode();
-        } else if(stockTypeEnum == StockTypeEnum.COUNTER) {
-            url = ROOT_URL+"/h/kimosel.php?tse=2&cat=%C2d%A5b%BE%C9&form=menu&form_id=stock_id&form_name=stock_name&domain=0";
-            HtmlPage page = processGuceOathCom(webClient.getPage(url));
-            HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'上市')]").get(0);
-            domNode = htmlElement.getParentNode().getParentNode().getParentNode();
-        }
-      List<DomNode> trDomNodes = domNode.querySelectorAll("tr");
-      if(trDomNodes != null && !trDomNodes.isEmpty()) {
-          for(DomNode node : trDomNodes) {
-              DomNodeList<DomNode> tdNodes = node.getChildNodes();
-              if(tdNodes != null && !tdNodes.isEmpty()) {
-                  for(DomNode tdNode : tdNodes) {
-                      if(tdNode != null) {
-                          DomNode aNode = tdNode.getFirstChild();
-                          if(aNode != null && aNode instanceof HtmlAnchor) {
-                              HtmlAnchor anchor = (HtmlAnchor)aNode;
-                              String name = anchor.asText();
-                              if(stockTypeEnum == StockTypeEnum.MARKET || (stockTypeEnum == StockTypeEnum.COUNTER && !"上市".equals(name))) {
-                                    String aHref = anchor.getHrefAttribute();
-//                                    System.out.println("name--->" + name + "/aHref--->" + aHref);
-                                    StockType stockType = new StockType();
-                                    stockType.setName(name);
-                                    if(!skipKinds(name)) {
-                                        stockType.setType(stockTypeEnum.getType());
-                                        stockType.setUrl(aHref);
-                                        stockType.setStatus(true);
-                                        stockType.setCreateDate(date);
-                                        stockTypes.add(stockType);
-                                        StockType existStockType = stockTypeMapper.selectByName(name, stockTypeEnum.getType());
-                                        if(existStockType == null) {
-                                            stockType.setId(IdUtils.genLongId());
-                                            stockTypeMapper.insert(stockType);
-                                        } else {
-                                            // 如果存在的话，用原来的id记录
-                                            stockType.setId(existStockType.getId());
-                                            stockTypeMapper.updateByPrimaryKey(stockType);
+        try {
+            List<StockType> stockTypes = Lists.newArrayList();
+            Date date = new Date();
+            // 上市
+            String url = "";
+            DomNode domNode = null;
+            if(stockTypeEnum == StockTypeEnum.MARKET) {
+                url = ROOT_URL+"/h/kimosel.php?tse=1&cat=%A5b%BE%C9%C5%E9&form=menu&form_id=stock_id&form_name=stock_name&domain=0";
+                HtmlPage page = processGuceOathCom(webClient.getPage(url));
+                HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'上市')]").get(0);
+                domNode = htmlElement.getParentNode().getParentNode();
+            } else if(stockTypeEnum == StockTypeEnum.COUNTER) {
+                url = ROOT_URL+"/h/kimosel.php?tse=2&cat=%C2d%A5b%BE%C9&form=menu&form_id=stock_id&form_name=stock_name&domain=0";
+                HtmlPage page = processGuceOathCom(webClient.getPage(url));
+                HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'上市')]").get(0);
+                domNode = htmlElement.getParentNode().getParentNode().getParentNode();
+            }
+          List<DomNode> trDomNodes = domNode.querySelectorAll("tr");
+          if(trDomNodes != null && !trDomNodes.isEmpty()) {
+              for(DomNode node : trDomNodes) {
+                  DomNodeList<DomNode> tdNodes = node.getChildNodes();
+                  if(tdNodes != null && !tdNodes.isEmpty()) {
+                      for(DomNode tdNode : tdNodes) {
+                          if(tdNode != null) {
+                              DomNode aNode = tdNode.getFirstChild();
+                              if(aNode != null && aNode instanceof HtmlAnchor) {
+                                  HtmlAnchor anchor = (HtmlAnchor)aNode;
+                                  String name = anchor.asText();
+                                  if(stockTypeEnum == StockTypeEnum.MARKET || (stockTypeEnum == StockTypeEnum.COUNTER && !"上市".equals(name))) {
+                                        String aHref = anchor.getHrefAttribute();
+//                                        System.out.println("name--->" + name + "/aHref--->" + aHref);
+                                        StockType stockType = new StockType();
+                                        stockType.setName(name);
+                                        if(!skipKinds(name)) {
+                                            stockType.setType(stockTypeEnum.getType());
+                                            stockType.setUrl(aHref);
+                                            stockType.setStatus(true);
+                                            stockType.setCreateDate(date);
+                                            stockTypes.add(stockType);
+                                            StockType existStockType = stockTypeMapper.selectByName(name, stockTypeEnum.getType());
+                                            if(existStockType == null) {
+                                                stockType.setId(IdUtils.genLongId());
+                                                stockTypeMapper.insert(stockType);
+                                            } else {
+                                                // 如果存在的话，用原来的id记录
+                                                stockType.setId(existStockType.getId());
+                                                stockTypeMapper.updateByPrimaryKey(stockType);
+                                            }
                                         }
-                                    }
-                                  
+                                      
+                                  }
                               }
                           }
                       }
+                      
                   }
-                  
               }
           }
-      }
-      return stockTypes;
+          return stockTypes;
+        } finally {
+            final List<WebWindow> windows = webClient.getWebWindows();
+            for (final WebWindow wd : windows) {
+                wd.getJobManager().removeAllJobs();
+            }
+            // webClient.close();
+        }
     }
 
     private void fetchNewStocks(List<StockType> stockTypes) throws Exception {
@@ -311,7 +320,11 @@ public class FetchServiceImpl implements FetchService {
                         }
                     }
                 } finally {
-                    nextPage.cleanUp();
+                    final List<WebWindow> windows = webClient.getWebWindows();
+                    for (final WebWindow wd : windows) {
+                        wd.getJobManager().removeAllJobs();
+                    }
+                    // webClient.close();
                 }
             }
         }
@@ -406,49 +419,57 @@ public class FetchServiceImpl implements FetchService {
     @Override
     @Transactional
     public List<StockNews> fetchNews(StockData stockData, int fetchPage) throws Exception {
-//        StockMyData stockMyData = stockMyDataMapper.selectByStockId(stockId);
-        if(stockData == null) {
-            throw new ParameterException("stockData must be not empty!");
-        }
-        String newUrl = ROOT_URL + "/q/h?s="+stockData.getNo().replaceAll("[A-Z]+$", "")+"&pg="+fetchPage;
-        HtmlPage page = processGuceOathCom(webClient.getPage(newUrl));
-        List<StockNews> stockNewses =  Lists.newArrayList();
-        List<?> trDomNodes = page.querySelectorAll("tr table.yui-text-left tbody tr td table tbody tr");
-        if(trDomNodes!=null && !trDomNodes.isEmpty()) {
-            for(int i=0;i<trDomNodes.size();i=i+2) {
-                HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
-                List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
-                if(nextTds.size() == 2) {
-                    HtmlElement titleDomNode = (HtmlElement) trDomNodes.get(i+1);
-                    List<HtmlElement> titleTds = titleDomNode.getElementsByTagName("td");
-                    String title = titleTds.get(0).asText().replaceAll("^\\(|\\)$", "");
-                    String newsDate = StringUtils.substringBefore(title, " ");
-                    String froms = StringUtils.substringAfter(title, " ");
-                    
-                    HtmlElement td = nextTds.get(1);
-                    List<HtmlElement> aNodes = td.getElementsByTagName("a");
-                    if(aNodes==null || aNodes.isEmpty()) continue;
-                    HtmlElement aElement = aNodes.get(0);
-                    String url = ROOT_URL + aElement.getAttribute("href");
-                    String subject = td.asText() + "("+froms +" "+newsDate+")";
-                    StockNews stockNews = new StockNews();
-                    stockNews.setId(IdUtils.genLongId());
-                    stockNews.setFroms(froms);
-                    stockNews.setNewsDate(DatesUtils.YYMMDD2.toDate(newsDate));
-                    stockNews.setStockId(stockData.getId());
-                    stockNews.setSubject(subject);
-                    stockNews.setUrl(url);
-                    stockNews.setCreateDate(new Date());
-                    stockNewses.add(stockNews);
-                    stockNewsMapper.deleteByStockNews(stockNews);
-//                    if(!checkNewsSubject(subject)) {
-                    stockNewsMapper.insert(stockNews);
-//                    logger.info(stockNews.toString());
-//                    }
-                }
+        try {
+//          StockMyData stockMyData = stockMyDataMapper.selectByStockId(stockId);
+          if(stockData == null) {
+              throw new ParameterException("stockData must be not empty!");
+          }
+          String newUrl = ROOT_URL + "/q/h?s="+stockData.getNo().replaceAll("[A-Z]+$", "")+"&pg="+fetchPage;
+          HtmlPage page = processGuceOathCom(webClient.getPage(newUrl));
+          List<StockNews> stockNewses =  Lists.newArrayList();
+          List<?> trDomNodes = page.querySelectorAll("tr table.yui-text-left tbody tr td table tbody tr");
+          if(trDomNodes!=null && !trDomNodes.isEmpty()) {
+              for(int i=0;i<trDomNodes.size();i=i+2) {
+                  HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
+                  List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
+                  if(nextTds.size() == 2) {
+                      HtmlElement titleDomNode = (HtmlElement) trDomNodes.get(i+1);
+                      List<HtmlElement> titleTds = titleDomNode.getElementsByTagName("td");
+                      String title = titleTds.get(0).asText().replaceAll("^\\(|\\)$", "");
+                      String newsDate = StringUtils.substringBefore(title, " ");
+                      String froms = StringUtils.substringAfter(title, " ");
+                      
+                      HtmlElement td = nextTds.get(1);
+                      List<HtmlElement> aNodes = td.getElementsByTagName("a");
+                      if(aNodes==null || aNodes.isEmpty()) continue;
+                      HtmlElement aElement = aNodes.get(0);
+                      String url = ROOT_URL + aElement.getAttribute("href");
+                      String subject = td.asText() + "("+froms +" "+newsDate+")";
+                      StockNews stockNews = new StockNews();
+                      stockNews.setId(IdUtils.genLongId());
+                      stockNews.setFroms(froms);
+                      stockNews.setNewsDate(DatesUtils.YYMMDD2.toDate(newsDate));
+                      stockNews.setStockId(stockData.getId());
+                      stockNews.setSubject(subject);
+                      stockNews.setUrl(url);
+                      stockNews.setCreateDate(new Date());
+                      stockNewses.add(stockNews);
+                      stockNewsMapper.deleteByStockNews(stockNews);
+//                      if(!checkNewsSubject(subject)) {
+                      stockNewsMapper.insert(stockNews);
+//                      logger.info(stockNews.toString());
+//                      }
+                  }
+              }
+          }
+          return stockNewses;
+        } finally {
+            final List<WebWindow> windows = webClient.getWebWindows();
+            for (final WebWindow wd : windows) {
+                wd.getJobManager().removeAllJobs();
             }
+            // webClient.close();
         }
-        return stockNewses;
     }
 
     @Override
@@ -521,48 +542,56 @@ public class FetchServiceImpl implements FetchService {
     @Override
     @Transactional
     public List<StockImportantNews> fetchImportantNews(int fetchPage) throws Exception {
-        Date date = new Date();
-		String newUrl = ROOT_URL + "/news_list/url/d/e/N1.html?q=&pg="+fetchPage;
-		logger.info("fetchImportantNews newUrl--->" + newUrl);
-		HtmlPage page = processGuceOathCom(webClient.getPage(newUrl));
-		List<StockImportantNews> stockImportantNewses = Lists.newArrayList();
-		HtmlElement ele = page.getHtmlElementById("newListContainer");
-		List<?> tableDomNodes = ele.querySelectorAll("table#newListTable tbody tr td table");
-        if(tableDomNodes!=null && !tableDomNodes.isEmpty()) {
-        	for(int i=0;i<tableDomNodes.size();i++) {
-                HtmlElement tableDomNode = (HtmlElement) tableDomNodes.get(i);
-                List<?> trDomNodes = tableDomNode.querySelectorAll("tbody tr");
-                if(trDomNodes!=null && !trDomNodes.isEmpty()) {
-                	HtmlElement fromDomNode = (HtmlElement) trDomNodes.get(0);
-                	// from
-                	HtmlElement td = fromDomNode.getElementsByTagName("td").get(0);
-                	List<HtmlElement> aNodes = td.getElementsByTagName("a");
-                	if(aNodes==null || aNodes.isEmpty()) continue;
-                    HtmlElement aElement = aNodes.get(1);
-                    String url = aElement.getAttribute("href");
-                    String fromValue = td.asText();
-                    String a1 = StringUtils.substringAfterLast(fromValue, "（");
-                    String a2 = StringUtils.substringBeforeLast(a1, "）");
-                    String newsDateString = StringUtils.substringAfter(a2, " ");
-                    // subject
-                	HtmlElement subjectDomNode = (HtmlElement) trDomNodes.get(1);
-                	String subjectValue = subjectDomNode.asText().replace("(詳全文)", "");
-                	StockImportantNews stockImportantNews = new StockImportantNews();
-                	stockImportantNews.setId(IdUtils.genLongId());
-                	stockImportantNews.setCreateDate(date);
-                	stockImportantNews.setFroms(fromValue);
-//                    System.out.println("fromValue--->"+fromValue);
-//                    System.out.println("newsDateString--->"+newsDateString);
-                    stockImportantNews.setNewsDate(DatesUtils.YYMMDDHHMMSS2.toDate(newsDateString+":00"));
-                	stockImportantNews.setSubject(subjectValue);
-                	stockImportantNews.setUrl(url);
-                	stockImportantNewses.add(stockImportantNews);
-                	stockImportantNewsMapper.deleteByFroms(fromValue);
-                	stockImportantNewsMapper.insert(stockImportantNews);
+        try {
+            Date date = new Date();
+            String newUrl = ROOT_URL + "/news_list/url/d/e/N1.html?q=&pg="+fetchPage;
+            logger.info("fetchImportantNews newUrl--->" + newUrl);
+            HtmlPage page = processGuceOathCom(webClient.getPage(newUrl));
+            List<StockImportantNews> stockImportantNewses = Lists.newArrayList();
+            HtmlElement ele = page.getHtmlElementById("newListContainer");
+            List<?> tableDomNodes = ele.querySelectorAll("table#newListTable tbody tr td table");
+            if(tableDomNodes!=null && !tableDomNodes.isEmpty()) {
+                for(int i=0;i<tableDomNodes.size();i++) {
+                    HtmlElement tableDomNode = (HtmlElement) tableDomNodes.get(i);
+                    List<?> trDomNodes = tableDomNode.querySelectorAll("tbody tr");
+                    if(trDomNodes!=null && !trDomNodes.isEmpty()) {
+                        HtmlElement fromDomNode = (HtmlElement) trDomNodes.get(0);
+                        // from
+                        HtmlElement td = fromDomNode.getElementsByTagName("td").get(0);
+                        List<HtmlElement> aNodes = td.getElementsByTagName("a");
+                        if(aNodes==null || aNodes.isEmpty()) continue;
+                        HtmlElement aElement = aNodes.get(1);
+                        String url = aElement.getAttribute("href");
+                        String fromValue = td.asText();
+                        String a1 = StringUtils.substringAfterLast(fromValue, "（");
+                        String a2 = StringUtils.substringBeforeLast(a1, "）");
+                        String newsDateString = StringUtils.substringAfter(a2, " ");
+                        // subject
+                        HtmlElement subjectDomNode = (HtmlElement) trDomNodes.get(1);
+                        String subjectValue = subjectDomNode.asText().replace("(詳全文)", "");
+                        StockImportantNews stockImportantNews = new StockImportantNews();
+                        stockImportantNews.setId(IdUtils.genLongId());
+                        stockImportantNews.setCreateDate(date);
+                        stockImportantNews.setFroms(fromValue);
+//                        System.out.println("fromValue--->"+fromValue);
+//                        System.out.println("newsDateString--->"+newsDateString);
+                        stockImportantNews.setNewsDate(DatesUtils.YYMMDDHHMMSS2.toDate(newsDateString+":00"));
+                        stockImportantNews.setSubject(subjectValue);
+                        stockImportantNews.setUrl(url);
+                        stockImportantNewses.add(stockImportantNews);
+                        stockImportantNewsMapper.deleteByFroms(fromValue);
+                        stockImportantNewsMapper.insert(stockImportantNews);
+                    }
                 }
-        	}
+            }
+            return stockImportantNewses;
+        } finally {
+            final List<WebWindow> windows = webClient.getWebWindows();
+            for (final WebWindow wd : windows) {
+                wd.getJobManager().removeAllJobs();
+            }
+            // webClient.close();
         }
-        return stockImportantNewses;
     }
     
     private List<StockType> fetchKinds(StockTypeEnum stockTypeEnum) throws Exception {
@@ -586,47 +615,55 @@ public class FetchServiceImpl implements FetchService {
             default:
                 throw new ParameterException("stockTypeEnum must be not empty!");
         }
-        HtmlPage page = webClient.getPage(ROOT_URL + "/h/getclass.php");
-        //        HtmlElement element = page.getHtmlElementById("table7");
-        DomElement element = page.getElementById(eleId);
-        DomElement ele = element.getNextElementSibling();
-        List<HtmlElement> trs = ele.getElementsByTagName("tr");
-        List<StockType> stockTypes = Lists.newArrayList();
-//        System.out.println("2===>" + trs);
-        if (trs != null && !trs.isEmpty()) {
-            Date date = new Date();
-            for (HtmlElement tr : trs) {
-//                System.out.println("3===>" + tr.asXml());
-                List<HtmlElement> tds = tr.getElementsByTagName("td");
-                if (tds != null && !tds.isEmpty()) {
-                    for (HtmlElement td : tds) {
-//                        System.out.println("td=" + td.asXml());
-                        List<HtmlElement> aNodes = td.getElementsByTagName("a");
-                        if(aNodes==null || aNodes.isEmpty()) continue;
-                        HtmlElement aElement = aNodes.get(0);
-                        String url = ROOT_URL + aElement.getAttribute("href");
-//                        String id = StringUtils.substringAfterLast(href, " ");
-                        String name = td.asText();
-                        if(!skipKinds(name)) {
-//                          System.out.println("url--->" + url + "/name=" + name);
-                            StockType stockType = new StockType();
-                            stockType.setId(IdUtils.genLongId());
-                            stockType.setName(name);
-                            stockType.setType(stockTypeEnum.getType());
-                            stockType.setUrl(url);
-                            stockType.setStatus(true);
-                            stockType.setCreateDate(date);
-                            stockTypes.add(stockType);
-//                            stockTypeConceptMapper.deleteByName(name);
-                            if(stockTypeMapper.selectByName(name, stockTypeEnum.getType()) == null) {
-                                stockTypeMapper.insert(stockType);
+        try {
+            HtmlPage page = webClient.getPage(ROOT_URL + "/h/getclass.php");
+            //        HtmlElement element = page.getHtmlElementById("table7");
+            DomElement element = page.getElementById(eleId);
+            DomElement ele = element.getNextElementSibling();
+            List<HtmlElement> trs = ele.getElementsByTagName("tr");
+            List<StockType> stockTypes = Lists.newArrayList();
+//            System.out.println("2===>" + trs);
+            if (trs != null && !trs.isEmpty()) {
+                Date date = new Date();
+                for (HtmlElement tr : trs) {
+//                    System.out.println("3===>" + tr.asXml());
+                    List<HtmlElement> tds = tr.getElementsByTagName("td");
+                    if (tds != null && !tds.isEmpty()) {
+                        for (HtmlElement td : tds) {
+//                            System.out.println("td=" + td.asXml());
+                            List<HtmlElement> aNodes = td.getElementsByTagName("a");
+                            if(aNodes==null || aNodes.isEmpty()) continue;
+                            HtmlElement aElement = aNodes.get(0);
+                            String url = ROOT_URL + aElement.getAttribute("href");
+//                            String id = StringUtils.substringAfterLast(href, " ");
+                            String name = td.asText();
+                            if(!skipKinds(name)) {
+//                              System.out.println("url--->" + url + "/name=" + name);
+                                StockType stockType = new StockType();
+                                stockType.setId(IdUtils.genLongId());
+                                stockType.setName(name);
+                                stockType.setType(stockTypeEnum.getType());
+                                stockType.setUrl(url);
+                                stockType.setStatus(true);
+                                stockType.setCreateDate(date);
+                                stockTypes.add(stockType);
+//                                stockTypeConceptMapper.deleteByName(name);
+                                if(stockTypeMapper.selectByName(name, stockTypeEnum.getType()) == null) {
+                                    stockTypeMapper.insert(stockType);
+                                }
                             }
                         }
                     }
                 }
             }
+            return stockTypes;
+        } finally {
+            final List<WebWindow> windows = webClient.getWebWindows();
+            for (final WebWindow wd : windows) {
+                wd.getJobManager().removeAllJobs();
+            }
+            // webClient.close();
         }
-        return stockTypes;
     }
     
 
@@ -737,7 +774,11 @@ public class FetchServiceImpl implements FetchService {
                 }
             }
         } finally {
-            nextPage.cleanUp();
+            final List<WebWindow> windows = webClient.getWebWindows();
+            for (final WebWindow wd : windows) {
+                wd.getJobManager().removeAllJobs();
+            }
+            // webClient.close();
         }
     }
     
@@ -756,8 +797,15 @@ public class FetchServiceImpl implements FetchService {
         List<StockHistoryError> stockHistoryErrors = stockHistoryErrorMapper.selectAllByStatus(0);
         if(stockHistoryErrors!=null && !stockHistoryErrors.isEmpty()) {
             for(StockHistoryError stockHistoryError : stockHistoryErrors) {
-                this.fetchHistory(stockHistoryError.getNo(), DatesUtils.YYMMDD2.toString(stockHistoryError.getStartDate()), DatesUtils.YYMMDD2.toString(stockHistoryError.getEndDate()));
-                stockHistoryErrorMapper.deleteByPrimaryKey(stockHistoryError.getId());
+                
+                try {
+                    long s = System.currentTimeMillis();
+                    System.out.println("股号: "+stockHistoryError.getNo()+", 重新抓取开始......");
+                    this.fetchHistory(stockHistoryError.getNo(), DatesUtils.YYMMDD2.toString(stockHistoryError.getStartDate()), DatesUtils.YYMMDD2.toString(stockHistoryError.getEndDate()));
+                    stockHistoryErrorMapper.deleteByPrimaryKey(stockHistoryError.getId());System.out.println("股号: "+stockHistoryError.getNo()+", 重新抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
+                } catch(Exception e) {
+                    logger.error("股号: {}, 重新抓取异常: ", stockHistoryError.getNo(), e);
+                }
             }
         }
     }
@@ -839,169 +887,172 @@ public class FetchServiceImpl implements FetchService {
         }
         long stockId = stockData.getId();
         String url = "https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo();
-//        try {
-        List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
-        HtmlPage page = processGuceOathCom(webClient.getPage(url));
-        page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
-        page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
-        HtmlForm form = page.getHtmlElementById("aspnetForm");
-        HtmlPage page2 = form.getOneHtmlElementByAttribute("input", "id", "ctl00_ContentPlaceHolder1_submitBut").click();
-        HtmlForm form2 = page2.getHtmlElementById("aspnetForm");
-        HtmlElement element = form2.getOneHtmlElementByAttribute("table", "enableviewstate", "false");
-//            System.out.println("1===>"+element.asXml());
-        List<HtmlElement> trs = element.getElementsByTagName("tr");
-//            System.out.println("2===>"+trs);
-        if(trs!=null && !trs.isEmpty()) {
-            stockHistoryMapper.deleteByDate(stockId, DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
-            for(HtmlElement tr : trs) {
-//                    System.out.println("3===>"+tr.asXml());
-                List<HtmlElement> tds = tr.getElementsByTagName("td");
-                if(tds!=null && !tds.isEmpty()) {
-                    int i=0;
-                    StockHistory stockHistory = new StockHistory();
-                    for(HtmlElement td : tds) {
-//                            System.out.println("===>"+td.asXml());
-                        switch(i) {
-                            case 0:
-                              // 日期
-                                stockHistory.setDate(DatesUtils.YYMMDD2.toDate(td.asText()));
-                            break;
-                            case 1:
-                              // 開盤
-                                stockHistory.setOpening(new BigDecimal(td.asText()));
-                              break;
-                            case 2:
-                                // 最高    
-                                stockHistory.setHighest(new BigDecimal(td.asText()));
+        try {
+            List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
+            HtmlPage page = processGuceOathCom(webClient.getPage(url));
+            page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
+            page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
+            HtmlForm form = page.getHtmlElementById("aspnetForm");
+            HtmlPage page2 = form.getOneHtmlElementByAttribute("input", "id", "ctl00_ContentPlaceHolder1_submitBut").click();
+            HtmlForm form2 = page2.getHtmlElementById("aspnetForm");
+            HtmlElement element = form2.getOneHtmlElementByAttribute("table", "enableviewstate", "false");
+    //            System.out.println("1===>"+element.asXml());
+            List<HtmlElement> trs = element.getElementsByTagName("tr");
+    //            System.out.println("2===>"+trs);
+            if(trs!=null && !trs.isEmpty()) {
+                stockHistoryMapper.deleteByDate(stockId, DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
+                for(HtmlElement tr : trs) {
+    //                    System.out.println("3===>"+tr.asXml());
+                    List<HtmlElement> tds = tr.getElementsByTagName("td");
+                    if(tds!=null && !tds.isEmpty()) {
+                        int i=0;
+                        StockHistory stockHistory = new StockHistory();
+                        for(HtmlElement td : tds) {
+    //                            System.out.println("===>"+td.asXml());
+                            switch(i) {
+                                case 0:
+                                  // 日期
+                                    stockHistory.setDate(DatesUtils.YYMMDD2.toDate(td.asText()));
                                 break;
-                            case 3:
-                                // 最低    
-                                stockHistory.setLowest(new BigDecimal(td.asText()));
-                                break;
-                            case 4:
-                                // 收盤    
-                                stockHistory.setClosing(new BigDecimal(td.asText()));
-                                break;
-                            case 5:
-                                // 漲跌    
-                                stockHistory.setUpsDowns(new BigDecimal(td.asText()));
-                                break;
-                            case 6:
-                                // 漲%    
-                                stockHistory.setRiseRate(td.asText());
-                                break;
-                            case 7:
-                                // 成交量    
-                                stockHistory.setVol(new BigDecimal(td.asText().replace(",", "")));
-                                break;
-                            case 8:
-                                // 成交金額    
-                                stockHistory.setAmount(new BigDecimal(td.asText().replace(",", "")));
-                                break;
-                            case 9:
-                                // 本益比
-                                stockHistory.setPer(td.asText());
-                                break;
+                                case 1:
+                                  // 開盤
+                                    stockHistory.setOpening(new BigDecimal(td.asText()));
+                                  break;
+                                case 2:
+                                    // 最高    
+                                    stockHistory.setHighest(new BigDecimal(td.asText()));
+                                    break;
+                                case 3:
+                                    // 最低    
+                                    stockHistory.setLowest(new BigDecimal(td.asText()));
+                                    break;
+                                case 4:
+                                    // 收盤    
+                                    stockHistory.setClosing(new BigDecimal(td.asText()));
+                                    break;
+                                case 5:
+                                    // 漲跌    
+                                    stockHistory.setUpsDowns(new BigDecimal(td.asText()));
+                                    break;
+                                case 6:
+                                    // 漲%    
+                                    stockHistory.setRiseRate(td.asText());
+                                    break;
+                                case 7:
+                                    // 成交量    
+                                    stockHistory.setVol(new BigDecimal(td.asText().replace(",", "")));
+                                    break;
+                                case 8:
+                                    // 成交金額    
+                                    stockHistory.setAmount(new BigDecimal(td.asText().replace(",", "")));
+                                    break;
+                                case 9:
+                                    // 本益比
+                                    stockHistory.setPer(td.asText());
+                                    break;
+                            }
+                            i++;
                         }
-                        i++;
+    //                        System.out.println("===>"+stockHistory);
+                        stockHistory.setType(StockHistoryEnum.DAY.getType());
+                        stockHistory4Inserts.add(stockHistory);
                     }
-//                        System.out.println("===>"+stockHistory);
-                    stockHistory.setType(StockHistoryEnum.DAY.getType());
-                    stockHistory4Inserts.add(stockHistory);
                 }
             }
+            if(!stockHistory4Inserts.isEmpty()) {
+                stockHistory4Inserts = Lists.reverse(stockHistory4Inserts);
+                // 升序insert
+                for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
+                    stockHistory4Insert.setId(IdUtils.genLongId());
+                    stockHistory4Insert.setStockId(stockId);
+                    stockHistory4Insert.setCreateDate(new Date());
+                    stockHistoryMapper.insert(stockHistory4Insert);
+                    // 日
+                    StockHistory averageOfDay = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
+                    StockHistory averageVolOfDay = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
+                    if(averageOfDay!=null && averageVolOfDay!=null) {
+                        averageOfDay.setId(stockHistory4Insert.getId());
+                        averageOfDay.setUpdateDate(new Date());
+                        // 设置5日成立量均线
+                        averageOfDay.setAveragevol5(averageVolOfDay.getAveragevol5());
+                        stockHistoryMapper.updateAverage(averageOfDay);
+                    }
+    
+                }
+                // 需要上面处理完才能往下处理
+                for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
+                    
+                    LocalDate localDate = MyDateUtils.date2LoalDate(stockHistory4Insert.getDate());
+                    // 周
+                    LocalDate firstDateOfWeek = MyDateUtils.getFirstDayOfWeek(localDate);
+                    Date startDateOfWeek = MyDateUtils.localDate2Date(firstDateOfWeek);
+                    
+    //                    LocalDate lastDateOfWeek = localDate.with(WeekFields.of(Locale.CHINA).dayOfWeek(), 7);
+    //                    Date endDateOfWeek = Date.from(lastDateOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    // 结束日期应该是当时那条记录的日期
+                    Date endDateOfWeek = stockHistory4Insert.getDate();
+                    
+                    StockHistory history4Week = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfWeek, endDateOfWeek, StockHistoryEnum.DAY.getType());
+                    if(history4Week != null) {
+                        // 以startDateOfWeek(（取下一个自然工作日）)作为周的唯一判断,一周只能有一和记录
+                        Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfWeek);
+                        stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.WEEK.getType());
+                        history4Week.setId(IdUtils.genLongId());
+                        history4Week.setStockId(stockId);
+                        history4Week.setDate(uniqeDate);
+                        history4Week.setType(StockHistoryEnum.WEEK.getType());
+                        history4Week.setCreateDate(new Date());
+                        stockHistoryMapper.insert(history4Week);
+                        StockHistory averageOfWeek = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
+                        StockHistory averageVolOfWeek = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
+                        if(averageOfWeek != null && averageVolOfWeek != null) {
+                            averageOfWeek.setId(history4Week.getId());
+                            averageOfWeek.setUpdateDate(new Date());
+                            // 设置5周成立量均线
+                            averageOfWeek.setAveragevol5(averageVolOfWeek.getAveragevol5());
+                            stockHistoryMapper.updateAverage(averageOfWeek);
+                        }
+                    }
+                    
+                    // 月
+                    LocalDate firstDateOfMonth = MyDateUtils.getFirstDayOfMonth(localDate);
+                    Date startDateOfMonth = MyDateUtils.localDate2Date(firstDateOfMonth);
+                    
+    //                    LocalDate lastDateOfMonth = localDate.with(TemporalAdjusters.lastDayOfMonth());
+    //                    Date endDateOfMonth = Date.from(lastDateOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    // 结束日期应该是当时那条记录的日期
+                    Date endDateOfMonth = stockHistory4Insert.getDate();
+                    
+                    StockHistory history4Month = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfMonth, endDateOfMonth, StockHistoryEnum.DAY.getType());
+                    if(history4Month != null) {
+                        // 以startDateOfMonth作为月（取下一个自然工作日）的唯一判断,一月只能有一和记录
+                        Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfMonth);
+                        stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.MONTH.getType());
+                        history4Month.setId(IdUtils.genLongId());
+                        history4Month.setStockId(stockId);
+                        history4Month.setDate(uniqeDate);
+                        history4Month.setType(StockHistoryEnum.MONTH.getType());
+                        history4Month.setCreateDate(new Date());
+                        stockHistoryMapper.insert(history4Month);
+                        StockHistory averageOfMonth = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
+                        StockHistory averageVolOfMonth = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
+                        if(averageOfMonth!=null && averageVolOfMonth!=null) {
+                            averageOfMonth.setId(history4Month.getId());
+                            averageOfMonth.setUpdateDate(new Date());
+                            // 设置5月成立量均线
+                            averageOfMonth.setAveragevol5(averageVolOfMonth.getAveragevol5());
+                            stockHistoryMapper.updateAverage(averageOfMonth);
+                        }
+                    }
+                }
+            }
+        } finally {
+            final List<WebWindow> windows = webClient.getWebWindows();
+            for (final WebWindow wd : windows) {
+                wd.getJobManager().removeAllJobs();
+            }
+            // webClient.close();
         }
-        if(!stockHistory4Inserts.isEmpty()) {
-            stockHistory4Inserts = Lists.reverse(stockHistory4Inserts);
-            // 升序insert
-            for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
-                stockHistory4Insert.setId(IdUtils.genLongId());
-                stockHistory4Insert.setStockId(stockId);
-                stockHistory4Insert.setCreateDate(new Date());
-                stockHistoryMapper.insert(stockHistory4Insert);
-                // 日
-                StockHistory averageOfDay = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
-                StockHistory averageVolOfDay = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
-                if(averageOfDay!=null && averageVolOfDay!=null) {
-                    averageOfDay.setId(stockHistory4Insert.getId());
-                    averageOfDay.setUpdateDate(new Date());
-                    // 设置5日成立量均线
-                    averageOfDay.setAveragevol5(averageVolOfDay.getAveragevol5());
-                    stockHistoryMapper.updateAverage(averageOfDay);
-                }
-
-            }
-            // 需要上面处理完才能往下处理
-            for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
-                
-                LocalDate localDate = MyDateUtils.date2LoalDate(stockHistory4Insert.getDate());
-                // 周
-                LocalDate firstDateOfWeek = MyDateUtils.getFirstDayOfWeek(localDate);
-                Date startDateOfWeek = MyDateUtils.localDate2Date(firstDateOfWeek);
-                
-//                    LocalDate lastDateOfWeek = localDate.with(WeekFields.of(Locale.CHINA).dayOfWeek(), 7);
-//                    Date endDateOfWeek = Date.from(lastDateOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
-                // 结束日期应该是当时那条记录的日期
-                Date endDateOfWeek = stockHistory4Insert.getDate();
-                
-                StockHistory history4Week = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfWeek, endDateOfWeek, StockHistoryEnum.DAY.getType());
-                if(history4Week != null) {
-                    // 以startDateOfWeek(（取下一个自然工作日）)作为周的唯一判断,一周只能有一和记录
-                    Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfWeek);
-                    stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.WEEK.getType());
-                    history4Week.setId(IdUtils.genLongId());
-                    history4Week.setStockId(stockId);
-                    history4Week.setDate(uniqeDate);
-                    history4Week.setType(StockHistoryEnum.WEEK.getType());
-                    history4Week.setCreateDate(new Date());
-                    stockHistoryMapper.insert(history4Week);
-                    StockHistory averageOfWeek = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
-                    StockHistory averageVolOfWeek = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
-                    if(averageOfWeek != null && averageVolOfWeek != null) {
-                        averageOfWeek.setId(history4Week.getId());
-                        averageOfWeek.setUpdateDate(new Date());
-                        // 设置5周成立量均线
-                        averageOfWeek.setAveragevol5(averageVolOfWeek.getAveragevol5());
-                        stockHistoryMapper.updateAverage(averageOfWeek);
-                    }
-                }
-                
-                // 月
-                LocalDate firstDateOfMonth = MyDateUtils.getFirstDayOfMonth(localDate);
-                Date startDateOfMonth = MyDateUtils.localDate2Date(firstDateOfMonth);
-                
-//                    LocalDate lastDateOfMonth = localDate.with(TemporalAdjusters.lastDayOfMonth());
-//                    Date endDateOfMonth = Date.from(lastDateOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
-                // 结束日期应该是当时那条记录的日期
-                Date endDateOfMonth = stockHistory4Insert.getDate();
-                
-                StockHistory history4Month = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfMonth, endDateOfMonth, StockHistoryEnum.DAY.getType());
-                if(history4Month != null) {
-                    // 以startDateOfMonth作为月（取下一个自然工作日）的唯一判断,一月只能有一和记录
-                    Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfMonth);
-                    stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.MONTH.getType());
-                    history4Month.setId(IdUtils.genLongId());
-                    history4Month.setStockId(stockId);
-                    history4Month.setDate(uniqeDate);
-                    history4Month.setType(StockHistoryEnum.MONTH.getType());
-                    history4Month.setCreateDate(new Date());
-                    stockHistoryMapper.insert(history4Month);
-                    StockHistory averageOfMonth = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
-                    StockHistory averageVolOfMonth = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
-                    if(averageOfMonth!=null && averageVolOfMonth!=null) {
-                        averageOfMonth.setId(history4Month.getId());
-                        averageOfMonth.setUpdateDate(new Date());
-                        // 设置5月成立量均线
-                        averageOfMonth.setAveragevol5(averageVolOfMonth.getAveragevol5());
-                        stockHistoryMapper.updateAverage(averageOfMonth);
-                    }
-                }
-            }
-        }
-//        } catch (Exception e) {
-//            System.out.println("error url------>"+url+"--->"+startDate+"--->"+endDate);
-//            logger.error(e.getMessage(), e);
-//        }
     }
 
     /*@Override

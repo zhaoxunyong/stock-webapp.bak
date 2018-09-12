@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=dev
+User=root
 WorkingDirectory=/works/app/stock-webapp
 ExecStart=/works/app/stock-webapp/start.sh 
 ExecStop=/works/app/stock-webapp/stop.sh

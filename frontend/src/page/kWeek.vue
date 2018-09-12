@@ -63,6 +63,7 @@ export default {
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
         // type 0: 日 1: 周 2: 月
         let url = `/api/stock/selectHistory?stockId=${this.stockId}&type=1&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`
+        console.log("kWeek url--->"+url)
         this.$api.get(url, null, rs => {
           if(rs != undefined && rs.length > 0) {
             for(let i=0;i<rs.length;i++) {

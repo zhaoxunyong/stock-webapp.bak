@@ -61,7 +61,7 @@
         <appender-ref ref="error_file" />
     </root>
     
-    <!-- 不顯示eureka-server的info信息 -->
-    <logger name="org.stock.fetch.dao" level="debug" />
+    <!-- 顯示sql信息 -->
+<!--     <logger name="org.stock.fetch.dao" level="debug" /> -->
     
 </configuration>
