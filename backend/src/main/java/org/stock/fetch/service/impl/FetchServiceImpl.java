@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +41,7 @@ import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
 import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
+import org.stock.fetch.tasks.ScheduledTasks;
 import org.stock.utils.FileMd5Utils;
 import org.stock.utils.MyDateUtils;
 
@@ -121,7 +121,7 @@ public class FetchServiceImpl implements FetchService {
         // 上柜
         List<StockType> counterTypes = fetchNewsKinds(StockTypeEnum.COUNTER);
         fetchNewStocks(counterTypes);
-        System.out.println("fetchNewsKinds---->"+(System.currentTimeMillis()-s)+"ms.");
+        logger.info("fetchNewsKinds---->"+(System.currentTimeMillis()-s)+"ms.");
         s = System.currentTimeMillis();
         // 電子行業
         List<StockType> electronicTypes = fetchKinds(StockTypeEnum.ELECTRONIC);
@@ -132,7 +132,7 @@ public class FetchServiceImpl implements FetchService {
         // 集團
         List<StockType> groupTypes = fetchKinds(StockTypeEnum.GROUP);
         fetchStocks(groupTypes);
-        System.out.println("fetchKinds---->"+(System.currentTimeMillis()-s)+"ms.");
+        logger.info("fetchKinds---->"+(System.currentTimeMillis()-s)+"ms.");
       
         /*// 上市
 //        List<StockType> marketTypes = fetchKinds(StockTypeEnum.MARKET);
@@ -161,7 +161,7 @@ public class FetchServiceImpl implements FetchService {
                 || "指數類".equals(name)
                 || "認購".equals(name)
                 || "認售".equals(name)) {
-            System.out.println("不需要导入: "+name);
+            logger.info("不需要导入: "+name);
             return true;
         } 
         return false;
@@ -169,7 +169,7 @@ public class FetchServiceImpl implements FetchService {
     
     private boolean skipSocks(String no) {
         if(no.length() == 6) {
-            System.out.println("股號長度為6位時跳過：" + no);
+            logger.info("股號長度為6位時跳過：" + no);
             return true;
         }
         return false;
@@ -206,7 +206,7 @@ public class FetchServiceImpl implements FetchService {
                                   String name = anchor.asText();
                                   if(stockTypeEnum == StockTypeEnum.MARKET || (stockTypeEnum == StockTypeEnum.COUNTER && !"上市".equals(name))) {
                                         String aHref = anchor.getHrefAttribute();
-//                                        System.out.println("name--->" + name + "/aHref--->" + aHref);
+//                                        logger.info("name--->" + name + "/aHref--->" + aHref);
                                         StockType stockType = new StockType();
                                         stockType.setName(name);
                                         if(!skipKinds(name)) {
@@ -255,7 +255,7 @@ public class FetchServiceImpl implements FetchService {
                         throw new BusinessException("Not found form!");
                     }
                     HtmlElement domNode = (HtmlElement) formNodes.get(0);
-//                    System.out.println("domNode===>"+domNode.asXml());
+//                    logger.info("domNode===>"+domNode.asXml());
                     
                     List<DomNode> tdDomNodes = domNode.querySelectorAll("table tbody tr td table tbody tr td");//.get(2);
                     if(tdDomNodes!=null && !tdDomNodes.isEmpty()) {
@@ -265,7 +265,7 @@ public class FetchServiceImpl implements FetchService {
                                 String no = StringUtils.substringBefore(text, " ");
                                 if(!skipSocks(no)) {
                                     String company = StringUtils.substringAfter(text, " ");
-//                                  System.out.println("no--->"+no+"/"+company);
+//                                  logger.info("no--->"+no+"/"+company);
                                     if(stockType.getType().equals(StockTypeEnum.MARKET.getType()) || stockType.getType().equals(StockTypeEnum.COUNTER.getType())) {
                                         // 如果該股票存在時，一定要復用之前的id，不然所有的其他的記錄關聯id，這樣會有問題
                                         StockData existStockData = stockDataMapper.selectByNo(no);
@@ -341,7 +341,7 @@ public class FetchServiceImpl implements FetchService {
                 HtmlElement htmlElement = (HtmlElement)page.getByXPath("//*[contains(text(),'細產業別')]").get(0);
                 DomElement domElement = htmlElement.getNextElementSibling();
                 String kinds = domElement.asText();
-                System.out.println("kinds--->"+kinds);
+                logger.info("kinds--->"+kinds);
                 
                 // 細產類別
                 String kinds = "";
@@ -384,7 +384,7 @@ public class FetchServiceImpl implements FetchService {
                     for(StockNews news : stockNewses) {
                         if(news.getNewsDate().getTime() <= newDate.getTime()) {
                             // 用system.out.println，可以在nohup.out文件中查看
-                            System.out.println("fetchLatestNews: "+stockData.getNo()+"-"+stockData.getCompany()+"已经导到了"+DatesUtils.YYMMDDHHMMSS.toString(newDate)+"，无需再导入!");
+                            logger.info("fetchLatestNews: "+stockData.getNo()+"-"+stockData.getCompany()+"已经导到了"+DatesUtils.YYMMDDHHMMSS.toString(newDate)+"，无需再导入!");
                             return ;
                         }
                     }
@@ -528,7 +528,7 @@ public class FetchServiceImpl implements FetchService {
                 if(stockImportantNewses!=null && !stockImportantNewses.isEmpty()) {
                     for(StockImportantNews importantNews : stockImportantNewses) {
                         if(importantNews != null && importantNews.getNewsDate()!=null && importantNews.getNewsDate().getTime() <= newDate.getTime()) {
-                            System.out.println("stockImportantNews: 已经导到了"+newDate+"，无需再导入!");
+                            logger.info("stockImportantNews: 已经导到了"+newDate+"，无需再导入!");
 //                            break labelA;
                             return;
                         }
@@ -573,8 +573,8 @@ public class FetchServiceImpl implements FetchService {
                         stockImportantNews.setId(IdUtils.genLongId());
                         stockImportantNews.setCreateDate(date);
                         stockImportantNews.setFroms(fromValue);
-//                        System.out.println("fromValue--->"+fromValue);
-//                        System.out.println("newsDateString--->"+newsDateString);
+//                        logger.info("fromValue--->"+fromValue);
+//                        logger.info("newsDateString--->"+newsDateString);
                         stockImportantNews.setNewsDate(DatesUtils.YYMMDDHHMMSS2.toDate(newsDateString+":00"));
                         stockImportantNews.setSubject(subjectValue);
                         stockImportantNews.setUrl(url);
@@ -622,15 +622,15 @@ public class FetchServiceImpl implements FetchService {
             DomElement ele = element.getNextElementSibling();
             List<HtmlElement> trs = ele.getElementsByTagName("tr");
             List<StockType> stockTypes = Lists.newArrayList();
-//            System.out.println("2===>" + trs);
+//            logger.info("2===>" + trs);
             if (trs != null && !trs.isEmpty()) {
                 Date date = new Date();
                 for (HtmlElement tr : trs) {
-//                    System.out.println("3===>" + tr.asXml());
+//                    logger.info("3===>" + tr.asXml());
                     List<HtmlElement> tds = tr.getElementsByTagName("td");
                     if (tds != null && !tds.isEmpty()) {
                         for (HtmlElement td : tds) {
-//                            System.out.println("td=" + td.asXml());
+//                            logger.info("td=" + td.asXml());
                             List<HtmlElement> aNodes = td.getElementsByTagName("a");
                             if(aNodes==null || aNodes.isEmpty()) continue;
                             HtmlElement aElement = aNodes.get(0);
@@ -638,7 +638,7 @@ public class FetchServiceImpl implements FetchService {
 //                            String id = StringUtils.substringAfterLast(href, " ");
                             String name = td.asText();
                             if(!skipKinds(name)) {
-//                              System.out.println("url--->" + url + "/name=" + name);
+//                              logger.info("url--->" + url + "/name=" + name);
                                 StockType stockType = new StockType();
                                 stockType.setId(IdUtils.genLongId());
                                 stockType.setName(name);
@@ -674,30 +674,30 @@ public class FetchServiceImpl implements FetchService {
         HtmlPage nextPage = webClient.getPage(stockType.getUrl());
         try {
             List<?> domNodes = nextPage.querySelectorAll("table.yui-text-left tbody tr");
-//            System.out.println("url="+stockType.getUrl()+"/name="+stockType.getName());
+//            logger.info("url="+stockType.getUrl()+"/name="+stockType.getName());
             if(domNodes==null || domNodes.size() < 3) {
-                System.out.println("domNodes异常，跳过导入：url2="+stockType.getUrl()+"/name="+stockType.getName());
+                logger.info("domNodes异常，跳过导入：url2="+stockType.getUrl()+"/name="+stockType.getName());
             } 
             // 存託憑證，市認購，市認售，指數類，收益證劵
             // 在櫃買部份，指數類，認購，認售
             else {
                 HtmlElement domNode = (HtmlElement) domNodes.get(2);
-    //            System.out.println("domNode===>"+domNode.asXml());
+    //            logger.info("domNode===>"+domNode.asXml());
                 
                 List<DomNode> trDomNodes = domNode.querySelectorAll("table table tbody tr");//.get(2);
                 if(trDomNodes!=null && !trDomNodes.isEmpty()) {
                     for(int i=2;i<trDomNodes.size();i++) {
                         HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
-    //                    System.out.println("trDomNode="+trDomNode.asXml());
-    //                  System.out.println("trDomNode===>"+trDomNode);
+    //                    logger.info("trDomNode="+trDomNode.asXml());
+    //                  logger.info("trDomNode===>"+trDomNode);
                         List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
                         HtmlElement tdElement = nextTds.get(1);
-    //                    System.out.println("tdElement===>"+tdElement.asXml());
+    //                    logger.info("tdElement===>"+tdElement.asXml());
                         
                         List<HtmlElement> aNodes = tdElement.getElementsByTagName("a");
                         if(aNodes==null || aNodes.isEmpty()) continue;
                         HtmlElement aElement = aNodes.get(0);
-    //                    System.out.println("aElement===>"+aElement.asXml());
+    //                    logger.info("aElement===>"+aElement.asXml());
                         String url = ROOT_URL + aElement.getAttribute("href");
     //                    String id = StringUtils.substringAfterLast(href, " ");
                         String value = tdElement.asText();
@@ -711,7 +711,7 @@ public class FetchServiceImpl implements FetchService {
                             HtmlElement highestElement = nextTds.get(10);
                             HtmlElement lowestElement = nextTds.get(11);
                             
-        //                    System.out.println("url=" + url + "/no=" + no + "/company=" + company);
+        //                    logger.info("url=" + url + "/no=" + no + "/company=" + company);
                             /*
                             // 細產類別
                             String kinds = "";
@@ -800,9 +800,9 @@ public class FetchServiceImpl implements FetchService {
                 
                 try {
                     long s = System.currentTimeMillis();
-                    System.out.println("股号: "+stockHistoryError.getNo()+", 重新抓取开始......");
+                    logger.info("股号: "+stockHistoryError.getNo()+", 重新抓取开始......");
                     this.fetchHistory(stockHistoryError.getNo(), DatesUtils.YYMMDD2.toString(stockHistoryError.getStartDate()), DatesUtils.YYMMDD2.toString(stockHistoryError.getEndDate()));
-                    stockHistoryErrorMapper.deleteByPrimaryKey(stockHistoryError.getId());System.out.println("股号: "+stockHistoryError.getNo()+", 重新抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
+                    stockHistoryErrorMapper.deleteByPrimaryKey(stockHistoryError.getId());logger.info("股号: "+stockHistoryError.getNo()+", 重新抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
                 } catch(Exception e) {
                     logger.error("股号: {}, 重新抓取异常: ", stockHistoryError.getNo(), e);
                 }
@@ -811,7 +811,7 @@ public class FetchServiceImpl implements FetchService {
     }
     
     @Override
-//    @Transactional
+    @Transactional
     public void fetchAllHistory() throws Exception {
         LocalDate endDate = LocalDate.now();
         List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
@@ -820,28 +820,7 @@ public class FetchServiceImpl implements FetchService {
 //                String startDate = "2017/07/18";
 //                String endDate = "2017/11/01";
 //                String endDate = DatesUtils.YYMMDD2.toString(nowDate);
-                StockHistory lastStockHistory = stockHistoryMapper.selectLastStockHistory(stockMyData.getNo());
-                // 一开始默认抓取最近5年的数据
-                LocalDate startDate = endDate.plusYears(-5L);
-                if(lastStockHistory != null) {
-                    startDate = MyDateUtils.date2LoalDate(lastStockHistory.getDate());
-                }
-                try {
-                    long s = System.currentTimeMillis();
-                    System.out.println("股号: "+stockMyData.getNo()+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取开始......");
-                    this.fetchHistory(stockMyData.getNo(), DatesUtils.YYMMDD2.toString(MyDateUtils.localDate2Date(startDate)), DatesUtils.YYMMDD2.toString(MyDateUtils.localDate2Date(endDate)));
-                    System.out.println("股号: "+stockMyData.getNo()+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
-                } catch(Exception e) {
-                    logger.error("股号: {}, 开始日期: {}, 结束日期: {}, 抓取异常: ", stockMyData.getNo(), startDate, endDate, e);
-                    StockHistoryError stockHistoryError = new StockHistoryError();
-                    stockHistoryError.setId(IdUtils.genLongId());
-                    stockHistoryError.setCreateDate(new Date());
-                    stockHistoryError.setNo(stockMyData.getNo());
-                    stockHistoryError.setStartDate(MyDateUtils.localDate2Date(startDate));
-                    stockHistoryError.setEndDate(MyDateUtils.localDate2Date(endDate));
-                    stockHistoryError.setStatus(0); //抓取状态 1: 重试后成功 0: 错误
-                    stockHistoryErrorMapper.insert(stockHistoryError);
-                }
+                fetchHistory(stockMyData.getNo());
             }
         }
     }
@@ -857,9 +836,9 @@ public class FetchServiceImpl implements FetchService {
 //                String endDate = DatesUtils.YYMMDD2.toString(nowDate);
                 try {
                     long s = System.currentTimeMillis();
-                    System.out.println("股号: "+stockMyData.getNo()+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取开始.");
+                    logger.info("股号: "+stockMyData.getNo()+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取开始.");
                     this.fetchHistory(stockMyData.getNo(), startDate, endDate);
-                    System.out.println("股号: "+stockMyData.getNo()+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
+                    logger.info("股号: "+stockMyData.getNo()+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
                 } catch(Exception e) {
                     logger.error("股号: {}, 开始日期: {}, 结束日期: {}, 抓取异常：", stockMyData.getNo(), startDate, endDate, e);
                     StockHistoryError stockHistoryError = new StockHistoryError();
@@ -880,178 +859,215 @@ public class FetchServiceImpl implements FetchService {
      */
     @Override
     @Transactional
-    public void fetchHistory(String no, String startDate, String endDate) throws Exception {
-        StockData stockData = stockDataMapper.selectByNo(no);
-        if(stockData == null) {
-            throw new BusinessException("Not found stock data by no: " + no);
+    public void fetchHistory(String no) throws Exception {
+        LocalDate endDate = LocalDate.now();
+        StockHistory lastStockHistory = stockHistoryMapper.selectLastStockHistory(no);
+        // 一开始默认抓取最近5年的数据
+        LocalDate startDate = endDate.plusYears(-5L);
+        if(lastStockHistory != null) {
+            startDate = MyDateUtils.date2LoalDate(lastStockHistory.getDate());
         }
-        long stockId = stockData.getId();
-        String url = "https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo();
         try {
-            List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
-            HtmlPage page = processGuceOathCom(webClient.getPage(url));
-            page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
-            page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
-            HtmlForm form = page.getHtmlElementById("aspnetForm");
-            HtmlPage page2 = form.getOneHtmlElementByAttribute("input", "id", "ctl00_ContentPlaceHolder1_submitBut").click();
-            HtmlForm form2 = page2.getHtmlElementById("aspnetForm");
-            HtmlElement element = form2.getOneHtmlElementByAttribute("table", "enableviewstate", "false");
-    //            System.out.println("1===>"+element.asXml());
-            List<HtmlElement> trs = element.getElementsByTagName("tr");
-    //            System.out.println("2===>"+trs);
-            if(trs!=null && !trs.isEmpty()) {
-                stockHistoryMapper.deleteByDate(stockId, DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
-                for(HtmlElement tr : trs) {
-    //                    System.out.println("3===>"+tr.asXml());
-                    List<HtmlElement> tds = tr.getElementsByTagName("td");
-                    if(tds!=null && !tds.isEmpty()) {
-                        int i=0;
-                        StockHistory stockHistory = new StockHistory();
-                        for(HtmlElement td : tds) {
-    //                            System.out.println("===>"+td.asXml());
-                            switch(i) {
-                                case 0:
-                                  // 日期
-                                    stockHistory.setDate(DatesUtils.YYMMDD2.toDate(td.asText()));
-                                break;
-                                case 1:
-                                  // 開盤
-                                    stockHistory.setOpening(new BigDecimal(td.asText()));
-                                  break;
-                                case 2:
-                                    // 最高    
-                                    stockHistory.setHighest(new BigDecimal(td.asText()));
+            long s = System.currentTimeMillis();
+            logger.info("股号: "+no+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取开始......");
+            this.fetchHistory(no, DatesUtils.YYMMDD2.toString(MyDateUtils.localDate2Date(startDate)), DatesUtils.YYMMDD2.toString(MyDateUtils.localDate2Date(endDate)));
+            logger.info("股号: "+no+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
+        } catch(Exception e) {
+            logger.error("股号: {}, 开始日期: {}, 结束日期: {}, 抓取异常: ", no, startDate, endDate, e);
+            StockHistoryError stockHistoryError = new StockHistoryError();
+            stockHistoryError.setId(IdUtils.genLongId());
+            stockHistoryError.setCreateDate(new Date());
+            stockHistoryError.setNo(no);
+            stockHistoryError.setStartDate(MyDateUtils.localDate2Date(startDate));
+            stockHistoryError.setEndDate(MyDateUtils.localDate2Date(endDate));
+            stockHistoryError.setStatus(0); //抓取状态 1: 重试后成功 0: 错误
+            stockHistoryErrorMapper.insert(stockHistoryError);
+        }
+    }
+
+    /**
+     * 日期格式為：yyyy/MM/dd
+     */
+    @Override
+    @Transactional
+    public void fetchHistory(String no, String startDate, String endDate) throws Exception {
+        if(!ScheduledTasks.IS_FETCH_HISTORY) {
+            ScheduledTasks.IS_FETCH_HISTORY = true;
+            StockData stockData = stockDataMapper.selectByNo(no);
+            if(stockData == null) {
+                throw new BusinessException("Not found stock data by no: " + no);
+            }
+            long stockId = stockData.getId();
+            String url = "https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo();
+            try {
+                List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
+                HtmlPage page = processGuceOathCom(webClient.getPage(url));
+                page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
+                page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
+                HtmlForm form = page.getHtmlElementById("aspnetForm");
+                HtmlPage page2 = form.getOneHtmlElementByAttribute("input", "id", "ctl00_ContentPlaceHolder1_submitBut").click();
+                HtmlForm form2 = page2.getHtmlElementById("aspnetForm");
+                HtmlElement element = form2.getOneHtmlElementByAttribute("table", "enableviewstate", "false");
+        //            logger.info("1===>"+element.asXml());
+                List<HtmlElement> trs = element.getElementsByTagName("tr");
+        //            logger.info("2===>"+trs);
+                if(trs!=null && !trs.isEmpty()) {
+                    stockHistoryMapper.deleteByDate(stockId, DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
+                    for(HtmlElement tr : trs) {
+        //                    logger.info("3===>"+tr.asXml());
+                        List<HtmlElement> tds = tr.getElementsByTagName("td");
+                        if(tds!=null && !tds.isEmpty()) {
+                            int i=0;
+                            StockHistory stockHistory = new StockHistory();
+                            for(HtmlElement td : tds) {
+        //                            logger.info("===>"+td.asXml());
+                                switch(i) {
+                                    case 0:
+                                      // 日期
+                                        stockHistory.setDate(DatesUtils.YYMMDD2.toDate(td.asText()));
                                     break;
-                                case 3:
-                                    // 最低    
-                                    stockHistory.setLowest(new BigDecimal(td.asText()));
-                                    break;
-                                case 4:
-                                    // 收盤    
-                                    stockHistory.setClosing(new BigDecimal(td.asText()));
-                                    break;
-                                case 5:
-                                    // 漲跌    
-                                    stockHistory.setUpsDowns(new BigDecimal(td.asText()));
-                                    break;
-                                case 6:
-                                    // 漲%    
-                                    stockHistory.setRiseRate(td.asText());
-                                    break;
-                                case 7:
-                                    // 成交量    
-                                    stockHistory.setVol(new BigDecimal(td.asText().replace(",", "")));
-                                    break;
-                                case 8:
-                                    // 成交金額    
-                                    stockHistory.setAmount(new BigDecimal(td.asText().replace(",", "")));
-                                    break;
-                                case 9:
-                                    // 本益比
-                                    stockHistory.setPer(td.asText());
-                                    break;
+                                    case 1:
+                                      // 開盤
+                                        stockHistory.setOpening(new BigDecimal(td.asText()));
+                                      break;
+                                    case 2:
+                                        // 最高    
+                                        stockHistory.setHighest(new BigDecimal(td.asText()));
+                                        break;
+                                    case 3:
+                                        // 最低    
+                                        stockHistory.setLowest(new BigDecimal(td.asText()));
+                                        break;
+                                    case 4:
+                                        // 收盤    
+                                        stockHistory.setClosing(new BigDecimal(td.asText()));
+                                        break;
+                                    case 5:
+                                        // 漲跌    
+                                        stockHistory.setUpsDowns(new BigDecimal(td.asText()));
+                                        break;
+                                    case 6:
+                                        // 漲%    
+                                        stockHistory.setRiseRate(td.asText());
+                                        break;
+                                    case 7:
+                                        // 成交量    
+                                        stockHistory.setVol(new BigDecimal(td.asText().replace(",", "")));
+                                        break;
+                                    case 8:
+                                        // 成交金額    
+                                        stockHistory.setAmount(new BigDecimal(td.asText().replace(",", "")));
+                                        break;
+                                    case 9:
+                                        // 本益比
+                                        stockHistory.setPer(td.asText());
+                                        break;
+                                }
+                                i++;
                             }
-                            i++;
-                        }
-    //                        System.out.println("===>"+stockHistory);
-                        stockHistory.setType(StockHistoryEnum.DAY.getType());
-                        stockHistory4Inserts.add(stockHistory);
-                    }
-                }
-            }
-            if(!stockHistory4Inserts.isEmpty()) {
-                stockHistory4Inserts = Lists.reverse(stockHistory4Inserts);
-                // 升序insert
-                for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
-                    stockHistory4Insert.setId(IdUtils.genLongId());
-                    stockHistory4Insert.setStockId(stockId);
-                    stockHistory4Insert.setCreateDate(new Date());
-                    stockHistoryMapper.insert(stockHistory4Insert);
-                    // 日
-                    StockHistory averageOfDay = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
-                    StockHistory averageVolOfDay = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
-                    if(averageOfDay!=null && averageVolOfDay!=null) {
-                        averageOfDay.setId(stockHistory4Insert.getId());
-                        averageOfDay.setUpdateDate(new Date());
-                        // 设置5日成立量均线
-                        averageOfDay.setAveragevol5(averageVolOfDay.getAveragevol5());
-                        stockHistoryMapper.updateAverage(averageOfDay);
-                    }
-    
-                }
-                // 需要上面处理完才能往下处理
-                for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
-                    
-                    LocalDate localDate = MyDateUtils.date2LoalDate(stockHistory4Insert.getDate());
-                    // 周
-                    LocalDate firstDateOfWeek = MyDateUtils.getFirstDayOfWeek(localDate);
-                    Date startDateOfWeek = MyDateUtils.localDate2Date(firstDateOfWeek);
-                    
-    //                    LocalDate lastDateOfWeek = localDate.with(WeekFields.of(Locale.CHINA).dayOfWeek(), 7);
-    //                    Date endDateOfWeek = Date.from(lastDateOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
-                    // 结束日期应该是当时那条记录的日期
-                    Date endDateOfWeek = stockHistory4Insert.getDate();
-                    
-                    StockHistory history4Week = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfWeek, endDateOfWeek, StockHistoryEnum.DAY.getType());
-                    if(history4Week != null) {
-                        // 以startDateOfWeek(（取下一个自然工作日）)作为周的唯一判断,一周只能有一和记录
-                        Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfWeek);
-                        stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.WEEK.getType());
-                        history4Week.setId(IdUtils.genLongId());
-                        history4Week.setStockId(stockId);
-                        history4Week.setDate(uniqeDate);
-                        history4Week.setType(StockHistoryEnum.WEEK.getType());
-                        history4Week.setCreateDate(new Date());
-                        stockHistoryMapper.insert(history4Week);
-                        StockHistory averageOfWeek = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
-                        StockHistory averageVolOfWeek = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
-                        if(averageOfWeek != null && averageVolOfWeek != null) {
-                            averageOfWeek.setId(history4Week.getId());
-                            averageOfWeek.setUpdateDate(new Date());
-                            // 设置5周成立量均线
-                            averageOfWeek.setAveragevol5(averageVolOfWeek.getAveragevol5());
-                            stockHistoryMapper.updateAverage(averageOfWeek);
-                        }
-                    }
-                    
-                    // 月
-                    LocalDate firstDateOfMonth = MyDateUtils.getFirstDayOfMonth(localDate);
-                    Date startDateOfMonth = MyDateUtils.localDate2Date(firstDateOfMonth);
-                    
-    //                    LocalDate lastDateOfMonth = localDate.with(TemporalAdjusters.lastDayOfMonth());
-    //                    Date endDateOfMonth = Date.from(lastDateOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
-                    // 结束日期应该是当时那条记录的日期
-                    Date endDateOfMonth = stockHistory4Insert.getDate();
-                    
-                    StockHistory history4Month = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfMonth, endDateOfMonth, StockHistoryEnum.DAY.getType());
-                    if(history4Month != null) {
-                        // 以startDateOfMonth作为月（取下一个自然工作日）的唯一判断,一月只能有一和记录
-                        Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfMonth);
-                        stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.MONTH.getType());
-                        history4Month.setId(IdUtils.genLongId());
-                        history4Month.setStockId(stockId);
-                        history4Month.setDate(uniqeDate);
-                        history4Month.setType(StockHistoryEnum.MONTH.getType());
-                        history4Month.setCreateDate(new Date());
-                        stockHistoryMapper.insert(history4Month);
-                        StockHistory averageOfMonth = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
-                        StockHistory averageVolOfMonth = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
-                        if(averageOfMonth!=null && averageVolOfMonth!=null) {
-                            averageOfMonth.setId(history4Month.getId());
-                            averageOfMonth.setUpdateDate(new Date());
-                            // 设置5月成立量均线
-                            averageOfMonth.setAveragevol5(averageVolOfMonth.getAveragevol5());
-                            stockHistoryMapper.updateAverage(averageOfMonth);
+        //                        logger.info("===>"+stockHistory);
+                            stockHistory.setType(StockHistoryEnum.DAY.getType());
+                            stockHistory4Inserts.add(stockHistory);
                         }
                     }
                 }
+                if(!stockHistory4Inserts.isEmpty()) {
+                    stockHistory4Inserts = Lists.reverse(stockHistory4Inserts);
+                    // 升序insert
+                    for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
+                        stockHistory4Insert.setId(IdUtils.genLongId());
+                        stockHistory4Insert.setStockId(stockId);
+                        stockHistory4Insert.setCreateDate(new Date());
+                        stockHistoryMapper.insert(stockHistory4Insert);
+                        // 日：可以在页面中进行计算
+                        /*StockHistory averageOfDay = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
+                        StockHistory averageVolOfDay = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
+                        if(averageOfDay!=null && averageVolOfDay!=null) {
+                            averageOfDay.setId(stockHistory4Insert.getId());
+                            averageOfDay.setUpdateDate(new Date());
+                            // 设置5日成立量均线
+                            averageOfDay.setAveragevol5(averageVolOfDay.getAveragevol5());
+                            stockHistoryMapper.updateAverage(averageOfDay);
+                        }*/
+        
+                    }
+                    // 需要上面处理完才能往下处理
+                    for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
+                        
+                        LocalDate localDate = MyDateUtils.date2LoalDate(stockHistory4Insert.getDate());
+                        // 周
+                        LocalDate firstDateOfWeek = MyDateUtils.getFirstDayOfWeek(localDate);
+                        Date startDateOfWeek = MyDateUtils.localDate2Date(firstDateOfWeek);
+                        
+        //                    LocalDate lastDateOfWeek = localDate.with(WeekFields.of(Locale.CHINA).dayOfWeek(), 7);
+        //                    Date endDateOfWeek = Date.from(lastDateOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                        // 结束日期应该是当时那条记录的日期
+                        Date endDateOfWeek = stockHistory4Insert.getDate();
+                        
+                        StockHistory history4Week = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfWeek, endDateOfWeek, StockHistoryEnum.DAY.getType());
+                        if(history4Week != null) {
+                            // 以startDateOfWeek(（取下一个自然工作日）)作为周的唯一判断,一周只能有一和记录
+                            Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfWeek);
+                            stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.WEEK.getType());
+                            history4Week.setId(IdUtils.genLongId());
+                            history4Week.setStockId(stockId);
+                            history4Week.setDate(uniqeDate);
+                            history4Week.setType(StockHistoryEnum.WEEK.getType());
+                            history4Week.setCreateDate(new Date());
+                            stockHistoryMapper.insert(history4Week);
+                            /*StockHistory averageOfWeek = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
+                            StockHistory averageVolOfWeek = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
+                            if(averageOfWeek != null && averageVolOfWeek != null) {
+                                averageOfWeek.setId(history4Week.getId());
+                                averageOfWeek.setUpdateDate(new Date());
+                                // 设置5周成立量均线
+                                averageOfWeek.setAveragevol5(averageVolOfWeek.getAveragevol5());
+                                stockHistoryMapper.updateAverage(averageOfWeek);
+                            }*/
+                        }
+                        
+                        // 月
+                        LocalDate firstDateOfMonth = MyDateUtils.getFirstDayOfMonth(localDate);
+                        Date startDateOfMonth = MyDateUtils.localDate2Date(firstDateOfMonth);
+                        
+        //                    LocalDate lastDateOfMonth = localDate.with(TemporalAdjusters.lastDayOfMonth());
+        //                    Date endDateOfMonth = Date.from(lastDateOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                        // 结束日期应该是当时那条记录的日期
+                        Date endDateOfMonth = stockHistory4Insert.getDate();
+                        
+                        StockHistory history4Month = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfMonth, endDateOfMonth, StockHistoryEnum.DAY.getType());
+                        if(history4Month != null) {
+                            // 以startDateOfMonth作为月（取下一个自然工作日）的唯一判断,一月只能有一和记录
+                            Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfMonth);
+                            stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.MONTH.getType());
+                            history4Month.setId(IdUtils.genLongId());
+                            history4Month.setStockId(stockId);
+                            history4Month.setDate(uniqeDate);
+                            history4Month.setType(StockHistoryEnum.MONTH.getType());
+                            history4Month.setCreateDate(new Date());
+                            stockHistoryMapper.insert(history4Month);
+                            /*StockHistory averageOfMonth = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
+                            StockHistory averageVolOfMonth = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
+                            if(averageOfMonth!=null && averageVolOfMonth!=null) {
+                                averageOfMonth.setId(history4Month.getId());
+                                averageOfMonth.setUpdateDate(new Date());
+                                // 设置5月成立量均线
+                                averageOfMonth.setAveragevol5(averageVolOfMonth.getAveragevol5());
+                                stockHistoryMapper.updateAverage(averageOfMonth);
+                            }*/
+                        }
+                    }
+                }
+            } finally {
+                ScheduledTasks.IS_FETCH_HISTORY = false;
+                final List<WebWindow> windows = webClient.getWebWindows();
+                for (final WebWindow wd : windows) {
+                    wd.getJobManager().removeAllJobs();
+                }
+                // webClient.close();
             }
-        } finally {
-            final List<WebWindow> windows = webClient.getWebWindows();
-            for (final WebWindow wd : windows) {
-                wd.getJobManager().removeAllJobs();
-            }
-            // webClient.close();
+        } else {
+            logger.error("股号: {}, 开始日期: {}, 结束日期: {}, 已经在执行中. ", no, startDate, endDate);
         }
     }
 
@@ -1071,16 +1087,16 @@ public class FetchServiceImpl implements FetchService {
         }
         Date date = new Date();
         Table<Integer, String, Object> table = ExcelUtils.readExcel2table(excelFile, 1, 1, 1);
-//        System.out.println("all=>"+table);
+//        logger.info("all=>"+table);
         Set<Integer> rowKeys = table.rowKeySet();
-        System.out.println("rowKeys size=>"+rowKeys.size());
+        logger.info("rowKeys size=>"+rowKeys.size());
 //        List<StockDailyTransactions> dailyTxs = Lists.newArrayList();
         for(Integer rowKey : rowKeys) {
             Map<String, Object> rows = table.row(rowKey);
 //            String columnKey = rowKey.getColumnKey();
 //            String value = set.getValue();
 //            table.get(rowKey, columnKey);
-//            System.out.println(rows);
+//            logger.info(rows);
             
             StockDailyTransactions tx = new StockDailyTransactions();
             String no = rows.get("代號").toString().replaceAll("\\.0", "");
@@ -1120,7 +1136,6 @@ public class FetchServiceImpl implements FetchService {
             tx.setTxPrice(toBigDecimal(rows.get("成交價").toString()));
             tx.setTxTallage(toBigDecimal(rows.get("交易稅").toString()));
             tx.setZsTallage(toBigDecimal(rows.get("證所稅").toString()));
-            System.out.println(tx);
             stockDailyTransactionsMapper.delete(tx.getStockId(), tx.getTxDate(), tx.getTxKind(), tx.getTxPrice(), tx.getQuantity());
             stockDailyTransactionsMapper.insert(tx);
             

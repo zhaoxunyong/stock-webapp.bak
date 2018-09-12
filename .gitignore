@@ -26,3 +26,4 @@ package.json
 *.sln
 frontend/node/
 /frontend/package.json
+/backend/log.path_IS_UNDEFINED

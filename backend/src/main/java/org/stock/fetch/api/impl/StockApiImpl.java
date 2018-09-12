@@ -610,6 +610,17 @@ public class StockApiImpl implements StockApi {
         return "ok";
     }
 
+    @Override
+    @PostMapping(value = "/fetchHistory")
+    public String fetchHistory(String no) {
+        try {
+            fetchService.fetchHistory(no);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return "ok";
+    }
+
     /*@Override
     @GetMapping(value = "/data")
     public String data(String stockId, String startDate, String endDate) {

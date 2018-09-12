@@ -13,6 +13,7 @@ interceptor:
     #登录
     /api/login, 
     /api/stock/fetchAllHistory, 
+    /api/stock/fetchHistory,
     #monitor
     /myhealth,
     /ops/.*

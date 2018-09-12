@@ -16,6 +16,8 @@ public class ScheduledTasks {
     
     public static volatile boolean IS_FETCH_NEW = false;
     
+    public static volatile boolean IS_FETCH_HISTORY = false;
+    
 //    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 //    private static ExecutorService executorService = Executors.newFixedThreadPool(3);
@@ -81,7 +83,24 @@ public class ScheduledTasks {
      */
     @Scheduled(cron="0 0 17 * * ?")
     public void fetchAllHistory() throws Exception {
-        fetchService.fetchAllHistory();
+        if(!IS_FETCH_HISTORY) {
+            try {
+                IS_FETCH_HISTORY = true;
+                /* logger.info("fetchAll start--->"+DatesUtils.YYMMDDHHMMSS.toString());
+                // 獲取所有股票的信息
+                fetchService.fetchAll();
+                logger.info("fetchAll end--->"+DatesUtils.YYMMDDHHMMSS.toString());*/
+                
+                logger.info("fetchAllHistory start--->"+DatesUtils.YYMMDDHHMMSS.toString());
+                fetchService.fetchAllHistory();
+                logger.info("fetchAllHistory end--->"+DatesUtils.YYMMDDHHMMSS.toString());
+                
+                // 獲取所有股票
+//                fetchService.fetchAll();
+            } finally {
+                IS_FETCH_HISTORY = false;
+            }
+        }
     }
     
     /**
@@ -89,6 +108,23 @@ public class ScheduledTasks {
      */
     @Scheduled(cron="0 0 1 * * ?")
     public void refetchAllHistory() throws Exception {
-        fetchService.refetchAllHistory();
+        if(!IS_FETCH_HISTORY) {
+            try {
+                IS_FETCH_HISTORY = true;
+                /* logger.info("fetchAll start--->"+DatesUtils.YYMMDDHHMMSS.toString());
+                // 獲取所有股票的信息
+                fetchService.fetchAll();
+                logger.info("fetchAll end--->"+DatesUtils.YYMMDDHHMMSS.toString());*/
+                
+                logger.info("refetchAllHistory start--->"+DatesUtils.YYMMDDHHMMSS.toString());
+                fetchService.refetchAllHistory();
+                logger.info("refetchAllHistory end--->"+DatesUtils.YYMMDDHHMMSS.toString());
+                
+                // 獲取所有股票
+//                fetchService.fetchAll();
+            } finally {
+                IS_FETCH_HISTORY = false;
+            }
+        }
     }
 }

@@ -215,6 +215,13 @@ public interface StockApi {
     
     @ApiOperation(value="fetchAllHistory", notes="fetchAllHistory")
     public String fetchAllHistory();
+    
+
+    @ApiOperation(value="fetchHistory", notes="fetchHistory")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "no", value = "no", required = true, dataType = "string", paramType = "query")
+    })
+    public String fetchHistory(String no);
     /*@ApiOperation(value="data", notes="data")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
