@@ -1,8 +1,8 @@
 <template>
   <div class="text-center">
     <form class="form-signin" @submit.stop.prevent="login">
-      <img class="mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
-      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+      <img class="mb-4" src="/static/image/login.png" alt="" width="120" height="120">
+      <!-- <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1> -->
       <label for="inputEmail" class="sr-only">loginName</label>
       <input type="loginName" id="inputEmail" v-model="loginName" class="form-control" placeholder="用戶" required autofocus>
       <label for="inputPassword" class="sr-only">password</label>
