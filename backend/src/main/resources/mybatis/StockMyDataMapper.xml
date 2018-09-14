@@ -62,12 +62,12 @@
 		(
 			SELECT
 				a.id,
-				b. NO,
+				b. no,
 				b.company,
 				a.stock_id,
 				a.kinds,
 				a.industry,
-				a. STATUS,
+				a. status,
 				a.create_date,
 				a.update_date
 			FROM

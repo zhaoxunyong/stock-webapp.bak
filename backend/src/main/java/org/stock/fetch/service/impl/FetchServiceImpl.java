@@ -813,7 +813,6 @@ public class FetchServiceImpl implements FetchService {
     @Override
     @Transactional
     public void fetchAllHistory() throws Exception {
-        LocalDate endDate = LocalDate.now();
         List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
         if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
             for(StockMyData stockMyData : stockMyDatas) {
