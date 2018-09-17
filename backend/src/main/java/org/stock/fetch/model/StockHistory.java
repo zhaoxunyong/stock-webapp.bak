@@ -13,8 +13,6 @@ public class StockHistory extends BaseModel {
     private Long stockId;
 
     private Date date;
-    
-    private int type;
 
     private BigDecimal opening;
 
@@ -33,20 +31,28 @@ public class StockHistory extends BaseModel {
     private BigDecimal amount;
 
     private String per;
-    
-    private BigDecimal averagevol5;
-    
-    private BigDecimal average5;
-    
-    private BigDecimal average10;
-    
-    private BigDecimal average20;
-    
-    private BigDecimal average60;
 
     private Date createDate;
 
     private Date updateDate;
+    
+    @Deprecated
+    private int type;
+
+    @Deprecated
+    private BigDecimal averagevol5;
+
+    @Deprecated
+    private BigDecimal average5;
+
+    @Deprecated
+    private BigDecimal average10;
+
+    @Deprecated
+    private BigDecimal average20;
+
+    @Deprecated
+    private BigDecimal average60;
 
     public Long getId() {
         return id;
