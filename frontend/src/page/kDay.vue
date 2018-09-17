@@ -62,7 +62,8 @@ export default {
       this.stockId = this.$route.params.stockId
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {
         // type 0: 日 1: 周 2: 月
-        let url = `/api/stock/selectHistory?stockId=${this.stockId}&type=0&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`
+        // let url = `/api/stock/selectHistory?stockId=${this.stockId}&type=0&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`
+        let url = `/api/stock/selectLastDayHistory?stockId=${this.stockId}`
         console.log("kDay url--->"+url)
         this.$api.get(url, null, rs => {
           if(rs != undefined && rs.length > 0) {
