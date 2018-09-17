@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ import org.stock.fetch.api.dto.StockMySelectedTypeDto;
 import org.stock.fetch.api.dto.StockMyStoreDto;
 import org.stock.fetch.api.dto.StockNewsDto;
 import org.stock.fetch.api.dto.StockNewsKeyDto;
+import org.stock.fetch.constant.StockHistoryEnum;
 import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;
@@ -70,6 +72,8 @@ import com.google.common.collect.Lists;
 public class StockApiImpl implements StockApi {
     
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
+    private final static int PERIOD = 88;
 	
 	@Autowired
 	private ModelMapper modelMapper;
@@ -591,10 +595,33 @@ public class StockApiImpl implements StockApi {
         }).collect(Collectors.toList());
         return Lists.reverse(dtoList);
     }
+    
 
-    /* (non-Javadoc)
-     * @see org.stock.fetch.api.StockApi#fetchAllHistory()
-     */
+    @Override
+    @GetMapping(value = "/selectLastDayHistory")
+    public List<StockHistoryDto> selectLastDayHistory(String stockId) {
+        Date endDate = new Date();
+        Date startDate = DateUtils.addDays(endDate, -PERIOD);
+        return this.selectHistory(stockId, DatesUtils.YYMMDD2.toString(startDate), DatesUtils.YYMMDD2.toString(endDate), StockHistoryEnum.DAY.getType());
+    }
+
+    @Override
+    @GetMapping(value = "/selectLastWeekHistory")
+    public List<StockHistoryDto> selectLastWeekHistory(String stockId) {
+        Date endDate = new Date();
+        Date startDate = DateUtils.addWeeks(endDate, -PERIOD);
+        return this.selectHistory(stockId, DatesUtils.YYMMDD2.toString(startDate), DatesUtils.YYMMDD2.toString(endDate), StockHistoryEnum.WEEK.getType());
+    }
+
+    @Override
+    @GetMapping(value = "/selectLastMonthHistory")
+    public List<StockHistoryDto> selectLastMonthHistory(String stockId) {
+        Date endDate = new Date();
+        Date startDate = DateUtils.addMonths(endDate, -PERIOD);
+        return this.selectHistory(stockId, DatesUtils.YYMMDD2.toString(startDate), DatesUtils.YYMMDD2.toString(endDate), StockHistoryEnum.MONTH.getType());
+    }
+
+    // test
     @Override
     @PostMapping(value = "/fetchAllHistory")
     public String fetchAllHistory() {
@@ -609,7 +636,8 @@ public class StockApiImpl implements StockApi {
         }.start();
         return "ok";
     }
-
+    
+    // test
     @Override
     @PostMapping(value = "/fetchHistory")
     public String fetchHistory(String no) {

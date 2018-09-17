@@ -213,10 +213,29 @@ public interface StockApi {
     })
     public List<StockHistoryDto> selectHistory(String stockId, String startDate, String endDate, int type);
     
+    @ApiOperation(value="selectLastDayHistory", notes="selectLastDayHistory")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+    })
+    public List<StockHistoryDto> selectLastDayHistory(String stockId);
+    
+    @ApiOperation(value="selectLastWeekHistory", notes="selectLastWeekHistory")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+    })
+    public List<StockHistoryDto> selectLastWeekHistory(String stockId);
+    
+    @ApiOperation(value="selectLastMonthHistory", notes="selectLastMonthHistory")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+    })
+    public List<StockHistoryDto> selectLastMonthHistory(String stockId);
+    
+    // test
     @ApiOperation(value="fetchAllHistory", notes="fetchAllHistory")
     public String fetchAllHistory();
     
-
+    // test
     @ApiOperation(value="fetchHistory", notes="fetchHistory")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "no", value = "no", required = true, dataType = "string", paramType = "query")

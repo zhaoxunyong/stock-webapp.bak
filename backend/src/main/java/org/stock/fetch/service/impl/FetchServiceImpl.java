@@ -811,7 +811,6 @@ public class FetchServiceImpl implements FetchService {
     }
     
     @Override
-    @Transactional
     public void fetchAllHistory() throws Exception {
         List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
         if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
@@ -819,6 +818,7 @@ public class FetchServiceImpl implements FetchService {
 //                String startDate = "2017/07/18";
 //                String endDate = "2017/11/01";
 //                String endDate = DatesUtils.YYMMDD2.toString(nowDate);
+                // 402396061841035264 1528
                 fetchHistory(stockMyData.getNo());
             }
         }
@@ -867,11 +867,8 @@ public class FetchServiceImpl implements FetchService {
             startDate = MyDateUtils.date2LoalDate(lastStockHistory.getDate());
         }
         try {
-            long s = System.currentTimeMillis();
-            logger.info("股号: "+no+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取开始......");
             this.fetchHistory(no, DatesUtils.YYMMDD2.toString(MyDateUtils.localDate2Date(startDate)), DatesUtils.YYMMDD2.toString(MyDateUtils.localDate2Date(endDate)));
-            logger.info("股号: "+no+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
-        } catch(Exception e) {
+            } catch(Exception e) {
             logger.error("股号: {}, 开始日期: {}, 结束日期: {}, 抓取异常: ", no, startDate, endDate, e);
             StockHistoryError stockHistoryError = new StockHistoryError();
             stockHistoryError.setId(IdUtils.genLongId());
@@ -888,8 +885,24 @@ public class FetchServiceImpl implements FetchService {
      * 日期格式為：yyyy/MM/dd
      */
     @Override
-    @Transactional
     public void fetchHistory(String no, String startDate, String endDate) throws Exception {
+        long s = System.currentTimeMillis();
+        logger.info("股号: "+no+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取开始......");
+        List<StockHistory> stockHistory4Inserts = searchHistory(no, startDate, endDate);
+        logger.info("股号: "+no+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
+        
+        s = System.currentTimeMillis();
+        logger.info("股号: "+no+", 开始日期: "+startDate+", 结束日期: "+endDate+", 保存开始......");
+        this.saveHistory(stockHistory4Inserts);
+        logger.info("股号: "+no+", 开始日期: "+startDate+", 结束日期: "+endDate+", 保存完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
+        }
+
+    /**
+     * 只抓取网站的数据，不保存数据库
+     * 日期格式為：yyyy/MM/dd
+     */
+    private List<StockHistory> searchHistory(String no, String startDate, String endDate) throws Exception {
+        List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
         if(!ScheduledTasks.IS_FETCH_HISTORY) {
             ScheduledTasks.IS_FETCH_HISTORY = true;
             StockData stockData = stockDataMapper.selectByNo(no);
@@ -899,7 +912,6 @@ public class FetchServiceImpl implements FetchService {
             long stockId = stockData.getId();
             String url = "https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo();
             try {
-                List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
                 HtmlPage page = processGuceOathCom(webClient.getPage(url));
                 page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
                 page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
@@ -966,94 +978,8 @@ public class FetchServiceImpl implements FetchService {
                             }
         //                        logger.info("===>"+stockHistory);
                             stockHistory.setType(StockHistoryEnum.DAY.getType());
+                            stockHistory.setStockId(stockId);
                             stockHistory4Inserts.add(stockHistory);
-                        }
-                    }
-                }
-                if(!stockHistory4Inserts.isEmpty()) {
-                    stockHistory4Inserts = Lists.reverse(stockHistory4Inserts);
-                    // 升序insert
-                    for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
-                        stockHistory4Insert.setId(IdUtils.genLongId());
-                        stockHistory4Insert.setStockId(stockId);
-                        stockHistory4Insert.setCreateDate(new Date());
-                        stockHistoryMapper.insert(stockHistory4Insert);
-                        // 日：可以在页面中进行计算
-                        /*StockHistory averageOfDay = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
-                        StockHistory averageVolOfDay = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
-                        if(averageOfDay!=null && averageVolOfDay!=null) {
-                            averageOfDay.setId(stockHistory4Insert.getId());
-                            averageOfDay.setUpdateDate(new Date());
-                            // 设置5日成立量均线
-                            averageOfDay.setAveragevol5(averageVolOfDay.getAveragevol5());
-                            stockHistoryMapper.updateAverage(averageOfDay);
-                        }*/
-        
-                    }
-                    // 需要上面处理完才能往下处理
-                    for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
-                        
-                        LocalDate localDate = MyDateUtils.date2LoalDate(stockHistory4Insert.getDate());
-                        // 周
-                        LocalDate firstDateOfWeek = MyDateUtils.getFirstDayOfWeek(localDate);
-                        Date startDateOfWeek = MyDateUtils.localDate2Date(firstDateOfWeek);
-                        
-        //                    LocalDate lastDateOfWeek = localDate.with(WeekFields.of(Locale.CHINA).dayOfWeek(), 7);
-        //                    Date endDateOfWeek = Date.from(lastDateOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
-                        // 结束日期应该是当时那条记录的日期
-                        Date endDateOfWeek = stockHistory4Insert.getDate();
-                        
-                        StockHistory history4Week = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfWeek, endDateOfWeek, StockHistoryEnum.DAY.getType());
-                        if(history4Week != null) {
-                            // 以startDateOfWeek(（取下一个自然工作日）)作为周的唯一判断,一周只能有一和记录
-                            Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfWeek);
-                            stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.WEEK.getType());
-                            history4Week.setId(IdUtils.genLongId());
-                            history4Week.setStockId(stockId);
-                            history4Week.setDate(uniqeDate);
-                            history4Week.setType(StockHistoryEnum.WEEK.getType());
-                            history4Week.setCreateDate(new Date());
-                            stockHistoryMapper.insert(history4Week);
-                            /*StockHistory averageOfWeek = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
-                            StockHistory averageVolOfWeek = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
-                            if(averageOfWeek != null && averageVolOfWeek != null) {
-                                averageOfWeek.setId(history4Week.getId());
-                                averageOfWeek.setUpdateDate(new Date());
-                                // 设置5周成立量均线
-                                averageOfWeek.setAveragevol5(averageVolOfWeek.getAveragevol5());
-                                stockHistoryMapper.updateAverage(averageOfWeek);
-                            }*/
-                        }
-                        
-                        // 月
-                        LocalDate firstDateOfMonth = MyDateUtils.getFirstDayOfMonth(localDate);
-                        Date startDateOfMonth = MyDateUtils.localDate2Date(firstDateOfMonth);
-                        
-        //                    LocalDate lastDateOfMonth = localDate.with(TemporalAdjusters.lastDayOfMonth());
-        //                    Date endDateOfMonth = Date.from(lastDateOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
-                        // 结束日期应该是当时那条记录的日期
-                        Date endDateOfMonth = stockHistory4Insert.getDate();
-                        
-                        StockHistory history4Month = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfMonth, endDateOfMonth, StockHistoryEnum.DAY.getType());
-                        if(history4Month != null) {
-                            // 以startDateOfMonth作为月（取下一个自然工作日）的唯一判断,一月只能有一和记录
-                            Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfMonth);
-                            stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.MONTH.getType());
-                            history4Month.setId(IdUtils.genLongId());
-                            history4Month.setStockId(stockId);
-                            history4Month.setDate(uniqeDate);
-                            history4Month.setType(StockHistoryEnum.MONTH.getType());
-                            history4Month.setCreateDate(new Date());
-                            stockHistoryMapper.insert(history4Month);
-                            /*StockHistory averageOfMonth = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
-                            StockHistory averageVolOfMonth = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
-                            if(averageOfMonth!=null && averageVolOfMonth!=null) {
-                                averageOfMonth.setId(history4Month.getId());
-                                averageOfMonth.setUpdateDate(new Date());
-                                // 设置5月成立量均线
-                                averageOfMonth.setAveragevol5(averageVolOfMonth.getAveragevol5());
-                                stockHistoryMapper.updateAverage(averageOfMonth);
-                            }*/
                         }
                     }
                 }
@@ -1067,6 +993,101 @@ public class FetchServiceImpl implements FetchService {
             }
         } else {
             logger.error("股号: {}, 开始日期: {}, 结束日期: {}, 已经在执行中. ", no, startDate, endDate);
+        }
+        return stockHistory4Inserts;
+    }
+    
+    /**
+     * 保存数据到数据库
+     */
+    @Transactional
+    private void saveHistory(List<StockHistory> stockHistory4Inserts) {
+        if(stockHistory4Inserts!=null && !stockHistory4Inserts.isEmpty()) {
+            stockHistory4Inserts = Lists.reverse(stockHistory4Inserts);
+            // 升序insert
+            for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
+                stockHistory4Insert.setId(IdUtils.genLongId());
+                stockHistory4Insert.setCreateDate(new Date());
+                stockHistoryMapper.insert(stockHistory4Insert);
+                // 日：可以在页面中进行计算
+                /*StockHistory averageOfDay = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
+                StockHistory averageVolOfDay = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
+                if(averageOfDay!=null && averageVolOfDay!=null) {
+                    averageOfDay.setId(stockHistory4Insert.getId());
+                    averageOfDay.setUpdateDate(new Date());
+                    // 设置5日成立量均线
+                    averageOfDay.setAveragevol5(averageVolOfDay.getAveragevol5());
+                    stockHistoryMapper.updateAverage(averageOfDay);
+                }*/
+
+            }
+            // 需要上面处理完才能往下处理
+            // 在前端页面中处理
+//            for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
+//                long stockId = stockHistory4Insert.getStockId();
+//                LocalDate localDate = MyDateUtils.date2LoalDate(stockHistory4Insert.getDate());
+//                // 周
+//                LocalDate firstDateOfWeek = MyDateUtils.getFirstDayOfWeek(localDate);
+//                Date startDateOfWeek = MyDateUtils.localDate2Date(firstDateOfWeek);
+//                
+////                    LocalDate lastDateOfWeek = localDate.with(WeekFields.of(Locale.CHINA).dayOfWeek(), 7);
+////                    Date endDateOfWeek = Date.from(lastDateOfWeek.atStartOfDay(ZoneId.systemDefault()).toInstant());
+//                // 结束日期应该是当时那条记录的日期
+//                Date endDateOfWeek = stockHistory4Insert.getDate();
+//                
+//                StockHistory history4Week = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfWeek, endDateOfWeek, StockHistoryEnum.DAY.getType());
+//                if(history4Week != null) {
+//                    // 以startDateOfWeek(（取下一个自然工作日）)作为周的唯一判断,一周只能有一和记录
+//                    Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfWeek);
+//                    stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.WEEK.getType());
+//                    history4Week.setId(IdUtils.genLongId());
+//                    history4Week.setStockId(stockId);
+//                    history4Week.setDate(uniqeDate);
+//                    history4Week.setType(StockHistoryEnum.WEEK.getType());
+//                    history4Week.setCreateDate(new Date());
+//                    stockHistoryMapper.insert(history4Week);
+//                    /*StockHistory averageOfWeek = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
+//                    StockHistory averageVolOfWeek = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.WEEK.getType());
+//                    if(averageOfWeek != null && averageVolOfWeek != null) {
+//                        averageOfWeek.setId(history4Week.getId());
+//                        averageOfWeek.setUpdateDate(new Date());
+//                        // 设置5周成立量均线
+//                        averageOfWeek.setAveragevol5(averageVolOfWeek.getAveragevol5());
+//                        stockHistoryMapper.updateAverage(averageOfWeek);
+//                    }*/
+//                }
+//                
+//                // 月
+//                LocalDate firstDateOfMonth = MyDateUtils.getFirstDayOfMonth(localDate);
+//                Date startDateOfMonth = MyDateUtils.localDate2Date(firstDateOfMonth);
+//                
+////                    LocalDate lastDateOfMonth = localDate.with(TemporalAdjusters.lastDayOfMonth());
+////                    Date endDateOfMonth = Date.from(lastDateOfMonth.atStartOfDay(ZoneId.systemDefault()).toInstant());
+//                // 结束日期应该是当时那条记录的日期
+//                Date endDateOfMonth = stockHistory4Insert.getDate();
+//                
+//                StockHistory history4Month = stockHistoryMapper.selectWeekOrMonthStockHistory(stockId, startDateOfMonth, endDateOfMonth, StockHistoryEnum.DAY.getType());
+//                if(history4Month != null) {
+//                    // 以startDateOfMonth作为月（取下一个自然工作日）的唯一判断,一月只能有一和记录
+//                    Date uniqeDate = MyDateUtils.getNextNatureWorkDay(startDateOfMonth);
+//                    stockHistoryMapper.deleteByWeekOrMonth(stockId, uniqeDate, StockHistoryEnum.MONTH.getType());
+//                    history4Month.setId(IdUtils.genLongId());
+//                    history4Month.setStockId(stockId);
+//                    history4Month.setDate(uniqeDate);
+//                    history4Month.setType(StockHistoryEnum.MONTH.getType());
+//                    history4Month.setCreateDate(new Date());
+//                    stockHistoryMapper.insert(history4Month);
+//                    /*StockHistory averageOfMonth = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
+//                    StockHistory averageVolOfMonth = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.MONTH.getType());
+//                    if(averageOfMonth!=null && averageVolOfMonth!=null) {
+//                        averageOfMonth.setId(history4Month.getId());
+//                        averageOfMonth.setUpdateDate(new Date());
+//                        // 设置5月成立量均线
+//                        averageOfMonth.setAveragevol5(averageVolOfMonth.getAveragevol5());
+//                        stockHistoryMapper.updateAverage(averageOfMonth);
+//                    }*/
+//                }
+//            }
         }
     }
 

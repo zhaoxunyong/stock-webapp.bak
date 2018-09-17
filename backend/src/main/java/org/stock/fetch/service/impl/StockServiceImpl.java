@@ -1,9 +1,12 @@
 package org.stock.fetch.service.impl;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +34,10 @@ import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
 import org.stock.fetch.model.StockNewsKey;
 import org.stock.fetch.service.StockService;
+import org.stock.utils.MyDateUtils;
 
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
+import com.google.common.collect.Lists;
 
 @Service
 public class StockServiceImpl implements StockService {
@@ -392,7 +397,150 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate, int type) {
-        return stockHistoryMapper.selectStockHistory(stockId, startDate, endDate, type);
+        List<StockHistory> actuallyStockHistorys = Lists.newArrayList();
+        // 始终通过日来计算
+        List<StockHistory> stockHistorys = stockHistoryMapper.selectStockHistory(stockId, startDate, endDate, StockHistoryEnum.DAY.getType());
+        if (type == StockHistoryEnum.DAY.getType()) {
+            actuallyStockHistorys.addAll(stockHistorys);
+        } else if (type == StockHistoryEnum.WEEK.getType()) {
+            List<BigDecimal> openings = Lists.newArrayList(); //从近到远的顺序添加
+            List<BigDecimal> closings =Lists.newArrayList(); //从近到远的顺序添加
+            List<BigDecimal> lowests =Lists.newArrayList(); //从近到远的顺序添加
+            List<BigDecimal> highests =Lists.newArrayList(); //从近到远的顺序添加
+            List<BigDecimal> vols =Lists.newArrayList(); //从近到远的顺序添加
+            Date lastStartDateOfWeek = null;
+            for (StockHistory stockHistory : stockHistorys) {
+                // 结束日期应该是当时那条记录的日期
+                Date endDateOfWeek = stockHistory.getDate();
+                LocalDate localDate = MyDateUtils.date2LoalDate(endDateOfWeek);
+                // 超过日期时，先计算出上次的结果
+                if (lastStartDateOfWeek != null && endDateOfWeek.getTime() < lastStartDateOfWeek.getTime()) {
+                    // 以startDateOfWeek(（取下一个自然工作日）)作为周的唯一判断,一周只能有一和记录
+                    Date date = MyDateUtils.getNextNatureWorkDay(lastStartDateOfWeek);
+                    StockHistory tempStockHistory = new StockHistory();
+                    tempStockHistory.setId(IdUtils.genLongId());
+                    tempStockHistory.setStockId(stockId);
+                    tempStockHistory.setOpening(openings.get(openings.size()-1));  // 第一天的开盘
+                    tempStockHistory.setClosing(closings.get(0));  // 最后一天的收盘
+                    tempStockHistory.setLowest(lowests.stream().reduce(BigDecimal::min).get());    // 这周中最低的
+                    tempStockHistory.setHighest(highests.stream().reduce(BigDecimal::max).get());  // 这周中最高的
+                    tempStockHistory.setVol(vols.stream().reduce(new BigDecimal(0), (a, b) -> a.add(b))); // 总和
+                    tempStockHistory.setDate(date);
+                    actuallyStockHistorys.add(tempStockHistory);
+                    // 重置数据
+                    openings = Lists.newArrayList();
+                    closings = Lists.newArrayList();
+                    lowests = Lists.newArrayList();
+                    highests = Lists.newArrayList();
+                    vols = Lists.newArrayList();
+                }
+                
+                // 周
+                LocalDate firstDateOfWeek = MyDateUtils.getFirstDayOfWeek(localDate);
+                Date startDateOfWeek = MyDateUtils.localDate2Date(firstDateOfWeek);
+                if (endDateOfWeek.getTime() >= startDateOfWeek.getTime()) {
+                    // 计算
+                    openings.add(stockHistory.getOpening());
+                    closings.add(stockHistory.getClosing());
+                    lowests.add(stockHistory.getLowest());
+                    highests.add(stockHistory.getHighest());
+                    vols.add(stockHistory.getVol());
+                }
+                // 当为最后一条或者第一条记录时，直接计算
+                if (stockHistorys.get(stockHistorys.size()-1).getId().equals(stockHistory.getId())) {
+                    // 以startDateOfWeek(（取下一个自然工作日）)作为周的唯一判断,一周只能有一和记录
+                    Date date = MyDateUtils.getNextNatureWorkDay(startDateOfWeek);
+                    StockHistory tempStockHistory = new StockHistory();
+                    tempStockHistory.setId(IdUtils.genLongId());
+                    tempStockHistory.setStockId(stockId);
+                    tempStockHistory.setOpening(openings.get(openings.size()-1));  // 第一天的开盘
+                    tempStockHistory.setClosing(closings.get(0));  // 最后一天的收盘
+                    tempStockHistory.setLowest(lowests.stream().reduce(BigDecimal::min).get());    // 这周中最低的
+                    tempStockHistory.setHighest(highests.stream().reduce(BigDecimal::max).get());  // 这周中最高的
+                    tempStockHistory.setVol(vols.stream().reduce(new BigDecimal(0), (a, b) -> a.add(b))); // 总和
+                    tempStockHistory.setDate(date);
+                    actuallyStockHistorys.add(tempStockHistory);
+                    // 重置数据
+                    openings = Lists.newArrayList();
+                    closings = Lists.newArrayList();
+                    lowests = Lists.newArrayList();
+                    highests = Lists.newArrayList();
+                    vols = Lists.newArrayList();
+                }
+                lastStartDateOfWeek = startDateOfWeek;
+                
+            }
+            
+        } else if (type == StockHistoryEnum.MONTH.getType()) {
+            List<BigDecimal> openings = Lists.newArrayList(); //从近到远的顺序添加
+            List<BigDecimal> closings =Lists.newArrayList(); //从近到远的顺序添加
+            List<BigDecimal> lowests =Lists.newArrayList(); //从近到远的顺序添加
+            List<BigDecimal> highests =Lists.newArrayList(); //从近到远的顺序添加
+            List<BigDecimal> vols =Lists.newArrayList(); //从近到远的顺序添加
+            Date lastStartDateOfMonth = null;
+            for (StockHistory stockHistory : stockHistorys) {
+                // 结束日期应该是当时那条记录的日期
+                Date endDateOfMonth = stockHistory.getDate();
+                LocalDate localDate = MyDateUtils.date2LoalDate(endDateOfMonth);
+                // 超过日期时，先计算出上次的结果
+                if (lastStartDateOfMonth != null && endDateOfMonth.getTime() < lastStartDateOfMonth.getTime()) {
+                    // 以startDateOfWeek(（取下一个自然工作日）)作为周的唯一判断,一周只能有一和记录
+                    Date date = MyDateUtils.getNextNatureWorkDay(lastStartDateOfMonth);
+                    StockHistory tempStockHistory = new StockHistory();
+                    tempStockHistory.setId(IdUtils.genLongId());
+                    tempStockHistory.setStockId(stockId);
+                    tempStockHistory.setOpening(openings.get(openings.size()-1));  // 第一天的开盘
+                    tempStockHistory.setClosing(closings.get(0));  // 最后一天的收盘
+                    tempStockHistory.setLowest(lowests.stream().reduce(BigDecimal::min).get());    // 这周中最低的
+                    tempStockHistory.setHighest(highests.stream().reduce(BigDecimal::max).get());  // 这周中最高的
+                    tempStockHistory.setVol(vols.stream().reduce(new BigDecimal(0), (a, b) -> a.add(b))); // 总和
+                    tempStockHistory.setDate(date);
+                    actuallyStockHistorys.add(tempStockHistory);
+                    // 重置数据
+                    openings = Lists.newArrayList();
+                    closings = Lists.newArrayList();
+                    lowests = Lists.newArrayList();
+                    highests = Lists.newArrayList();
+                    vols = Lists.newArrayList();
+                }
+                
+                // 月
+                LocalDate firstDateOfMonth = MyDateUtils.getFirstDayOfMonth(localDate);
+                Date startDateOfMonth = MyDateUtils.localDate2Date(firstDateOfMonth);
+                if (endDateOfMonth.getTime() >= startDateOfMonth.getTime()) {
+                    // 计算
+                    openings.add(stockHistory.getOpening());
+                    closings.add(stockHistory.getClosing());
+                    lowests.add(stockHistory.getLowest());
+                    highests.add(stockHistory.getHighest());
+                    vols.add(stockHistory.getVol());
+                }
+                // 当为最后一条或者第一条记录时，直接计算
+                if (stockHistorys.get(stockHistorys.size()-1).getId().equals(stockHistory.getId())) {
+                    // 以startDateOfMonth作为月（取下一个自然工作日）的唯一判断,一月只能有一和记录
+                    Date date = MyDateUtils.getNextNatureWorkDay(startDateOfMonth);
+                    StockHistory tempStockHistory = new StockHistory();
+                    tempStockHistory.setId(IdUtils.genLongId());
+                    tempStockHistory.setStockId(stockId);
+                    tempStockHistory.setOpening(openings.get(openings.size()-1));  // 第一天的开盘
+                    tempStockHistory.setClosing(closings.get(0));  // 最后一天的收盘
+                    tempStockHistory.setLowest(lowests.stream().reduce(BigDecimal::min).get());    // 这周中最低的
+                    tempStockHistory.setHighest(highests.stream().reduce(BigDecimal::max).get());  // 这周中最高的
+                    tempStockHistory.setVol(vols.stream().reduce(new BigDecimal(0), (a, b) -> a.add(b))); // 总和
+                    tempStockHistory.setDate(date);
+                    actuallyStockHistorys.add(tempStockHistory);
+                    // 重置数据
+                    openings = Lists.newArrayList();
+                    closings = Lists.newArrayList();
+                    lowests = Lists.newArrayList();
+                    highests = Lists.newArrayList();
+                    vols = Lists.newArrayList();
+                }
+                lastStartDateOfMonth = startDateOfMonth;
+                
+            }
+        }
+        return actuallyStockHistorys;
     }
     
     @Override
