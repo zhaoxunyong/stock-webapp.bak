@@ -45,19 +45,18 @@ export default {
     },
     showZoomKline() {
     },
-    getRecentDate() {
+    /* getRecentDate() {
       var now = new Date();
       var newDate = dateAdd("w", -RECENT_DATE, now);
       return {
         startDate: newDate.toLocaleDateString(),
         endDate: new Date().toLocaleDateString()
       };
-
-    },
+    }, */
     getData() {
       let this_ = this
       let datas = []
-      let dateRange = this.getRecentDate()
+      // let dateRange = this.getRecentDate()
       // this.stockId = '402396117293928448'
       this.stockId = this.$route.params.stockId
       if(this.stockId != undefined && this.stockId != '' && this.stockId != 0) {

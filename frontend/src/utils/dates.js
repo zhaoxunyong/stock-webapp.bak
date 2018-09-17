@@ -17,6 +17,7 @@ alert(newDate.toLocaleDateString())
 // 加一年
 newDate = dateAdd("y ", 1, now);
 alert(newDate.toLocaleDateString()) */
+// 暂时没有用
 export default function dateAdd(interval, number, date) {
   switch (interval) {
     case "y": {
