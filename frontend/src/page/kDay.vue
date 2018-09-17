@@ -55,6 +55,7 @@ export default {
 
     },
     getData() {
+      this.kline = null
       let this_ = this
       let datas = []
       let dateRange = this.getRecentDate()
@@ -73,12 +74,11 @@ export default {
               // console.log(stockHistorys)
               datas.push(stockHistorys)
             }
-            this.kline = candlestick(datas, '日')
           } else {
             this_.$alerts.error("找不到數據:"+this.stockId)
             // alert("找不到數據:"+this.stockId)
-            this.kline = null
           }
+          this.kline = candlestick(datas, '日')
         })
       }
     }
