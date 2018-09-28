@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div class="w-100 px-1 mx-1 kline-height">
+    <!-- <div class="w-100 px-1 mx-1 kline-height">
       <p class="font-weight-bold text-center align-middle px-1 mx-1" href="#" @click.prevent="showZoomKline">
         日線
       </p>
-    </div>
-    <chart :options="kline" :auto-resize="resize" @click="openNewKline" class="pl-2"></chart>
+    </div> -->
+    <chart :options="kline" :auto-resize="resize" @click="openNewKline"></chart>
   </div>
 </template>
 <script>
@@ -92,13 +92,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .echarts {
-  width: 85%;
+  width: 100%;
   height: 400px;
-}
-.kline-height {
-  height: 25px;
 }
 </style>
 

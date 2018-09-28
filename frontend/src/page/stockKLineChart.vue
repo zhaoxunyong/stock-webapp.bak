@@ -2,34 +2,34 @@
   <b-row>
     <b-col cols="12" sm="12">
       <b-row>
-          <b-col>
+          <b-col class="p-0 m-0 mw-100">
             <KDay></KDay>
           </b-col>
-          <b-col>
+          <b-col class="p-0 m-0 mw-100">
             <KWeek></KWeek>
           </b-col>
       </b-row>
       <!-- <b-row>
-          <b-col>
+          <b-col class="p-0 m-0 mw-100">
             <RsiDay></RsiDay>
           </b-col>
-          <b-col>
+          <b-col class="p-0 m-0 mw-100">
             <RsiWeek></RsiWeek>
           </b-col>
       </b-row>
       <b-row>
-          <b-col>
+          <b-col class="p-0 m-0 mw-100">
             <DmiDay></DmiDay>
           </b-col>
-          <b-col>
+          <b-col class="p-0 m-0 mw-100">
             <DmiWeek></DmiWeek>
           </b-col>
       </b-row>
       <b-row>
-          <b-col>
+          <b-col class="p-0 m-0 mw-100">
             <MacdDay></MacdDay>
           </b-col>
-          <b-col>
+          <b-col class="p-0 m-0 mw-100">
             <MacdWeek></MacdWeek>
           </b-col>
       </b-row> -->
