@@ -70,7 +70,7 @@ export default {
             for(let i=0;i<rs.length;i++) {
               // alert(this.stockId+"--->"+rs[i].date+"--->"+rs[i].opening+"--->"+rs[i].highest+"--->"+rs[i].lowest+"--->"+rs[i].closing+"--->"+rs[i].vol)
               let stockHistorys = [rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]
-              console.log(stockHistorys)
+              // console.log(stockHistorys)
               datas.push(stockHistorys)
             }
           } else {
@@ -95,7 +95,7 @@ export default {
 <style scoped>
 .echarts {
   width: 100%;
-  height: 400px;
+  height: 500px;
 }
 </style>
 
