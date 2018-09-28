@@ -37,7 +37,7 @@ export default {
   },
   created () {
     this.getData()
-    this.getRecentDate()
+    // this.getRecentDate()
   },
   methods: {
     openNewKline(params) {
@@ -67,7 +67,7 @@ export default {
         this.$api.get(url, null, rs => {
           if(rs != undefined && rs.length > 0) {
             for(let i=0;i<rs.length;i++) {
-              let stockHistorys = [rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest]
+              let stockHistorys = [rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]
               // console.log(stockHistorys)
               datas.push(stockHistorys)
             }

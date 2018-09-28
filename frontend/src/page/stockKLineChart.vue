@@ -43,7 +43,7 @@ import KDay from './kDay.vue'
 // 周K
 import KWeek from './kWeek.vue'
 
-// 日rsi
+/* // 日rsi
 import RsiDay from './rsiDay.vue'
 // 周rsi
 import RsiWeek from './rsiWeek.vue'
@@ -59,10 +59,10 @@ import DmiWeek from './dmiWeek.vue'
 // 日macd
 import MacdDay from './macdDay.vue'
 // 周macd
-import MacdWeek from './macdWeek.vue'
+import MacdWeek from './macdWeek.vue' */
 export default {
   components: {
-    KDay, KWeek, RsiDay, RsiWeek, DmiDay, DmiWeek, MacdDay, MacdWeek//, Alert//, Loading
+    KDay, KWeek/* , RsiDay, RsiWeek, DmiDay, DmiWeek, MacdDay, MacdWeek */
   },
   data () {
     return {

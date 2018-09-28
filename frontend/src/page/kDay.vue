@@ -37,7 +37,7 @@ export default {
   },
   created () {
     this.getData()
-    this.getRecentDate()
+    // this.getRecentDate()
   },
   methods: {
     openNewKline(params) {
@@ -69,8 +69,8 @@ export default {
           if(rs != undefined && rs.length > 0) {
             for(let i=0;i<rs.length;i++) {
               // alert(this.stockId+"--->"+rs[i].date+"--->"+rs[i].opening+"--->"+rs[i].highest+"--->"+rs[i].lowest+"--->"+rs[i].closing+"--->"+rs[i].vol)
-              let stockHistorys = [rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest]
-              // console.log(stockHistorys)
+              let stockHistorys = [rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]
+              console.log(stockHistorys)
               datas.push(stockHistorys)
             }
           } else {
