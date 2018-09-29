@@ -1,10 +1,11 @@
 // https://github.com/apache/incubator-echarts/issues/6583
 // http://gallery.echartsjs.com/editor.html?c=candlestick-sh
-
+// https://github.com/anandanand84/technicalindicators/tree/v1.1.13
 import * as macd from './MACD'
 import boll from 'bollinger-bands'
 let BB = require('technicalindicators').BollingerBands
 let RSI = require('technicalindicators').RSI
+let ADX = require('technicalindicators').ADX
 
 // rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol
 // 获取对应的数据格式
@@ -49,8 +50,22 @@ function getCloses(datas) {
     }
     return result;
 }
+function getLows(datas) {
+    var result = [];
+    for (var i = 0, len = datas.values.length; i < len; i++) {
+        result.push(datas.values[i][2])
+    }
+    return result;
+}
+function getHighs(datas) {
+    var result = [];
+    for (var i = 0, len = datas.values.length; i < len; i++) {
+        result.push(datas.values[i][3])
+    }
+    return result;
+}
 
-function getUppers(bolls) {
+function getBollUppers(bolls) {
     var result = [];
     for (var i = 0, len = bolls.length; i < len; i++) {
         result.push(bolls[i].upper)
@@ -58,7 +73,7 @@ function getUppers(bolls) {
     return result;
 }
 
-function getMiddles(bolls) {
+function getBollMiddles(bolls) {
     var result = [];
     for (var i = 0, len = bolls.length; i < len; i++) {
         result.push(bolls[i].middle)
@@ -66,10 +81,34 @@ function getMiddles(bolls) {
     return result;
 }
 
-function getLowers(bolls) {
+function getBollLowers(bolls) {
     var result = [];
     for (var i = 0, len = bolls.length; i < len; i++) {
         result.push(bolls[i].lower)
+    }
+    return result;
+}
+
+function getDmiAdxs(dmis) {
+    var result = [];
+    for (var i = 0, len = dmis.length; i < len; i++) {
+        result.push(dmis[i].adx)
+    }
+    return result;
+}
+
+function getDmiMdis(dmis) {
+    var result = [];
+    for (var i = 0, len = dmis.length; i < len; i++) {
+        result.push(dmis[i].mdi)
+    }
+    return result;
+}
+
+function getDmipdis(dmis) {
+    var result = [];
+    for (var i = 0, len = dmis.length; i < len; i++) {
+        result.push(dmis[i].pdi)
     }
     return result;
 }
@@ -87,17 +126,16 @@ export default function getData (datasets, kDisplay) {
   console.log("difs->"+difs);
   console.log("deas->"+deas);
 
-  let period = 20
-  let input = {
-    period : period, 
+  let inputBoll = {
+    period : 20, 
     values : getCloses(datas),
     stdDev : 1
     
   }
-  let bolls = BB.calculate(input)
-  let lowers = getLowers(bolls)
-  let middles = getMiddles(bolls)
-  let uppers = getUppers(bolls)
+  let bolls = BB.calculate(inputBoll)
+  let lowers = getBollLowers(bolls)
+  let middles = getBollMiddles(bolls)
+  let uppers = getBollUppers(bolls)
 
 //   let bolls = boll(getCloses(datas), 20, 2)
 //   let lowers = bolls.lower
@@ -116,6 +154,20 @@ export default function getData (datasets, kDisplay) {
     period : 20
   }
   let rsi100 = RSI.calculate(inputRSI100)
+
+  // DMI
+  let inputDMI = {
+    close: getCloses(datas),
+    high: getHighs(datas),
+    low: getLows(datas),
+    period : 14
+  }
+  let dmis = ADX.calculate(inputDMI)
+
+  let adxs = getDmiAdxs(dmis)
+  let mdis = getDmiMdis(dmis)
+  let pdis = getDmipdis(dmis)
+//   alert(datas.values.length+"->"+adxs.length)
 
 //   alert(rsi12)
 //   alert(rsi100)
@@ -221,19 +273,24 @@ export default function getData (datasets, kDisplay) {
             top: '3%',
             left: '15%',
             right: '5%',
-            height: '40%'
+            height: '30%'
         },{
-            top: '50%',
+            top: '38%',
             left: '15%',
             right: '5%',
             height: '13%'
         },{
-            top: '65%',
+            top: '53%',
             left: '15%',
             right: '5%',
             height: '13%'
         },{
-            top: '80%',
+            top: '68%',
+            left: '15%',
+            right: '5%',
+            height: '13%'
+        },{
+            top: '83%',
             left: '15%',
             right: '5%',
             height: '13%'
@@ -254,7 +311,7 @@ export default function getData (datasets, kDisplay) {
             data: datas.categoryData,
             // scale: true,
             // 坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
-            // boundaryGap: false,
+            boundaryGap: true,
             axisLabel: {
                 textStyle: {
                     fontSize: '12px',
@@ -267,7 +324,7 @@ export default function getData (datasets, kDisplay) {
         }, {
             type: 'category',
             data: datas.categoryData,
-            //boundaryGap: false,
+            boundaryGap: true,
             gridIndex: 1,
             axisTick: {
                 show: false
@@ -278,7 +335,7 @@ export default function getData (datasets, kDisplay) {
         }, {
             type: 'category',
             data: datas.categoryData,
-            //boundaryGap: false,
+            boundaryGap: true,
             gridIndex: 2,
             axisTick: {
                 show: false
@@ -289,8 +346,19 @@ export default function getData (datasets, kDisplay) {
         }, {
             type: 'category',
             data: datas.categoryData,
-            //boundaryGap: false,
+            boundaryGap: true,
             gridIndex: 3,
+            axisTick: {
+                show: false
+            },
+            axisLabel: {
+                show: false
+            }
+        }, {
+            type: 'category',
+            data: datas.categoryData,
+            boundaryGap: true,
+            gridIndex: 4,
             axisTick: {
                 show: false
             },
@@ -374,6 +442,25 @@ export default function getData (datasets, kDisplay) {
                 show: true,
                 color: config.col.y
             }
+        }, {
+            gridIndex: 4,
+            // position: 'right',
+            xAxisIndex: 4,
+            //splitNumber: 3,
+            splitArea: {
+                show: false
+            },
+            splitLine: {
+                show: true,
+                lineStyle: {
+                    color: ['#888'],
+                    type: 'dotted'
+                }
+            },
+            axisLabel: {
+                show: true,
+                color: config.col.y
+            }
         }],
 
         dataZoom: [{
@@ -399,6 +486,13 @@ export default function getData (datasets, kDisplay) {
             show: false,
             type: 'slider',
             xAxisIndex: [0, 3],
+            y: '94%',
+            start: config.st,
+            end: config.ed
+        }, {
+            show: false,
+            type: 'slider',
+            xAxisIndex: [0, 4],
             y: '94%',
             start: config.st,
             end: config.ed
@@ -566,11 +660,53 @@ export default function getData (datasets, kDisplay) {
                     }
                 }
             }, {
+                name: 'DMI1',
+                type: 'line',
+                xAxisIndex: 3,
+                yAxisIndex: 3,
+                smooth: true,
+                showSymbol: false,
+                data: mdis,
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: '#2E2EFE'
+                    }
+                }
+            }, {
+                name: 'DMI2',
+                type: 'line',
+                xAxisIndex: 3,
+                yAxisIndex: 3,
+                smooth: true,
+                showSymbol: false,
+                data: pdis,
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: '#FE9A2E'
+                    }
+                }
+            }, {
+                name: 'DMI3',
+                type: 'line',
+                xAxisIndex: 3,
+                yAxisIndex: 3,
+                smooth: true,
+                showSymbol: false,
+                data: adxs,
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: '#B45F04'
+                    }
+                }
+            }, {
                 name: 'MACD',
                 type: 'bar',
                 barWidth: config.barWidth,
-                xAxisIndex: 3,
-                yAxisIndex: 3,
+                xAxisIndex: 4,
+                yAxisIndex: 4,
                 smooth: true,
                 showSymbol: false,
                 data: macds,
@@ -591,8 +727,8 @@ export default function getData (datasets, kDisplay) {
             },{
                 name: 'DIF',
                 type: 'line',
-                xAxisIndex: 3,
-                yAxisIndex: 3,
+                xAxisIndex: 4,
+                yAxisIndex: 4,
                 smooth: true,
                 showSymbol: false,
                 data: difs,
@@ -605,8 +741,8 @@ export default function getData (datasets, kDisplay) {
             },{
                 name: 'DEA',
                 type: 'line',
-                xAxisIndex: 3,
-                yAxisIndex: 3,
+                xAxisIndex: 4,
+                yAxisIndex: 4,
                 smooth: true,
                 showSymbol: false,
                 data: deas,
