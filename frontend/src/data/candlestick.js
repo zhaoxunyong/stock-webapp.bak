@@ -2,7 +2,7 @@
 // http://gallery.echartsjs.com/editor.html?c=candlestick-sh
 // https://github.com/anandanand84/technicalindicators/tree/v1.1.13
 import * as macd from './MACD'
-import boll from 'bollinger-bands'
+// import boll from 'bollinger-bands'
 let BB = require('technicalindicators').BollingerBands
 let RSI = require('technicalindicators').RSI
 let ADX = require('technicalindicators').ADX

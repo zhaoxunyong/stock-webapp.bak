@@ -22,8 +22,7 @@ cnpm install vue-echarts --save
 cnpm install http-server -g
 
 #cnpm install stylus stylus-loader style-loader --save-dev
-
-cnpm install --save bollinger-bands
+#cnpm install --save bollinger-bands
 
 cnpm install --save technicalindicators@1.1.13
 
