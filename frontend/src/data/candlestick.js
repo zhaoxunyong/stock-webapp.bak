@@ -43,6 +43,20 @@ function calculateMA(datas,dayCount) {
     return result;
 }
 
+/* // 下面折线图的数据
+function calculateSA(datas) {
+    var result = [];
+    result.push(0);
+    for (var i = 0, len = datas.values.length; i < len; i++) {
+        if (i > 0) {
+            var k = Math.abs(datas.values[i][3] - datas.values[i][2]) / datas.values[i - 1][1];
+            result.push(k.toFixed(2));
+        }
+    }
+    alert(result)
+    return result;
+} */
+
 // 收盘价
 function getCloses(datas) {
     var result = [];
@@ -187,11 +201,11 @@ export default function getData (datasets, kDisplay) {
         col: {
             // up: 'rgb(153, 14, 14)',
             // down: '#19b34c',
-            up: 'red',
-            down: 'green',
-            m5: '#f00',
-            m10: 'yellow',
-            m20: '#dd1ce0',
+            up: '#ff4238',
+            down: '#30d94c',
+            m5: '#ec63a7',
+            m10: '#f5cc65',
+            m20: '#1e88e5',
             m60: 'purple',
             // y: '#ffefef'
         },
@@ -201,7 +215,7 @@ export default function getData (datasets, kDisplay) {
     }
 
     return {
-        // backgroundColor: config.bg,
+        // backgroundColor: '#21202D',
         // color: '#fff',
         /* title: {
             text: kDisplay+'k线'
@@ -526,14 +540,11 @@ export default function getData (datasets, kDisplay) {
             end: config.ed
         }],
         series: [
-            /* {
-                type: 'line',
-                name: '分时',
-                data: datas.now
-            }, */
             {
                 type: 'k', //Candlestick 
                 name: '日K',
+                // barGap:'1%',
+                // barCategoryGap:"1%",
                 barWidth: config.barWidth,
                 itemStyle: {
                     normal: {
@@ -629,19 +640,26 @@ export default function getData (datasets, kDisplay) {
                         color: '#7999f2'
                     }
                 }
-            }/* , {
+            } /* , {
                 type: 'line',
                 name: '振幅', //下面的折线图
                 xAxisIndex: 1,
                 yAxisIndex: 1,
-                data: calculateSA(datas)
-            } */, {
+                data: calculateSA(datas),
+                smooth: true,
+                showSymbol: false,
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: 'red'
+                    }
+                }
+            } */ , {
                 type: 'bar',
                 name: '成交量', //下面的柱状图
                 barWidth: config.barWidth,
                 xAxisIndex: 1,
                 yAxisIndex: 1,
-                // data: calculateUD(datas),
                 data: sliceVols,
                 itemStyle: {
                     normal: {
@@ -649,7 +667,6 @@ export default function getData (datasets, kDisplay) {
                         color: (params) => {
                             let currVol = params.data
                             let previousVol = params.dataIndex > 0 ? sliceVols[params.dataIndex - 1] : 0
-                            // console.log("currVol:"+currVol+"->previousVol:"+previousVol)
                             if(parseInt(currVol) < parseInt(previousVol)) {
                                 return config.col.down;
                             } else {
