@@ -73,7 +73,8 @@ public class StockApiImpl implements StockApi {
     
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
-    private final static int PERIOD = 88;
+    // 由于js需要处理数据，需要多获取些数据，然后再在js中取88天的数据
+    private final static int PERIOD = 288;
 	
 	@Autowired
 	private ModelMapper modelMapper;
