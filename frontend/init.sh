@@ -30,3 +30,4 @@ cnpm install --save technicalindicators@1.1.13
 #npm i node-sass --sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
 #https://nodejs.org/download/release/v8.9.4/
 #npm config set registry=https://registry.npmjs.org/
+#删除build/webpack.prod.conf.js中的uglifyjs内容
