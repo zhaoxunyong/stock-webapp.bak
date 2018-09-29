@@ -125,7 +125,7 @@ export default function getData (datasets, kDisplay) {
     ['2017-1-4', 20.92, 21.17, 20.84, 21.24]
 ]); */
     const config = {
-        // barWidth: 10,//指定柱宽度
+        // barWidth: 3,//指定柱宽度
         col: {
             // up: 'rgb(153, 14, 14)',
             // down: '#19b34c',
@@ -185,9 +185,25 @@ export default function getData (datasets, kDisplay) {
 
             }
         },
-        legend: {
-            data: ['分时', kDisplay+'K', '5'+kDisplay+'平均线', '10'+kDisplay+'平均线', '20'+kDisplay+'平均线', '60'+kDisplay+'平均线', '布林通道', '成交量', 'MACD', 'DIF', 'DEA']
-        },
+        /* legend: {
+            // type: 'scroll',
+            // orient: 'vertical',
+            // left: 'center',
+            data: [kDisplay+'K', 
+                '5'+kDisplay+'平均线', 
+                '10'+kDisplay+'平均线', 
+                '20'+kDisplay+'平均线', 
+                '60'+kDisplay+'平均线', 
+                '布林通道1', 
+                '布林通道2', 
+                '布林通道3',
+                '成交量', 
+                'RSI12', 
+                'RSI100', 
+                'MACD', 
+                'DIF', 
+                'DEA']
+        }, */
         grid: [/* {
             top: '14%',
             // show:true,
@@ -202,24 +218,24 @@ export default function getData (datasets, kDisplay) {
             height: '18%',
         } */
         {
-            top: '10%',
+            top: '3%',
             left: '15%',
-            right: '2%',
+            right: '5%',
             height: '40%'
         },{
-            top: '53%',
+            top: '50%',
             left: '15%',
-            right: '2%',
+            right: '5%',
             height: '13%'
         },{
-            top: '70%',
+            top: '65%',
             left: '15%',
-            right: '2%',
+            right: '5%',
             height: '13%'
         },{
-            top: '84%',
+            top: '80%',
             left: '15%',
-            right: '2%',
+            right: '5%',
             height: '13%'
         }
         ],
@@ -235,25 +251,22 @@ export default function getData (datasets, kDisplay) {
         // 上下两个图表的x轴数据
         xAxis: [{
             type: 'category',
+            data: datas.categoryData,
             // scale: true,
             // 坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
             // boundaryGap: false,
-            axisLine: {
-                // show: false,
-                onZero: false
-            },
             axisLabel: {
-                show: false
-            },
-            axisTick: {
-                show: false
-            },
-            splitLine: {
-                show: false
-            },
-            data: datas.categoryData
+                textStyle: {
+                    fontSize: '12px',
+                    // color: '#a1a1a1'
+                }/* ,
+                formatter: function (value) {
+                    return echarts.format.formatTime('MM-dd', value);
+                } */
+            }
         }, {
             type: 'category',
+            data: datas.categoryData,
             //boundaryGap: false,
             gridIndex: 1,
             axisTick: {
@@ -261,10 +274,10 @@ export default function getData (datasets, kDisplay) {
             },
             axisLabel: {
                 show: false
-            },
-            data: datas.categoryData
+            }
         }, {
             type: 'category',
+            data: datas.categoryData,
             //boundaryGap: false,
             gridIndex: 2,
             axisTick: {
@@ -272,10 +285,10 @@ export default function getData (datasets, kDisplay) {
             },
             axisLabel: {
                 show: false
-            },
-            data: datas.categoryData
+            }
         }, {
             type: 'category',
+            data: datas.categoryData,
             //boundaryGap: false,
             gridIndex: 3,
             axisTick: {
@@ -283,8 +296,7 @@ export default function getData (datasets, kDisplay) {
             },
             axisLabel: {
                 show: false
-            },
-            data: datas.categoryData
+            }
         }],
         // 
         yAxis: [{
@@ -400,9 +412,10 @@ export default function getData (datasets, kDisplay) {
             {
                 type: 'k', //Candlestick 
                 name: '日K',
-                // barWidth: config.barWidth, //指定柱宽度
+                barWidth: config.barWidth,
                 itemStyle: {
                     normal: {
+                        width: 1,
                         color: config.col.up, //阳线填充色
                         color0: config.col.down,
                         borderColor: config.col.up, //阳线边框色
@@ -418,6 +431,7 @@ export default function getData (datasets, kDisplay) {
                 showSymbol: false,
                 lineStyle: {
                     normal: {
+                        width: 1,
                         color: config.col.m5
                     }
                 }
@@ -429,6 +443,7 @@ export default function getData (datasets, kDisplay) {
                 showSymbol: false,
                 lineStyle: {
                     normal: {
+                        width: 1,
                         color: config.col.m10
                     }
                 }
@@ -440,6 +455,7 @@ export default function getData (datasets, kDisplay) {
                 showSymbol: false,
                 lineStyle: {
                     normal: {
+                        width: 1,
                         color: config.col.m20
                     }
                 }
@@ -451,6 +467,7 @@ export default function getData (datasets, kDisplay) {
                 showSymbol: false,
                 lineStyle: {
                     normal: {
+                        width: 1,
                         color: config.col.m60
                     }
                 }
@@ -462,6 +479,7 @@ export default function getData (datasets, kDisplay) {
                 showSymbol: false,
                 lineStyle: {
                     normal: {
+                        width: 1,
                         color: '#7999f2'
                     }
                 }
@@ -473,6 +491,7 @@ export default function getData (datasets, kDisplay) {
                 showSymbol: false,
                 lineStyle: {
                     normal: {
+                        width: 1,
                         color: '#7999f2'
                     }
                 }
@@ -484,6 +503,7 @@ export default function getData (datasets, kDisplay) {
                 showSymbol: false,
                 lineStyle: {
                     normal: {
+                        width: 1,
                         color: '#7999f2'
                     }
                 }
@@ -496,13 +516,14 @@ export default function getData (datasets, kDisplay) {
             } */, {
                 type: 'bar',
                 name: '成交量', //下面的柱状图
-                // barWidth: config.barWidth,
+                barWidth: config.barWidth,
                 xAxisIndex: 1,
                 yAxisIndex: 1,
                 // data: calculateUD(datas),
                 data: datas.vols,
                 itemStyle: {
                     normal: {
+                        width: 1,
                         color: (params) => {
                             let currVol = params.data
                             let previousVol = params.dataIndex > 0 ? datas.vols[params.dataIndex - 1] : 0
@@ -524,8 +545,9 @@ export default function getData (datasets, kDisplay) {
                 smooth: true,
                 showSymbol: false,
                 data: rsi12,
-                itemStyle: {
+                lineStyle: {
                     normal: {
+                        width: 1,
                         color: config.col.down
                     }
                 }
@@ -537,14 +559,16 @@ export default function getData (datasets, kDisplay) {
                 smooth: true,
                 showSymbol: false,
                 data: rsi100,
-                itemStyle: {
+                lineStyle: {
                     normal: {
+                        width: 1,
                         color: config.col.up
                     }
                 }
             }, {
                 name: 'MACD',
                 type: 'bar',
+                barWidth: config.barWidth,
                 xAxisIndex: 3,
                 yAxisIndex: 3,
                 smooth: true,
@@ -552,6 +576,7 @@ export default function getData (datasets, kDisplay) {
                 data: macds,
                 itemStyle: {
                     normal: {
+                        width: 1,
                         color: function(params) {
                             var colorList;
                             if (params.data >= 0) {
@@ -570,7 +595,13 @@ export default function getData (datasets, kDisplay) {
                 yAxisIndex: 3,
                 smooth: true,
                 showSymbol: false,
-                data: difs
+                data: difs,
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: 'blue'
+                    }
+                }
             },{
                 name: 'DEA',
                 type: 'line',
@@ -578,7 +609,13 @@ export default function getData (datasets, kDisplay) {
                 yAxisIndex: 3,
                 smooth: true,
                 showSymbol: false,
-                data: deas
+                data: deas,
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: 'blue'
+                    }
+                }
             }
         ]
     }
