@@ -74,10 +74,10 @@ public class StockServiceTest {
     
     @Test
     public void fetchHistory() throws Exception {
-        String no = "2337";
-        String startDate = "2015/01/01";
-        String endDate = "2018/09/01";
-        fetchService.fetchHistory(no, startDate, endDate);
+        String no = "6111";
+//        String startDate = "2015/01/01";
+//        String endDate = "2018/09/01";
+        fetchService.fetchHistory(no);
     }
     
     @Test

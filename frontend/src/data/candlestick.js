@@ -6,6 +6,7 @@ import * as macd from './MACD'
 let BB = require('technicalindicators').BollingerBands
 let RSI = require('technicalindicators').RSI
 let ADX = require('technicalindicators').ADX
+import echarts from 'echarts/lib/echarts'
 const PERIOD = -88
 
 // rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol
@@ -132,6 +133,15 @@ function getSlice(datas) {
     return datas.slice(PERIOD);
 }
 
+function getSeriesIndex(tooltipDatas, index) {
+    for (var i = 0, len = tooltipDatas.length; i < len; i++) {
+        if(tooltipDatas[i].seriesIndex == index) {
+            return tooltipDatas[i];
+        }
+    }
+    return null;
+}
+
 export default function getData (datasets, kDisplay) {
   let datas = splitData(datasets)
   let sliceVols = getSlice(datas.vols)
@@ -222,10 +232,31 @@ export default function getData (datasets, kDisplay) {
         }, */
         // backgroundColor: '#21202D',
         // 提示框浮层的位置
+        animation: false,
         tooltip: {
+            show: true,
+            backgroundColor: 'white',
             trigger: 'axis',
+            animation: false,
             position: ['10%', '-8%'],
-            formatter: '{a0}:{c0}<br />{a1}:{c1}<br />{a2}:{c2}',
+            // formatter: '{a0}:{c0}<br />{a1}:{c1}<br />{a2}:{c2}',
+            formatter: function (params) {
+                console.log(params)
+                // rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol
+                let v = `${getSeriesIndex(params,0).axisValue} 
+                收 ${getSeriesIndex(params,0).data[1]} 
+                開 ${getSeriesIndex(params,0).data[0]} 
+                高 ${getSeriesIndex(params,0).data[3]} 
+                低 ${getSeriesIndex(params,0).data[2]} <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                ${kDisplay}線 
+                <font color="${config.col.m5}">M5 ${getSeriesIndex(params,1).value}</font> 
+                <font color="${config.col.m10}">M10 ${getSeriesIndex(params,2).value}</font> 
+                <font color="${config.col.m20}">M20 ${getSeriesIndex(params,3).value}</font> 
+                <font color="${config.col.m60}">M60 ${getSeriesIndex(params,4).value}</font>`
+                $("#tooltipId"+kDisplay).html(v)
+                // return `<font color="read">${params[0].data}</font>`;
+                return "";
+            },
             // formatter:function(params){
             //     return params.data
             // },
@@ -251,9 +282,11 @@ export default function getData (datasets, kDisplay) {
                     //     return 'some text' + params.value;
                     // },
                 },
-                /* crossStyle: {
-                    type: 'solid'
-                }, */
+                crossStyle: {
+                    // color: '#1e90ff',
+                    width: 1,
+                    // type: 'solid'
+                }
 
             }
         },
@@ -285,7 +318,46 @@ export default function getData (datasets, kDisplay) {
             top: '38%',
             left: '15%',
             right: '5%',
-            height: '13%'
+            height: '13%',
+            tooltip: {
+                show: true,
+                backgroundColor: 'white',
+                trigger: 'axis',
+                animation: false,
+                // position: ['10%', '-8%'],
+                // formatter:function(params){
+                //     return params.data
+                // },
+                // backgroundColor: '#fff',
+                borderWidth: 1,
+                textStyle: {
+                    color: '#fff',
+                    width: '100%'
+                },
+                // 坐标轴指示器配置项
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        show: true,
+                        color: '#ff0',
+                        rich: {
+                            a: {
+                                // 没有设置 `lineHeight`，则 `lineHeight` 为 56
+                            }
+                        }
+                        // formatter: function(params) {
+                        //     // 假设此轴的 type 为 'time'。
+                        //     return 'some text' + params.value;
+                        // },
+                    },
+                    crossStyle: {
+                        // color: '#1e90ff',
+                        width: 1,
+                        // type: 'solid'
+                    }
+    
+                }
+            },
         },{
             top: '53%',
             left: '15%',
@@ -327,10 +399,10 @@ export default function getData (datasets, kDisplay) {
                 textStyle: {
                     fontSize: '12px',
                     // color: '#a1a1a1'
-                }/* ,
+                } ,
                 formatter: function (value) {
-                    return echarts.format.formatTime('MM-dd', value);
-                } */
+                    return echarts.format.formatTime('MM/dd', value.replace('/','-'));
+                }
             }
         }, {
             type: 'category',
@@ -402,29 +474,28 @@ export default function getData (datasets, kDisplay) {
                 color: config.col.y
             },
             scale: true,
-            // position: 'right',
+            // position: 'right',,
+            splitNumber: 2,
             // splitArea: {
             //     show: false
             // },
             splitLine: {
-                show: true,
+                show: false,
                 lineStyle: {
                     color: ['#888'],
                     type: 'dotted'
                 }
-            },
-
-            // splitNumber: 10
+            }
         }, {
             gridIndex: 1,
             // position: 'right',
             xAxisIndex: 1,
-            //splitNumber: 3,
-            splitArea: {
+            splitNumber: 2,
+            /* splitArea: {
                 show: false
-            },
+            }, */
             splitLine: {
-                show: true,
+                show: false,
                 lineStyle: {
                     color: ['#888'],
                     type: 'dotted'
@@ -441,12 +512,12 @@ export default function getData (datasets, kDisplay) {
             gridIndex: 2,
             // position: 'right',
             xAxisIndex: 2,
-            //splitNumber: 3,
-            splitArea: {
+            splitNumber: 2,
+            /* splitArea: {
                 show: false
-            },
+            }, */
             splitLine: {
-                show: true,
+                show: false,
                 lineStyle: {
                     color: ['#888'],
                     type: 'dotted'
@@ -463,12 +534,12 @@ export default function getData (datasets, kDisplay) {
             gridIndex: 3,
             // position: 'right',
             xAxisIndex: 3,
-            //splitNumber: 3,
-            splitArea: {
+            splitNumber: 2,
+            /* splitArea: {
                 show: false
-            },
+            }, */
             splitLine: {
-                show: true,
+                show: false,
                 lineStyle: {
                     color: ['#888'],
                     type: 'dotted'
@@ -485,12 +556,12 @@ export default function getData (datasets, kDisplay) {
             gridIndex: 4,
             // position: 'right',
             xAxisIndex: 4,
-            //splitNumber: 3,
-            splitArea: {
+            splitNumber: 2,
+            /* splitArea: {
                 show: false
-            },
+            }, */
             splitLine: {
-                show: true,
+                show: false,
                 lineStyle: {
                     color: ['#888'],
                     type: 'dotted'
@@ -546,6 +617,9 @@ export default function getData (datasets, kDisplay) {
                 // barGap:'1%',
                 // barCategoryGap:"1%",
                 barWidth: config.barWidth,
+                // smooth: true,
+                // showSymbol: false,
+                symbol: "none",
                 itemStyle: {
                     normal: {
                         width: 1,
@@ -562,6 +636,7 @@ export default function getData (datasets, kDisplay) {
                 data: getSlice(calculateMA(datas, 5)),
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -574,6 +649,7 @@ export default function getData (datasets, kDisplay) {
                 data: getSlice(calculateMA(datas, 10)),
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -586,6 +662,7 @@ export default function getData (datasets, kDisplay) {
                 data: getSlice(calculateMA(datas, 20)),
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -598,6 +675,7 @@ export default function getData (datasets, kDisplay) {
                 data: getSlice(calculateMA(datas, 60)),
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -610,6 +688,7 @@ export default function getData (datasets, kDisplay) {
                 data: getSlice(uppers),
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -622,6 +701,7 @@ export default function getData (datasets, kDisplay) {
                 data: getSlice(middles),
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -634,6 +714,7 @@ export default function getData (datasets, kDisplay) {
                 data: getSlice(lowers),
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -661,6 +742,7 @@ export default function getData (datasets, kDisplay) {
                 xAxisIndex: 1,
                 yAxisIndex: 1,
                 data: sliceVols,
+                symbol: "none",
                 itemStyle: {
                     normal: {
                         width: 1,
@@ -682,6 +764,7 @@ export default function getData (datasets, kDisplay) {
                 yAxisIndex: 2,
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 data: getSlice(rsi12),
                 lineStyle: {
                     normal: {
@@ -696,6 +779,7 @@ export default function getData (datasets, kDisplay) {
                 yAxisIndex: 2,
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 data: getSlice(rsi100),
                 lineStyle: {
                     normal: {
@@ -710,6 +794,7 @@ export default function getData (datasets, kDisplay) {
                 yAxisIndex: 3,
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 data: getSlice(mdis),
                 lineStyle: {
                     normal: {
@@ -724,6 +809,7 @@ export default function getData (datasets, kDisplay) {
                 yAxisIndex: 3,
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 data: getSlice(pdis),
                 lineStyle: {
                     normal: {
@@ -738,6 +824,7 @@ export default function getData (datasets, kDisplay) {
                 yAxisIndex: 3,
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 data: getSlice(adxs),
                 lineStyle: {
                     normal: {
@@ -753,6 +840,7 @@ export default function getData (datasets, kDisplay) {
                 yAxisIndex: 4,
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 data: getSlice(macds),
                 itemStyle: {
                     normal: {
@@ -775,6 +863,7 @@ export default function getData (datasets, kDisplay) {
                 yAxisIndex: 4,
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 data: getSlice(difs),
                 lineStyle: {
                     normal: {
@@ -789,6 +878,7 @@ export default function getData (datasets, kDisplay) {
                 yAxisIndex: 4,
                 smooth: true,
                 showSymbol: false,
+                symbol: "none",
                 data: getSlice(deas),
                 lineStyle: {
                     normal: {

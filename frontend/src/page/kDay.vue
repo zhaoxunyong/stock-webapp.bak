@@ -1,10 +1,9 @@
 <template>
-  <div>
-    <!-- <div class="w-100 px-1 mx-1 kline-height">
-      <p class="font-weight-bold text-center align-middle px-1 mx-1" href="#" @click.prevent="showZoomKline">
-        日線
-      </p>
-    </div> -->
+  <div class="w-100 px-1 mx-1 kline-height">
+    <span id="tooltipId日" class="text-left align-middle px-1 mx-1 ml-5" href="#" @click.prevent="showZoomKline">
+                收 開 高 低  <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                日線 M5 M10 M20 M60
+    </span>
     <chart :options="kline" :auto-resize="resize" @click="openNewKline"></chart>
   </div>
 </template>
