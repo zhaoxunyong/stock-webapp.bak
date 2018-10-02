@@ -1,6 +1,9 @@
 // https://github.com/apache/incubator-echarts/issues/6583
 // http://gallery.echartsjs.com/editor.html?c=candlestick-sh
 // https://github.com/anandanand84/technicalindicators/tree/v1.1.13
+
+import * as stockUtils from './stockUtils'
+
 import * as macd from './MACD'
 // import boll from 'bollinger-bands'
 let BB = require('technicalindicators').BollingerBands
@@ -9,142 +12,9 @@ let ADX = require('technicalindicators').ADX
 import echarts from 'echarts/lib/echarts'
 const PERIOD = -88
 
-// rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol
-// 获取对应的数据格式
-function splitData(rawData) {
-    var categoryData = [];
-    var values = []
-    var vols = []
-    for (var i = 0; i < rawData.length; i++) {
-        categoryData.push(rawData[i].splice(0, 1)[0]);
-        values.push(rawData[i])
-        vols.push(rawData[i][4])
-        // alert(rawData[i])
-    }
-    return {
-        categoryData: categoryData,
-        values: values,
-        vols: vols
-    };
-}
-// 平均值
-function calculateMA(datas,dayCount) {
-    var result = [];
-    for (var i = 0, len = datas.values.length; i < len; i++) {
-        if (i < dayCount) {
-            result.push('-');
-            continue;
-        }
-        var sum = 0;
-        for (var j = 0; j < dayCount; j++) {
-            sum += datas.values[i - j][1];
-        }
-        result.push((sum / dayCount).toFixed(2));
-    }
-    return result;
-}
-
-/* // 下面折线图的数据
-function calculateSA(datas) {
-    var result = [];
-    result.push(0);
-    for (var i = 0, len = datas.values.length; i < len; i++) {
-        if (i > 0) {
-            var k = Math.abs(datas.values[i][3] - datas.values[i][2]) / datas.values[i - 1][1];
-            result.push(k.toFixed(2));
-        }
-    }
-    alert(result)
-    return result;
-} */
-
-// 收盘价
-function getCloses(datas) {
-    var result = [];
-    for (var i = 0, len = datas.values.length; i < len; i++) {
-        result.push(datas.values[i][1])
-    }
-    return result;
-}
-function getLows(datas) {
-    var result = [];
-    for (var i = 0, len = datas.values.length; i < len; i++) {
-        result.push(datas.values[i][2])
-    }
-    return result;
-}
-function getHighs(datas) {
-    var result = [];
-    for (var i = 0, len = datas.values.length; i < len; i++) {
-        result.push(datas.values[i][3])
-    }
-    return result;
-}
-
-function getBollUppers(bolls) {
-    var result = [];
-    for (var i = 0, len = bolls.length; i < len; i++) {
-        result.push(bolls[i].upper)
-    }
-    return result;
-}
-
-function getBollMiddles(bolls) {
-    var result = [];
-    for (var i = 0, len = bolls.length; i < len; i++) {
-        result.push(bolls[i].middle)
-    }
-    return result;
-}
-
-function getBollLowers(bolls) {
-    var result = [];
-    for (var i = 0, len = bolls.length; i < len; i++) {
-        result.push(bolls[i].lower)
-    }
-    return result;
-}
-
-function getDmiAdxs(dmis) {
-    var result = [];
-    for (var i = 0, len = dmis.length; i < len; i++) {
-        result.push(dmis[i].adx)
-    }
-    return result;
-}
-
-function getDmiMdis(dmis) {
-    var result = [];
-    for (var i = 0, len = dmis.length; i < len; i++) {
-        result.push(dmis[i].mdi)
-    }
-    return result;
-}
-
-function getDmipdis(dmis) {
-    var result = [];
-    for (var i = 0, len = dmis.length; i < len; i++) {
-        result.push(dmis[i].pdi)
-    }
-    return result;
-}
-
-function getSlice(datas) {
-    return datas.slice(PERIOD);
-}
-
-function getSeriesIndex(tooltipDatas, index) {
-    for (var i = 0, len = tooltipDatas.length; i < len; i++) {
-        if(tooltipDatas[i].seriesIndex == index) {
-            return tooltipDatas[i];
-        }
-    }
-    return null;
-}
-
 export default function getData (datasets, kDisplay) {
-  let datas = splitData(datasets)
-  let sliceVols = getSlice(datas.vols)
+  let datas = stockUtils.splitData(datasets)
+  let sliceVols = stockUtils.getSlice(datas.vols)
 //   let EMAS = macd.EMASL(datas.values,12);
 //   let EMAL = macd.EMASL(datas.values,26);
 //   console.log("EMAS->"+EMAS);
@@ -152,20 +22,20 @@ export default function getData (datasets, kDisplay) {
   let difs = macd.DIF(datas.values);
   let deas = macd.DEA(datas.values,9);
   let macds = macd.BAR(datas.values);
-  console.log("macds->"+macds);
-  console.log("difs->"+difs);
-  console.log("deas->"+deas);
+//   console.log("macds->"+macds);
+//   console.log("difs->"+difs);
+//   console.log("deas->"+deas);
 
   let inputBoll = {
     period : 20, 
-    values : getCloses(datas),
+    values : stockUtils.getCloses(datas),
     stdDev : 2
     
   }
   let bolls = BB.calculate(inputBoll)
-  let lowers = getBollLowers(bolls)
-  let middles = getBollMiddles(bolls)
-  let uppers = getBollUppers(bolls)
+  let lowers = stockUtils.getBollLowers(bolls)
+  let middles = stockUtils.getBollMiddles(bolls)
+  let uppers = stockUtils.getBollUppers(bolls)
 
 //   let bolls = boll(getCloses(datas), 20, 2)
 //   let lowers = bolls.lower
@@ -173,30 +43,30 @@ export default function getData (datasets, kDisplay) {
 //   let uppers = bolls.upper
 
   let inputRSI12 = {
-    values : getCloses(datas),
+    values : stockUtils.getCloses(datas),
     period : 12
   }
   
   let rsi12 = RSI.calculate(inputRSI12)
 
   let inputRSI100 = {
-    values : getCloses(datas),
+    values : stockUtils.getCloses(datas),
     period : 100
   }
   let rsi100 = RSI.calculate(inputRSI100)
 
   // DMI
   let inputDMI = {
-    close: getCloses(datas),
-    high: getHighs(datas),
-    low: getLows(datas),
+    close: stockUtils.getCloses(datas),
+    high: stockUtils.getHighs(datas),
+    low: stockUtils.getLows(datas),
     period : 14
   }
   let dmis = ADX.calculate(inputDMI)
 
-  let adxs = getDmiAdxs(dmis)
-  let mdis = getDmiMdis(dmis)
-  let pdis = getDmipdis(dmis)
+  let adxs = stockUtils.getDmiAdxs(dmis)
+  let mdis = stockUtils.getDmiMdis(dmis)
+  let pdis = stockUtils.getDmipdis(dmis)
 //   alert(datas.values.length+"->"+adxs.length)
 
 //   alert(rsi12)
@@ -235,12 +105,12 @@ export default function getData (datasets, kDisplay) {
         animation: false,
         tooltip: {
             show: true,
-            backgroundColor: 'white',
+            // backgroundColor: 'white',
             trigger: 'axis',
             animation: false,
             position: ['10%', '-8%'],
             // formatter: '{a0}:{c0}<br />{a1}:{c1}<br />{a2}:{c2}',
-            formatter: function (params) {
+            /* formatter: function (params) {
                 console.log(params)
                 // rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol
                 let v = `${getSeriesIndex(params,0).axisValue} 
@@ -256,10 +126,10 @@ export default function getData (datasets, kDisplay) {
                 $("#tooltipId"+kDisplay).html(v)
                 // return `<font color="read">${params[0].data}</font>`;
                 return "";
+            }, */
+            formatter:function(params){
+                return ''
             },
-            // formatter:function(params){
-            //     return params.data
-            // },
             // backgroundColor: '#fff',
             borderWidth: 1,
             textStyle: {
@@ -387,7 +257,7 @@ export default function getData (datasets, kDisplay) {
         // 上下两个图表的x轴数据
         xAxis: [{
             type: 'category',
-            data: getSlice(datas.categoryData),
+            data: stockUtils.getSlice(datas.categoryData),
             // scale: true,
             // 坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
             boundaryGap: true,
@@ -406,7 +276,7 @@ export default function getData (datasets, kDisplay) {
             }
         }, {
             type: 'category',
-            data: getSlice(datas.categoryData),
+            data: stockUtils.getSlice(datas.categoryData),
             boundaryGap: true,
             gridIndex: 1,
             axisTick: {
@@ -421,7 +291,7 @@ export default function getData (datasets, kDisplay) {
             }
         }, {
             type: 'category',
-            data: getSlice(datas.categoryData),
+            data: stockUtils.getSlice(datas.categoryData),
             boundaryGap: true,
             gridIndex: 2,
             axisTick: {
@@ -436,7 +306,7 @@ export default function getData (datasets, kDisplay) {
             }
         }, {
             type: 'category',
-            data: getSlice(datas.categoryData),
+            data: stockUtils.getSlice(datas.categoryData),
             boundaryGap: true,
             gridIndex: 3,
             axisTick: {
@@ -451,7 +321,7 @@ export default function getData (datasets, kDisplay) {
             }
         }, {
             type: 'category',
-            data: getSlice(datas.categoryData),
+            data: stockUtils.getSlice(datas.categoryData),
             boundaryGap: true,
             gridIndex: 4,
             axisTick: {
@@ -629,11 +499,11 @@ export default function getData (datasets, kDisplay) {
                         borderColor0: config.col.down
                     }
                 },
-                data: getSlice(datas.values)
+                data: stockUtils.getSlice(datas.values)
             }, {
                 type: 'line',
                 name: '5'+kDisplay+'平均线',
-                data: getSlice(calculateMA(datas, 5)),
+                data: stockUtils.getSlice(stockUtils.calculateMA(datas, 5)),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -646,7 +516,7 @@ export default function getData (datasets, kDisplay) {
             }, {
                 type: 'line',
                 name: '10'+kDisplay+'平均线',
-                data: getSlice(calculateMA(datas, 10)),
+                data: stockUtils.getSlice(stockUtils.calculateMA(datas, 10)),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -659,7 +529,7 @@ export default function getData (datasets, kDisplay) {
             }, {
                 type: 'line',
                 name: '20'+kDisplay+'平均线',
-                data: getSlice(calculateMA(datas, 20)),
+                data: stockUtils.getSlice(stockUtils.calculateMA(datas, 20)),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -672,7 +542,7 @@ export default function getData (datasets, kDisplay) {
             }, {
                 type: 'line',
                 name: '60'+kDisplay+'平均线',
-                data: getSlice(calculateMA(datas, 60)),
+                data: stockUtils.getSlice(stockUtils.calculateMA(datas, 60)),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -685,7 +555,7 @@ export default function getData (datasets, kDisplay) {
             }, {
                 type: 'line',
                 name: '上軸線',
-                data: getSlice(uppers),
+                data: stockUtils.getSlice(uppers),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -698,7 +568,7 @@ export default function getData (datasets, kDisplay) {
             }, {
                 type: 'line',
                 name: '中軸線',
-                data: getSlice(middles),
+                data: stockUtils.getSlice(middles),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -711,7 +581,7 @@ export default function getData (datasets, kDisplay) {
             }, {
                 type: 'line',
                 name: '下軸線',
-                data: getSlice(lowers),
+                data: stockUtils.getSlice(lowers),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -726,7 +596,7 @@ export default function getData (datasets, kDisplay) {
                 name: '振幅', //下面的折线图
                 xAxisIndex: 1,
                 yAxisIndex: 1,
-                data: calculateSA(datas),
+                data: stockUtils.calculateSA(datas),
                 smooth: true,
                 showSymbol: false,
                 lineStyle: {
@@ -765,7 +635,7 @@ export default function getData (datasets, kDisplay) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                data: getSlice(rsi12),
+                data: stockUtils.getSlice(rsi12),
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -780,7 +650,7 @@ export default function getData (datasets, kDisplay) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                data: getSlice(rsi100),
+                data: stockUtils.getSlice(rsi100),
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -795,7 +665,7 @@ export default function getData (datasets, kDisplay) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                data: getSlice(mdis),
+                data: stockUtils.getSlice(mdis),
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -810,7 +680,7 @@ export default function getData (datasets, kDisplay) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                data: getSlice(pdis),
+                data: stockUtils.getSlice(pdis),
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -825,7 +695,7 @@ export default function getData (datasets, kDisplay) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                data: getSlice(adxs),
+                data: stockUtils.getSlice(adxs),
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -841,7 +711,7 @@ export default function getData (datasets, kDisplay) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                data: getSlice(macds),
+                data: stockUtils.getSlice(macds),
                 itemStyle: {
                     normal: {
                         width: 1,
@@ -864,7 +734,7 @@ export default function getData (datasets, kDisplay) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                data: getSlice(difs),
+                data: stockUtils.getSlice(difs),
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -879,7 +749,7 @@ export default function getData (datasets, kDisplay) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                data: getSlice(deas),
+                data: stockUtils.getSlice(deas),
                 lineStyle: {
                     normal: {
                         width: 1,

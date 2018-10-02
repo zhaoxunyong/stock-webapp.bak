@@ -3,10 +3,10 @@
     <b-col cols="12" sm="12">
       <b-row>
           <b-col class="p-0 m-0 mw-100">
-            <KDay></KDay>
+            <KCandle kineType="0"></KCandle>
           </b-col>
           <b-col class="p-0 m-0 mw-100">
-            <KWeek></KWeek>
+            <KCandle kineType="1"></KCandle>
           </b-col>
       </b-row>
       <!-- <b-row>
@@ -39,11 +39,11 @@
 <script>
 import Bus from '../eventBus'
 // 日K
-import KDay from './kDay.vue'
-// 周K
+import KCandle from './kCandle.vue'
+/* // 周K
 import KWeek from './kWeek.vue'
 
-/* // 日rsi
+// 日rsi
 import RsiDay from './rsiDay.vue'
 // 周rsi
 import RsiWeek from './rsiWeek.vue'
@@ -62,7 +62,7 @@ import MacdDay from './macdDay.vue'
 import MacdWeek from './macdWeek.vue' */
 export default {
   components: {
-    KDay, KWeek/* , RsiDay, RsiWeek, DmiDay, DmiWeek, MacdDay, MacdWeek */
+    KCandle/*, KWeek , RsiDay, RsiWeek, DmiDay, DmiWeek, MacdDay, MacdWeek */
   },
   data () {
     return {

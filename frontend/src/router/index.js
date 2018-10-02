@@ -6,8 +6,8 @@ import ImportantNews from '@/page/importantNews'
 import StockDailyTransactions from '@/page/stockDailyTransactions'
 import EditMySelectedType from '@/page/editMySelectedType'
 import NewsSettings from '@/page/newsSettings'
-import KDay from '@/page/kDay'
-import KWeek from '@/page/kWeek'
+import KCandle from '@/page/kCandle'
+// import KWeek from '@/page/kWeek'
 /* import RsiDay from '@/page/rsiDay'
 import RsiWeek from '@/page/rsiWeek'
 import DmiDay from '@/page/dmiDay'
@@ -59,13 +59,13 @@ export default new Router({
       component: NewsSettings
     },
     {
-      path: '/kday',
-      component: KDay
+      path: '/kCandle',
+      component: KCandle
     },
-    {
+    /*{
       path: '/kweek',
       component: KWeek
-    }/* ,
+    } ,
     {
       path: '/rsiday',
       component: RsiDay

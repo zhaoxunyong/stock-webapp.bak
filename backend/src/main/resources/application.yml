@@ -24,7 +24,7 @@ spring:
     
   datasource: 
     url: jdbc:mysql://127.0.0.1:3306/wenchun?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
-    username: wenchun
+    username: root
     password: Aa123456
     driver-class-name: com.mysql.jdbc.Driver
         

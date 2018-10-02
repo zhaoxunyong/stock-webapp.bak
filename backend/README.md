@@ -8,6 +8,7 @@ mysql:5.6 \
 
 grant all privileges on *.* to root@'%' identified by 'Aa123#@!';
 grant all privileges on *.* to root@'localhost' identified by 'Aa654321';
+grant all privileges on *.* to wenchun@'localhost' identified by 'Aa654321';
 CREATE DATABASE `wenchun` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; 
 
 echo "0 */2 * * * /works/app/stock-webapp/sql_backup.sh" > /var/spool/cron/root  

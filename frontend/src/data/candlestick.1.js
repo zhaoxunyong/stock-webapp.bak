@@ -35,7 +35,7 @@ function calculateMA(data0, dayCount) {
 
 export default function getData (datas, kDisplay) {
   let data0 = splitData(datas)
-  console.log(data0.vols)
+//   console.log(data0.vols)
 /*let data0 = splitData([
     ['2017-1-3', 21.37, 20.99, 20.9, 21.37],
     ['2017-1-4', 20.92, 21.17, 20.84, 21.24]
