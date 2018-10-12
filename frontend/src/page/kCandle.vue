@@ -5,7 +5,8 @@
         日線
       </p>
     </div> -->
-    <chart :options="stockCandle" :auto-resize="resize" @click="openNewKline"></chart>
+    <div :id="'tooltipId'+kineType" class="position-relative" style="top:100px;"></div>
+    <chart :options="stockCandle" :auto-resize="resize" @mousemove="openNewKline"></chart>
   </div>
 </template>
 <script>
@@ -41,8 +42,8 @@ export default {
     // this.getRecentDate()
   },
   methods: {
-    openNewKline(params) {
-      console.log(params.componentType+","+params.name)
+    openNewKline(param) {
+      // console.log(param)
     },
     showZoomKline() {
     },
@@ -81,7 +82,7 @@ export default {
             this_.$alerts.error("找不到數據:"+this.stockId)
             // alert("找不到數據:"+this.stockId)
           }
-          this.stockCandle = stockCandle(datas, '日')
+          this.stockCandle = stockCandle(datas, this.kineType)
 
         })
       }

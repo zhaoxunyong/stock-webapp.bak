@@ -106,75 +106,113 @@ export default function getData (datasets, kineType) {
         // 提示框浮层的位置
         animation: false,
         tooltip: {
-            trigger: 'none',
+            show: true,
+            // backgroundColor: 'white',
+            trigger: 'axis',
+            animation: false,
+            position: ['10%', '-8%'],
+            // formatter: '{a0}:{c0}<br />{a1}:{c1}<br />{a2}:{c2}',
+            formatter: function (params) {
+                // console.log(params.seriesIndex)
+                // rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol
+                let v = `${stockUtils.getSeriesIndex(params,0).axisValue} 
+                收 ${stockUtils.getSeriesIndex(params,0).data[1]} 
+                開 ${stockUtils.getSeriesIndex(params,0).data[0]} 
+                高 ${stockUtils.getSeriesIndex(params,0).data[3]} 
+                低 ${stockUtils.getSeriesIndex(params,0).data[2]} <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                ${kDisplay}線 
+                <font color="${config.col.m5}">M5 ${stockUtils.getSeriesIndex(params,1).value}</font> 
+                <font color="${config.col.m10}">M10 ${stockUtils.getSeriesIndex(params,2).value}</font> 
+                <font color="${config.col.m20}">M20 ${stockUtils.getSeriesIndex(params,3).value}</font> 
+                <font color="${config.col.m60}">M60 ${stockUtils.getSeriesIndex(params,4).value}</font>`
+                $("#tooltipId"+kineType).html(v)
+                // console.log(v)
+                // return `<font color="read">${params[0].data}</font>`;
+                return "";
+            },
+            /* formatter:function(params){
+                return ''
+            }, */
+            // backgroundColor: '#fff',
+            borderWidth: 1,
+            textStyle: {
+                color: '#fff',
+                width: '100%'
+            },
+            // 坐标轴指示器配置项
             axisPointer: {
-                type: 'cross'
+                type: 'cross',
+                label: {
+                    show: true,
+                    color: '#ff0',
+                    rich: {
+                        a: {
+                            // 没有设置 `lineHeight`，则 `lineHeight` 为 56
+                        }
+                    }
+                    // formatter: function(params) {
+                    //     // 假设此轴的 type 为 'time'。
+                    //     return 'some text' + params.value;
+                    // },
+                },
+                crossStyle: {
+                    // color: '#1e90ff',
+                    width: 1,
+                    // type: 'solid'
+                }
+
             }
         },
+        /* legend: {
+            // type: 'scroll',
+            // orient: 'vertical',
+            // left: 'center',
+            data: [kDisplay+'K', 
+                '5'+kDisplay+'平均线', 
+                '10'+kDisplay+'平均线', 
+                '20'+kDisplay+'平均线', 
+                '60'+kDisplay+'平均线', 
+                '布林通道1', 
+                '布林通道2', 
+                '布林通道3',
+                '成交量', 
+                'RSI12', 
+                'RSI100', 
+                'MACD', 
+                'DIF', 
+                'DEA']
+        }, */
         grid: [{
             top: '3%',
             left: '15%',
             right: '5%',
-            height: '30%',
-            /* tooltip : {             // Series config.
-                trigger: 'item',
-                backgroundColor: 'black',
-                position : [0, 0],
-                formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-            } */
+            height: '30%'
         },{
             top: '38%',
             left: '15%',
             right: '5%',
-            height: '13%',
-            /* tooltip : {             // Series config.
-                trigger: 'item',
-                backgroundColor: 'black',
-                position : [0, 0],
-                formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-            } */
+            height: '13%'
         },{
             top: '53%',
             left: '15%',
             right: '5%',
-            height: '13%',
-            /* tooltip : {             // Series config.
-                trigger: 'item',
-                backgroundColor: 'black',
-                position : [0, 0],
-                formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-            } */
+            height: '13%'
         },{
             top: '68%',
             left: '15%',
             right: '5%',
-            height: '13%',
-            /* tooltip : {             // Series config.
-                trigger: 'item',
-                backgroundColor: 'black',
-                position : [0, 0],
-                formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-            } */
+            height: '13%'
         },{
             top: '83%',
             left: '15%',
             right: '5%',
-            height: '13%',
-            /* tooltip : {             // Series config.
-                trigger: 'item',
-                backgroundColor: 'black',
-                position : [0, 0],
-                formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-            } */
+            height: '13%'
         }
         ],
-        // 坐标轴指示器（axisPointer）的全局公用设置
         axisPointer: {
             link: {
-                // 所有x坐标一起联动
                 xAxisIndex: 'all'
             },
-            // mouse动时坐标处的文字
             label: {
                 backgroundColor: '#777'
             },
@@ -186,23 +224,15 @@ export default function getData (datasets, kineType) {
             data: stockUtils.getSlice(datas.categoryData),
             // scale: true,
             // 坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
-            boundaryGap: false,
-            tooltip : {             // Series config.
-                trigger: 'item',
-                backgroundColor: 'black',
-                position : [0, 0],
-                formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-            },
-            // 坐标文字内容
+            boundaryGap: true,
             axisLabel: {
                 onZero: false,
-			    /* lineStyle:{  
+			    lineStyle:{  
                     color:'red',  
-                }, */
-                // 坐标文字相关样式
+                },
                 textStyle: {
                     fontSize: '12px',
-                    color: 'green'
+                    // color: '#a1a1a1'
                 } ,
                 formatter: function (value) {
                     return echarts.format.formatTime('MM/dd', value.replace('/','-'));
@@ -211,47 +241,61 @@ export default function getData (datasets, kineType) {
         }, {
             type: 'category',
             data: stockUtils.getSlice(datas.categoryData),
-            boundaryGap: false,
+            boundaryGap: true,
             gridIndex: 1,
-            // 坐标刻度
             axisTick: {
                 show: false
             },
-            // 坐标文字内容
             axisLabel: {
+                onZero: false,
+			    lineStyle:{  
+                    color:'red',  
+                },
                 show: false
             }
         }, {
             type: 'category',
             data: stockUtils.getSlice(datas.categoryData),
-            boundaryGap: false,
+            boundaryGap: true,
             gridIndex: 2,
             axisTick: {
                 show: false
             },
             axisLabel: {
+                onZero: false,
+			    lineStyle:{  
+                    color:'red',  
+                },
                 show: false
             }
         }, {
             type: 'category',
             data: stockUtils.getSlice(datas.categoryData),
-            boundaryGap: false,
+            boundaryGap: true,
             gridIndex: 3,
             axisTick: {
                 show: false
             },
             axisLabel: {
+                onZero: false,
+			    lineStyle:{  
+                    color:'red',  
+                },
                 show: false
             }
         }, {
             type: 'category',
             data: stockUtils.getSlice(datas.categoryData),
-            boundaryGap: false,
+            boundaryGap: true,
             gridIndex: 4,
             axisTick: {
                 show: false
             },
             axisLabel: {
+                onZero: false,
+			    lineStyle:{  
+                    color:'red',  
+                },
                 show: false
             }
         }],
@@ -410,12 +454,6 @@ export default function getData (datasets, kineType) {
                 // smooth: true,
                 // showSymbol: false,
                 symbol: "none",
-                tooltip : {             // Series config.
-                    trigger: 'item',
-                    backgroundColor: 'black',
-                    position : [0, 0],
-                    formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-                },
                 itemStyle: {
                     normal: {
                         width: 1,
@@ -433,12 +471,6 @@ export default function getData (datasets, kineType) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                tooltip : {             // Series config.
-                    trigger: 'item',
-                    backgroundColor: 'black',
-                    position : [0, 0],
-                    formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-                },
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -452,12 +484,6 @@ export default function getData (datasets, kineType) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                tooltip : {             // Series config.
-                    trigger: 'item',
-                    backgroundColor: 'black',
-                    position : [0, 0],
-                    formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-                },
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -471,12 +497,6 @@ export default function getData (datasets, kineType) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                tooltip : {             // Series config.
-                    trigger: 'item',
-                    backgroundColor: 'black',
-                    position : [0, 0],
-                    formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-                },
                 lineStyle: {
                     normal: {
                         width: 1,
@@ -490,12 +510,6 @@ export default function getData (datasets, kineType) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                tooltip : {             // Series config.
-                    trigger: 'item',
-                    backgroundColor: 'black',
-                    position : [0, 0],
-                    formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-                },
                 lineStyle: {
                     normal: {
                         width: 1,
