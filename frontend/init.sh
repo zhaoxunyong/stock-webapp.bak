@@ -16,8 +16,8 @@ cnpm install vue-message --save
 #cnpm uninstall bootstrap --save
 #cnpm install bootstrap@4.1.0 --save
 
-#cnpm install echarts --save
-cnpm install vue-echarts --save
+npm install echarts --registry=https://registry.npm.taobao.org
+#cnpm install vue-echarts --save
 
 cnpm install http-server -g
 

@@ -51,8 +51,12 @@ import axios from 'axios'
 
 /* eslint-disable no-new */
 
-import ECharts from 'vue-echarts'
-Vue.component('chart', ECharts)
+// vue echarts
+// import ECharts from 'vue-echarts'
+// Vue.component('chart', ECharts)
+
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts
 
 new Vue({
   el: '#app',

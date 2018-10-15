@@ -1,12 +1,6 @@
 // https://github.com/apache/incubator-echarts/issues/6583
 // http://gallery.echartsjs.com/editor.html?c=candlestick-sh
 // https://github.com/anandanand84/technicalindicators/tree/v1.1.13
-import * as macd from './MACD'
-// import boll from 'bollinger-bands'
-let BB = require('technicalindicators').BollingerBands
-let RSI = require('technicalindicators').RSI
-let ADX = require('technicalindicators').ADX
-import echarts from 'echarts/lib/echarts'
 export const PERIOD = -88
 
 // rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol
