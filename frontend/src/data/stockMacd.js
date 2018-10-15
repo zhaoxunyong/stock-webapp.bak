@@ -2,7 +2,7 @@
 // http://gallery.echartsjs.com/editor.html?c=candlestick-sh
 // https://github.com/anandanand84/technicalindicators/tree/v1.1.13
 
-import * as stockUtils from './stockUtils'
+import * as stockUtils from '../utils/stockUtils'
 
 import * as macd from './MACD'
 

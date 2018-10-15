@@ -2,7 +2,7 @@
 // http://gallery.echartsjs.com/editor.html?c=candlestick-sh
 // https://github.com/anandanand84/technicalindicators/tree/v1.1.13
 
-import * as stockUtils from './stockUtils'
+import * as stockUtils from '../utils/stockUtils'
 
 export default function getData (datasets, kineType) {
     let kDisplay = kineType == 1 ? "月" : "日"
