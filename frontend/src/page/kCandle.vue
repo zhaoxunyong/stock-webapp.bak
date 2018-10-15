@@ -5,9 +5,11 @@
         日線
       </p>
     </div> -->
-    <!-- <div :id="'tooltipId'+kineType" class="position-relative" style="top:100px;"></div> -->
+    
     <!-- <chart :options="stockCandle" :auto-resize="resize" @mousemove="openNewKline"></chart> -->
-    <div id="myChart1" class="echarts1"></div>
+    <div id="myChart1" class="echarts1">
+      <div :id="'tooltipId'+kineType" class="w-100 text-left"></div>
+    </div>
     <div id="myChart2" class="echarts2"></div>
     <div id="myChart3" class="echarts2"></div>
     <div id="myChart4" class="echarts2"></div>

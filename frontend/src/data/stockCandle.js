@@ -39,7 +39,26 @@ export default function getData (datasets, kineType) {
             backgroundColor: 'black',
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
-            formatter: "Series formatter: <br/>{a}<br/>{b}:{c}",
+            // formatter: "Series formatter: <br/>{a}<br/>{b}:{c}",
+            formatter: function (params) {
+                console.log(params)
+                // rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol
+                // let data0 = stockUtils.getSeriesIndex(params,0)
+                // 83, 72.5, 70, 67, 73.8, "16032"
+                let v = `${params[0].axisValue} 
+                收 ${params[0].data[2]} 
+                開 ${params[0].data[1]} 
+                高 ${params[0].data[4]} 
+                低 ${params[0].data[3]} <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                ${kDisplay}線 
+                <font color="${STOCK_CONFIG.col.m5}">M5 ${params[1].value} </font> 
+                <font color="${STOCK_CONFIG.col.m10}">M10 ${params[1].value} </font> 
+                <font color="${STOCK_CONFIG.col.m20}">M20 ${params[2].value} </font> 
+                <font color="${STOCK_CONFIG.col.m60}">M60 ${params[3].value} </font>`
+                $("#tooltipId"+kineType).html(v)
+                // return `<font color="read">${params[0].data}</font>`;
+                return "";
+            },
             axisPointer: {
                 type: 'cross',
                 label: {
