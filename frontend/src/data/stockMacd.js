@@ -33,7 +33,13 @@ export default function getData (datasets, kineType) {
             backgroundColor: 'black',
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
-            formatter: "Series formatter: <br/>{a}<br/>{b}:{c}",
+            formatter: function (params) {
+                let v = `<font color="${STOCK_CONFIG.col.up}">MACD ${params[0].value}</font>
+                <font color="${STOCK_CONFIG.col.dif}">DIF ${params[1].value}</font>
+                <font color="${STOCK_CONFIG.col.dea}">DEA ${params[2].value}</font>`
+                $("#tooltipId5"+kineType).html(v)
+                return "";
+            },
             axisPointer: {
                 type: 'cross',
                 label: {
@@ -132,9 +138,9 @@ export default function getData (datasets, kineType) {
                         color: function(params) {
                             var colorList;
                             if (params.data >= 0) {
-                                colorList = '#ef232a';
+                                colorList = STOCK_CONFIG.col.up;
                             } else {
-                                colorList = '#14b143';
+                                colorList = STOCK_CONFIG.col.down;
                             }
                             return colorList;
                         },
@@ -150,7 +156,7 @@ export default function getData (datasets, kineType) {
                 lineStyle: {
                     normal: {
                         width: 1,
-                        color: 'blue'
+                        color: STOCK_CONFIG.col.dif
                     }
                 }
             },{
@@ -163,7 +169,7 @@ export default function getData (datasets, kineType) {
                 lineStyle: {
                     normal: {
                         width: 1,
-                        color: 'blue'
+                        color: STOCK_CONFIG.col.dea
                     }
                 }
             }

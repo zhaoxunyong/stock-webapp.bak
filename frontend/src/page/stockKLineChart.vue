@@ -6,7 +6,7 @@
             <KCandle kineType="0"></KCandle>
           </b-col>
           <b-col class="p-0 m-0 mw-100">
-            <KCandle kineType="1"></KCandle>
+            <!-- <KCandle kineType="1"></KCandle> -->
           </b-col>
       </b-row>
       <!-- <b-row>

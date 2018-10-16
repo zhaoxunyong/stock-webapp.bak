@@ -1,5 +1,5 @@
 <template>
-  <div class="echarts">
+  <div class="echarts border border-primary">
     <!-- <div class="w-100 px-1 mx-1 kline-height">
       <p class="font-weight-bold text-center align-middle px-1 mx-1" href="#" @click.prevent="showZoomKline">
         日線
@@ -7,13 +7,30 @@
     </div> -->
     
     <!-- <chart :options="stockCandle" :auto-resize="resize" @mousemove="openNewKline"></chart> -->
-    <div id="myChart1" class="echarts1">
-      <div :id="'tooltipId'+kineType" class="w-100 text-left"></div>
+    <div class="border border-primary">
+      <div :id="'tooltipId1'+kineType" class="w-100 text-left ml-5 my-1" v-html="rawHtml"></div>
+      <div id="myChart1" class="echarts1"></div>
     </div>
-    <div id="myChart2" class="echarts2"></div>
-    <div id="myChart3" class="echarts2"></div>
-    <div id="myChart4" class="echarts2"></div>
-    <div id="myChart5" class="echarts2"></div>
+
+    <div class="border border-primary">
+      <div :id="'tooltipId2'+kineType" class="w-100 text-left ml-5 my-1">成交量 </div>
+      <div id="myChart2" class="echarts2"></div>
+    </div>
+
+    <div class="border border-primary">
+      <div :id="'tooltipId3'+kineType" class="w-100 text-left ml-5 my-1">RSI-12 RSI-100 </div>
+      <div id="myChart3" class="echarts2"></div>
+    </div>
+
+    <div class="border border-primary">
+      <div :id="'tooltipId4'+kineType" class="w-100 text-left ml-5 my-1">MDI PDI ADX </div>
+      <div id="myChart4" class="echarts2"></div>
+    </div>
+    
+    <div class="border border-primary">
+      <div :id="'tooltipId5'+kineType" class="w-100 text-left ml-5 my-1">MACD DIF DEA</div>
+      <div id="myChart5" class="echarts2"></div>
+    </div>
   </div>
 </template>
 <script>
@@ -42,11 +59,18 @@ export default {
       stockId: '',
       chart: null,
       // stockCandle: null,
-      resize: true
+      resize: true,
+      rawHtml: ''
     }
   },
   props: ["kineType"],
   mounted () {
+    this.rawHtml = `收 開 高 低<br/>
+                ${this.kineType == 1 ? "月" : "日"}線
+                <font color="${STOCK_CONFIG.col.m5}">M5 </font> 
+                <font color="${STOCK_CONFIG.col.m10}">M10 </font> 
+                <font color="${STOCK_CONFIG.col.m20}">M20 </font> 
+                <font color="${STOCK_CONFIG.col.m60}">M60 </font>`
     this.init()
   },
   created () {

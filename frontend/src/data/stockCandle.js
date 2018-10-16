@@ -39,9 +39,10 @@ export default function getData (datasets, kineType) {
             backgroundColor: 'black',
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
-            // formatter: "Series formatter: <br/>{a}<br/>{b}:{c}",
+            // formatter: "Series formatter: <br/>{a}<br/>{b}<br/>{c}",
+            // 数据结构：dataIndex/opening/closing/lowest/highest/vol
+            // formatter: "{b} 收 {c2} 開 {c1} 高 {c4} 低 {c3}",
             formatter: function (params) {
-                console.log(params)
                 // rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol
                 // let data0 = stockUtils.getSeriesIndex(params,0)
                 // 83, 72.5, 70, 67, 73.8, "16032"
@@ -49,13 +50,13 @@ export default function getData (datasets, kineType) {
                 收 ${params[0].data[2]} 
                 開 ${params[0].data[1]} 
                 高 ${params[0].data[4]} 
-                低 ${params[0].data[3]} <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                低 ${params[0].data[3]}<br/>
                 ${kDisplay}線 
-                <font color="${STOCK_CONFIG.col.m5}">M5 ${params[1].value} </font> 
-                <font color="${STOCK_CONFIG.col.m10}">M10 ${params[1].value} </font> 
-                <font color="${STOCK_CONFIG.col.m20}">M20 ${params[2].value} </font> 
-                <font color="${STOCK_CONFIG.col.m60}">M60 ${params[3].value} </font>`
-                $("#tooltipId"+kineType).html(v)
+                <font color="${STOCK_CONFIG.col.m5}">M5 ${params[1].value}</font> 
+                <font color="${STOCK_CONFIG.col.m10}">M10 ${params[2].value}</font> 
+                <font color="${STOCK_CONFIG.col.m20}">M20 ${params[3].value}</font> 
+                <font color="${STOCK_CONFIG.col.m60}">M60 ${params[4].value}</font>`
+                $("#tooltipId1"+kineType).html(v)
                 // return `<font color="read">${params[0].data}</font>`;
                 return "";
             },
@@ -173,12 +174,6 @@ export default function getData (datasets, kineType) {
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
-                tooltip : {             // Series STOCK_CONFIG.
-                    trigger: 'item',
-                    backgroundColor: 'black',
-                    position : [0, 0],
-                    formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-                },
                 lineStyle: {
                     normal: {
                         width: 1,

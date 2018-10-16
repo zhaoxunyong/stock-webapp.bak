@@ -14,6 +14,13 @@ window.STOCK_CONFIG = {
         m10: '#f5cc65',
         m20: '#1e88e5',
         m60: 'purple',
+        // dmi
+        mdi: '#2E2EFE',
+        pdi: '#FE9A2E',
+        adx: '#B45F04',
+        // macd
+        dif: 'blue',
+        dea: 'blue'
         // y: '#ffefef'
     },
     // bg: '#000',

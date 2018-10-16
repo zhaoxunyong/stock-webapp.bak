@@ -42,7 +42,12 @@ export default function getData (datasets, kineType) {
             backgroundColor: 'black',
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
-            formatter: "Series formatter: <br/>{a}<br/>{b}:{c}",
+            formatter: function (params) {
+                let v = `<font color="${STOCK_CONFIG.col.up}">RSI-12 ${params[0].value}</font>
+                <font color="${STOCK_CONFIG.col.down}">RSI-100 ${params[0].value}</font>`
+                $("#tooltipId3"+kineType).html(v)
+                return "";
+            },
             axisPointer: {
                 type: 'cross',
                 label: {

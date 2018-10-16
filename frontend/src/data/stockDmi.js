@@ -42,7 +42,13 @@ export default function getData (datasets, kineType) {
             backgroundColor: 'black',
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
-            formatter: "Series formatter: <br/>{a}<br/>{b}:{c}",
+            formatter: function (params) {
+                let v = `<font color="${STOCK_CONFIG.col.mdi}">MDI ${params[0].value.toFixed(2)}</font>
+                <font color="${STOCK_CONFIG.col.pdi}">PDI ${params[1].value.toFixed(2)}</font>
+                <font color="${STOCK_CONFIG.col.adx}">ADX ${params[2].value.toFixed(2)}</font>`
+                $("#tooltipId4"+kineType).html(v)
+                return "";
+            },
             axisPointer: {
                 type: 'cross',
                 label: {
@@ -137,7 +143,7 @@ export default function getData (datasets, kineType) {
                 lineStyle: {
                     normal: {
                         width: 1,
-                        color: '#2E2EFE'
+                        color: STOCK_CONFIG.col.mdi
                     }
                 }
             }, {
@@ -150,7 +156,7 @@ export default function getData (datasets, kineType) {
                 lineStyle: {
                     normal: {
                         width: 1,
-                        color: '#FE9A2E'
+                        color: STOCK_CONFIG.col.pdi
                     }
                 }
             }, {
@@ -163,7 +169,7 @@ export default function getData (datasets, kineType) {
                 lineStyle: {
                     normal: {
                         width: 1,
-                        color: '#B45F04'
+                        color: STOCK_CONFIG.col.adx
                     }
                 }
             }
