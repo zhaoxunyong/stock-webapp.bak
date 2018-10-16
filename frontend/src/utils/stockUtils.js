@@ -1,7 +1,6 @@
 // https://github.com/apache/incubator-echarts/issues/6583
 // http://gallery.echartsjs.com/editor.html?c=candlestick-sh
 // https://github.com/anandanand84/technicalindicators/tree/v1.1.13
-export const PERIOD = -88
 
 // rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol
 // 获取对应的数据格式
@@ -119,9 +118,9 @@ export function getDmipdis(dmis) {
     return result;
 }
 
-// 取数据中的最近PERIOD数据
+// 取数据中的最近RECENT_DATE数据
 export function getSlice(datas) {
-    return datas.slice(PERIOD);
+    return datas.slice(RECENT_DATE);
 }
 
 export function getSeriesIndex(tooltipDatas, index) {

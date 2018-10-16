@@ -3,12 +3,13 @@
 // https://github.com/anandanand84/technicalindicators/tree/v1.1.13
 
 import * as stockUtils from '../utils/stockUtils'
+import * as dateUtils from '../utils/dateUtils'
 
 // import boll from 'bollinger-bands'
 // var MACD = require('technicalindicators').MACD
 let BB = require('technicalindicators').BollingerBands
 
-import echarts from 'echarts/lib/echarts'
+// import echarts from 'echarts/lib/echarts'
 
 export default function getData (datasets, kineType) {
     let kDisplay = kineType == 1 ? "月" : "日"
@@ -52,10 +53,10 @@ export default function getData (datasets, kineType) {
                 高 ${params[0].data[4]} 
                 低 ${params[0].data[3]}<br/>
                 ${kDisplay}線 
-                <font color="${STOCK_CONFIG.col.m5}">M5 ${params[1].value}</font> 
-                <font color="${STOCK_CONFIG.col.m10}">M10 ${params[2].value}</font> 
-                <font color="${STOCK_CONFIG.col.m20}">M20 ${params[3].value}</font> 
-                <font color="${STOCK_CONFIG.col.m60}">M60 ${params[4].value}</font>`
+                <font color="${STOCK_CONFIG.col.m5}">M5</font> ${params[1].value} 
+                <font color="${STOCK_CONFIG.col.m10}">M10</font> ${params[2].value} 
+                <font color="${STOCK_CONFIG.col.m20}">M20</font> ${params[3].value} 
+                <font color="${STOCK_CONFIG.col.m60}">M60</font> ${params[4].value}`
                 $("#tooltipId1"+kineType).html(v)
                 // return `<font color="read">${params[0].data}</font>`;
                 return "";
@@ -77,7 +78,7 @@ export default function getData (datasets, kineType) {
             top: '3%',
             left: '15%',
             right: '5%',
-            height: '80%',
+            height: '80%'
         }],
         // 坐标轴指示器（axisPointer）的全局公用设置
         axisPointer: {
@@ -101,16 +102,13 @@ export default function getData (datasets, kineType) {
             // 坐标文字内容
             axisLabel: {
                 onZero: false,
-			    /* lineStyle:{  
-                    color:'red',  
-                }, */
                 // 坐标文字相关样式
                 textStyle: {
                     fontSize: '12px',
                     color: 'green'
                 } ,
                 formatter: function (value) {
-                    return echarts.format.formatTime('MM/dd', value.replace('/','-'));
+                    return dateUtils.formatTime('MM/dd', value)
                 }
             }
         }],
@@ -143,7 +141,7 @@ export default function getData (datasets, kineType) {
         }, {
             show: false,
             type: 'slider',
-            y: '94%',
+            // y: '94%',
             start: STOCK_CONFIG.st,
             end: STOCK_CONFIG.ed
         }],

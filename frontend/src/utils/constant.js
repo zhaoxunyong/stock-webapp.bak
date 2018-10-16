@@ -1,7 +1,7 @@
 // 分页显示20条
 window.PAGE_SIZE = 20
-// K线图获取最近88天的历史数据
-window.RECENT_DATE = 88
+// K线图获取最近xx天的历史数据
+window.RECENT_DATE = -260
 
 window.STOCK_CONFIG = {
     // barWidth: 3,//指定柱宽度
@@ -24,6 +24,6 @@ window.STOCK_CONFIG = {
         // y: '#ffefef'
     },
     // bg: '#000',
-    st: 0,
+    st: 79,
     ed: 100
 }

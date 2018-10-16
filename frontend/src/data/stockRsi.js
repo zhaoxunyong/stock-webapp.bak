@@ -3,6 +3,7 @@
 // https://github.com/anandanand84/technicalindicators/tree/v1.1.13
 
 import * as stockUtils from '../utils/stockUtils'
+import * as dateUtils from '../utils/dateUtils'
 
 let RSI = require('technicalindicators').RSI
 
@@ -43,8 +44,8 @@ export default function getData (datasets, kineType) {
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function (params) {
-                let v = `<font color="${STOCK_CONFIG.col.up}">RSI-12 ${params[0].value}</font>
-                <font color="${STOCK_CONFIG.col.down}">RSI-100 ${params[0].value}</font>`
+                let v = `<font color="${STOCK_CONFIG.col.up}">RSI-12</font> ${params[0].value}
+                <font color="${STOCK_CONFIG.col.down}">RSI-100</font> ${params[0].value}`
                 $("#tooltipId3"+kineType).html(v)
                 return "";
             },
@@ -62,16 +63,10 @@ export default function getData (datasets, kineType) {
             }
         },
         grid: [{
-            top: '3%',
+            top: '5%',
             left: '15%',
             right: '5%',
-            height: '80%',
-            /* tooltip : {             // Series STOCK_CONFIG.
-                trigger: 'item',
-                backgroundColor: 'black',
-                position : [0, 0],
-                formatter: "Series formatter: <br/>{a}<br/>{b}:{c}"
-            } */
+            height: '90%'
         }],
         // 坐标轴指示器（axisPointer）的全局公用设置
         axisPointer: {
@@ -89,7 +84,21 @@ export default function getData (datasets, kineType) {
         xAxis: [{
             type: 'category',
             data: stockUtils.getSlice(datas.categoryData),
+            // scale: true,
+            // 坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
             boundaryGap: false,
+            // 坐标文字内容
+            /* axisLabel: {
+                onZero: false,
+                // 坐标文字相关样式
+                textStyle: {
+                    fontSize: '12px',
+                    color: 'green'
+                } ,
+                formatter: function (value) {
+                    return dateUtils.formatTime('MM/dd', value)
+                }
+            } */
             // 坐标刻度
             axisTick: {
                 show: false
@@ -101,23 +110,24 @@ export default function getData (datasets, kineType) {
         }],
         // 
         yAxis: [{
+            axisLabel: {
+                lineStyle:{  
+                    color:'red',  
+                },
+                color: STOCK_CONFIG.col.y
+            },
+            scale: true,
+            // position: 'right',,
             splitNumber: 2,
-            /* splitArea: {
-                show: false
-            }, */
+            // splitArea: {
+            //     show: false
+            // },
             splitLine: {
                 show: false,
                 lineStyle: {
                     color: ['#888'],
                     type: 'dotted'
                 }
-            },
-            axisLabel: {
-                lineStyle:{  
-                    color:'red',  
-                },
-                show: true,
-                color: STOCK_CONFIG.col.y
             }
         }],
         dataZoom: [{

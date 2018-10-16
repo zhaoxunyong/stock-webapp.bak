@@ -1,5 +1,5 @@
 <template>
-  <div class="echarts border border-primary">
+  <div>
     <!-- <div class="w-100 px-1 mx-1 kline-height">
       <p class="font-weight-bold text-center align-middle px-1 mx-1" href="#" @click.prevent="showZoomKline">
         日線
@@ -7,29 +7,30 @@
     </div> -->
     
     <!-- <chart :options="stockCandle" :auto-resize="resize" @mousemove="openNewKline"></chart> -->
-    <div class="border border-primary">
-      <div :id="'tooltipId1'+kineType" class="w-100 text-left ml-5 my-1" v-html="rawHtml"></div>
-      <div id="myChart1" class="echarts1"></div>
+    <!-- stockCandle -->
+    <div>
+      <div :id="'tooltipId1'+kineType" class="w-100 text-left ml-5 pl-3 my-1" v-html="rawHtml1"></div>
+      <div :id="'myChart1'+kineType" class="echarts1"></div>
     </div>
-
-    <div class="border border-primary">
-      <div :id="'tooltipId2'+kineType" class="w-100 text-left ml-5 my-1">成交量 </div>
-      <div id="myChart2" class="echarts2"></div>
+    <!-- stockVol -->
+    <div>
+      <div :id="'tooltipId2'+kineType" class="w-100 text-left ml-5 pl-3 my-1" v-html="rawHtml2"></div>
+      <div :id="'myChart2'+kineType" class="echarts2"></div>
     </div>
-
-    <div class="border border-primary">
-      <div :id="'tooltipId3'+kineType" class="w-100 text-left ml-5 my-1">RSI-12 RSI-100 </div>
-      <div id="myChart3" class="echarts2"></div>
+    <!-- stockRsi -->
+    <div>
+      <div :id="'tooltipId3'+kineType" class="w-100 text-left ml-5 pl-3 my-1" v-html="rawHtml3"></div>
+      <div :id="'myChart3'+kineType" class="echarts2"></div>
     </div>
-
-    <div class="border border-primary">
-      <div :id="'tooltipId4'+kineType" class="w-100 text-left ml-5 my-1">MDI PDI ADX </div>
-      <div id="myChart4" class="echarts2"></div>
+    <!-- stockDmi -->
+    <div>
+      <div :id="'tooltipId4'+kineType" class="w-100 text-left ml-5 pl-3 my-1" v-html="rawHtml4"></div>
+      <div :id="'myChart4'+kineType" class="echarts2"></div>
     </div>
-    
-    <div class="border border-primary">
-      <div :id="'tooltipId5'+kineType" class="w-100 text-left ml-5 my-1">MACD DIF DEA</div>
-      <div id="myChart5" class="echarts2"></div>
+    <!-- stockMacd -->
+    <div>
+      <div :id="'tooltipId5'+kineType" class="w-100 text-left ml-5 pl-3 my-1" v-html="rawHtml5"></div>
+      <div :id="'myChart5'+kineType" class="echarts3"></div>
     </div>
   </div>
 </template>
@@ -43,7 +44,6 @@ import stockVol from '../data/stockVol'
 import stockRsi from '../data/stockRsi'
 import stockDmi from '../data/stockDmi'
 import stockMacd from '../data/stockMacd'
-import dateAdd from '../utils/dates'
 // 引用alert文件, alerts.error('xxx')
 // import * as alerts from '../utils/alert.js'
 // import {success, error} from '../utils/alert.js'
@@ -60,17 +60,34 @@ export default {
       chart: null,
       // stockCandle: null,
       resize: true,
-      rawHtml: ''
+      rawHtml1: '',
+      rawHtml2: '',
+      rawHtml3: '',
+      rawHtml4: '',
+      rawHtml5: '',
     }
   },
   props: ["kineType"],
   mounted () {
-    this.rawHtml = `收 開 高 低<br/>
+    this.rawHtml1 = `收 開 高 低<br/>
                 ${this.kineType == 1 ? "月" : "日"}線
                 <font color="${STOCK_CONFIG.col.m5}">M5 </font> 
                 <font color="${STOCK_CONFIG.col.m10}">M10 </font> 
                 <font color="${STOCK_CONFIG.col.m20}">M20 </font> 
                 <font color="${STOCK_CONFIG.col.m60}">M60 </font>`
+
+    this.rawHtml2 =  `<font color="${STOCK_CONFIG.col.up}">成交量 </font>`
+
+    this.rawHtml3 =  `<font color="${STOCK_CONFIG.col.up}">RSI-12 </font>
+                <font color="${STOCK_CONFIG.col.down}">RSI-100 </font>`
+
+    this.rawHtml4 =  `<font color="${STOCK_CONFIG.col.mdi}">MDI </font>
+                <font color="${STOCK_CONFIG.col.pdi}">PDI </font>
+                <font color="${STOCK_CONFIG.col.adx}">ADX </font>`
+
+    this.rawHtml5 =  `<font color="${STOCK_CONFIG.col.up}">MACD </font>
+                <font color="${STOCK_CONFIG.col.dif}">DIF </font>
+                <font color="${STOCK_CONFIG.col.dea}">DEA </font>`
     this.init()
   },
   created () {
@@ -94,11 +111,11 @@ export default {
       if (this.chart != null) {
         return
       }
-      let chart1 = this.$echarts.init(document.getElementById('myChart1'))
-      let chart2 = this.$echarts.init(document.getElementById('myChart2'))
-      let chart3 = this.$echarts.init(document.getElementById('myChart3'))
-      let chart4 = this.$echarts.init(document.getElementById('myChart4'))
-      let chart5 = this.$echarts.init(document.getElementById('myChart5'))
+      let chart1 = this.$echarts.init(document.getElementById('myChart1'+this.kineType))
+      let chart2 = this.$echarts.init(document.getElementById('myChart2'+this.kineType))
+      let chart3 = this.$echarts.init(document.getElementById('myChart3'+this.kineType))
+      let chart4 = this.$echarts.init(document.getElementById('myChart4'+this.kineType))
+      let chart5 = this.$echarts.init(document.getElementById('myChart5'+this.kineType))
       this.setOptions(chart1, chart2, chart3, chart4, chart5)
       this.$echarts.connect([chart1, chart2, chart3, chart4, chart5]);
     },
@@ -168,11 +185,15 @@ export default {
 } */
 .echarts1 {
   width: 100%;
-  height: 240px;
+  height: 190px;
 }
 .echarts2 {
   width: 100%;
-  height: 180px;
+  height: 90px;
+}
+.echarts3 {
+  width: 100%;
+  height: 120px;
 }
 </style>
 
