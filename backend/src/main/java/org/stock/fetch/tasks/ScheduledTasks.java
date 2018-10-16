@@ -16,7 +16,7 @@ public class ScheduledTasks {
     
     public static volatile boolean IS_FETCH_NEW = false;
     
-    public static volatile boolean IS_FETCH_HISTORY = false;
+    private static volatile boolean IS_FETCH_HISTORY = false;
     
 //    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -83,7 +83,7 @@ public class ScheduledTasks {
     /**
      * 重新导失败的日期数据
      */
-    @Scheduled(cron="0 0 1 * * ?")
+    @Scheduled(cron="0 */30 20-23 * * ?")
     public void refetchAllHistory() throws Exception {
         if(!IS_FETCH_HISTORY) {
             try {

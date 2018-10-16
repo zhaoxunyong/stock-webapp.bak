@@ -903,96 +903,90 @@ public class FetchServiceImpl implements FetchService {
      */
     private List<StockHistory> searchHistory(String no, String startDate, String endDate) throws Exception {
         List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
-        if(!ScheduledTasks.IS_FETCH_HISTORY) {
-            ScheduledTasks.IS_FETCH_HISTORY = true;
-            StockData stockData = stockDataMapper.selectByNo(no);
-            if(stockData == null) {
-                throw new BusinessException("Not found stock data by no: " + no);
-            }
-            long stockId = stockData.getId();
-            String url = "https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo();
-            try {
-                HtmlPage page = processGuceOathCom(webClient.getPage(url));
-                page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
-                page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
-                HtmlForm form = page.getHtmlElementById("aspnetForm");
-                HtmlPage page2 = form.getOneHtmlElementByAttribute("input", "id", "ctl00_ContentPlaceHolder1_submitBut").click();
-                HtmlForm form2 = page2.getHtmlElementById("aspnetForm");
-                HtmlElement element = form2.getOneHtmlElementByAttribute("table", "enableviewstate", "false");
-        //            logger.info("1===>"+element.asXml());
-                List<HtmlElement> trs = element.getElementsByTagName("tr");
-        //            logger.info("2===>"+trs);
-                if(trs!=null && !trs.isEmpty()) {
-                    stockHistoryMapper.deleteByDate(stockId, DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
-                    for(HtmlElement tr : trs) {
-        //                    logger.info("3===>"+tr.asXml());
-                        List<HtmlElement> tds = tr.getElementsByTagName("td");
-                        if(tds!=null && !tds.isEmpty()) {
-                            int i=0;
-                            StockHistory stockHistory = new StockHistory();
-                            for(HtmlElement td : tds) {
-        //                            logger.info("===>"+td.asXml());
-                                switch(i) {
-                                    case 0:
-                                      // 日期
-                                        stockHistory.setDate(DatesUtils.YYMMDD2.toDate(td.asText()));
+        StockData stockData = stockDataMapper.selectByNo(no);
+        if(stockData == null) {
+            throw new BusinessException("Not found stock data by no: " + no);
+        }
+        long stockId = stockData.getId();
+        String url = "https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo();
+        try {
+            HtmlPage page = processGuceOathCom(webClient.getPage(url));
+            page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
+            page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
+            HtmlForm form = page.getHtmlElementById("aspnetForm");
+            HtmlPage page2 = form.getOneHtmlElementByAttribute("input", "id", "ctl00_ContentPlaceHolder1_submitBut").click();
+            HtmlForm form2 = page2.getHtmlElementById("aspnetForm");
+            HtmlElement element = form2.getOneHtmlElementByAttribute("table", "enableviewstate", "false");
+    //            logger.info("1===>"+element.asXml());
+            List<HtmlElement> trs = element.getElementsByTagName("tr");
+    //            logger.info("2===>"+trs);
+            if(trs!=null && !trs.isEmpty()) {
+                stockHistoryMapper.deleteByDate(stockId, DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
+                for(HtmlElement tr : trs) {
+    //                    logger.info("3===>"+tr.asXml());
+                    List<HtmlElement> tds = tr.getElementsByTagName("td");
+                    if(tds!=null && !tds.isEmpty()) {
+                        int i=0;
+                        StockHistory stockHistory = new StockHistory();
+                        for(HtmlElement td : tds) {
+    //                            logger.info("===>"+td.asXml());
+                            switch(i) {
+                                case 0:
+                                  // 日期
+                                    stockHistory.setDate(DatesUtils.YYMMDD2.toDate(td.asText()));
+                                break;
+                                case 1:
+                                  // 開盤
+                                    stockHistory.setOpening(new BigDecimal(td.asText()));
+                                  break;
+                                case 2:
+                                    // 最高    
+                                    stockHistory.setHighest(new BigDecimal(td.asText()));
                                     break;
-                                    case 1:
-                                      // 開盤
-                                        stockHistory.setOpening(new BigDecimal(td.asText()));
-                                      break;
-                                    case 2:
-                                        // 最高    
-                                        stockHistory.setHighest(new BigDecimal(td.asText()));
-                                        break;
-                                    case 3:
-                                        // 最低    
-                                        stockHistory.setLowest(new BigDecimal(td.asText()));
-                                        break;
-                                    case 4:
-                                        // 收盤    
-                                        stockHistory.setClosing(new BigDecimal(td.asText()));
-                                        break;
-                                    case 5:
-                                        // 漲跌    
-                                        stockHistory.setUpsDowns(new BigDecimal(td.asText()));
-                                        break;
-                                    case 6:
-                                        // 漲%    
-                                        stockHistory.setRiseRate(td.asText());
-                                        break;
-                                    case 7:
-                                        // 成交量    
-                                        stockHistory.setVol(new BigDecimal(td.asText().replace(",", "")));
-                                        break;
-                                    case 8:
-                                        // 成交金額    
-                                        stockHistory.setAmount(new BigDecimal(td.asText().replace(",", "")));
-                                        break;
-                                    case 9:
-                                        // 本益比
-                                        stockHistory.setPer(td.asText());
-                                        break;
-                                }
-                                i++;
+                                case 3:
+                                    // 最低    
+                                    stockHistory.setLowest(new BigDecimal(td.asText()));
+                                    break;
+                                case 4:
+                                    // 收盤    
+                                    stockHistory.setClosing(new BigDecimal(td.asText()));
+                                    break;
+                                case 5:
+                                    // 漲跌    
+                                    stockHistory.setUpsDowns(new BigDecimal(td.asText()));
+                                    break;
+                                case 6:
+                                    // 漲%    
+                                    stockHistory.setRiseRate(td.asText());
+                                    break;
+                                case 7:
+                                    // 成交量    
+                                    stockHistory.setVol(new BigDecimal(td.asText().replace(",", "")));
+                                    break;
+                                case 8:
+                                    // 成交金額    
+                                    stockHistory.setAmount(new BigDecimal(td.asText().replace(",", "")));
+                                    break;
+                                case 9:
+                                    // 本益比
+                                    stockHistory.setPer(td.asText());
+                                    break;
                             }
-        //                        logger.info("===>"+stockHistory);
-                            stockHistory.setType(StockHistoryEnum.DAY.getType());
-                            stockHistory.setStockId(stockId);
-                            stockHistory4Inserts.add(stockHistory);
+                            i++;
                         }
+    //                        logger.info("===>"+stockHistory);
+                        stockHistory.setType(StockHistoryEnum.DAY.getType());
+                        stockHistory.setStockId(stockId);
+                        stockHistory4Inserts.add(stockHistory);
                     }
                 }
-            } finally {
-                ScheduledTasks.IS_FETCH_HISTORY = false;
-                final List<WebWindow> windows = webClient.getWebWindows();
-                for (final WebWindow wd : windows) {
-                    wd.getJobManager().removeAllJobs();
-                }
-                // webClient.close();
             }
-        } else {
-            logger.error("股号: {}, 开始日期: {}, 结束日期: {}, 已经在执行中. ", no, startDate, endDate);
+        } finally {
+            final List<WebWindow> windows = webClient.getWebWindows();
+            for (final WebWindow wd : windows) {
+                wd.getJobManager().removeAllJobs();
+            }
+            // webClient.close();
         }
         return stockHistory4Inserts;
     }
