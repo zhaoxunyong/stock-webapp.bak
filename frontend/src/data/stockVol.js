@@ -70,9 +70,8 @@ export default function getData (datasets, kineType) {
         xAxis: [{
             type: 'category',
             data: stockUtils.getSlice(datas.categoryData),
-            // scale: true,
             // 坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
-            boundaryGap: false,
+            boundaryGap: true,
             // 坐标文字内容
             /* axisLabel: {
                 onZero: false,
@@ -131,6 +130,10 @@ export default function getData (datasets, kineType) {
             {
                 type: 'bar',
                 name: '成交量', //下面的柱状图
+                // braGap用于设置同一个类目内的柱形之间的间距
+                // barGap: '1%',
+                // barCategoryGap则用于设置不同类目之间的间距
+                barCategoryGap: STOCK_CONFIG.barCategoryGap,
                 barWidth: STOCK_CONFIG.barWidth,
                 data: sliceVols,
                 smooth: true,

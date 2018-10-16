@@ -1,10 +1,12 @@
 // 分页显示20条
 window.PAGE_SIZE = 20
 // K线图获取最近xx天的历史数据
-window.RECENT_DATE = -260
+window.RECENT_DATE = -88
 
 window.STOCK_CONFIG = {
-    // barWidth: 3,//指定柱宽度
+    // barCategoryGap则用于设置不同类目之间的间距
+    barCategoryGap: "2px",
+    barWidth: '90%',//指定柱宽度
     col: {
         // up: 'rgb(153, 14, 14)',
         // down: '#19b34c',
@@ -24,6 +26,6 @@ window.STOCK_CONFIG = {
         // y: '#ffefef'
     },
     // bg: '#000',
-    st: 79,
+    st: 43,
     ed: 100
 }

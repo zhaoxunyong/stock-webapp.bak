@@ -123,12 +123,12 @@ export function getSlice(datas) {
     return datas.slice(RECENT_DATE);
 }
 
-export function getSeriesIndex(tooltipDatas, index) {
+/* export function getSeriesIndex(tooltipDatas, index) {
     for (var i = 0, len = tooltipDatas.length; i < len; i++) {
         if(tooltipDatas[i].seriesIndex == index) {
             return tooltipDatas[i];
         }
     }
     return null;
-}
+} */
 

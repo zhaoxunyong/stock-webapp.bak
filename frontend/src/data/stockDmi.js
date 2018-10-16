@@ -12,10 +12,10 @@ export default function getData (datasets, kineType) {
     let datas = stockUtils.splitData(datasets)
     // DMI
     let inputDMI = {
-    close: stockUtils.getCloses(datas),
-    high: stockUtils.getHighs(datas),
-    low: stockUtils.getLows(datas),
-    period : 14
+        close: stockUtils.getCloses(datas),
+        high: stockUtils.getHighs(datas),
+        low: stockUtils.getLows(datas),
+        period : 14
     }
     let dmis = ADX.calculate(inputDMI)
 
@@ -85,9 +85,8 @@ export default function getData (datasets, kineType) {
         xAxis: [{
             type: 'category',
             data: stockUtils.getSlice(datas.categoryData),
-            // scale: true,
             // 坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
-            boundaryGap: false,
+            boundaryGap: true,
             // 坐标文字内容
             /* axisLabel: {
                 onZero: false,

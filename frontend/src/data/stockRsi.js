@@ -11,17 +11,20 @@ export default function getData (datasets, kineType) {
     let kDisplay = kineType == 1 ? "月" : "日"
     let datas = stockUtils.splitData(datasets)
     let inputRSI12 = {
-    values : stockUtils.getCloses(datas),
-    period : 12
+        values : stockUtils.getCloses(datas),
+        period : 12
     }
 
-    let rsi12 = RSI.calculate(inputRSI12)
+    let rsi12_src = RSI.calculate(inputRSI12)
+    let rsi12 = stockUtils.getSlice(rsi12_src)
 
     let inputRSI100 = {
-    values : stockUtils.getCloses(datas),
-    period : 100
+        values : stockUtils.getCloses(datas),
+        period : 100
     }
-    let rsi100 = RSI.calculate(inputRSI100)
+
+    let rsi100_src = RSI.calculate(inputRSI100)
+    let rsi100 = stockUtils.getSlice(rsi100_src)
 
     return {
         // backgroundColor: '#21202D',
@@ -84,9 +87,8 @@ export default function getData (datasets, kineType) {
         xAxis: [{
             type: 'category',
             data: stockUtils.getSlice(datas.categoryData),
-            // scale: true,
             // 坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
-            boundaryGap: false,
+            boundaryGap: true,
             // 坐标文字内容
             /* axisLabel: {
                 onZero: false,
