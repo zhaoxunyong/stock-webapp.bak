@@ -118,6 +118,15 @@ export default {
       let chart5 = this.$echarts.init(document.getElementById('myChart5'+this.kineType))
       this.setOptions(chart1, chart2, chart3, chart4, chart5)
       this.$echarts.connect([chart1, chart2, chart3, chart4, chart5]);
+      setTimeout(function (){
+          window.onresize = function () {
+              chart1.resize();
+              chart2.resize();
+              chart3.resize();
+              chart4.resize();
+              chart5.resize();
+          }
+      },200)
     },
     setOptions(chart1, chart2, chart3, chart4, chart5) {
       // this.stockCandle = null
