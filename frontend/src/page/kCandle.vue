@@ -9,27 +9,27 @@
     <!-- <chart :options="stockCandle" :auto-resize="resize" @mousemove="openNewKline"></chart> -->
     <!-- stockCandle -->
     <div>
-      <div :id="'tooltipId1'+kineType" class="w-100 text-left ml-5 pl-3 my-1" v-html="rawHtml1"></div>
+      <div :id="'tooltipId1'+kineType" class="tooltips w-100 text-left" v-html="rawHtml1"></div>
       <div :id="'myChart1'+kineType" class="echarts1"></div>
     </div>
     <!-- stockVol -->
     <div>
-      <div :id="'tooltipId2'+kineType" class="w-100 text-left ml-5 pl-3 my-1" v-html="rawHtml2"></div>
+      <div :id="'tooltipId2'+kineType" class="tooltips w-100 text-left" v-html="rawHtml2"></div>
       <div :id="'myChart2'+kineType" class="echarts2"></div>
     </div>
     <!-- stockRsi -->
     <div>
-      <div :id="'tooltipId3'+kineType" class="w-100 text-left ml-5 pl-3 my-1" v-html="rawHtml3"></div>
+      <div :id="'tooltipId3'+kineType" class="tooltips w-100 text-left" v-html="rawHtml3"></div>
       <div :id="'myChart3'+kineType" class="echarts2"></div>
     </div>
     <!-- stockDmi -->
     <div>
-      <div :id="'tooltipId4'+kineType" class="w-100 text-left ml-5 pl-3 my-1" v-html="rawHtml4"></div>
+      <div :id="'tooltipId4'+kineType" class="tooltips w-100 text-left" v-html="rawHtml4"></div>
       <div :id="'myChart4'+kineType" class="echarts2"></div>
     </div>
     <!-- stockMacd -->
     <div>
-      <div :id="'tooltipId5'+kineType" class="w-100 text-left ml-5 pl-3 my-1" v-html="rawHtml5"></div>
+      <div :id="'tooltipId5'+kineType" class="tooltips w-100 text-left" v-html="rawHtml5"></div>
       <div :id="'myChart5'+kineType" class="echarts3"></div>
     </div>
   </div>
@@ -215,6 +215,10 @@ export default {
 .echarts3 {
   width: 100%;
   height: 120px;
+}
+.tooltips {
+  font-size: 10px;
+  margin-left: 14%;
 }
 </style>
 

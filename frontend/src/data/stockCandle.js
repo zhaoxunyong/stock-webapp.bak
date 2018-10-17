@@ -86,7 +86,7 @@ export default function getData (datasets, kineType) {
                 '布林通道3',]
         }, */
         grid: [{
-            top: '3%',
+            top: '8%',
             left: '15%',
             right: '5%',
             height: '80%'
