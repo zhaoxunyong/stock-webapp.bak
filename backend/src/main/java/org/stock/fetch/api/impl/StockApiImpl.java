@@ -637,6 +637,22 @@ public class StockApiImpl implements StockApi {
         }.start();
         return "ok";
     }
+
+    // test
+    @Override
+    @PostMapping(value = "/refetchAllHistory")
+    public String refetchAllHistory() {
+        new Thread() {
+            public void run() {
+                try {
+                    fetchService.refetchAllHistory();
+                } catch (Exception e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }.start();
+        return "ok";
+    }
     
     // test
     @Override
