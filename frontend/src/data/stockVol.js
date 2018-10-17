@@ -31,7 +31,7 @@ export default function getData (datasets, kineType) {
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function (params) {
-                let v = `<font color="${STOCK_CONFIG.col.up}">成交量</font> ${params[0].value}`
+                let v = `<font color="${STOCK_CONFIG.col.volup}">成交量</font> ${params[0].value}`
                 $("#tooltipId2"+kineType).html(v)
                 return "";
             },
@@ -52,7 +52,7 @@ export default function getData (datasets, kineType) {
             top: '5%',
             left: '15%',
             right: '5%',
-            height: '90%'
+            height: '85%'
         }],
         // 坐标轴指示器（axisPointer）的全局公用设置
         axisPointer: {
@@ -146,9 +146,9 @@ export default function getData (datasets, kineType) {
                             let currVol = params.data
                             let previousVol = params.dataIndex > 0 ? sliceVols[params.dataIndex - 1] : 0
                             if(parseInt(currVol) < parseInt(previousVol)) {
-                                return STOCK_CONFIG.col.down;
+                                return STOCK_CONFIG.col.voldown;
                             } else {
-                                return STOCK_CONFIG.col.up;
+                                return STOCK_CONFIG.col.volup;
                             }
                         }
                     }

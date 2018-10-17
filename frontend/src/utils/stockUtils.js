@@ -120,7 +120,19 @@ export function getDmipdis(dmis) {
 
 // 取数据中的最近RECENT_DATE数据
 export function getSlice(datas) {
-    return datas.slice(RECENT_DATE);
+    let recentDatas = datas.slice(RECENT_DATE);
+    let absRecentDate = Math.abs(RECENT_DATE)
+    if(recentDatas.length < absRecentDate) {
+        return leftPad(recentDatas, absRecentDate - recentDatas.length, '-')
+    }
+    return recentDatas
+}
+
+export function leftPad(arrays, pad_length, pad_string){
+    for(let i=0;i<pad_length;i++) {
+        arrays.unshift(pad_string)
+    }
+    return arrays
 }
 
 /* export function getSeriesIndex(tooltipDatas, index) {

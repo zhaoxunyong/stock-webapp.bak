@@ -35,7 +35,7 @@ export default function getData (datasets, kineType) {
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function (params) {
-                let v = `<font color="${STOCK_CONFIG.col.up}">MACD</font> ${params[0].value}
+                let v = `<font color="${STOCK_CONFIG.col.macdup}">MACD</font> ${params[0].value}
                 <font color="${STOCK_CONFIG.col.dif}">DIF</font> ${params[1].value}
                 <font color="${STOCK_CONFIG.col.dea}">DEA</font> ${params[2].value}`
                 $("#tooltipId5"+kineType).html(v)
@@ -55,10 +55,10 @@ export default function getData (datasets, kineType) {
             }
         },
         grid: [{
-            top: '1%',
+            top: '5%',
             left: '15%',
             right: '5%',
-            height: '80%'
+            height: '75%'
         }],
         // 坐标轴指示器（axisPointer）的全局公用设置
         axisPointer: {
@@ -146,9 +146,9 @@ export default function getData (datasets, kineType) {
                         color: function(params) {
                             var colorList;
                             if (params.data >= 0) {
-                                colorList = STOCK_CONFIG.col.up;
+                                colorList = STOCK_CONFIG.col.macdup;
                             } else {
-                                colorList = STOCK_CONFIG.col.down;
+                                colorList = STOCK_CONFIG.col.macddown;
                             }
                             return colorList;
                         },

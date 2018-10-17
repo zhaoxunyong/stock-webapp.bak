@@ -76,16 +76,16 @@ export default {
                 <font color="${STOCK_CONFIG.col.m20}">M20 </font> 
                 <font color="${STOCK_CONFIG.col.m60}">M60 </font>`
 
-    this.rawHtml2 =  `<font color="${STOCK_CONFIG.col.up}">成交量 </font>`
+    this.rawHtml2 =  `<font color="${STOCK_CONFIG.col.volup}">成交量 </font>`
 
-    this.rawHtml3 =  `<font color="${STOCK_CONFIG.col.up}">RSI-12 </font>
-                <font color="${STOCK_CONFIG.col.down}">RSI-100 </font>`
+    this.rawHtml3 =  `<font color="${STOCK_CONFIG.col.rsi12}">RSI-12 </font>
+                <font color="${STOCK_CONFIG.col.rsi100}">RSI-100 </font>`
 
     this.rawHtml4 =  `<font color="${STOCK_CONFIG.col.mdi}">MDI </font>
                 <font color="${STOCK_CONFIG.col.pdi}">PDI </font>
                 <font color="${STOCK_CONFIG.col.adx}">ADX </font>`
 
-    this.rawHtml5 =  `<font color="${STOCK_CONFIG.col.up}">MACD </font>
+    this.rawHtml5 =  `<font color="${STOCK_CONFIG.col.macdup}">MACD </font>
                 <font color="${STOCK_CONFIG.col.dif}">DIF </font>
                 <font color="${STOCK_CONFIG.col.dea}">DEA </font>`
     this.init()
@@ -172,6 +172,18 @@ export default {
           chart3.setOption(stockRsi(data3s, this.kineType))
           chart4.setOption(stockDmi(data4s, this.kineType))
           chart5.setOption(stockMacd(data5s, this.kineType))
+
+          /* chart1.on('click', function (params) {
+            console.log('params.componentType--->'+params.componentType)
+            // if(params.componentType === 'series'){
+                chart1.dispatchAction({
+                    type: 'legendUnSelect',
+                    seriesseriesIdIndex: 'k-line'
+
+                });
+            // }
+          
+          }); */
         })
       }
     }

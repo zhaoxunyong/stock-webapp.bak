@@ -47,8 +47,8 @@ export default function getData (datasets, kineType) {
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function (params) {
-                let v = `<font color="${STOCK_CONFIG.col.up}">RSI-12</font> ${params[0].value}
-                <font color="${STOCK_CONFIG.col.down}">RSI-100</font> ${params[0].value}`
+                let v = `<font color="${STOCK_CONFIG.col.rsi12}">RSI-12</font> ${params[0].value}
+                <font color="${STOCK_CONFIG.col.rsi100}">RSI-100</font> ${params[0].value}`
                 $("#tooltipId3"+kineType).html(v)
                 return "";
             },
@@ -69,7 +69,7 @@ export default function getData (datasets, kineType) {
             top: '5%',
             left: '15%',
             right: '5%',
-            height: '90%'
+            height: '85%'
         }],
         // 坐标轴指示器（axisPointer）的全局公用设置
         axisPointer: {
@@ -147,27 +147,27 @@ export default function getData (datasets, kineType) {
             {
                 name: 'RSI-12',
                 type: 'line',
-                data: stockUtils.getSlice(rsi12),
+                data: rsi12,
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
                 lineStyle: {
                     normal: {
                         width: 1,
-                        color: STOCK_CONFIG.col.down
+                        color: STOCK_CONFIG.col.rsi12
                     }
                 }
             } ,{
                 name: 'RSI-100',
                 type: 'line',
-                data: stockUtils.getSlice(rsi100),
+                data: rsi100,
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
                 lineStyle: {
                     normal: {
                         width: 1,
-                        color: STOCK_CONFIG.col.up
+                        color: STOCK_CONFIG.col.rsi100
                     }
                 }
             }

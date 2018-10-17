@@ -10,17 +10,26 @@ window.STOCK_CONFIG = {
     col: {
         // up: 'rgb(153, 14, 14)',
         // down: '#19b34c',
-        up: '#ff4238',
-        down: '#30d94c',
+        // k
+        up: 'red',
+        down: '#00008b', // 深蓝
         m5: '#ec63a7',
         m10: '#f5cc65',
         m20: '#1e88e5',
         m60: 'purple',
+        // vol
+        volup: 'red', // red
+        voldown: '#30d94c', // 深蓝
+        // rsi
+        rsi12: '#30d94c', // green
+        rsi100: 'red', // red
         // dmi
         mdi: '#2E2EFE',
         pdi: '#FE9A2E',
         adx: '#B45F04',
         // macd
+        macdup: 'red', // red
+        macddown: '#30d94c', // green
         dif: 'blue',
         dea: 'blue'
         // y: '#ffefef'

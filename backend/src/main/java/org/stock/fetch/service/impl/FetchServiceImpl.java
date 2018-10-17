@@ -813,6 +813,7 @@ public class FetchServiceImpl implements FetchService {
     @Override
     public void fetchAllHistory() throws Exception {
         List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
+        logger.info("fetchAllHistory size---->"+stockMyDatas.size());
         if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
             for(StockMyData stockMyData : stockMyDatas) {
 //                String startDate = "2017/07/18";

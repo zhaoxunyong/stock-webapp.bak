@@ -72,6 +72,19 @@ export default function getData (datasets, kineType) {
                 }
             }
         },
+        /* legend: {
+            // type: 'scroll',
+            // orient: 'vertical',
+            // left: 'center',
+            data: [kDisplay+'K', 
+                '5'+kDisplay+'平均线', 
+                '10'+kDisplay+'平均线', 
+                '20'+kDisplay+'平均线', 
+                '60'+kDisplay+'平均线', 
+                '布林通道1', 
+                '布林通道2', 
+                '布林通道3',]
+        }, */
         grid: [{
             top: '3%',
             left: '15%',
@@ -146,6 +159,7 @@ export default function getData (datasets, kineType) {
             {
                 type: 'k', //Candlestick 
                 name: '日K',
+                id: 'k-line',
                 // braGap用于设置同一个类目内的柱形之间的间距
                 // barGap: '1%',
                 // barCategoryGap则用于设置不同类目之间的间距
