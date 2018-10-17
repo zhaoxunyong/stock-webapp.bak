@@ -83,7 +83,7 @@ public class ScheduledTasks {
     /**
      * 重新导失败的日期数据
      */
-    @Scheduled(cron="0 */30 20-23 * * ?")
+    @Scheduled(cron="0 */30 17-23 * * ?")
     public void refetchAllHistory() throws Exception {
         if(!IS_FETCH_HISTORY) {
             try {

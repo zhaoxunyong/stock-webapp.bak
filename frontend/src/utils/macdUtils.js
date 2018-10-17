@@ -71,4 +71,4 @@ function EMA(fNow,fPre,N){
       return Number(n.toFixed(2));
   }
 
-  export { EMASL, DIF, DEA, BAR } 
+  export { DIF, DEA, BAR } 

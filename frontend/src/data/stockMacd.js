@@ -4,14 +4,13 @@
 
 import * as stockUtils from '../utils/stockUtils'
 import * as dateUtils from '../utils/dateUtils'
-
-import * as macd from './MACD'
+import * as macd from '../utils/macdUtils'
 
 export default function getData (datasets, kineType) {
     let kDisplay = kineType == 1 ? "月" : "日"
     let datas = stockUtils.splitData(datasets)
     let difs = macd.DIF(datas.values);  // DIF
-    let macds = macd.DEA(datas.values,9); // 也就是DEM
+    let macds = macd.DEA(datas.values,9); // 也就是DEM或MACD
     let oscs = macd.BAR(datas.values); // 也就是OSC
 
     return {

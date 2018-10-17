@@ -5,8 +5,8 @@ window.RECENT_DATE = -88
 
 window.STOCK_CONFIG = {
     // barCategoryGap则用于设置不同类目之间的间距
-    barCategoryGap: "2px",
-    barWidth: '90%',//指定柱宽度
+    barCategoryGap: "5px",
+    barWidth: '80%',//指定柱宽度
     col: {
         // up: 'rgb(153, 14, 14)',
         // down: '#19b34c',
@@ -22,7 +22,7 @@ window.STOCK_CONFIG = {
         voldown: '#30d94c', // 深蓝
         // rsi
         rsi12: '#30d94c', // green
-        rsi100: 'red', // red
+        rsi100: 'red',
         // dmi
         mdi: '#2E2EFE',
         pdi: '#FE9A2E',
