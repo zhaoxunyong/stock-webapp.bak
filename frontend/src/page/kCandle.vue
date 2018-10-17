@@ -148,9 +148,12 @@ export default {
           url = `/api/stock/selectLastWeekHistory?stockId=${this.stockId}`
         }
         // alert("kDay url--->"+url)
-        // chart1.showLoading()
+        chart1.showLoading()
+        chart2.showLoading()
+        chart3.showLoading()
+        chart4.showLoading()
+        chart5.showLoading()
         this.$api.get(url, null, rs => {
-          // chart1.hideLoading()
           if(rs != undefined && rs.length > 0) {
             for(let i=0;i<rs.length;i++) {
               // alert(this.stockId+"--->"+rs[i].date+"--->"+rs[i].opening+"--->"+rs[i].highest+"--->"+rs[i].lowest+"--->"+rs[i].closing+"--->"+rs[i].vol)
@@ -167,6 +170,11 @@ export default {
             // alert("找不到數據:"+this.stockId)
           }
           // return stockCandle(datas, this.kineType)
+          chart1.hideLoading()
+          chart2.hideLoading()
+          chart3.hideLoading()
+          chart4.hideLoading()
+          chart5.hideLoading()
           chart1.setOption(stockCandle(data1s, this.kineType))
           chart2.setOption(stockVol(data2s, this.kineType))
           chart3.setOption(stockRsi(data3s, this.kineType))
