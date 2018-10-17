@@ -10,9 +10,9 @@ import * as macd from './MACD'
 export default function getData (datasets, kineType) {
     let kDisplay = kineType == 1 ? "月" : "日"
     let datas = stockUtils.splitData(datasets)
-    let difs = macd.DIF(datas.values);
-    let deas = macd.DEA(datas.values,9);
-    let macds = macd.BAR(datas.values);
+    let difs = macd.DIF(datas.values);  // DIF
+    let macds = macd.DEA(datas.values,9); // 也就是DEM
+    let oscs = macd.BAR(datas.values); // 也就是OSC
 
     return {
         // backgroundColor: '#21202D',
@@ -35,9 +35,9 @@ export default function getData (datasets, kineType) {
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function (params) {
-                let v = `<font color="${STOCK_CONFIG.col.macdup}">MACD</font> ${params[0].value}
-                <font color="${STOCK_CONFIG.col.dif}">DIF</font> ${params[1].value}
-                <font color="${STOCK_CONFIG.col.dea}">DEA</font> ${params[2].value}`
+                let v = `<font color="${STOCK_CONFIG.col.oscup}">OSC:</font> ${params[0].value}
+                <font color="${STOCK_CONFIG.col.dif}">DIF:</font> ${params[1].value}
+                <font color="${STOCK_CONFIG.col.macd}">MACD:</font> ${params[2].value}`
                 $("#tooltipId5"+kineType).html(v)
                 return "";
             },
@@ -129,14 +129,14 @@ export default function getData (datasets, kineType) {
         }],
         series: [
             {
-                name: 'MACD',
+                name: 'OSC', // BAR
                 type: 'bar',
                 // braGap用于设置同一个类目内的柱形之间的间距
                 // barGap: '1%',
                 // barCategoryGap则用于设置不同类目之间的间距
                 barCategoryGap: STOCK_CONFIG.barCategoryGap,
                 barWidth: STOCK_CONFIG.barWidth,
-                data: stockUtils.getSlice(macds),
+                data: stockUtils.getSlice(oscs),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -146,16 +146,16 @@ export default function getData (datasets, kineType) {
                         color: function(params) {
                             var colorList;
                             if (params.data >= 0) {
-                                colorList = STOCK_CONFIG.col.macdup;
+                                colorList = STOCK_CONFIG.col.oscup;
                             } else {
-                                colorList = STOCK_CONFIG.col.macddown;
+                                colorList = STOCK_CONFIG.col.oscdown;
                             }
                             return colorList;
                         },
                     }
                 }
             },{
-                name: 'DIF',
+                name: 'DIF', // DIF
                 type: 'line',
                 data: stockUtils.getSlice(difs),
                 smooth: true,
@@ -168,16 +168,16 @@ export default function getData (datasets, kineType) {
                     }
                 }
             },{
-                name: 'DEA',
+                name: 'MACD', // BAR
                 type: 'line',
-                data: stockUtils.getSlice(deas),
+                data: stockUtils.getSlice(macds),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
                 lineStyle: {
                     normal: {
                         width: 1,
-                        color: STOCK_CONFIG.col.dea
+                        color: STOCK_CONFIG.col.macd
                     }
                 }
             }

@@ -28,10 +28,10 @@ window.STOCK_CONFIG = {
         pdi: '#FE9A2E',
         adx: '#B45F04',
         // macd
-        macdup: 'red', // red
-        macddown: '#30d94c', // green
-        dif: 'blue',
-        dea: 'blue'
+        oscup: 'red', // red
+        oscdown: '#30d94c', // green
+        dif: 'orange',
+        macd: 'blue'
         // y: '#ffefef'
     },
     // bg: '#000',

@@ -25,6 +25,7 @@ function EMA(fNow,fPre,N){
     return result;
   }
 
+  // DIF = EMA(close,12) - EMA(close,26)
   function DIF(points){
     if (points == null || points.length <= 0)
       return new Array();
@@ -37,6 +38,7 @@ function EMA(fNow,fPre,N){
     return DIFs;
   }
 
+  // DEM = DEA
   function DEA(points,N){
     if (points == null || points.length <= 0)
       return new Array();
@@ -52,6 +54,7 @@ function EMA(fNow,fPre,N){
     return result;
   }
 
+  // BAR = OSC
   function BAR(points){
     if (points == null || points.length <= 0)
       return new Array();

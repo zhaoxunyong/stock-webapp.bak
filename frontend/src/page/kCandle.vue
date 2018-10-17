@@ -69,25 +69,25 @@ export default {
   },
   props: ["kineType"],
   mounted () {
-    this.rawHtml1 = `收 開 高 低<br/>
+    this.rawHtml1 = `收: 開: 高: 低:<br/>
                 ${this.kineType == 1 ? "月" : "日"}線
-                <font color="${STOCK_CONFIG.col.m5}">M5 </font> 
-                <font color="${STOCK_CONFIG.col.m10}">M10 </font> 
-                <font color="${STOCK_CONFIG.col.m20}">M20 </font> 
-                <font color="${STOCK_CONFIG.col.m60}">M60 </font>`
+                <font color="${STOCK_CONFIG.col.m5}">M5: </font> 
+                <font color="${STOCK_CONFIG.col.m10}">M10: </font> 
+                <font color="${STOCK_CONFIG.col.m20}">M20: </font> 
+                <font color="${STOCK_CONFIG.col.m60}">M60: </font>`
 
-    this.rawHtml2 =  `<font color="${STOCK_CONFIG.col.volup}">成交量 </font>`
+    this.rawHtml2 =  `<font color="${STOCK_CONFIG.col.volup}">成交量: </font>`
 
-    this.rawHtml3 =  `<font color="${STOCK_CONFIG.col.rsi12}">RSI-12 </font>
-                <font color="${STOCK_CONFIG.col.rsi100}">RSI-100 </font>`
+    this.rawHtml3 =  `<font color="${STOCK_CONFIG.col.rsi12}">RSI-12: </font>
+                <font color="${STOCK_CONFIG.col.rsi100}">RSI-100: </font>`
 
-    this.rawHtml4 =  `<font color="${STOCK_CONFIG.col.mdi}">MDI </font>
-                <font color="${STOCK_CONFIG.col.pdi}">PDI </font>
-                <font color="${STOCK_CONFIG.col.adx}">ADX </font>`
+    this.rawHtml4 =  `<font color="${STOCK_CONFIG.col.mdi}">MDI: </font>
+                <font color="${STOCK_CONFIG.col.pdi}">PDI: </font>
+                <font color="${STOCK_CONFIG.col.adx}">ADX: </font>`
 
-    this.rawHtml5 =  `<font color="${STOCK_CONFIG.col.macdup}">MACD </font>
-                <font color="${STOCK_CONFIG.col.dif}">DIF </font>
-                <font color="${STOCK_CONFIG.col.dea}">DEA </font>`
+    this.rawHtml5 =  `<font color="${STOCK_CONFIG.col.oscup}">OSC: </font>
+                <font color="${STOCK_CONFIG.col.dif}">DIF: </font>
+                <font color="${STOCK_CONFIG.col.macd}">MACD: </font>`
     this.init()
   },
   created () {

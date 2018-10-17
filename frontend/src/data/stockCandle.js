@@ -46,15 +46,15 @@ export default function getData (datasets, kineType) {
                 // let data0 = stockUtils.getSeriesIndex(params,0)
                 // 83, 72.5, 70, 67, 73.8, "16032"
                 let v = `${params[0].axisValue} 
-                收 ${params[0].data[2]} 
-                開 ${params[0].data[1]} 
-                高 ${params[0].data[4]} 
-                低 ${params[0].data[3]}<br/>
+                收: ${params[0].data[2]} 
+                開: ${params[0].data[1]} 
+                高: ${params[0].data[4]} 
+                低: ${params[0].data[3]}<br/>
                 ${kDisplay}線 
-                <font color="${STOCK_CONFIG.col.m5}">M5</font> ${params[1].value} 
-                <font color="${STOCK_CONFIG.col.m10}">M10</font> ${params[2].value} 
-                <font color="${STOCK_CONFIG.col.m20}">M20</font> ${params[3].value} 
-                <font color="${STOCK_CONFIG.col.m60}">M60</font> ${params[4].value}`
+                <font color="${STOCK_CONFIG.col.m5}">M5:</font> ${params[1].value} 
+                <font color="${STOCK_CONFIG.col.m10}">M10:</font> ${params[2].value} 
+                <font color="${STOCK_CONFIG.col.m20}">M20:</font> ${params[3].value} 
+                <font color="${STOCK_CONFIG.col.m60}">M60:</font> ${params[4].value}`
                 $("#tooltipId1"+kineType).html(v)
                 // return `<font color="read">${params[0].data}</font>`;
                 return "";

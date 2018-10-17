@@ -31,7 +31,7 @@ export default function getData (datasets, kineType) {
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function (params) {
-                let v = `<font color="${STOCK_CONFIG.col.volup}">成交量</font> ${params[0].value}`
+                let v = `<font color="${STOCK_CONFIG.col.volup}">成交量:</font> ${params[0].value}`
                 $("#tooltipId2"+kineType).html(v)
                 return "";
             },
