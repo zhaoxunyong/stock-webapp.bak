@@ -81,6 +81,14 @@ public class StockServiceTest {
     }
     
     @Test
+    public void searchCurrentHistory() throws Exception {
+        String no = "2881";
+//        String startDate = "2015/01/01";
+//        String endDate = "2018/09/01";
+        fetchService.searchCurrentHistory(no);
+    }
+    
+    @Test
     public void importBydailyTransactions() throws IOException {
         String excelFile = "E:/wenchun/bstw.xlsx";
         fetchService.importBydailyTransactions(excelFile);

@@ -18,6 +18,8 @@ public interface StockHistoryErrorMapper {
     List<StockHistoryError> selectAllByStatus(@Param("status") Integer status);
 
     int updateByPrimaryKey(StockHistoryError record);
+
+    int updateErrCount(Long id);
     
     int deleteByDate(@Param("no") String no, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }

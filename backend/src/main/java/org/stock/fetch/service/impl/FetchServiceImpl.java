@@ -78,6 +78,9 @@ public class FetchServiceImpl implements FetchService {
     private WebClient webClient;
     
     @Autowired
+    private WebClient jsWebClient;
+    
+    @Autowired
     private StockHistoryMapper stockHistoryMapper;
     
     @Autowired
@@ -801,10 +804,11 @@ public class FetchServiceImpl implements FetchService {
                 try {
                     long s = System.currentTimeMillis();
                     logger.info("股号: "+stockHistoryError.getNo()+", 重新抓取开始......");
-                    this.fetchHistory(stockHistoryError.getNo(), DatesUtils.YYMMDD2.toString(stockHistoryError.getStartDate()), DatesUtils.YYMMDD2.toString(stockHistoryError.getEndDate()));
+                    this.fetchHistory(stockHistoryError.getNo(), stockHistoryError.getStartDate(), stockHistoryError.getEndDate());
                     stockHistoryErrorMapper.deleteByPrimaryKey(stockHistoryError.getId());logger.info("股号: "+stockHistoryError.getNo()+", 重新抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
                 } catch(Exception e) {
                     logger.error("股号: {}, 重新抓取异常: ", stockHistoryError.getNo(), e);
+                    stockHistoryErrorMapper.updateErrCount(stockHistoryError.getId());
                 }
             }
         }
@@ -868,8 +872,8 @@ public class FetchServiceImpl implements FetchService {
             startDate = MyDateUtils.date2LoalDate(lastStockHistory.getDate());
         }
         try {
-            this.fetchHistory(no, DatesUtils.YYMMDD2.toString(MyDateUtils.localDate2Date(startDate)), DatesUtils.YYMMDD2.toString(MyDateUtils.localDate2Date(endDate)));
-            } catch(Exception e) {
+            this.fetchHistory(no, MyDateUtils.localDate2Date(startDate), MyDateUtils.localDate2Date(endDate));
+        } catch(Exception e) {
             logger.error("股号: {}, 开始日期: {}, 结束日期: {}, 抓取异常: ", no, startDate, endDate, e);
             StockHistoryError stockHistoryError = new StockHistoryError();
             stockHistoryError.setId(IdUtils.genLongId());
@@ -878,15 +882,16 @@ public class FetchServiceImpl implements FetchService {
             stockHistoryError.setStartDate(MyDateUtils.localDate2Date(startDate));
             stockHistoryError.setEndDate(MyDateUtils.localDate2Date(endDate));
             stockHistoryError.setStatus(0); //抓取状态 1: 重试后成功 0: 错误
+            stockHistoryError.setErrCount(1);
             stockHistoryErrorMapper.insert(stockHistoryError);
         }
+            
     }
 
     /**
      * 日期格式為：yyyy/MM/dd
      */
-    @Override
-    public void fetchHistory(String no, String startDate, String endDate) throws Exception {
+    private void fetchHistory(String no, Date startDate, Date endDate) throws Exception {
         long s = System.currentTimeMillis();
         logger.info("股号: "+no+", 开始日期: "+startDate+", 结束日期: "+endDate+", 抓取开始......");
         List<StockHistory> stockHistory4Inserts = searchHistory(no, startDate, endDate);
@@ -896,13 +901,97 @@ public class FetchServiceImpl implements FetchService {
         logger.info("股号: "+no+", 开始日期: "+startDate+", 结束日期: "+endDate+", 保存开始......");
         this.saveHistory(stockHistory4Inserts);
         logger.info("股号: "+no+", 开始日期: "+startDate+", 结束日期: "+endDate+", 保存完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
-        }
+        
+    }
 
     /**
      * 只抓取网站的数据，不保存数据库
      * 日期格式為：yyyy/MM/dd
      */
-    private List<StockHistory> searchHistory(String no, String startDate, String endDate) throws Exception {
+    @Override
+    @Transactional
+    public StockHistory searchCurrentHistory(String no) throws Exception {
+        // https://www.cnyes.com/twstock/quote/2881.htm
+        List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
+        StockData stockData = stockDataMapper.selectByNo(no);
+        if(stockData == null) {
+            throw new BusinessException("Not found stock data by no: " + no);
+        }
+        long stockId = stockData.getId();
+        String url = "https://traderoom.cnyes.com/tse/quote2FB_HTML5.aspx?code="+stockData.getNo();
+        try {
+            HtmlPage page = processGuceOathCom(webClient.getPage(url));
+//            final String pageAsXml = page.asXml();
+//            System.out.println(pageAsXml);
+            
+//            DomElement domElement = page.getElementById("real_0");
+            List<HtmlElement> tdNodes = (List<HtmlElement>)page.getByXPath("//div[@id=\"real_0\"]//div[@class=\"idxtab4\"]//tr//td");
+            if(tdNodes!=null && !tdNodes.isEmpty()) {
+//                    DomNodeList<HtmlElement> tdNodes = htmlElement.getElementsByTagName("td");
+                for(HtmlElement tdNode : tdNodes) {
+                    System.out.println(tdNode.asText());
+                }
+                StockHistory stockHistory = new StockHistory();
+//                    if(tdNodes!=null && !tdNodes.isEmpty()) {
+                /*// 日期
+                stockHistory.setDate(DatesUtils.YYMMDD2.toDate(td.asText()));
+                // 開盤
+                stockHistory.setOpening(new BigDecimal(td.asText()));
+                // 最高    
+                stockHistory.setHighest(new BigDecimal(td.asText()));
+                // 最低    
+                stockHistory.setLowest(new BigDecimal(td.asText()));
+                // 收盤    
+                stockHistory.setClosing(new BigDecimal(td.asText()));
+                // 漲跌    
+                stockHistory.setUpsDowns(new BigDecimal(td.asText()));
+                // 漲%    
+                stockHistory.setRiseRate(td.asText());
+                // 成交量    
+                stockHistory.setVol(new BigDecimal(td.asText().replace(",", "")));
+                // 成交金額    
+                stockHistory.setAmount(new BigDecimal(td.asText().replace(",", "")));
+                // 本益比
+                stockHistory.setPer(td.asText());
+                stockHistory.setType(StockHistoryEnum.DAY.getType());
+                stockHistory.setStockId(stockId);*/
+//                    }
+                String vol = tdNodes.get(0).asText();
+                String amount = tdNodes.get(1).asText();
+                String upsDowns = tdNodes.get(2).asText();
+                String riseRate = tdNodes.get(4).asText();
+                String opening = tdNodes.get(5).asText();
+                String highest = tdNodes.get(7).asText();
+                String lowest = tdNodes.get(9).asText();
+//                String closing = tdNodes.get(9).asText();
+//                String per = tdNodes.get(4).asText();
+            }
+            // 時間   買價  賣價  成交價 漲跌  單量  總量
+            // 日期   開盤  最高  最低  收盤  漲跌  漲% 成交量 成交金額 本益比
+            // 成交 買進 <tr><th class="ltpd">昨量</th><td width="25%" class="rt">9848</td><th class="ltpd">跌停價</th><td width="20%" class="price rt">44.6</td></
+            // 漲跌 賣出
+            // 漲幅 開盤
+            // 昨收 最高
+            // 總量 最低
+            // 單量 漲停價
+            // 昨量 跌停價
+          
+//          HtmlElement domNode = (HtmlElement) domNodes.get(2);
+        } finally {
+            final List<WebWindow> windows = webClient.getWebWindows();
+            for (final WebWindow wd : windows) {
+                wd.getJobManager().removeAllJobs();
+            }
+            // webClient.close();
+        }
+        return null;
+    }
+
+    /**
+     * 只抓取网站的数据，不保存数据库
+     * 日期格式為：yyyy/MM/dd
+     */
+    private List<StockHistory> searchHistory(String no, Date startDate, Date endDate) throws Exception {
         List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
         StockData stockData = stockDataMapper.selectByNo(no);
         if(stockData == null) {
@@ -912,8 +1001,8 @@ public class FetchServiceImpl implements FetchService {
         String url = "https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo();
         try {
             HtmlPage page = processGuceOathCom(webClient.getPage(url));
-            page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", startDate);  
-            page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", endDate);  
+            page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", DatesUtils.YYMMDD2.toString(startDate));  
+            page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", DatesUtils.YYMMDD2.toString(endDate));  
             HtmlForm form = page.getHtmlElementById("aspnetForm");
             HtmlPage page2 = form.getOneHtmlElementByAttribute("input", "id", "ctl00_ContentPlaceHolder1_submitBut").click();
             HtmlForm form2 = page2.getHtmlElementById("aspnetForm");

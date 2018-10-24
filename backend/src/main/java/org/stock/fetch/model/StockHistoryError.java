@@ -14,6 +14,8 @@ public class StockHistoryError extends BaseModel {
     private Date endDate;
 
     private Integer status;
+    
+    private Integer errCount;
 
     private Date createDate;
 
@@ -57,6 +59,14 @@ public class StockHistoryError extends BaseModel {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+    
+    public Integer getErrCount() {
+        return errCount;
+    }
+
+    public void setErrCount(Integer errCount) {
+        this.errCount = errCount;
     }
 
     public Date getCreateDate() {
