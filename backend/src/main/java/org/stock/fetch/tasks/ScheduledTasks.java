@@ -101,9 +101,9 @@ public class ScheduledTasks {
     }
     
     /**
-     * 每天13:45点执行
+     * 每天13到17点，每30分钟执行一次
      */
-    @Scheduled(cron="0 45 13 * * ?")
+    @Scheduled(cron="0 */20 13-17 * * ?")
     public void fetchAllHistoryDaily() throws Exception {
         if(!IS_FETCH_HISTORY_DAILY) {
             try {
