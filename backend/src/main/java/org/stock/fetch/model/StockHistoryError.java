@@ -5,6 +5,8 @@ import java.util.Date;
 import com.aeasycredit.commons.lang.base.BaseModel;
 
 public class StockHistoryError extends BaseModel {
+    private static final long serialVersionUID = 2596401189601085439L;
+
     private Long id;
 
     private String no;
@@ -12,6 +14,9 @@ public class StockHistoryError extends BaseModel {
     private Date startDate;
 
     private Date endDate;
+    
+    // 类型 [0: 历史交易 1: 当日交易]
+    private Integer type;
 
     private Integer status;
     
@@ -84,4 +89,13 @@ public class StockHistoryError extends BaseModel {
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
     }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+    
 }

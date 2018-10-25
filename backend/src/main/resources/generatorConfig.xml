@@ -30,7 +30,7 @@
 
 		<!-- 必须要有的，使用这个配置链接数据库 @TODO:是否可以扩展 -->
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-			connectionURL="jdbc:mysql://127.0.0.1:3306/wenchun" userId="wenchun" password="Aa123456">
+			connectionURL="jdbc:mysql://127.0.0.1:3306/wenchun" userId="root" password="Aa654321">
 			<!-- 这里面可以设置property属性，每一个property属性都设置到配置的Driver上 -->
 		</jdbcConnection>
 
@@ -81,7 +81,7 @@
 				value=""/> -->
 		</javaClientGenerator>
 
-		<table tableName="stock_history_error">
+		<table tableName="stock_history_daily">
 			<!-- 参考 javaModelGenerator 的 constructorBased属性 -->
 			<property name="constructorBased" value="false" />
 			<generatedKey column="id" sqlStatement="JDBC" />

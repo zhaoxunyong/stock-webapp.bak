@@ -1,6 +1,5 @@
 package org.stock.fetch.dao;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -15,7 +14,7 @@ public interface StockHistoryErrorMapper {
 
     StockHistoryError selectByPrimaryKey(Long id);
 
-    List<StockHistoryError> selectAllByStatus(@Param("status") Integer status);
+    List<StockHistoryError> selectAllByStatus(@Param("status") Integer status, @Param("type") Integer type);
 
     int updateByPrimaryKey(StockHistoryError record);
 
@@ -23,5 +22,5 @@ public interface StockHistoryErrorMapper {
 
     int updateStatus(@Param("id") Long id, @Param("status") Integer status);
     
-    int deleteByDate(@Param("no") String no, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+//    int deleteByDate(@Param("no") String no, @Param("type") Integer type, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.stock.fetch.constant.StockHistoryErrorEnum;
 import org.stock.fetch.service.FetchService;
 
 import com.aeasycredit.commons.lang.utils.DatesUtils;
@@ -17,6 +18,8 @@ public class ScheduledTasks {
     public static volatile boolean IS_FETCH_NEW = false;
     
     private static volatile boolean IS_FETCH_HISTORY = false;
+    
+    public static volatile boolean IS_FETCH_HISTORY_DAILY = false;
     
 //    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -93,6 +96,40 @@ public class ScheduledTasks {
                 logger.info("refetchAllHistory end--->"+DatesUtils.YYMMDDHHMMSS.toString());
             } finally {
                 IS_FETCH_HISTORY = false;
+            }
+        }
+    }
+    
+    /**
+     * 每天13:45点执行
+     */
+    @Scheduled(cron="0 45 13 * * ?")
+    public void fetchAllHistoryDaily() throws Exception {
+        if(!IS_FETCH_HISTORY_DAILY) {
+            try {
+                IS_FETCH_HISTORY_DAILY = true;
+                logger.info("fetchAllHistoryDaily start--->"+DatesUtils.YYMMDDHHMMSS.toString());
+                fetchService.fetchAllHistoryDaily();
+                logger.info("fetchAllHistoryDaily end--->"+DatesUtils.YYMMDDHHMMSS.toString());
+            } finally {
+                IS_FETCH_HISTORY_DAILY = false;
+            }
+        }
+    }
+    
+    /**
+     * 重新导失败的日期数据
+     */
+    @Scheduled(cron="0 */30 13-23 * * ?")
+    public void refetchAllHistoryDaily() throws Exception {
+        if(!IS_FETCH_HISTORY_DAILY) {
+            try {
+                IS_FETCH_HISTORY_DAILY = true;
+                logger.info("refetchAllHistoryDaily start--->"+DatesUtils.YYMMDDHHMMSS.toString());
+                fetchService.refetchAllHistoryDaily();
+                logger.info("refetchAllHistoryDaily end--->"+DatesUtils.YYMMDDHHMMSS.toString());
+            } finally {
+                IS_FETCH_HISTORY_DAILY = false;
             }
         }
     }

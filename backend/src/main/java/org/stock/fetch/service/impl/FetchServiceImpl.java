@@ -19,10 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.stock.fetch.constant.BuyTypeEnum;
 import org.stock.fetch.constant.StockHistoryEnum;
+import org.stock.fetch.constant.StockHistoryErrorEnum;
 import org.stock.fetch.constant.StockTypeEnum;
 import org.stock.fetch.dao.StockDailyTransactionsHistoryMapper;
 import org.stock.fetch.dao.StockDailyTransactionsMapper;
 import org.stock.fetch.dao.StockDataMapper;
+import org.stock.fetch.dao.StockHistoryDailyMapper;
 import org.stock.fetch.dao.StockHistoryErrorMapper;
 import org.stock.fetch.dao.StockHistoryMapper;
 import org.stock.fetch.dao.StockImportantNewsMapper;
@@ -34,6 +36,7 @@ import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockDailyTransactionsHistory;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
+import org.stock.fetch.model.StockHistoryDaily;
 import org.stock.fetch.model.StockHistoryError;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
@@ -41,7 +44,6 @@ import org.stock.fetch.model.StockMyStore;
 import org.stock.fetch.model.StockNews;
 import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
-import org.stock.fetch.tasks.ScheduledTasks;
 import org.stock.utils.FileMd5Utils;
 import org.stock.utils.MyDateUtils;
 
@@ -111,6 +113,9 @@ public class FetchServiceImpl implements FetchService {
     
     @Autowired
     private StockDailyTransactionsMapper stockDailyTransactionsMapper;
+    
+    @Autowired
+    private StockHistoryDailyMapper stockHistoryDailyMapper;
     
     @Override
     @Transactional
@@ -799,7 +804,7 @@ public class FetchServiceImpl implements FetchService {
     @Override
     @Transactional
     public void refetchAllHistory() throws Exception {
-        List<StockHistoryError> stockHistoryErrors = stockHistoryErrorMapper.selectAllByStatus(0);
+        List<StockHistoryError> stockHistoryErrors = stockHistoryErrorMapper.selectAllByStatus(0, StockHistoryErrorEnum.HISTORY.getType());
         if(stockHistoryErrors!=null && !stockHistoryErrors.isEmpty()) {
             for(StockHistoryError stockHistoryError : stockHistoryErrors) {
                 int errCount = stockHistoryError.getErrCount();
@@ -825,6 +830,34 @@ public class FetchServiceImpl implements FetchService {
     }
     
     @Override
+    @Transactional
+    public void refetchAllHistoryDaily() throws Exception {
+        List<StockHistoryError> stockHistoryErrors = stockHistoryErrorMapper.selectAllByStatus(0, StockHistoryErrorEnum.DAILY.getType());
+        if(stockHistoryErrors!=null && !stockHistoryErrors.isEmpty()) {
+            for(StockHistoryError stockHistoryError : stockHistoryErrors) {
+                int errCount = stockHistoryError.getErrCount();
+                if(errCount <= MAX_ERR_COUNT) {
+                    try {
+                        long s = System.currentTimeMillis();
+                        logger.info("股号: "+stockHistoryError.getNo()+", 重新抓取当日交易开始......");
+                        this.fetchCurrentHistoryDaily(stockHistoryError.getNo());
+                        stockHistoryErrorMapper.deleteByPrimaryKey(stockHistoryError.getId());
+                        logger.info("股号: "+stockHistoryError.getNo()+", 重新抓取当日交易完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
+                    } catch(Exception e) {
+                        logger.error("股号: {}, 重新抓取当日交易异常: ", stockHistoryError.getNo(), e);
+                        stockHistoryErrorMapper.updateErrCount(stockHistoryError.getId());
+                    }
+                } else {
+                    logger.info("股号: "+stockHistoryError.getNo()+"当日交易错误次数太多: "+errCount+", 不再重新抓取......");
+//                    stockHistoryErrorMapper.deleteByPrimaryKey(stockHistoryError.getId());
+                    // 不再重试
+                    stockHistoryErrorMapper.updateStatus(stockHistoryError.getId(), 1);
+                }
+            }
+        }
+    }
+    
+    @Override
     public void fetchAllHistory() throws Exception {
         List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
         logger.info("fetchAllHistory size---->"+stockMyDatas.size());
@@ -835,6 +868,35 @@ public class FetchServiceImpl implements FetchService {
 //                String endDate = DatesUtils.YYMMDD2.toString(nowDate);
                 // 402396061841035264 1528
                 fetchHistory(stockMyData.getNo());
+            }
+        }
+    }
+    
+    @Override
+    public void fetchAllHistoryDaily() throws Exception {
+        List<StockMyData> stockMyDatas = stockMyDataMapper.selectAll();
+        logger.info("fetchAllHistoryDaily size---->"+stockMyDatas.size());
+        if(stockMyDatas !=null && !stockMyDatas.isEmpty()){
+            for(StockMyData stockMyData : stockMyDatas) {
+                String no = stockMyData.getNo();
+                try {
+                    logger.info("股号: "+no+", 抓取当日交易开始......");
+                    fetchCurrentHistoryDaily(no);
+                    logger.info("股号: "+no+", 抓取当日交易结束......");
+                } catch(Exception e) {
+                    logger.error("股号: {}, 抓取当日交易异常: ", no, e);
+                    StockHistoryError stockHistoryError = new StockHistoryError();
+                    Date date = new Date();
+                    stockHistoryError.setId(IdUtils.genLongId());
+                    stockHistoryError.setCreateDate(date);
+                    stockHistoryError.setNo(no);
+                    stockHistoryError.setStartDate(MyDateUtils.localDate2Date(LocalDate.now()));
+                    stockHistoryError.setEndDate(MyDateUtils.localDate2Date(LocalDate.now()));
+                    stockHistoryError.setStatus(0); //抓取状态 1: 重试后成功 0: 错误
+                    stockHistoryError.setErrCount(1);
+                    stockHistoryError.setType(StockHistoryErrorEnum.DAILY.getType());
+                    stockHistoryErrorMapper.insert(stockHistoryError);
+                }
             }
         }
     }
@@ -893,6 +955,7 @@ public class FetchServiceImpl implements FetchService {
             stockHistoryError.setEndDate(MyDateUtils.localDate2Date(endDate));
             stockHistoryError.setStatus(0); //抓取状态 1: 重试后成功 0: 错误
             stockHistoryError.setErrCount(1);
+            stockHistoryError.setType(StockHistoryErrorEnum.HISTORY.getType());
             stockHistoryErrorMapper.insert(stockHistoryError);
         }
             
@@ -920,9 +983,9 @@ public class FetchServiceImpl implements FetchService {
      */
     @Override
     @Transactional
-    public StockHistory searchCurrentHistory(String no) throws Exception {
+    public void fetchCurrentHistoryDaily(String no) throws Exception {
         // https://www.cnyes.com/twstock/quote/2881.htm
-        List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
+        List<StockHistoryDaily> stockHistoryDaily4Inserts = Lists.newArrayList();
         StockData stockData = stockDataMapper.selectByNo(no);
         if(stockData == null) {
             throw new BusinessException("Not found stock data by no: " + no);
@@ -933,39 +996,47 @@ public class FetchServiceImpl implements FetchService {
             HtmlPage page = processGuceOathCom(webClient.getPage(url));
 //            final String pageAsXml = page.asXml();
 //            System.out.println(pageAsXml);
+            List<HtmlElement> trNodes = (List<HtmlElement>)page.getByXPath("//div[@id=\"real_1\"]//div[@class=\"idxtab3 \"]//tr");
+            if(trNodes!=null && !trNodes.isEmpty()) {
+                // 第一行是title
+                for(int i = 1;i<trNodes.size();i++) {
+                    HtmlElement node = trNodes.get(i);
+                    DomNodeList<DomNode> tdNodes = node.getChildNodes();
+                    if(tdNodes != null && !tdNodes.isEmpty()) {
+                        // 時間   買價  賣價  成交價 漲跌  現量
+//                        10:16:17 48.40 48.45 48.45 -0.70 1
+//                        10:16:12 48.40 48.45 48.45 -0.70 3
+//                        10:15:42 48.40 48.45 48.40 -0.75 1
+//                        10:15:37 48.40 48.45 48.45 -0.70 1
+                        String dateStr = tdNodes.get(0).asText();
+                        String buy = tdNodes.get(1).asText();
+                        String sell = tdNodes.get(2).asText();
+                        String vol = tdNodes.get(3).asText();
+                        String upsDowns = tdNodes.get(4).asText();
+                        String pratyaksam = tdNodes.get(5).asText();
+                        String datetimeStr = DatesUtils.YYMMDD2.toString()+" "+dateStr;
+//                        System.out.println(datetimeStr+" "+buy+" "+sell+" "+vol+" "+upsDowns+" "+pratyaksam);
+                        StockHistoryDaily stockHistoryDaily = new StockHistoryDaily();
+//                        stockHistoryDaily.setId(IdUtils.genLongId());
+//                      stockHistoryDaily.setCreateDate(new Date());
+                        stockHistoryDaily.setStockId(stockId);
+                        stockHistoryDaily.setDate(DatesUtils.YYMMDDHHMMSS2.toDate(datetimeStr));
+                        stockHistoryDaily.setBuy(new BigDecimal(buy));
+                        stockHistoryDaily.setSell(new BigDecimal(sell));
+                        stockHistoryDaily.setVol(new BigDecimal(vol));
+                        stockHistoryDaily.setUpsDowns(new BigDecimal(upsDowns));
+                        stockHistoryDaily.setPratyaksam(new BigDecimal(pratyaksam));
+//                        stockHistoryDailyMapper.insert(stockHistoryDaily);
+                        stockHistoryDaily4Inserts.add(stockHistoryDaily);
+                    }
+                }
+            }
             
 //            DomElement domElement = page.getElementById("real_0");
-            List<HtmlElement> tdNodes = (List<HtmlElement>)page.getByXPath("//div[@id=\"real_0\"]//div[@class=\"idxtab4\"]//tr//td");
+            /*List<HtmlElement> tdNodes = (List<HtmlElement>)page.getByXPath("//div[@id=\"real_0\"]//div[@class=\"idxtab4\"]//tr//td");
             if(tdNodes!=null && !tdNodes.isEmpty()) {
 //                    DomNodeList<HtmlElement> tdNodes = htmlElement.getElementsByTagName("td");
-                for(HtmlElement tdNode : tdNodes) {
-                    System.out.println(tdNode.asText());
-                }
                 StockHistory stockHistory = new StockHistory();
-//                    if(tdNodes!=null && !tdNodes.isEmpty()) {
-                /*// 日期
-                stockHistory.setDate(DatesUtils.YYMMDD2.toDate(td.asText()));
-                // 開盤
-                stockHistory.setOpening(new BigDecimal(td.asText()));
-                // 最高    
-                stockHistory.setHighest(new BigDecimal(td.asText()));
-                // 最低    
-                stockHistory.setLowest(new BigDecimal(td.asText()));
-                // 收盤    
-                stockHistory.setClosing(new BigDecimal(td.asText()));
-                // 漲跌    
-                stockHistory.setUpsDowns(new BigDecimal(td.asText()));
-                // 漲%    
-                stockHistory.setRiseRate(td.asText());
-                // 成交量    
-                stockHistory.setVol(new BigDecimal(td.asText().replace(",", "")));
-                // 成交金額    
-                stockHistory.setAmount(new BigDecimal(td.asText().replace(",", "")));
-                // 本益比
-                stockHistory.setPer(td.asText());
-                stockHistory.setType(StockHistoryEnum.DAY.getType());
-                stockHistory.setStockId(stockId);*/
-//                    }
                 String vol = tdNodes.get(0).asText();
                 String amount = tdNodes.get(1).asText();
                 String upsDowns = tdNodes.get(2).asText();
@@ -975,16 +1046,16 @@ public class FetchServiceImpl implements FetchService {
                 String lowest = tdNodes.get(9).asText();
 //                String closing = tdNodes.get(9).asText();
 //                String per = tdNodes.get(4).asText();
-            }
-            // 時間   買價  賣價  成交價 漲跌  單量  總量
-            // 日期   開盤  最高  最低  收盤  漲跌  漲% 成交量 成交金額 本益比
-            // 成交 買進 <tr><th class="ltpd">昨量</th><td width="25%" class="rt">9848</td><th class="ltpd">跌停價</th><td width="20%" class="price rt">44.6</td></
-            // 漲跌 賣出
-            // 漲幅 開盤
-            // 昨收 最高
-            // 總量 最低
-            // 單量 漲停價
-            // 昨量 跌停價
+                // 時間   買價  賣價  成交價 漲跌  單量  總量
+                // 日期   開盤  最高  最低  收盤  漲跌  漲% 成交量 成交金額 本益比
+                // 成交 買進 <tr><th class="ltpd">昨量</th><td width="25%" class="rt">9848</td><th class="ltpd">跌停價</th><td width="20%" class="price rt">44.6</td></
+                // 漲跌 賣出
+                // 漲幅 開盤
+                // 昨收 最高
+                // 總量 最低
+                // 單量 漲停價
+                // 昨量 跌停價
+            }*/
           
 //          HtmlElement domNode = (HtmlElement) domNodes.get(2);
         } finally {
@@ -994,7 +1065,24 @@ public class FetchServiceImpl implements FetchService {
             }
             // webClient.close();
         }
-        return null;
+        
+        StockHistoryDaily lastStockHistoryDaily = stockHistoryDailyMapper.selectLastStockHistoryDaily(no);
+        Date lastDate = null;
+        if(lastStockHistoryDaily!=null) {
+            lastDate = lastStockHistoryDaily.getDate();
+        }
+        if(stockHistoryDaily4Inserts!=null && !stockHistoryDaily4Inserts.isEmpty()) {
+            stockHistoryDaily4Inserts = Lists.reverse(stockHistoryDaily4Inserts);
+            // 升序insert
+            for (StockHistoryDaily stockHistoryDaily4Insert : stockHistoryDaily4Inserts) {
+                if(lastDate == null || stockHistoryDaily4Insert.getDate().getTime() > lastDate.getTime()) {
+                    stockHistoryDaily4Insert.setId(IdUtils.genLongId());
+                    stockHistoryDaily4Insert.setCreateDate(new Date());
+                    stockHistoryDailyMapper.insert(stockHistoryDaily4Insert);
+                }
+                
+            }
+        }
     }
 
     /**

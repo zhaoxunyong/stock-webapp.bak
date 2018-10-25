@@ -2,6 +2,7 @@ package org.stock.fetch.service.impl;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import org.stock.fetch.constant.StockHistoryEnum;
 import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.dao.StockDailyTransactionsMapper;
 import org.stock.fetch.dao.StockDataMapper;
+import org.stock.fetch.dao.StockHistoryDailyMapper;
 import org.stock.fetch.dao.StockHistoryMapper;
 import org.stock.fetch.dao.StockImportantNewsMapper;
 import org.stock.fetch.dao.StockMyDataMapper;
@@ -26,6 +28,7 @@ import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
+import org.stock.fetch.model.StockHistoryDaily;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelected;
@@ -71,6 +74,9 @@ public class StockServiceImpl implements StockService {
     
     @Autowired
     private StockHistoryMapper stockHistoryMapper;
+    
+    @Autowired
+    private StockHistoryDailyMapper stockHistoryDailyMapper;
 
 	@Override
 	public List<StockMyData> getStockMyDatas() {
@@ -398,8 +404,36 @@ public class StockServiceImpl implements StockService {
     @Override
     public List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate, int type) {
         List<StockHistory> actuallyStockHistorys = Lists.newArrayList();
-        // 始终通过日来计算
+        // 始终通过日来计算,第一条记录是最新的
         List<StockHistory> stockHistorys = stockHistoryMapper.selectStockHistory(stockId, startDate, endDate, StockHistoryEnum.DAY.getType());
+        // 是否有当日的数据？
+        if(!stockHistorys.isEmpty()) {
+            Date lastDate = stockHistorys.get(0).getDate();
+            if(!MyDateUtils.date2LoalDate(lastDate).isEqual(LocalDate.now())) {
+                // 获取当天的数据,最后一条记录是最新的
+                List<StockHistoryDaily> stockHistoryDailys = this.selectCurrentStockHistoryDailys(stockId);
+                if(stockHistoryDailys!=null && !stockHistoryDailys.isEmpty()) {
+                    // 時間   買價  賣價  成交價 漲跌  單量  總量
+                    BigDecimal opening = stockHistoryDailys.get(0).getVol();
+                    BigDecimal closing = stockHistoryDailys.get(stockHistoryDailys.size()-1).getVol();
+                    BigDecimal lowest = stockHistoryDailys.stream().map(StockHistoryDaily::getVol).reduce(BigDecimal::min).get();
+                    BigDecimal highest = stockHistoryDailys.stream().map(StockHistoryDaily::getVol).reduce(BigDecimal::max).get();
+                    BigDecimal vol = stockHistoryDailys.stream().map(StockHistoryDaily::getVol).reduce(new BigDecimal(0), (a, b) -> a.add(b));
+                    StockHistory currentStockHistory = new StockHistory();
+                    currentStockHistory.setId(IdUtils.genLongId());
+                    currentStockHistory.setStockId(stockId);
+                    currentStockHistory.setType(StockHistoryEnum.DAY.getType());
+                    
+                    currentStockHistory.setOpening(opening);
+                    currentStockHistory.setClosing(closing);
+                    currentStockHistory.setLowest(lowest);
+                    currentStockHistory.setHighest(highest);
+                    currentStockHistory.setVol(vol);
+                    currentStockHistory.setDate(new Date());
+                    stockHistorys.add(0, currentStockHistory);
+                }
+            }
+        }
         if (type == StockHistoryEnum.DAY.getType()) {
             actuallyStockHistorys.addAll(stockHistorys);
         } else if (type == StockHistoryEnum.WEEK.getType()) {
@@ -435,7 +469,7 @@ public class StockServiceImpl implements StockService {
                     vols = Lists.newArrayList();
                 }
                 
-                // 周
+                // 一周的第一天
                 LocalDate firstDateOfWeek = MyDateUtils.getFirstDayOfWeek(localDate);
                 Date startDateOfWeek = MyDateUtils.localDate2Date(firstDateOfWeek);
                 if (endDateOfWeek.getTime() >= startDateOfWeek.getTime()) {
@@ -556,6 +590,13 @@ public class StockServiceImpl implements StockService {
     @Override
     public StockHistory averageVol(Long stockId, Date date, int type) {
          return stockHistoryMapper.averageVol(stockId, date, type);
+    }
+
+    @Override
+    public List<StockHistoryDaily> selectCurrentStockHistoryDailys(Long stockId) {
+        Date startDate = MyDateUtils.localDate2Date(LocalDate.now());
+        Date endDate = new Date();
+        return stockHistoryDailyMapper.selectStockHistoryDailys(stockId, startDate, endDate);
     }
 
 }

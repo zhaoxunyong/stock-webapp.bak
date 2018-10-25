@@ -666,6 +666,21 @@ public class StockApiImpl implements StockApi {
         return "ok";
     }
 
+    @Override
+    @PostMapping(value = "/fetchCurrentHistoryDaily")
+    public void fetchCurrentHistoryDaily(String stockId) {
+        if(!ScheduledTasks.IS_FETCH_HISTORY_DAILY) {
+            try {
+                ScheduledTasks.IS_FETCH_HISTORY_DAILY = true;
+                fetchService.fetchCurrentHistoryDaily(stockService.getStockData(Long.parseLong(stockId)).getNo());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            } finally {
+                ScheduledTasks.IS_FETCH_HISTORY_DAILY = false;
+            }
+        }
+    }
+
     /*@Override
     @GetMapping(value = "/data")
     public String data(String stockId, String startDate, String endDate) {

@@ -2,10 +2,13 @@ package org.stock.fetch.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
+import org.stock.fetch.model.StockHistoryDaily;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockNews;
 import org.stock.fetch.model.StockType;
@@ -45,7 +48,10 @@ public interface FetchService {
     public void fetchAllHistory() throws Exception;
     public void refetchAllHistory() throws Exception;
     public void fetchHistory(String no) throws Exception;
-    public StockHistory searchCurrentHistory(String no) throws Exception;
+    
+    public void fetchAllHistoryDaily() throws Exception;
+    public void refetchAllHistoryDaily() throws Exception;
+    public void fetchCurrentHistoryDaily(String no) throws Exception;
 //    public void fetchHistory(String no, LocalDate startDate, LocalDate endDate) throws Exception;
     
 //    List<StockHistory> select(Date startDate, Date endDate);

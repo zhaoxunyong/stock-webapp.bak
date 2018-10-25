@@ -9,6 +9,7 @@ import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
+import org.stock.fetch.model.StockHistoryDaily;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelectedType;
@@ -86,6 +87,8 @@ public interface StockService {
     void saveCompanyStatus(Long stockId, String companyStatus);
     
     List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate, int type);
+    
+    List<StockHistoryDaily> selectCurrentStockHistoryDailys(Long stockId);
     
     StockHistory selectWeekOrMonthStockHistory(long stockId, Date startDate, Date endDate, int type);
     

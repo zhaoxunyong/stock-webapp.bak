@@ -2,7 +2,6 @@ package com.stock.fetch;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Date;
 
 import org.junit.Test;
@@ -68,8 +67,8 @@ public class StockServiceTest {
     }
     
     @Test
-    public void refetchAllHistory() throws Exception {
-        fetchService.refetchAllHistory();
+    public void fetchAllHistoryDaily() throws Exception {
+        fetchService.fetchAllHistoryDaily();
     }
     
     @Test
@@ -85,7 +84,7 @@ public class StockServiceTest {
         String no = "2881";
 //        String startDate = "2015/01/01";
 //        String endDate = "2018/09/01";
-        fetchService.searchCurrentHistory(no);
+        fetchService.fetchCurrentHistoryDaily(no);
     }
     
     @Test
