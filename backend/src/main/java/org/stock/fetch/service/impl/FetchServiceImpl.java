@@ -72,6 +72,8 @@ public class FetchServiceImpl implements FetchService {
     
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
+    private final static Integer MAX_ERR_COUNT = 10;
+    
     private final static String ROOT_URL = "https://tw.stock.yahoo.com";
     
     @Autowired
@@ -800,15 +802,23 @@ public class FetchServiceImpl implements FetchService {
         List<StockHistoryError> stockHistoryErrors = stockHistoryErrorMapper.selectAllByStatus(0);
         if(stockHistoryErrors!=null && !stockHistoryErrors.isEmpty()) {
             for(StockHistoryError stockHistoryError : stockHistoryErrors) {
-                
-                try {
-                    long s = System.currentTimeMillis();
-                    logger.info("股号: "+stockHistoryError.getNo()+", 重新抓取开始......");
-                    this.fetchHistory(stockHistoryError.getNo(), stockHistoryError.getStartDate(), stockHistoryError.getEndDate());
-                    stockHistoryErrorMapper.deleteByPrimaryKey(stockHistoryError.getId());logger.info("股号: "+stockHistoryError.getNo()+", 重新抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
-                } catch(Exception e) {
-                    logger.error("股号: {}, 重新抓取异常: ", stockHistoryError.getNo(), e);
-                    stockHistoryErrorMapper.updateErrCount(stockHistoryError.getId());
+                int errCount = stockHistoryError.getErrCount();
+                if(errCount <= MAX_ERR_COUNT) {
+                    try {
+                        long s = System.currentTimeMillis();
+                        logger.info("股号: "+stockHistoryError.getNo()+", 重新抓取开始......");
+                        this.fetchHistory(stockHistoryError.getNo(), stockHistoryError.getStartDate(), stockHistoryError.getEndDate());
+                        stockHistoryErrorMapper.deleteByPrimaryKey(stockHistoryError.getId());
+                        logger.info("股号: "+stockHistoryError.getNo()+", 重新抓取完成, 耗时: "+((System.currentTimeMillis()-s)/1000)+"s.");
+                    } catch(Exception e) {
+                        logger.error("股号: {}, 重新抓取异常: ", stockHistoryError.getNo(), e);
+                        stockHistoryErrorMapper.updateErrCount(stockHistoryError.getId());
+                    }
+                } else {
+                    logger.info("股号: "+stockHistoryError.getNo()+"错误次数太多: "+errCount+", 不再重新抓取......");
+//                    stockHistoryErrorMapper.deleteByPrimaryKey(stockHistoryError.getId());
+                    // 不再重试
+                    stockHistoryErrorMapper.updateStatus(stockHistoryError.getId(), 1);
                 }
             }
         }
