@@ -414,11 +414,17 @@ public class StockServiceImpl implements StockService {
                 List<StockHistoryDaily> stockHistoryDailys = this.selectCurrentStockHistoryDailys(stockId);
                 if(stockHistoryDailys!=null && !stockHistoryDailys.isEmpty()) {
                     // 時間   買價  賣價  成交價 漲跌  單量  總量
+                    /*當日K線數據中，
+                                                        開盤價=當日交易明細的第一筆成交價，
+                                                        收盤價=當日交易明細的當時的最後一筆成交價，
+                                                        最高價=當日交易明細的最高成交價，
+                                                        最低價=當日交易明細的最低成交價，
+                                                        成交量=當日交易明細的單量加總=當日交易明細的最後一筆的總量*/
                     BigDecimal opening = stockHistoryDailys.get(0).getVol();
                     BigDecimal closing = stockHistoryDailys.get(stockHistoryDailys.size()-1).getVol();
                     BigDecimal lowest = stockHistoryDailys.stream().map(StockHistoryDaily::getVol).reduce(BigDecimal::min).get();
                     BigDecimal highest = stockHistoryDailys.stream().map(StockHistoryDaily::getVol).reduce(BigDecimal::max).get();
-                    BigDecimal vol = stockHistoryDailys.stream().map(StockHistoryDaily::getVol).reduce(new BigDecimal(0), (a, b) -> a.add(b));
+                    BigDecimal vol = stockHistoryDailys.stream().map(StockHistoryDaily::getPratyaksam).reduce(new BigDecimal(0), (a, b) -> a.add(b));
                     StockHistory currentStockHistory = new StockHistory();
                     currentStockHistory.setId(IdUtils.genLongId());
                     currentStockHistory.setStockId(stockId);
