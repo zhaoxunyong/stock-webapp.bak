@@ -3,7 +3,6 @@ package org.stock.fetch.service;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
 import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;
@@ -92,7 +91,9 @@ public interface StockService {
     
     StockHistory selectWeekOrMonthStockHistory(long stockId, Date startDate, Date endDate, int type);
     
-    StockHistory averageClosing(@Param("stockId") Long stockId, @Param("date") Date date, int type);
+    StockHistory averageClosing(Long stockId, Date date, int type);
     
-    StockHistory averageVol(@Param("stockId") Long stockId, @Param("date") Date date, int type);
+    StockHistory averageVol(Long stockId, Date date, int type);
+    
+    void deleteByAgoOfDayDate();
 }

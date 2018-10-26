@@ -605,4 +605,11 @@ public class StockServiceImpl implements StockService {
         return stockHistoryDailyMapper.selectStockHistoryDailys(stockId, startDate, endDate);
     }
 
+    @Override
+    public void deleteByAgoOfDayDate() {
+        // 只保留3天以内的数据，因为日期是从00:00:00开始的，所以只需要向前2天
+        Date agoOfDayDate = MyDateUtils.localDate2Date(LocalDate.now().plusDays(-2));
+        stockHistoryDailyMapper.deleteByAgoOfDayDate(agoOfDayDate);
+    }
+
 }

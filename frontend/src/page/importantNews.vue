@@ -29,6 +29,7 @@ export default {
       currentPage: this.$route.params.pageNum,
       type: 1,
       pageSize: PAGE_SIZE,
+      intervalid1: null,
       fields: {
         content_title: {
           label: '<span id="content_id">: </span>市場重大新聞',

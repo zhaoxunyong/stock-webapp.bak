@@ -10,6 +10,8 @@ import org.stock.fetch.model.StockHistoryDaily;
 @Mapper
 public interface StockHistoryDailyMapper {
     int deleteByPrimaryKey(Long id);
+    
+    int deleteByAgoOfDayDate(@Param("agoOfDayDate") Date agoOfDayDate);
 
     int insert(StockHistoryDaily record);
 

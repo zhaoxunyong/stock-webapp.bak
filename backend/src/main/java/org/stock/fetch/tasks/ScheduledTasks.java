@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.stock.fetch.constant.StockHistoryErrorEnum;
 import org.stock.fetch.service.FetchService;
+import org.stock.fetch.service.StockService;
 
 import com.aeasycredit.commons.lang.utils.DatesUtils;
 
@@ -27,6 +28,9 @@ public class ScheduledTasks {
     
     @Autowired
     private FetchService fetchService;
+    
+    @Autowired
+    private StockService stockService;
     
     @Scheduled(cron="0 */8 8-23 * * ?")
     public void fetchImportantNews() throws Exception {
@@ -132,5 +136,15 @@ public class ScheduledTasks {
                 IS_FETCH_HISTORY_DAILY = false;
             }
         }
+    }
+    
+    /**
+     * stock_history_daily只保留3天数据
+     */
+    @Scheduled(cron="0 0 0 * * ?")
+    public void deleteByAgoOfDayDate() throws Exception {
+        logger.info("deleteByAgoOfDayDate start--->"+DatesUtils.YYMMDDHHMMSS.toString());
+        stockService.deleteByAgoOfDayDate();
+        logger.info("deleteByAgoOfDayDate end--->"+DatesUtils.YYMMDDHHMMSS.toString());
     }
 }

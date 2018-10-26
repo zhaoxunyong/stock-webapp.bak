@@ -60,6 +60,7 @@ export default {
       chart: null,
       // stockCandle: null,
       resize: true,
+      intervalid1: null,
       rawHtml1: '',
       rawHtml2: '',
       rawHtml3: '',
@@ -93,11 +94,15 @@ export default {
   created() {
     // this.getRecentDate()
   },
+  destroyed:function(){
+    if(this.intervalid1 != null) {
+      clearInterval(this.intervalid1)
+    }
+  },
   methods: {
     openNewKline(param) {
       // console.log(param)
     },
-    showZoomKline() {},
     /* getRecentDate() {
       var now = new Date();
       var newDate = dateAdd("d", -RECENT_DATE, now);
@@ -137,19 +142,21 @@ export default {
         };
       }, 200); */
       let _this = this
-      setInterval(function() {
-        if (this.kineType == 0) {
-          // 重新抓取数据
-          let url = `/api/stock/fetchCurrentHistoryDaily?stockId=${
-            _this.stockId
-          }`
-          _this.$api.post(url, null, rs => {
+      if(_this.intervalid1 == null) {
+        _this.intervalid1 = setInterval(function() {
+          if (_this.kineType == 0) {
+            // 重新抓取数据
+            let url = `/api/stock/fetchCurrentHistoryDaily?stockId=${
+              _this.stockId
+            }`
+            _this.$api.post(url, null, rs => {
+              _this.setOptions(chart1, chart2, chart3, chart4, chart5)
+            })
+          } else {
             _this.setOptions(chart1, chart2, chart3, chart4, chart5)
-          })
-        } else {
-          _this.setOptions(chart1, chart2, chart3, chart4, chart5)
-        }
-      }, 10000) // ms
+          }
+        }, 10000) // ms
+      }
     },
     setOptions(chart1, chart2, chart3, chart4, chart5) {
       // this.stockCandle = null

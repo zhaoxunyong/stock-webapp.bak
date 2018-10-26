@@ -17,6 +17,11 @@
     delete from stock_history_daily
     where id = #{id,jdbcType=BIGINT}
   </delete>
+  <delete id="deleteByAgoOfDayDate" >
+  <![CDATA[
+    DELETE from stock_history_daily where date < #{agoOfDayDate,jdbcType=TIMESTAMP}
+  ]]>
+  </delete>
   <insert id="insert" parameterType="org.stock.fetch.model.StockHistoryDaily" useGeneratedKeys="true" keyProperty="id" >
     insert into stock_history_daily (id, stock_id, date, buy, 
       sell, vol, ups_downs, 

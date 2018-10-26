@@ -36,6 +36,11 @@ public class StockServiceTest {
         fetchService.fetchAllMyStock();
     }
     
+    @Test
+    public void deleteByAgoOfDayDate() {
+        stockService.deleteByAgoOfDayDate();
+    }
+    
     /*@Test
     public void fetchDetail() throws Exception {
         fetchService.fetchDetail();
