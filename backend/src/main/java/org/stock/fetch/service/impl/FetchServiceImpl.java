@@ -991,6 +991,7 @@ public class FetchServiceImpl implements FetchService {
             throw new BusinessException("Not found stock data by no: " + no);
         }
         long stockId = stockData.getId();
+        // https://www.cnyes.com/twstock/ps_pv_time/2881.htm
         String url = "https://traderoom.cnyes.com/tse/quote2FB_HTML5.aspx?code="+stockData.getNo();
         try {
             HtmlPage page = processGuceOathCom(webClient.getPage(url));

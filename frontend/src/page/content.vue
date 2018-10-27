@@ -29,8 +29,8 @@
             </b-col>
             <!--个股右侧信息-->
             <b-col cols="3" sm="3" class="pl-0 pr-0">
-              <img src="../images/stock02.png" class="w-100" />
-              <img src="../images/stock04.png" class="w-100" />
+              <img src="../images/stock02.png" class="w-80" />
+              <img src="../images/stock04.png" class="w-80" />
             </b-col>
           </b-row>
         </b-col>

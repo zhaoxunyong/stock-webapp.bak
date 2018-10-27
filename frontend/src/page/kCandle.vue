@@ -282,15 +282,15 @@ export default {
   height: 580px;
 } */
 .echarts1 {
-  width: 100%;
+  width: 98%;
   height: 190px;
 }
 .echarts2 {
-  width: 100%;
+  width: 98%;
   height: 90px;
 }
 .echarts3 {
-  width: 100%;
+  width: 98%;
   height: 120px;
 }
 .tooltips {
