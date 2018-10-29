@@ -122,7 +122,7 @@ export default function getData (datasets, kineType) {
                     color: 'green'
                 } , */
                 formatter: function (value) {
-                    return value >= 10000 ? value / 1000 +'k' : value
+                    return value >= 1000 ? value / 1000 +'k' : value
                 }
             }
         }],
