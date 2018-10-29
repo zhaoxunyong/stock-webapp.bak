@@ -20,6 +20,8 @@ public class StockHistoryDaily extends BaseModel {
 
     private BigDecimal vol;
 
+    private BigDecimal totalAmount;
+    
     private BigDecimal upsDowns;
 
     private BigDecimal pratyaksam;
@@ -72,7 +74,15 @@ public class StockHistoryDaily extends BaseModel {
         return vol;
     }
 
-    public void setVol(BigDecimal vol) {
+    public BigDecimal getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(BigDecimal totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+
+	public void setVol(BigDecimal vol) {
         this.vol = vol;
     }
 

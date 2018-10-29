@@ -53,7 +53,7 @@ export default function getData (datasets, kineType) {
             axisPointer: {
                 type: 'cross',
                 label: {
-                    show: true,
+                    show: false,
                     color: '#ff0'
                 },
                 crossStyle: {
@@ -66,8 +66,8 @@ export default function getData (datasets, kineType) {
         grid: [{
             top: '5%',
             left: '9%',
-            right: '1%',
-            height: '85%'
+            right: '0%',
+            height: '60%'
         }],
         // 坐标轴指示器（axisPointer）的全局公用设置
         axisPointer: {

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -51,6 +52,7 @@ import com.aeasycredit.commons.lang.exception.BusinessException;
 import com.aeasycredit.commons.lang.exception.ParameterException;
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 import com.aeasycredit.commons.lang.utils.DatesUtils;
+import com.aeasycredit.commons.lang.utils.RegexUtils;
 import com.aeasycredit.commons.poi.excel.ExcelUtils;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebWindow;
@@ -991,13 +993,53 @@ public class FetchServiceImpl implements FetchService {
             throw new BusinessException("Not found stock data by no: " + no);
         }
         long stockId = stockData.getId();
-        // https://www.cnyes.com/twstock/ps_pv_time/2881.htm
-        String url = "https://traderoom.cnyes.com/tse/quote2FB_HTML5.aspx?code="+stockData.getNo();
+        // 
+        String url = "https://www.cnyes.com/twstock/ps_pv_time/"+stockData.getNo()+".htm";
         try {
             HtmlPage page = processGuceOathCom(webClient.getPage(url));
 //            final String pageAsXml = page.asXml();
 //            System.out.println(pageAsXml);
-            List<HtmlElement> trNodes = (List<HtmlElement>)page.getByXPath("//div[@id=\"real_1\"]//div[@class=\"idxtab3 \"]//tr");
+            List<HtmlElement> trNodes = (List<HtmlElement>)page.getByXPath("//div[@class=\"scroll\"]//tr");
+            if(trNodes!=null && !trNodes.isEmpty()) {
+                // 第一行是title
+                for(int i = 0;i<trNodes.size();i++) {
+                    HtmlElement node = trNodes.get(i);
+                    DomNodeList<DomNode> tdNodes = node.getChildNodes();
+                    if(tdNodes != null && !tdNodes.isEmpty()) {
+                        // 時間	買價	賣價	成交價	漲跌	單量	總量
+                        String dateStr = tdNodes.get(0).asText();
+                        String datetimeStr = DatesUtils.YYMMDD2.toString()+" "+dateStr;
+                        Date date = DatesUtils.YYMMDDHHMMSS2.toDate(datetimeStr);
+						boolean isExisted = stockHistoryDaily4Inserts.stream().map(StockHistoryDaily::getDate)
+								.anyMatch(p -> date.getTime() == p.getTime());
+                    	if(!isExisted) {
+                            String buy = tdNodes.get(1).asText();
+                            String sell = tdNodes.get(2).asText();
+                            String vol = tdNodes.get(3).asText();
+                            String upsDowns = tdNodes.get(4).asText();
+                            String pratyaksam = tdNodes.get(5).asText();
+                            String totalAmount = tdNodes.get(6).asText();
+//                            System.out.println(datetimeStr+" "+buy+" "+sell+" "+vol+" "+upsDowns+" "+pratyaksam);
+                            StockHistoryDaily stockHistoryDaily = new StockHistoryDaily();
+//                            stockHistoryDaily.setId(IdUtils.genLongId());
+//                          stockHistoryDaily.setCreateDate(new Date());
+                            stockHistoryDaily.setStockId(stockId);
+                            stockHistoryDaily.setDate(date);
+                            stockHistoryDaily.setBuy(new BigDecimal(buy));
+                            stockHistoryDaily.setSell(new BigDecimal(sell));
+                            stockHistoryDaily.setVol(new BigDecimal(vol));
+                            stockHistoryDaily.setUpsDowns(new BigDecimal(upsDowns));
+                            stockHistoryDaily.setTotalAmount(new BigDecimal(totalAmount));
+                            stockHistoryDaily.setPratyaksam(new BigDecimal(pratyaksam));
+//                            stockHistoryDailyMapper.insert(stockHistoryDaily);
+                            stockHistoryDaily4Inserts.add(stockHistoryDaily);
+                    	}
+                    }
+                }
+            }
+            
+            /*String url = "https://traderoom.cnyes.com/tse/quote2FB_HTML5.aspx?code="+stockData.getNo();
+        	List<HtmlElement> trNodes = (List<HtmlElement>)page.getByXPath("//div[@id=\"real_1\"]//div[@class=\"idxtab3 \"]//tr");
             if(trNodes!=null && !trNodes.isEmpty()) {
                 // 第一行是title
                 for(int i = 1;i<trNodes.size();i++) {
@@ -1031,31 +1073,6 @@ public class FetchServiceImpl implements FetchService {
                         stockHistoryDaily4Inserts.add(stockHistoryDaily);
                     }
                 }
-            }
-            
-//            DomElement domElement = page.getElementById("real_0");
-            /*List<HtmlElement> tdNodes = (List<HtmlElement>)page.getByXPath("//div[@id=\"real_0\"]//div[@class=\"idxtab4\"]//tr//td");
-            if(tdNodes!=null && !tdNodes.isEmpty()) {
-//                    DomNodeList<HtmlElement> tdNodes = htmlElement.getElementsByTagName("td");
-                StockHistory stockHistory = new StockHistory();
-                String vol = tdNodes.get(0).asText();
-                String amount = tdNodes.get(1).asText();
-                String upsDowns = tdNodes.get(2).asText();
-                String riseRate = tdNodes.get(4).asText();
-                String opening = tdNodes.get(5).asText();
-                String highest = tdNodes.get(7).asText();
-                String lowest = tdNodes.get(9).asText();
-//                String closing = tdNodes.get(9).asText();
-//                String per = tdNodes.get(4).asText();
-                // 時間   買價  賣價  成交價 漲跌  單量  總量
-                // 日期   開盤  最高  最低  收盤  漲跌  漲% 成交量 成交金額 本益比
-                // 成交 買進 <tr><th class="ltpd">昨量</th><td width="25%" class="rt">9848</td><th class="ltpd">跌停價</th><td width="20%" class="price rt">44.6</td></
-                // 漲跌 賣出
-                // 漲幅 開盤
-                // 昨收 最高
-                // 總量 最低
-                // 單量 漲停價
-                // 昨量 跌停價
             }*/
           
 //          HtmlElement domNode = (HtmlElement) domNodes.get(2);

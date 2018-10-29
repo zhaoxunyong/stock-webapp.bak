@@ -38,7 +38,7 @@ export default function getData (datasets, kineType) {
             axisPointer: {
                 type: 'cross',
                 label: {
-                    show: true,
+                    show: false,
                     color: '#ff0'
                 },
                 crossStyle: {
@@ -51,8 +51,8 @@ export default function getData (datasets, kineType) {
         grid: [{
             top: '5%',
             left: '9%',
-            right: '1%',
-            height: '85%'
+            right: '0%',
+            height: '60%'
         }],
         // 坐标轴指示器（axisPointer）的全局公用设置
         axisPointer: {
@@ -95,12 +95,12 @@ export default function getData (datasets, kineType) {
         }],
         // 
         yAxis: [{
-            axisLabel: {
+            /* axisLabel: {
                 lineStyle:{  
                     color:'red',  
                 },
                 color: STOCK_CONFIG.col.y
-            },
+            }, */
             scale: true,
             // position: 'right',,
             splitNumber: 2,
@@ -112,6 +112,17 @@ export default function getData (datasets, kineType) {
                 lineStyle: {
                     color: ['#888'],
                     type: 'dotted'
+                }
+            },
+            axisLabel: {
+                onZero: false,
+                // 坐标文字相关样式
+                /* textStyle: {
+                    fontSize: '12px',
+                    color: 'green'
+                } , */
+                formatter: function (value) {
+                    return value >= 10000 ? value / 1000 +'k' : value
                 }
             }
         }],

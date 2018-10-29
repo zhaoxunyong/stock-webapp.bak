@@ -282,19 +282,19 @@ export default {
   height: 580px;
 } */
 .echarts1 {
-  width: 98%;
+  width: 100%;
   height: 190px;
 }
 .echarts2 {
-  width: 98%;
+  width: 100%;
   height: 90px;
 }
 .echarts3 {
-  width: 98%;
+  width: 100%;
   height: 120px;
 }
 .tooltips {
-  font-size: 10px;
+  font-size: 100%;
   margin-left: 14%;
 }
 </style>

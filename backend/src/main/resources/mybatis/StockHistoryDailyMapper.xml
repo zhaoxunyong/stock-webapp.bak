@@ -9,6 +9,7 @@
     <result column="sell" property="sell" jdbcType="DECIMAL" />
     <result column="vol" property="vol" jdbcType="DECIMAL" />
     <result column="ups_downs" property="upsDowns" jdbcType="DECIMAL" />
+    <result column="total_amount" property="totalAmount" jdbcType="DECIMAL" />
     <result column="pratyaksam" property="pratyaksam" jdbcType="DECIMAL" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
@@ -24,11 +25,11 @@
   </delete>
   <insert id="insert" parameterType="org.stock.fetch.model.StockHistoryDaily" useGeneratedKeys="true" keyProperty="id" >
     insert into stock_history_daily (id, stock_id, date, buy, 
-      sell, vol, ups_downs, 
+      sell, vol, ups_downs, total_amount, 
       pratyaksam, create_date, update_date
       )
     values (#{id,jdbcType=BIGINT}, #{stockId,jdbcType=BIGINT}, #{date,jdbcType=TIMESTAMP}, #{buy,jdbcType=DECIMAL}, 
-      #{sell,jdbcType=DECIMAL}, #{vol,jdbcType=DECIMAL}, #{upsDowns,jdbcType=DECIMAL}, 
+      #{sell,jdbcType=DECIMAL}, #{vol,jdbcType=DECIMAL}, #{upsDowns,jdbcType=DECIMAL}, #{totalAmount,jdbcType=DECIMAL}, 
       #{pratyaksam,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -40,18 +41,19 @@
       sell = #{sell,jdbcType=DECIMAL},
       vol = #{vol,jdbcType=DECIMAL},
       ups_downs = #{upsDowns,jdbcType=DECIMAL},
+      total_amount = #{totalAmount,jdbcType=DECIMAL},
       pratyaksam = #{pratyaksam,jdbcType=DECIMAL},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select id, stock_id, date, buy, sell, vol, ups_downs, pratyaksam, create_date, update_date
+    select id, stock_id, date, buy, sell, vol, ups_downs, total_amount, pratyaksam, create_date, update_date
     from stock_history_daily
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectStockHistoryDailys" resultMap="BaseResultMap" >
-    select id, stock_id, date, buy, sell, vol, ups_downs, pratyaksam, create_date, update_date
+    select id, stock_id, date, buy, sell, vol, ups_downs, total_amount, pratyaksam, create_date, update_date
     from stock_history_daily
     where stock_id = #{stockId,jdbcType=BIGINT}
     and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
