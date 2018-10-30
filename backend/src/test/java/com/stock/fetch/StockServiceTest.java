@@ -85,7 +85,7 @@ public class StockServiceTest {
     }
     
     @Test
-    public void searchCurrentHistory() throws Exception {
+    public void fetchCurrentHistoryDaily() throws Exception {
         String no = "2881";
 //        String startDate = "2015/01/01";
 //        String endDate = "2018/09/01";

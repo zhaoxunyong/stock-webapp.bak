@@ -1001,7 +1001,6 @@ public class FetchServiceImpl implements FetchService {
 //            System.out.println(pageAsXml);
             List<HtmlElement> trNodes = (List<HtmlElement>)page.getByXPath("//div[@class=\"scroll\"]//tr");
             if(trNodes!=null && !trNodes.isEmpty()) {
-                // 第一行是title
                 for(int i = 0;i<trNodes.size();i++) {
                     HtmlElement node = trNodes.get(i);
                     DomNodeList<DomNode> tdNodes = node.getChildNodes();
