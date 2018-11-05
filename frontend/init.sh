@@ -31,3 +31,7 @@ cnpm install --save technicalindicators@1.1.13
 #https://nodejs.org/download/release/v8.9.4/
 #npm config set registry=https://registry.npmjs.org/
 #删除build/webpack.prod.conf.js中的uglifyjs内容
+
+git config core.filemode false
+git config --global core.autocrlf false
+
