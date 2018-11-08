@@ -27,3 +27,6 @@ package.json
 frontend/node/
 /frontend/package.json
 /backend/log.path_IS_UNDEFINED
+main/resources/
+.history/
+.vscode/

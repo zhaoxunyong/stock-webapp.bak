@@ -1,16 +1,27 @@
-#docker run -d  -p 3306:3306 --restart=always --name mysql \
-#-e MYSQL_ROOT_PASSWORD=Aa123456 \
-#-e MYSQL_DATABASE=wenchun \
-#-e MYSQL_USER=wenchun \
-#-e MYSQL_PASSWORD=Aa123456 \
-#mysql:5.6 \
-#--character-set-server=utf8 --collation-server=utf8_general_ci --lower_case_table_names=1
+docker run -d  -p 3306:3306 --restart=always --name mysql \
+-e MYSQL_ROOT_PASSWORD=Aa654321 \
+-e MYSQL_DATABASE=wenchun \
+-e MYSQL_USER=wenchun \
+-e MYSQL_PASSWORD=Aa123456 \
+mysql:5.7.21 \
+--character-set-server=utf8 --collation-server=utf8_general_ci --lower_case_table_names=1
 
-yum install mysql-community-server-5.7.18-1.el7
+sudo apt-cache policy mysql-server
+sudo apt-get install mysql-server=5.7.21-1
 
-choco install mysql --version 5.7.18
+yum repolist all
+yum --showduplicates list mysql-community-server
+#yum install mysql-community-server-5.7.18-1.el7
+yum install mysql-community-server-5.7.21-1.el7
+
+#choco install mysql --version 5.7.18
 
 在my.ini中加入:
+character-set-server=utf8
+collation-server=utf8_general_ci
+lower_case_table_names=1
+
+#5.7.21不需要添加
 sql_mode ='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
 
 #https://www.cnblogs.com/conanwang/p/6001196.html
