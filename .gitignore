@@ -19,7 +19,6 @@ package.json
 
 # Editor directories and files
 .idea
-.vscode
 *.suo
 *.ntvs*
 *.njsproj
@@ -29,4 +28,3 @@ frontend/node/
 /backend/log.path_IS_UNDEFINED
 main/resources/
 .history/
-.vscode/
