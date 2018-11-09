@@ -28,3 +28,4 @@ frontend/node/
 /backend/log.path_IS_UNDEFINED
 main/resources/
 .history/
+backend/.vscode/launch.test.json

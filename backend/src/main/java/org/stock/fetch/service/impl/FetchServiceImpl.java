@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -47,12 +46,13 @@ import org.stock.fetch.model.StockType;
 import org.stock.fetch.service.FetchService;
 import org.stock.utils.FileMd5Utils;
 import org.stock.utils.MyDateUtils;
+import org.stock.webclient.WebClientCallBack;
+import org.stock.webclient.WebClientUtils;
 
 import com.aeasycredit.commons.lang.exception.BusinessException;
 import com.aeasycredit.commons.lang.exception.ParameterException;
 import com.aeasycredit.commons.lang.idgenerator.IdUtils;
 import com.aeasycredit.commons.lang.utils.DatesUtils;
-import com.aeasycredit.commons.lang.utils.RegexUtils;
 import com.aeasycredit.commons.poi.excel.ExcelUtils;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebWindow;
@@ -70,6 +70,7 @@ import com.google.common.collect.Table;
  * https://www.cnyes.com/twstock/ps_historyprice/2881.htm
  * https://tw.stock.yahoo.com/h/getclass.php
  * https://github.com/andredumas/techan.js/wiki/Gallery
+ * out of memory: https://blog.csdn.net/qq43599939/article/details/68958676
  */
 @Service
 public class FetchServiceImpl implements FetchService {
@@ -80,11 +81,8 @@ public class FetchServiceImpl implements FetchService {
     
     private final static String ROOT_URL = "https://tw.stock.yahoo.com";
     
-    @Autowired
-    private WebClient webClient;
-    
-    @Autowired
-    private WebClient jsWebClient;
+    // @Autowired
+    // private WebClient webClient;
     
     @Autowired
     private StockHistoryMapper stockHistoryMapper;
@@ -188,7 +186,7 @@ public class FetchServiceImpl implements FetchService {
     }
     
     private List<StockType> fetchNewsKinds(StockTypeEnum stockTypeEnum) throws Exception {
-        try {
+        return WebClientUtils.process(webClient -> {
             List<StockType> stockTypes = Lists.newArrayList();
             Date date = new Date();
             // 上市
@@ -247,21 +245,15 @@ public class FetchServiceImpl implements FetchService {
               }
           }
           return stockTypes;
-        } finally {
-            final List<WebWindow> windows = webClient.getWebWindows();
-            for (final WebWindow wd : windows) {
-                wd.getJobManager().removeAllJobs();
-            }
-            // webClient.close();
-        }
+        });
     }
 
     private void fetchNewStocks(List<StockType> stockTypes) throws Exception {
-        Date date = new Date();
-        if(stockTypes!=null && !stockTypes.isEmpty()) {
-            for(StockType stockType : stockTypes) {
-                HtmlPage nextPage = processGuceOathCom(webClient.getPage(ROOT_URL+stockType.getUrl()));
-                try {
+        WebClientUtils.process(webClient -> {
+            Date date = new Date();
+            if(stockTypes!=null && !stockTypes.isEmpty()) {
+                for(StockType stockType : stockTypes) {
+                    HtmlPage nextPage = processGuceOathCom(webClient.getPage(ROOT_URL+stockType.getUrl()));
                     List<?> formNodes = nextPage.querySelectorAll("form[name=\"stock\"]");
                     if(formNodes==null || formNodes.isEmpty()) {
                         throw new BusinessException("Not found form!");
@@ -331,15 +323,11 @@ public class FetchServiceImpl implements FetchService {
                             }
                         }
                     }
-                } finally {
-                    final List<WebWindow> windows = webClient.getWebWindows();
-                    for (final WebWindow wd : windows) {
-                        wd.getJobManager().removeAllJobs();
-                    }
-                    // webClient.close();
                 }
             }
-        }
+            return null;
+        });
+        
     }
 
     /*@Override
@@ -431,57 +419,52 @@ public class FetchServiceImpl implements FetchService {
     @Override
     @Transactional
     public List<StockNews> fetchNews(StockData stockData, int fetchPage) throws Exception {
-        try {
-//          StockMyData stockMyData = stockMyDataMapper.selectByStockId(stockId);
-          if(stockData == null) {
-              throw new ParameterException("stockData must be not empty!");
-          }
-          String newUrl = ROOT_URL + "/q/h?s="+stockData.getNo().replaceAll("[A-Z]+$", "")+"&pg="+fetchPage;
-          HtmlPage page = processGuceOathCom(webClient.getPage(newUrl));
-          List<StockNews> stockNewses =  Lists.newArrayList();
-          List<?> trDomNodes = page.querySelectorAll("tr table.yui-text-left tbody tr td table tbody tr");
-          if(trDomNodes!=null && !trDomNodes.isEmpty()) {
-              for(int i=0;i<trDomNodes.size();i=i+2) {
-                  HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
-                  List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
-                  if(nextTds.size() == 2) {
-                      HtmlElement titleDomNode = (HtmlElement) trDomNodes.get(i+1);
-                      List<HtmlElement> titleTds = titleDomNode.getElementsByTagName("td");
-                      String title = titleTds.get(0).asText().replaceAll("^\\(|\\)$", "");
-                      String newsDate = StringUtils.substringBefore(title, " ");
-                      String froms = StringUtils.substringAfter(title, " ");
-                      
-                      HtmlElement td = nextTds.get(1);
-                      List<HtmlElement> aNodes = td.getElementsByTagName("a");
-                      if(aNodes==null || aNodes.isEmpty()) continue;
-                      HtmlElement aElement = aNodes.get(0);
-                      String url = ROOT_URL + aElement.getAttribute("href");
-                      String subject = td.asText() + "("+froms +" "+newsDate+")";
-                      StockNews stockNews = new StockNews();
-                      stockNews.setId(IdUtils.genLongId());
-                      stockNews.setFroms(froms);
-                      stockNews.setNewsDate(DatesUtils.YYMMDD2.toDate(newsDate));
-                      stockNews.setStockId(stockData.getId());
-                      stockNews.setSubject(subject);
-                      stockNews.setUrl(url);
-                      stockNews.setCreateDate(new Date());
-                      stockNewses.add(stockNews);
-                      stockNewsMapper.deleteByStockNews(stockNews);
+        return WebClientUtils.process(webClient -> {
+            //          StockMyData stockMyData = stockMyDataMapper.selectByStockId(stockId);
+            if(stockData == null) {
+                throw new ParameterException("stockData must be not empty!");
+            }
+            String newUrl = ROOT_URL + "/q/h?s="+stockData.getNo().replaceAll("[A-Z]+$", "")+"&pg="+fetchPage;
+            HtmlPage page = processGuceOathCom(webClient.getPage(newUrl));
+            List<StockNews> stockNewses =  Lists.newArrayList();
+            List<?> trDomNodes = page.querySelectorAll("tr table.yui-text-left tbody tr td table tbody tr");
+            if(trDomNodes!=null && !trDomNodes.isEmpty()) {
+                for(int i=0;i<trDomNodes.size();i=i+2) {
+                    HtmlElement trDomNode = (HtmlElement) trDomNodes.get(i);
+                    List<HtmlElement> nextTds = trDomNode.getElementsByTagName("td");
+                    if(nextTds.size() == 2) {
+                        HtmlElement titleDomNode = (HtmlElement) trDomNodes.get(i+1);
+                        List<HtmlElement> titleTds = titleDomNode.getElementsByTagName("td");
+                        String title = titleTds.get(0).asText().replaceAll("^\\(|\\)$", "");
+                        String newsDate = StringUtils.substringBefore(title, " ");
+                        String froms = StringUtils.substringAfter(title, " ");
+                        
+                        HtmlElement td = nextTds.get(1);
+                        List<HtmlElement> aNodes = td.getElementsByTagName("a");
+                        if(aNodes==null || aNodes.isEmpty()) continue;
+                        HtmlElement aElement = aNodes.get(0);
+                        String url = ROOT_URL + aElement.getAttribute("href");
+                        String subject = td.asText() + "("+froms +" "+newsDate+")";
+                        StockNews stockNews = new StockNews();
+                        stockNews.setId(IdUtils.genLongId());
+                        stockNews.setFroms(froms);
+                        stockNews.setNewsDate(DatesUtils.YYMMDD2.toDate(newsDate));
+                        stockNews.setStockId(stockData.getId());
+                        stockNews.setSubject(subject);
+                        stockNews.setUrl(url);
+                        stockNews.setCreateDate(new Date());
+                        stockNewses.add(stockNews);
+                        stockNewsMapper.deleteByStockNews(stockNews);
 //                      if(!checkNewsSubject(subject)) {
-                      stockNewsMapper.insert(stockNews);
+                        stockNewsMapper.insert(stockNews);
 //                      logger.info(stockNews.toString());
 //                      }
-                  }
-              }
-          }
-          return stockNewses;
-        } finally {
-            final List<WebWindow> windows = webClient.getWebWindows();
-            for (final WebWindow wd : windows) {
-                wd.getJobManager().removeAllJobs();
+                    }
+                }
             }
-            // webClient.close();
-        }
+            return stockNewses;
+
+        });
     }
 
     @Override
@@ -554,7 +537,7 @@ public class FetchServiceImpl implements FetchService {
     @Override
     @Transactional
     public List<StockImportantNews> fetchImportantNews(int fetchPage) throws Exception {
-        try {
+        return WebClientUtils.process(webClient -> {
             Date date = new Date();
             String newUrl = ROOT_URL + "/news_list/url/d/e/N1.html?q=&pg="+fetchPage;
             logger.info("fetchImportantNews newUrl--->" + newUrl);
@@ -597,37 +580,31 @@ public class FetchServiceImpl implements FetchService {
                 }
             }
             return stockImportantNewses;
-        } finally {
-            final List<WebWindow> windows = webClient.getWebWindows();
-            for (final WebWindow wd : windows) {
-                wd.getJobManager().removeAllJobs();
-            }
-            // webClient.close();
-        }
+        });
     }
     
     private List<StockType> fetchKinds(StockTypeEnum stockTypeEnum) throws Exception {
-        String eleId = "";
-        switch(stockTypeEnum) {
-            case MARKET:
-                eleId = "table1";
-                break;
-            case COUNTER:
-                eleId = "table3";
-                break;
-            case ELECTRONIC:
-                eleId = "table5";
-                break;
-            case CONCEPT:
-                eleId = "table7";
-                break;
-            case GROUP:
-                eleId = "table9";
-                break;
-            default:
-                throw new ParameterException("stockTypeEnum must be not empty!");
-        }
-        try {
+        return WebClientUtils.process(webClient -> {
+            String eleId = "";
+            switch(stockTypeEnum) {
+                case MARKET:
+                    eleId = "table1";
+                    break;
+                case COUNTER:
+                    eleId = "table3";
+                    break;
+                case ELECTRONIC:
+                    eleId = "table5";
+                    break;
+                case CONCEPT:
+                    eleId = "table7";
+                    break;
+                case GROUP:
+                    eleId = "table9";
+                    break;
+                default:
+                    throw new ParameterException("stockTypeEnum must be not empty!");
+            }
             HtmlPage page = webClient.getPage(ROOT_URL + "/h/getclass.php");
             //        HtmlElement element = page.getHtmlElementById("table7");
             DomElement element = page.getElementById(eleId);
@@ -669,22 +646,16 @@ public class FetchServiceImpl implements FetchService {
                 }
             }
             return stockTypes;
-        } finally {
-            final List<WebWindow> windows = webClient.getWebWindows();
-            for (final WebWindow wd : windows) {
-                wd.getJobManager().removeAllJobs();
-            }
-            // webClient.close();
-        }
+        });
     }
     
 
     
     @Override
     public void fetchStocks(StockType stockType) throws Exception {
-        Date date = new Date();
-        HtmlPage nextPage = webClient.getPage(stockType.getUrl());
-        try {
+        WebClientUtils.process(webClient -> {
+            Date date = new Date();
+            HtmlPage nextPage = webClient.getPage(stockType.getUrl());
             List<?> domNodes = nextPage.querySelectorAll("table.yui-text-left tbody tr");
 //            logger.info("url="+stockType.getUrl()+"/name="+stockType.getName());
             if(domNodes==null || domNodes.size() < 3) {
@@ -785,13 +756,8 @@ public class FetchServiceImpl implements FetchService {
                     }
                 }
             }
-        } finally {
-            final List<WebWindow> windows = webClient.getWebWindows();
-            for (final WebWindow wd : windows) {
-                wd.getJobManager().removeAllJobs();
-            }
-            // webClient.close();
-        }
+            return null;
+        });
     }
     
     private void fetchStocks(List<StockType> stockTypes) throws Exception {
@@ -987,22 +953,22 @@ public class FetchServiceImpl implements FetchService {
     @Transactional
     public void fetchCurrentHistoryDaily(String no) throws Exception {
         // https://www.cnyes.com/twstock/quote/2881.htm
-        List<StockHistoryDaily> stockHistoryDaily4Inserts = Lists.newArrayList();
-        StockData stockData = stockDataMapper.selectByNo(no);
-        if(stockData == null) {
-            throw new BusinessException("Not found stock data by no: " + no);
-        }
-        long stockId = stockData.getId();
-        // 
-        String url = "https://www.cnyes.com/twstock/ps_pv_time/"+stockData.getNo()+".htm";
-        try {
+        WebClientUtils.process(webClient -> {
+            List<StockHistoryDaily> stockHistoryDaily4Inserts = Lists.newArrayList();
+            StockData stockData = stockDataMapper.selectByNo(no);
+            if(stockData == null) {
+                throw new BusinessException("Not found stock data by no: " + no);
+            }
+            long stockId = stockData.getId();
+            // 
+            String url = "https://www.cnyes.com/twstock/ps_pv_time/"+stockData.getNo()+".htm";
             HtmlPage page = processGuceOathCom(webClient.getPage(url));
 //            final String pageAsXml = page.asXml();
 //            System.out.println(pageAsXml);
-            List<HtmlElement> trNodes = (List<HtmlElement>)page.getByXPath("//div[@class=\"scroll\"]//tr");
+            List<Object> trNodes = page.getByXPath("//div[@class=\"scroll\"]//tr");
             if(trNodes!=null && !trNodes.isEmpty()) {
                 for(int i = 0;i<trNodes.size();i++) {
-                    HtmlElement node = trNodes.get(i);
+                    HtmlElement node = (HtmlElement)trNodes.get(i);
                     DomNodeList<DomNode> tdNodes = node.getChildNodes();
                     if(tdNodes != null && !tdNodes.isEmpty()) {
                         // 時間	買價	賣價	成交價	漲跌	單量	總量
@@ -1036,70 +1002,26 @@ public class FetchServiceImpl implements FetchService {
                     }
                 }
             }
-            
-            /*String url = "https://traderoom.cnyes.com/tse/quote2FB_HTML5.aspx?code="+stockData.getNo();
-        	List<HtmlElement> trNodes = (List<HtmlElement>)page.getByXPath("//div[@id=\"real_1\"]//div[@class=\"idxtab3 \"]//tr");
-            if(trNodes!=null && !trNodes.isEmpty()) {
-                // 第一行是title
-                for(int i = 1;i<trNodes.size();i++) {
-                    HtmlElement node = trNodes.get(i);
-                    DomNodeList<DomNode> tdNodes = node.getChildNodes();
-                    if(tdNodes != null && !tdNodes.isEmpty()) {
-                        // 時間   買價  賣價  成交價 漲跌  現量
-//                        10:16:17 48.40 48.45 48.45 -0.70 1
-//                        10:16:12 48.40 48.45 48.45 -0.70 3
-//                        10:15:42 48.40 48.45 48.40 -0.75 1
-//                        10:15:37 48.40 48.45 48.45 -0.70 1
-                        String dateStr = tdNodes.get(0).asText();
-                        String buy = tdNodes.get(1).asText();
-                        String sell = tdNodes.get(2).asText();
-                        String vol = tdNodes.get(3).asText();
-                        String upsDowns = tdNodes.get(4).asText();
-                        String pratyaksam = tdNodes.get(5).asText();
-                        String datetimeStr = DatesUtils.YYMMDD2.toString()+" "+dateStr;
-//                        System.out.println(datetimeStr+" "+buy+" "+sell+" "+vol+" "+upsDowns+" "+pratyaksam);
-                        StockHistoryDaily stockHistoryDaily = new StockHistoryDaily();
-//                        stockHistoryDaily.setId(IdUtils.genLongId());
-//                      stockHistoryDaily.setCreateDate(new Date());
-                        stockHistoryDaily.setStockId(stockId);
-                        stockHistoryDaily.setDate(DatesUtils.YYMMDDHHMMSS2.toDate(datetimeStr));
-                        stockHistoryDaily.setBuy(new BigDecimal(buy));
-                        stockHistoryDaily.setSell(new BigDecimal(sell));
-                        stockHistoryDaily.setVol(new BigDecimal(vol));
-                        stockHistoryDaily.setUpsDowns(new BigDecimal(upsDowns));
-                        stockHistoryDaily.setPratyaksam(new BigDecimal(pratyaksam));
-//                        stockHistoryDailyMapper.insert(stockHistoryDaily);
-                        stockHistoryDaily4Inserts.add(stockHistoryDaily);
-                    }
-                }
-            }*/
-          
-//          HtmlElement domNode = (HtmlElement) domNodes.get(2);
-        } finally {
-            final List<WebWindow> windows = webClient.getWebWindows();
-            for (final WebWindow wd : windows) {
-                wd.getJobManager().removeAllJobs();
-            }
-            // webClient.close();
-        }
         
-        StockHistoryDaily lastStockHistoryDaily = stockHistoryDailyMapper.selectLastStockHistoryDaily(no);
-        Date lastDate = null;
-        if(lastStockHistoryDaily!=null) {
-            lastDate = lastStockHistoryDaily.getDate();
-        }
-        if(stockHistoryDaily4Inserts!=null && !stockHistoryDaily4Inserts.isEmpty()) {
-            stockHistoryDaily4Inserts = Lists.reverse(stockHistoryDaily4Inserts);
-            // 升序insert
-            for (StockHistoryDaily stockHistoryDaily4Insert : stockHistoryDaily4Inserts) {
-                if(lastDate == null || stockHistoryDaily4Insert.getDate().getTime() > lastDate.getTime()) {
-                    stockHistoryDaily4Insert.setId(IdUtils.genLongId());
-                    stockHistoryDaily4Insert.setCreateDate(new Date());
-                    stockHistoryDailyMapper.insert(stockHistoryDaily4Insert);
-                }
-                
+            StockHistoryDaily lastStockHistoryDaily = stockHistoryDailyMapper.selectLastStockHistoryDaily(no);
+            Date lastDate = null;
+            if(lastStockHistoryDaily!=null) {
+                lastDate = lastStockHistoryDaily.getDate();
             }
-        }
+            if(stockHistoryDaily4Inserts!=null && !stockHistoryDaily4Inserts.isEmpty()) {
+                stockHistoryDaily4Inserts = Lists.reverse(stockHistoryDaily4Inserts);
+                // 升序insert
+                for (StockHistoryDaily stockHistoryDaily4Insert : stockHistoryDaily4Inserts) {
+                    if(lastDate == null || stockHistoryDaily4Insert.getDate().getTime() > lastDate.getTime()) {
+                        stockHistoryDaily4Insert.setId(IdUtils.genLongId());
+                        stockHistoryDaily4Insert.setCreateDate(new Date());
+                        stockHistoryDailyMapper.insert(stockHistoryDaily4Insert);
+                    }
+                    
+                }
+            }
+            return null;
+        });
     }
 
     /**
@@ -1107,14 +1029,14 @@ public class FetchServiceImpl implements FetchService {
      * 日期格式為：yyyy/MM/dd
      */
     private List<StockHistory> searchHistory(String no, Date startDate, Date endDate) throws Exception {
-        List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
-        StockData stockData = stockDataMapper.selectByNo(no);
-        if(stockData == null) {
-            throw new BusinessException("Not found stock data by no: " + no);
-        }
-        long stockId = stockData.getId();
-        String url = "https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo();
-        try {
+        return WebClientUtils.process(webClient -> {
+            List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
+            StockData stockData = stockDataMapper.selectByNo(no);
+            if(stockData == null) {
+                throw new BusinessException("Not found stock data by no: " + no);
+            }
+            long stockId = stockData.getId();
+            String url = "https://www.cnyes.com/twstock/ps_historyprice.aspx?code="+stockData.getNo();
             HtmlPage page = processGuceOathCom(webClient.getPage(url));
             page.getElementById("ctl00_ContentPlaceHolder1_startText").setAttribute("value", DatesUtils.YYMMDD2.toString(startDate));  
             page.getElementById("ctl00_ContentPlaceHolder1_endText").setAttribute("value", DatesUtils.YYMMDD2.toString(endDate));  
@@ -1186,14 +1108,8 @@ public class FetchServiceImpl implements FetchService {
                     }
                 }
             }
-        } finally {
-            final List<WebWindow> windows = webClient.getWebWindows();
-            for (final WebWindow wd : windows) {
-                wd.getJobManager().removeAllJobs();
-            }
-            // webClient.close();
-        }
-        return stockHistory4Inserts;
+            return stockHistory4Inserts;
+        });
     }
     
     /**
