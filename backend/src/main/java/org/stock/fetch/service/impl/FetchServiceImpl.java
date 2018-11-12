@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -953,6 +954,12 @@ public class FetchServiceImpl implements FetchService {
     @Transactional
     public void fetchCurrentHistoryDaily(String no) throws Exception {
         // https://www.cnyes.com/twstock/quote/2881.htm
+        List<StockHistoryError> stockHistoryErrors = stockHistoryErrorMapper.selectAllByStatusByNo(no, 1, StockHistoryErrorEnum.DAILY.getType());
+        if(stockHistoryErrors!=null && stockHistoryErrors.stream()//.map(StockHistoryError::getNo)
+            .anyMatch(p -> no.equals(p.getNo()) && p.getErrCount() > MAX_ERR_COUNT)) {
+                logger.info("fetchCurrentHistoryDaily: 股号: "+no+"错误次数太多，不太抓取。");
+                return;
+        }
         WebClientUtils.process(webClient -> {
             List<StockHistoryDaily> stockHistoryDaily4Inserts = Lists.newArrayList();
             StockData stockData = stockDataMapper.selectByNo(no);
@@ -1029,6 +1036,12 @@ public class FetchServiceImpl implements FetchService {
      * 日期格式為：yyyy/MM/dd
      */
     private List<StockHistory> searchHistory(String no, Date startDate, Date endDate) throws Exception {
+        List<StockHistoryError> stockHistoryErrors = stockHistoryErrorMapper.selectAllByStatusByNo(no, 1, StockHistoryErrorEnum.HISTORY.getType());
+        if(stockHistoryErrors!=null && stockHistoryErrors.stream()//.map(StockHistoryError::getNo)
+            .anyMatch(p -> no.equals(p.getNo()) && p.getErrCount() > MAX_ERR_COUNT)) {
+                logger.info("searchHistory: 股号: "+no+"错误次数太多，不太抓取。");
+                return Lists.newArrayList();
+        }
         return WebClientUtils.process(webClient -> {
             List<StockHistory> stockHistory4Inserts = Lists.newArrayList();
             StockData stockData = stockDataMapper.selectByNo(no);

@@ -62,4 +62,8 @@
     select id, no, start_date, end_date, status, type, err_count, create_date, update_date
     from stock_history_error where status = #{status,jdbcType=TINYINT} and type = #{type,jdbcType=TINYINT}
   </select>
+  <select id="selectAllByStatusByNo" resultMap="BaseResultMap" >
+    select id, no, start_date, end_date, status, type, err_count, create_date, update_date
+    from stock_history_error where no = #{no,jdbcType=VARCHAR} and status = #{status,jdbcType=TINYINT} and type = #{type,jdbcType=TINYINT}
+  </select>
 </mapper>

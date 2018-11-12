@@ -15,6 +15,8 @@ public interface StockHistoryErrorMapper {
     StockHistoryError selectByPrimaryKey(Long id);
 
     List<StockHistoryError> selectAllByStatus(@Param("status") Integer status, @Param("type") Integer type);
+    
+    List<StockHistoryError> selectAllByStatusByNo(@Param("no") String no, @Param("status") Integer status, @Param("type") Integer type);
 
     int updateByPrimaryKey(StockHistoryError record);
 
