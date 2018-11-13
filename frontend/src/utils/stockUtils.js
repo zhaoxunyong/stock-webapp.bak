@@ -21,7 +21,7 @@ export function splitData(rawData) {
     };
 }
 // 平均值
-export function calculateMA(datas,dayCount) {
+export function calculateMA(datas, dayCount) {
     var result = [];
     for (var i = 0, len = datas.values.length; i < len; i++) {
         if (i < dayCount) {
@@ -33,6 +33,111 @@ export function calculateMA(datas,dayCount) {
             sum += datas.values[i - j][1];
         }
         result.push((sum / dayCount).toFixed(1));
+    }
+    return result;
+}
+// 宝塔图
+export function calculateMA(datas) {
+    let dayCount = 3
+
+    let zftResult = []
+    let hhtResult = []
+    let towerOpenResult = []
+    let towerCloseResult = []
+
+    let openPriceTowerResult = []
+    let lowMinTowerResult = []
+    let lowMaxTowerResult = []
+    let closePriceTowerResult = []
+    for (var i = 0, len = datas.values.length; i < len; i++) {
+        // 涨跌态
+        let zft = -1
+        // 红黑态
+        let hht = -1
+        // 宝塔开
+        let towerOpen = 0
+        // 宝塔收
+        let towerClose = 0
+
+        // 开盘价宝塔
+        let openPriceTower = 0
+        // 最高价宝塔
+        let lowMinTower = 0
+        // 最低价宝塔
+        let lowMaxTower = 0
+        // 收盘价宝塔
+        let closePriceTower = 0
+        if (i > 0) {
+            // 当天收盘价
+            let nowClose = datas.values[i][1]
+            let previousClose = datas.values[i - 1][1]
+            // --- 涨跌态
+            if (nowClose >= previousClose) {
+                zft = 1
+            }
+            //--- 红黑态
+            // 前一天红黑态
+            let previousHht = hhtResult[i-1]
+            // 获取前4天的最低价
+            let previousLows = []
+            let previousHigh = []
+            for (var j = 1; j <= dayCount; j++) {
+                if(i - j >= 0) {
+                    previousLows.push(datas.values[i - j][2])
+                    previousHigh.push(datas.values[i - j][3])
+                }
+            } 
+            // 求previousLows的最小值
+            lowMinTower = Math.min(previousLows)
+            // 求previousHigh的最大值
+            lowMaxTower = Math.max(previousHigh)
+            if(
+                (previousHht >= 0 && nowClose >= lowMinTower) ||
+                (previousHht == -1 && nowClose >= lowMaxTower)
+            ) {
+                hht = 1
+            }
+
+            // ---宝塔开
+            let previousTowerOpen = towerOpenResult[i-1]
+            let previousTowerClose = towerCloseResult[i-1]
+            if(
+                (previousHht == 1 && zft  == -1 && nowClose < lowMinTower && previousTowerOpen > previousTowerClose) ||
+                (previousHht == -1 && zft  == 1 && nowClose > lowMaxTower && previousTowerOpen < previousTowerClose)
+            ) {
+                towerOpen = previousTowerOpen
+            } else {
+                towerOpen = previousTowerClose
+            }
+        }
+        // --- 宝塔收
+        towerClose = nowClose
+
+        // --- 开盘价宝塔
+        if(
+            (hht == 1 && towerClose < towerOpen) ||
+            (hht == -1 && towerClose > towerOpen)
+        ) {
+            openPriceTower = towerClose
+        } else {
+            openPriceTower = towerOpen
+        }
+        // --- 收盘价宝塔
+        // let closePriceTower = 0
+        if(openPriceTower == towerClose) {
+            closePriceTower = towerOpen
+        } else {
+            closePriceTower = towerClose
+        }
+
+        zftResult.push(zft)
+        hhtResult.push(hht)
+        towerOpenResult.push(towerOpen)
+        towerCloseResult.push(towerClose)
+        openPriceTowerResult.push(openPriceTower)
+        lowMinTowerResult.push(lowMinTower)
+        lowMaxTowerResult.push(lowMaxTower)
+        closePriceTowerResult.push(closePriceTower)
     }
     return result;
 }
@@ -122,14 +227,14 @@ export function getDmipdis(dmis) {
 export function getSlice(datas) {
     let recentDatas = datas.slice(RECENT_DATE);
     let absRecentDate = Math.abs(RECENT_DATE)
-    if(recentDatas.length < absRecentDate) {
+    if (recentDatas.length < absRecentDate) {
         return leftPad(recentDatas, absRecentDate - recentDatas.length, '-')
     }
     return recentDatas
 }
 
-export function leftPad(arrays, pad_length, pad_string){
-    for(let i=0;i<pad_length;i++) {
+export function leftPad(arrays, pad_length, pad_string) {
+    for (let i = 0; i < pad_length; i++) {
         arrays.unshift(pad_string)
     }
     return arrays
