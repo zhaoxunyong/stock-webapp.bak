@@ -32,7 +32,7 @@ export function calculateMA(datas,dayCount) {
         for (var j = 0; j < dayCount; j++) {
             sum += datas.values[i - j][1];
         }
-        result.push((sum / dayCount).toFixed(2));
+        result.push((sum / dayCount).toFixed(1));
     }
     return result;
 }

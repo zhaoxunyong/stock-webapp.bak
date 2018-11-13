@@ -47,8 +47,8 @@ export default function getData (datasets, kineType) {
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function (params) {
-                let v = `<font color="${STOCK_CONFIG.col.rsi12}">RSI-12:</font> ${params[0].value}
-                <font color="${STOCK_CONFIG.col.rsi100}">RSI-100:</font> ${params[0].value}`
+                let v = `<font color="${STOCK_CONFIG.col.rsi12}">RSI-12:</font> ${params[0].value.toFixed(1)}
+                <font color="${STOCK_CONFIG.col.rsi100}">RSI-100:</font> ${params[0].value.toFixed(1)}`
                 $("#tooltipId3"+kineType).html(v)
                 return "";
             },
@@ -134,6 +134,7 @@ export default function getData (datasets, kineType) {
         }],
         dataZoom: [{
             type: 'inside',
+            disabled: true,
             start: STOCK_CONFIG.st,
             end: STOCK_CONFIG.ed
         }, {

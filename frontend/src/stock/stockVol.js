@@ -128,6 +128,7 @@ export default function getData (datasets, kineType) {
         }],
         dataZoom: [{
             type: 'inside',
+            disabled: true,
             start: STOCK_CONFIG.st,
             end: STOCK_CONFIG.ed
         }, {
