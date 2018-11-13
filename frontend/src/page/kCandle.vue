@@ -295,7 +295,7 @@ export default {
 }
 .tooltips {
   font-size: 100%;
-  margin-left: 14%;
+  margin-left: 40px;
 }
 </style>
 

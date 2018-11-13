@@ -21,7 +21,7 @@ webpackJsonp([1],{
 
 /***/ }),
 
-/***/ "4Kk1":
+/***/ "6v35":
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
@@ -1538,7 +1538,7 @@ function calculateMA(datas, dayCount) {
         for (var j = 0; j < dayCount; j++) {
             sum += datas.values[i - j][1];
         }
-        result.push((sum / dayCount).toFixed(2));
+        result.push((sum / dayCount).toFixed(1));
     }
     return result;
 }
@@ -2062,6 +2062,7 @@ function stockVol_getData(datasets, kineType) {
         }],
         dataZoom: [{
             type: 'inside',
+            disabled: true,
             start: STOCK_CONFIG.st,
             end: STOCK_CONFIG.ed
         }, {
@@ -2150,7 +2151,7 @@ function stockRsi_getData(datasets, kineType) {
             position: [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function formatter(params) {
-                var v = '<font color="' + STOCK_CONFIG.col.rsi12 + '">RSI-12:</font> ' + params[0].value + '\n                <font color="' + STOCK_CONFIG.col.rsi100 + '">RSI-100:</font> ' + params[0].value;
+                var v = '<font color="' + STOCK_CONFIG.col.rsi12 + '">RSI-12:</font> ' + params[0].value.toFixed(1) + '\n                <font color="' + STOCK_CONFIG.col.rsi100 + '">RSI-100:</font> ' + params[0].value.toFixed(1);
                 $("#tooltipId3" + kineType).html(v);
                 return "";
             },
@@ -2236,6 +2237,7 @@ function stockRsi_getData(datasets, kineType) {
         }],
         dataZoom: [{
             type: 'inside',
+            disabled: true,
             start: STOCK_CONFIG.st,
             end: STOCK_CONFIG.ed
         }, {
@@ -2321,7 +2323,7 @@ function stockDmi_getData(datasets, kineType) {
             position: [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function formatter(params) {
-                var v = '<font color="' + STOCK_CONFIG.col.mdi + '">MDI:</font> ' + params[0].value.toFixed(2) + '\n                <font color="' + STOCK_CONFIG.col.pdi + '">PDI:</font> ' + params[1].value.toFixed(2) + '\n                <font color="' + STOCK_CONFIG.col.adx + '">ADX:</font> ' + params[2].value.toFixed(2);
+                var v = '<font color="' + STOCK_CONFIG.col.mdi + '">MDI:</font> ' + params[0].value.toFixed(1) + '\n                <font color="' + STOCK_CONFIG.col.pdi + '">PDI:</font> ' + params[1].value.toFixed(1) + '\n                <font color="' + STOCK_CONFIG.col.adx + '">ADX:</font> ' + params[2].value.toFixed(1);
                 $("#tooltipId4" + kineType).html(v);
                 return "";
             },
@@ -2407,6 +2409,7 @@ function stockDmi_getData(datasets, kineType) {
         }],
         dataZoom: [{
             type: 'inside',
+            disabled: true,
             start: STOCK_CONFIG.st,
             end: STOCK_CONFIG.ed
         }, {
@@ -2567,7 +2570,7 @@ function stockMacd_getData(datasets, kineType) {
             position: [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function formatter(params) {
-                var v = '<font color="' + STOCK_CONFIG.col.oscup + '">OSC:</font> ' + params[0].value + '\n                <font color="' + STOCK_CONFIG.col.dif + '">DIF:</font> ' + params[1].value + '\n                <font color="' + STOCK_CONFIG.col.macd + '">MACD:</font> ' + params[2].value;
+                var v = '<font color="' + STOCK_CONFIG.col.oscup + '">OSC:</font> ' + params[0].value.toFixed(1) + '\n                <font color="' + STOCK_CONFIG.col.dif + '">DIF:</font> ' + params[1].value.toFixed(1) + '\n                <font color="' + STOCK_CONFIG.col.macd + '">MACD:</font> ' + params[2].value.toFixed(1);
                 $("#tooltipId5" + kineType).html(v);
                 return "";
             },
@@ -2648,6 +2651,7 @@ function stockMacd_getData(datasets, kineType) {
         }],
         dataZoom: [{
             type: 'inside',
+            disabled: true,
             start: STOCK_CONFIG.st,
             end: STOCK_CONFIG.ed
         }, {
@@ -2932,14 +2936,14 @@ function stockMacd_getData(datasets, kineType) {
     }
   }
 });
-// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-51723674","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/kCandle.vue
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-9ab5adfc","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/kCandle.vue
 var kCandle_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId1'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml1)}}),_vm._v(" "),_c('div',{staticClass:"echarts1",attrs:{"id":'myChart1'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId2'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml2)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart2'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId3'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml3)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart3'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId4'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml4)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart4'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId5'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml5)}}),_vm._v(" "),_c('div',{staticClass:"echarts3",attrs:{"id":'myChart5'+_vm.kineType}})])])}
 var kCandle_staticRenderFns = []
 var kCandle_esExports = { render: kCandle_render, staticRenderFns: kCandle_staticRenderFns }
 /* harmony default export */ var page_kCandle = (kCandle_esExports);
 // CONCATENATED MODULE: ./src/page/kCandle.vue
 function kCandle_injectStyle (ssrContext) {
-  __webpack_require__("4Kk1")
+  __webpack_require__("6v35")
 }
 var kCandle_normalizeComponent = __webpack_require__("VU/8")
 /* script */
@@ -2952,7 +2956,7 @@ var kCandle___vue_template_functional__ = false
 /* styles */
 var kCandle___vue_styles__ = kCandle_injectStyle
 /* scopeId */
-var kCandle___vue_scopeId__ = "data-v-51723674"
+var kCandle___vue_scopeId__ = "data-v-9ab5adfc"
 /* moduleIdentifier (server only) */
 var kCandle___vue_module_identifier__ = null
 var kCandle_Component = kCandle_normalizeComponent(
