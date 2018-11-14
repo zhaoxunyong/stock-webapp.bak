@@ -12,6 +12,11 @@
       <div :id="'tooltipId1'+kineType" class="tooltips w-100 text-left" v-html="rawHtml1"></div>
       <div :id="'myChart1'+kineType" class="echarts1"></div>
     </div>
+    <!-- stockTower -->
+    <div>
+      <div :id="'tooltipId6'+kineType" class="tooltips w-100 text-left" v-html="rawHtml6"></div>
+      <div :id="'myChart6'+kineType" class="echarts1"></div>
+    </div>
     <!-- stockVol -->
     <div>
       <div :id="'tooltipId2'+kineType" class="tooltips w-100 text-left" v-html="rawHtml2"></div>
@@ -40,6 +45,7 @@
 // import Alert from '../components/alert.vue'
 import Bus from '../eventBus'
 import stockCandle from '../stock/stockCandle'
+import stockTower from '../stock/stockTower'
 import stockVol from '../stock/stockVol'
 import stockRsi from '../stock/stockRsi'
 import stockDmi from '../stock/stockDmi'
@@ -62,6 +68,7 @@ export default {
       resize: true,
       intervalid1: null,
       rawHtml1: '',
+      rawHtml6: '',
       rawHtml2: '',
       rawHtml3: '',
       rawHtml4: '',
@@ -76,6 +83,8 @@ export default {
                 <font color="${STOCK_CONFIG.col.m10}">M10: </font> 
                 <font color="${STOCK_CONFIG.col.m20}">M20: </font> 
                 <font color="${STOCK_CONFIG.col.m60}">M60: </font>`
+                
+    this.rawHtml6 = `<font color="${STOCK_CONFIG.col.rsi12}">寶塔:</font>`
 
     this.rawHtml2 = `<font color="${STOCK_CONFIG.col.volup}">成交量: </font>`
 
@@ -94,8 +103,8 @@ export default {
   created() {
     // this.getRecentDate()
   },
-  destroyed:function(){
-    if(this.intervalid1 != null) {
+  destroyed: function() {
+    if (this.intervalid1 != null) {
       clearInterval(this.intervalid1)
     }
   },
@@ -103,20 +112,16 @@ export default {
     openNewKline(param) {
       // console.log(param)
     },
-    /* getRecentDate() {
-      var now = new Date();
-      var newDate = dateAdd("d", -RECENT_DATE, now);
-      return {
-        startDate: newDate.toLocaleDateString(),
-        endDate: new Date().toLocaleDateString()
-      };
-    }, */
     init() {
+      // chart對象沒有其他用處，只作是否加載判斷
       if (this.chart != null) {
         return
       }
       let chart1 = this.$echarts.init(
         document.getElementById('myChart1' + this.kineType)
+      )
+      let chart6 = this.$echarts.init(
+        document.getElementById('myChart6' + this.kineType)
       )
       let chart2 = this.$echarts.init(
         document.getElementById('myChart2' + this.kineType)
@@ -130,8 +135,8 @@ export default {
       let chart5 = this.$echarts.init(
         document.getElementById('myChart5' + this.kineType)
       )
-      this.setOptions(chart1, chart2, chart3, chart4, chart5)
-      this.$echarts.connect([chart1, chart2, chart3, chart4, chart5])
+      this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
+      this.$echarts.connect([chart1, chart6, chart2, chart3, chart4, chart5])
       /* setTimeout(function() {
         window.onresize = function() {
           chart1.resize();
@@ -150,18 +155,19 @@ export default {
               _this.stockId
             }`
             _this.$api.post(url, null, rs => {
-              _this.setOptions(chart1, chart2, chart3, chart4, chart5)
+              _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
             })
           } else {
-            _this.setOptions(chart1, chart2, chart3, chart4, chart5)
+            _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
           }
         }, 10000) // ms
       }
     },
-    setOptions(chart1, chart2, chart3, chart4, chart5) {
+    setOptions(chart1, chart6, chart2, chart3, chart4, chart5) {
       // this.stockCandle = null
       let this_ = this
       let data1s = []
+      let data6s = []
       let data2s = []
       let data3s = []
       let data4s = []
@@ -194,6 +200,14 @@ export default {
               // let stockHistorys = [rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]
               // console.log(stockHistorys)
               data1s.push([
+                rs[i].date,
+                rs[i].opening,
+                rs[i].closing,
+                rs[i].lowest,
+                rs[i].highest,
+                rs[i].vol
+              ])
+              data6s.push([
                 rs[i].date,
                 rs[i].opening,
                 rs[i].closing,
@@ -245,6 +259,7 @@ export default {
           // chart4.hideLoading();
           // chart5.hideLoading();
           chart1.setOption(stockCandle(data1s, this.kineType))
+          chart6.setOption(stockTower(data6s, this.kineType))
           chart2.setOption(stockVol(data2s, this.kineType))
           chart3.setOption(stockRsi(data3s, this.kineType))
           chart4.setOption(stockDmi(data4s, this.kineType))

@@ -9,7 +9,7 @@ import * as dateUtils from '../utils/dateUtils'
 // var MACD = require('technicalindicators').MACD
 let BB = require('technicalindicators').BollingerBands
 
-export default function getData (datasets, kineType) {
+export default function getData(datasets, kineType) {
     let kDisplay = kineType == 1 ? "月" : "日"
     let datas = stockUtils.splitData(datasets)
 

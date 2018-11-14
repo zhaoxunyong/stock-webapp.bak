@@ -6,33 +6,17 @@ import * as stockUtils from '../utils/stockUtils'
 import * as dateUtils from '../utils/dateUtils'
 
 export default function getData(datasets, kineType) {
-    let kDisplay = kineType == 1 ? "月" : "日"
     let datas = stockUtils.splitData(datasets)
-    let sliceVols = stockUtils.getSlice(datas.vols)
-
     return {
-        // backgroundColor: '#21202D',
-        // color: '#fff',
-        /* title: {
-            text: kDisplay+'k线'
-        }, */
-        // backgroundColor: '#21202D',
         // 提示框浮层的位置
         animation: false,
-        /* tooltip: {
-            trigger: 'none',
-            axisPointer: {
-                type: 'cross'
-            }
-        }, */
-        tooltip: {
+        tooltip : {
             trigger: 'axis',
             backgroundColor: 'black',
-            position: [0, 0],
-            // extraCssText:'width:100px;height:60px;',
+            position : [0, 0],
             formatter: function (params) {
-                let v = `<font color="${STOCK_CONFIG.col.volup}">成交量:</font> ${params[0].value}`
-                $("#tooltipId2" + kineType).html(v)
+                let v = `<font color="${STOCK_CONFIG.col.rsi12}">寶塔:</font> ${params[0].data[2]}`
+                $("#tooltipId6"+kineType).html(v)
                 return "";
             },
             axisPointer: {
@@ -49,10 +33,10 @@ export default function getData(datasets, kineType) {
             }
         },
         grid: [{
-            top: '5%',
+            top: '8%',
             left: '9%',
             right: '0%',
-            height: '60%'
+            height: '80%'
         }],
         // 坐标轴指示器（axisPointer）的全局公用设置
         axisPointer: {
@@ -83,7 +67,7 @@ export default function getData(datasets, kineType) {
                 formatter: function (value) {
                     return dateUtils.formatTime('MM/dd', value)
                 }
-            } */
+            }, */
             // 坐标刻度
             axisTick: {
                 show: false
@@ -93,7 +77,6 @@ export default function getData(datasets, kineType) {
                 show: false
             }
         }],
-        // 
         yAxis: [{
             /* axisLabel: {
                 lineStyle:{  
@@ -115,15 +98,7 @@ export default function getData(datasets, kineType) {
                 }
             },
             axisLabel: {
-                onZero: false,
-                // 坐标文字相关样式
-                /* textStyle: {
-                    fontSize: '12px',
-                    color: 'green'
-                } , */
-                formatter: function (value) {
-                    return value >= 1000 ? value / 1000 + 'k' : value
-                }
+                onZero: false
             }
         }],
         dataZoom: [{
@@ -140,29 +115,25 @@ export default function getData(datasets, kineType) {
         }],
         series: [
             {
-                type: 'bar',
-                name: '成交量', //下面的柱状图
+                type: 'k', //Candlestick 
+                name: '寶塔圖',
+                id: 'tower',
                 // braGap用于设置同一个类目内的柱形之间的间距
                 // barGap: '1%',
                 // barCategoryGap则用于设置不同类目之间的间距
                 barCategoryGap: STOCK_CONFIG.barCategoryGap,
                 barWidth: STOCK_CONFIG.barWidth,
-                data: sliceVols,
+                data: stockUtils.getSlice(stockUtils.getTowerDatas(datas)),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
                 itemStyle: {
                     normal: {
                         width: 1,
-                        color: (params) => {
-                            let currVol = params.data
-                            let previousVol = params.dataIndex > 0 ? sliceVols[params.dataIndex - 1] : 0
-                            if (parseInt(currVol) < parseInt(previousVol)) {
-                                return STOCK_CONFIG.col.voldown;
-                            } else {
-                                return STOCK_CONFIG.col.volup;
-                            }
-                        }
+                        color: STOCK_CONFIG.col.up, //阳线填充色
+                        color0: STOCK_CONFIG.col.down,
+                        borderColor: STOCK_CONFIG.col.up, //阳线边框色
+                        borderColor0: STOCK_CONFIG.col.down
                     }
                 }
             }

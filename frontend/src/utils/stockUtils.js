@@ -37,9 +37,10 @@ export function calculateMA(datas, dayCount) {
     return result;
 }
 // 宝塔图
-export function calculateMA(datas) {
-    let dayCount = 3
+export function getTowerDatas(datas) {
+    let values = []
 
+    let dayCount = 3
     let zftResult = []
     let hhtResult = []
     let towerOpenResult = []
@@ -67,44 +68,48 @@ export function calculateMA(datas) {
         let lowMaxTower = 0
         // 收盘价宝塔
         let closePriceTower = 0
+        
+        // 当天收盘价
+        let nowClose = datas.values[i][1]
         if (i > 0) {
-            // 当天收盘价
-            let nowClose = datas.values[i][1]
+            // 前一天收盘价
             let previousClose = datas.values[i - 1][1]
             // --- 涨跌态
             if (nowClose >= previousClose) {
                 zft = 1
+            } else {
+                zft = -1
             }
             //--- 红黑态
             // 前一天红黑态
             let previousHht = hhtResult[i-1]
-            // 获取前4天的最低价
+            // 获取前3天的最低价与最高价
             let previousLows = []
             let previousHigh = []
-            for (var j = 1; j <= dayCount; j++) {
-                if(i - j >= 0) {
-                    previousLows.push(datas.values[i - j][2])
-                    previousHigh.push(datas.values[i - j][3])
-                }
+            for (var j = 1; j <= dayCount && i >= j; j++) {
+                previousLows.push(datas.values[i - j][2])
+                previousHigh.push(datas.values[i - j][3])
             } 
             // 求previousLows的最小值
-            lowMinTower = Math.min(previousLows)
+            // lowMinTower = Math.min(previousLows)
+            // https://aotu.io/notes/2016/04/14/js-reduce/index.html
+            lowMinTower = previousLows.reduce((pre, cur) => pre < cur ? pre : cur)
+
             // 求previousHigh的最大值
-            lowMaxTower = Math.max(previousHigh)
-            if(
-                (previousHht >= 0 && nowClose >= lowMinTower) ||
-                (previousHht == -1 && nowClose >= lowMaxTower)
-            ) {
+            // lowMaxTower = Math.max(previousHigh)
+            lowMaxTower = previousHigh.reduce((pre,cur) => pre>cur?pre:cur)
+            if((previousHht >= 0 && nowClose >= lowMinTower) ||
+                (previousHht == -1 && nowClose >= lowMaxTower)) {
                 hht = 1
+            } else {
+                hht = -1
             }
 
             // ---宝塔开
             let previousTowerOpen = towerOpenResult[i-1]
             let previousTowerClose = towerCloseResult[i-1]
-            if(
-                (previousHht == 1 && zft  == -1 && nowClose < lowMinTower && previousTowerOpen > previousTowerClose) ||
-                (previousHht == -1 && zft  == 1 && nowClose > lowMaxTower && previousTowerOpen < previousTowerClose)
-            ) {
+            if((previousHht == 1 && zft  == -1 && nowClose < lowMinTower && previousTowerOpen > previousTowerClose) ||
+                (previousHht == -1 && zft  == 1 && nowClose > lowMaxTower && previousTowerOpen < previousTowerClose)) {
                 towerOpen = previousTowerOpen
             } else {
                 towerOpen = previousTowerClose
@@ -114,10 +119,8 @@ export function calculateMA(datas) {
         towerClose = nowClose
 
         // --- 开盘价宝塔
-        if(
-            (hht == 1 && towerClose < towerOpen) ||
-            (hht == -1 && towerClose > towerOpen)
-        ) {
+        if((hht == 1 && towerClose < towerOpen) ||
+            (hht == -1 && towerClose > towerOpen)) {
             openPriceTower = towerClose
         } else {
             openPriceTower = towerOpen
@@ -138,8 +141,11 @@ export function calculateMA(datas) {
         lowMinTowerResult.push(lowMinTower)
         lowMaxTowerResult.push(lowMaxTower)
         closePriceTowerResult.push(closePriceTower)
+        // opening, closing, lowest, highest, vol
+        // 開盤價_寶塔	收盤價_寶塔 最低價_寶塔	最高價_寶塔	
+        values.push([openPriceTower, closePriceTower, lowMaxTower, lowMinTower, 0])
     }
-    return result;
+    return values;
 }
 
 // 单独抽出收盘价
