@@ -143,7 +143,8 @@ export function getTowerDatas(datas) {
         closePriceTowerResult.push(closePriceTower)
         // opening, closing, lowest, highest, vol
         // 開盤價_寶塔	收盤價_寶塔 最低價_寶塔	最高價_寶塔	
-        values.push([openPriceTower, closePriceTower, lowMaxTower, lowMinTower, 0])
+        // values.push([openPriceTower, closePriceTower, lowMaxTower, lowMinTower, 0])
+        values.push([openPriceTower, closePriceTower, openPriceTower, closePriceTower, 0])
     }
     return values;
 }
