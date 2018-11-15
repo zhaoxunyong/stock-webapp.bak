@@ -91,9 +91,9 @@ export default {
     this.rawHtml3 = `<font color="${STOCK_CONFIG.col.rsi12}">RSI-12: </font>
                 <font color="${STOCK_CONFIG.col.rsi100}">RSI-100: </font>`
 
-    this.rawHtml4 = `<font color="${STOCK_CONFIG.col.mdi}">MDI: </font>
-                <font color="${STOCK_CONFIG.col.pdi}">PDI: </font>
-                <font color="${STOCK_CONFIG.col.adx}">ADX: </font>`
+    this.rawHtml4 = `<font color="${STOCK_CONFIG.col.diUp}">+DI14: </font>
+                <font color="${STOCK_CONFIG.col.diDown}">-DI14: </font>
+                <font color="${STOCK_CONFIG.col.adx}">ADX14: </font>`
 
     this.rawHtml5 = `<font color="${STOCK_CONFIG.col.oscup}">OSC: </font>
                 <font color="${STOCK_CONFIG.col.dif}">DIF: </font>
@@ -146,7 +146,7 @@ export default {
           chart5.resize();
         };
       }, 200); */
-      let _this = this
+      /* let _this = this
       if(_this.intervalid1 == null) {
         _this.intervalid1 = setInterval(function() {
           if (_this.kineType == 0) {
@@ -161,7 +161,7 @@ export default {
             _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
           }
         }, 10000) // ms
-      }
+      } */
     },
     setOptions(chart1, chart6, chart2, chart3, chart4, chart5) {
       // this.stockCandle = null

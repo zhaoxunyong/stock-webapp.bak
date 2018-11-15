@@ -3,14 +3,13 @@
 // https://github.com/anandanand84/technicalindicators/tree/v1.1.13
 
 import * as stockUtils from '../utils/stockUtils'
-import * as dateUtils from '../utils/dateUtils'
 
-let ADX = require('technicalindicators').ADX
+// let ADX = require('technicalindicators').ADX
 
 export default function getData (datasets, kineType) {
     let kDisplay = kineType == 1 ? "月" : "日"
     let datas = stockUtils.splitData(datasets)
-    // DMI
+    /* // DMI
     let inputDMI = {
         close: stockUtils.getCloses(datas),
         high: stockUtils.getHighs(datas),
@@ -21,7 +20,12 @@ export default function getData (datasets, kineType) {
 
     let adxs = stockUtils.getDmiAdxs(dmis)
     let mdis = stockUtils.getDmiMdis(dmis)
-    let pdis = stockUtils.getDmipdis(dmis)
+    let pdis = stockUtils.getDmipdis(dmis) */
+    
+    let dmiResult = stockUtils.getDmis(datas)
+    let adxs = dmiResult.adx14
+    let diUps = dmiResult.diUp14
+    let diDowns = dmiResult.diDown14
 
     return {
         // backgroundColor: '#21202D',
@@ -44,9 +48,9 @@ export default function getData (datasets, kineType) {
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function (params) {
-                let v = `<font color="${STOCK_CONFIG.col.mdi}">MDI:</font> ${params[0].value.toFixed(1)}
-                <font color="${STOCK_CONFIG.col.pdi}">PDI:</font> ${params[1].value.toFixed(1)}
-                <font color="${STOCK_CONFIG.col.adx}">ADX:</font> ${params[2].value.toFixed(1)}`
+                let v = `<font color="${STOCK_CONFIG.col.diUp}">+DI14:</font> ${params[0].value.toFixed(1)}
+                <font color="${STOCK_CONFIG.col.diDown}">-DI14:</font> ${params[1].value.toFixed(1)}
+                <font color="${STOCK_CONFIG.col.adx}">ADX14:</font> ${params[2].value.toFixed(1)}`
                 $("#tooltipId4"+kineType).html(v)
                 return "";
             },
@@ -144,33 +148,33 @@ export default function getData (datasets, kineType) {
         }],
         series: [
             {
-                name: 'MDI',
+                name: '+DI14',
                 type: 'line',
-                data: stockUtils.getSlice(mdis),
+                data: stockUtils.getSlice(diUps),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
                 lineStyle: {
                     normal: {
                         width: 1,
-                        color: STOCK_CONFIG.col.mdi
+                        color: STOCK_CONFIG.col.diUp
                     }
                 }
             }, {
-                name: 'PDI',
+                name: '-DI14',
                 type: 'line',
-                data: stockUtils.getSlice(pdis),
+                data: stockUtils.getSlice(diDowns),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
                 lineStyle: {
                     normal: {
                         width: 1,
-                        color: STOCK_CONFIG.col.pdi
+                        color: STOCK_CONFIG.col.diDown
                     }
                 }
             }, {
-                name: 'ADX',
+                name: 'ADX14',
                 type: 'line',
                 data: stockUtils.getSlice(adxs),
                 smooth: true,

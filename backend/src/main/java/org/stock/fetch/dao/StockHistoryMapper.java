@@ -21,6 +21,8 @@ public interface StockHistoryMapper {
 
     int deleteByWeekOrMonth(@Param("stockId") Long stockId, @Param("date") Date date, @Param("type") int type);
 
+    int selectUniqueHistoryCount(@Param("stockId") Long stockId, @Param("date") Date date, @Param("type") int type);
+    
     List<StockHistory> selectStockHistory(@Param("stockId") Long stockId, @Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("type") int type);
     
     StockHistory selectLastStockHistory(@Param("no") String no);

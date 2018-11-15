@@ -148,6 +148,115 @@ export function getTowerDatas(datas) {
     }
     return values;
 }
+// DMI
+export function getDmis(datas) {
+    let dayCount = 14
+    
+    let trResult = []
+    let dmUpResult = []
+    let dmDownResult = []
+    let dxResult = []
+
+    let tr14Result = []
+    let dmUp14Result = []
+    let dmDown14Result = []
+    let diUp14Result = []
+    let diDown14Result = []
+    let adx14Result = []
+    // let adxr14Result = []
+
+    for (var i = 0, len = datas.values.length; i < len; i++) {
+        // TR
+        let tr = 0
+        let dmUp = 0
+        let dmDown = 0
+        let dx = 0
+
+        let tr14 = 0
+        let dmUp14 = 0
+        let dmDown14 = 0
+        let diUp14 = 0
+        let diDown14 = 0
+        let adx14 = 0
+        // let adxr14 = 0
+        if (i > 0) {
+            // 前一天收盘价
+            let lowest = datas.values[i][2]
+            let highest = datas.values[i][3]
+            let previousClose = datas.values[i - 1][1]
+            // TR值(True Range)波動值 = MAX(最高-最低, ABS(最高-昨收), ABS(最低-昨收))
+            let t1 = highest-lowest
+            let t2 = Math.abs(highest-previousClose)
+            let t3 = Math.abs(lowest-previousClose)
+            tr = [t1, t2, t3].reduce((pre,cur) => pre>cur?pre:cur)
+            // TR14 = 前一日TR14 × 13/14 + 今日TR × 1/14
+            let previousTr14 = tr14Result[i-1]
+            tr14 = previousTr14 * ((dayCount-1) / dayCount) + tr * (1 / dayCount)
+            // +DM = 最高 - 昨高
+            // -DM = 昨低 - 最低
+            // If +DM > -DM And +DM > 0 Then +DM = +DM Else +DM = 0
+            // If +DM < -DM And -DM > 0 Then -DM = -DM Else -DM = 0
+            let previousLowest = datas.values[i - 1][2]
+            let previousHigh = datas.values[i - 1][3]
+            dmUp = highest - previousHigh
+            dmDown = previousLowest - lowest
+            if(!(dmUp > dmDown && dmUp > 0)) {
+                dmUp = 0
+            }
+            if(!(dmUp < dmDown && dmDown > 0)) {
+                dmDown = 0
+            }
+            // +DM14 = 前一日+DM14 × 13/14 + +DM × 1/14
+            // -DM14 = 前一日-DM14 × 13/14 + -DM × 1/14
+            let previousDmUp14 = dmUp14Result[i-1]
+            let previousDmDown14 = dmDown14Result[i-1]
+            let dmUp14 = previousDmUp14 * ((dayCount-1) / dayCount) + dmUp * (1 / dayCount)
+            let dmDown14 = previousDmDown14 * ((dayCount-1) / dayCount) + dmDown * (1 / dayCount)
+
+            // DI
+            // +DI14 = +DM14 ÷ TR14 × 100
+            // -DI14 = -DM14 ÷ TR14 × 100
+            diUp14 = dmUp14 / tr14 * 100
+            diDown14 = dmDown14 / tr14 * 100
+
+            // DX
+            // DX = ABS(+DI14 - -DI14 ) ÷ (+DI14 + -DI14) × 100
+            if(diUp14 + diDown14 > 0) {
+                dx = Math.abs(diUp14 - diDown14) / (diUp14 + diDown14) * 100
+            } else {
+                dx = 0
+            }
+
+            // ADX14
+            // ADX14 = 前一日ADX14 × 13/14 + 今日DX × 1/14
+            let previousAdx14 = adx14Result[i-1]
+            adx14 = previousAdx14 * ((dayCount-1) / dayCount) + dx * (1 / dayCount)
+
+            // ADXR14(没用到)
+            // (当日ADX14 + 第前14日ADX14) / 2
+            // let before14Adx = (i-dayCount) >=0 ? adx14Result[i-dayCount] : 0
+            // adxr14 = (adx14 + before14Adx) / 2
+        }
+
+        trResult.push(tr)
+        dmUpResult.push(dmUp)
+        dmDownResult.push(dmDown)
+        dxResult.push(dx)
+    
+        tr14Result.push(tr14)
+        dmUp14Result.push(dmUp14)
+        dmDown14Result.push(dmDown14)
+        diUp14Result.push(diUp14)
+        diDown14Result.push(diDown14)
+        adx14Result.push(adx14)
+        // adxr14Result.push(adxr14)
+    }
+    return {
+        adx14: adx14Result,
+        diUp14: diUp14Result,
+        diDown14: diDown14Result
+    }
+}
 
 // 单独抽出收盘价
 export function getCloses(datas) {

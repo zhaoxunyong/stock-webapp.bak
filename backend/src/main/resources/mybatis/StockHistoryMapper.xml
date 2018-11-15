@@ -98,6 +98,13 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
   
+  <select id="selectUniqueHistoryCount" resultType="int" >
+    select DISTINCT count(stock_id) 
+    from stock_history
+    where stock_id = #{stockId,jdbcType=BIGINT} and type=#{type,jdbcType=INTEGER} and date=#{date,jdbcType=TIMESTAMP}
+    ORDER BY date desc
+  </select>
+  
   <select id="selectAll" resultMap="BaseResultMap" >
     select <include refid="BaseColumnList" /> 
     from stock_history

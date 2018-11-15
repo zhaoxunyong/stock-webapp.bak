@@ -10,8 +10,8 @@ export default function getData (datasets, kineType) {
     let kDisplay = kineType == 1 ? "月" : "日"
     let datas = stockUtils.splitData(datasets)
     let difs = macd.DIF(datas.values);  // DIF
-    let macds = macd.DEA(datas.values,9); // 也就是DEM或MACD
-    let oscs = macd.BAR(datas.values); // 也就是OSC
+    let macds = macd.MACD(datas.values,9); // 也就是DEM或MACD
+    let oscs = macd.OSC(datas.values); // 也就是OSC
 
     return {
         // backgroundColor: '#21202D',

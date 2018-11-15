@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -905,27 +906,32 @@ public class FetchServiceImpl implements FetchService {
     @Override
     @Transactional
     public void fetchHistory(String no) throws Exception {
+        // 处理日期，而不是时间,所以用LocalDate
         LocalDate endDate = LocalDate.now();
         StockHistory lastStockHistory = stockHistoryMapper.selectLastStockHistory(no);
         // 一开始默认抓取最近5年的数据
         LocalDate startDate = endDate.plusYears(-5L);
         if(lastStockHistory != null) {
-            startDate = MyDateUtils.date2LoalDate(lastStockHistory.getDate());
+            // 开始日期从最近数据库中的最近日期+1
+            startDate = MyDateUtils.date2LoalDate(DateUtils.addDays(lastStockHistory.getDate(), 1));
         }
-        try {
-            this.fetchHistory(no, MyDateUtils.localDate2Date(startDate), MyDateUtils.localDate2Date(endDate));
-        } catch(Exception e) {
-            logger.error("股号: {}, 开始日期: {}, 结束日期: {}, 抓取异常: ", no, startDate, endDate, e);
-            StockHistoryError stockHistoryError = new StockHistoryError();
-            stockHistoryError.setId(IdUtils.genLongId());
-            stockHistoryError.setCreateDate(new Date());
-            stockHistoryError.setNo(no);
-            stockHistoryError.setStartDate(MyDateUtils.localDate2Date(startDate));
-            stockHistoryError.setEndDate(MyDateUtils.localDate2Date(endDate));
-            stockHistoryError.setStatus(0); //抓取状态 1: 重试后成功 0: 错误
-            stockHistoryError.setErrCount(1);
-            stockHistoryError.setType(StockHistoryErrorEnum.HISTORY.getType());
-            stockHistoryErrorMapper.insert(stockHistoryError);
+        // 结束日期 >= 开始日期才fetch
+        if(endDate.isAfter(startDate) || endDate.isEqual(startDate)) {
+            try {
+                this.fetchHistory(no, MyDateUtils.localDate2Date(startDate), MyDateUtils.localDate2Date(endDate));
+            } catch(Exception e) {
+                logger.error("股号: {}, 开始日期: {}, 结束日期: {}, 抓取异常: ", no, startDate, endDate, e);
+                StockHistoryError stockHistoryError = new StockHistoryError();
+                stockHistoryError.setId(IdUtils.genLongId());
+                stockHistoryError.setCreateDate(new Date());
+                stockHistoryError.setNo(no);
+                stockHistoryError.setStartDate(MyDateUtils.localDate2Date(startDate));
+                stockHistoryError.setEndDate(MyDateUtils.localDate2Date(endDate));
+                stockHistoryError.setStatus(0); //抓取状态 1: 重试后成功 0: 错误
+                stockHistoryError.setErrCount(1);
+                stockHistoryError.setType(StockHistoryErrorEnum.HISTORY.getType());
+                stockHistoryErrorMapper.insert(stockHistoryError);
+            }
         }
             
     }
@@ -1134,9 +1140,12 @@ public class FetchServiceImpl implements FetchService {
             stockHistory4Inserts = Lists.reverse(stockHistory4Inserts);
             // 升序insert
             for (StockHistory stockHistory4Insert : stockHistory4Inserts) {
-                stockHistory4Insert.setId(IdUtils.genLongId());
-                stockHistory4Insert.setCreateDate(new Date());
-                stockHistoryMapper.insert(stockHistory4Insert);
+                int existCount = stockHistoryMapper.selectUniqueHistoryCount(stockHistory4Insert.getStockId(), stockHistory4Insert.getDate(), stockHistory4Insert.getType());
+                if(existCount == 0) {
+                    stockHistory4Insert.setId(IdUtils.genLongId());
+                    stockHistory4Insert.setCreateDate(new Date());
+                    stockHistoryMapper.insert(stockHistory4Insert);
+                }
                 // 日：可以在页面中进行计算
                 /*StockHistory averageOfDay = stockHistoryMapper.averageClosing(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());
                 StockHistory averageVolOfDay = stockHistoryMapper.averageVol(stockId, stockHistory4Insert.getDate(), StockHistoryEnum.DAY.getType());

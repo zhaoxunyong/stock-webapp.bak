@@ -38,8 +38,8 @@ function EMA(fNow,fPre,N){
     return DIFs;
   }
 
-  // DEM = DEA
-  function DEA(points,N){
+  // DEM = MACD = DEA
+  function MACD(points,N){
     if (points == null || points.length <= 0)
       return new Array();
     let dif = DIF(points);
@@ -54,21 +54,21 @@ function EMA(fNow,fPre,N){
     return result;
   }
 
-  // BAR = OSC
-  function BAR(points){
+  // BAR = OSC  OSC=DIF-MACD
+  function OSC(points){
     if (points == null || points.length <= 0)
       return new Array();
     let dif = DIF(points);
-    let dea = DEA(points,9);
-    let bar = new Array();
+    let macd = MACD(points,9);
+    let osc = new Array();
     for(let i=0;i<points.length;i++){
-      bar.push(2*(formartNumber(dif[i]-dea[i])));
+      osc.push(formartNumber(dif[i]-macd[i]));
     }
-    return bar;
+    return osc;
   }
 
   function formartNumber(n){
-      return Number(n.toFixed(2));
+      return Number(n.toFixed(1));
   }
 
-  export { DIF, DEA, BAR } 
+  export { DIF, MACD, OSC } 
