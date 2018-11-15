@@ -312,7 +312,7 @@ export function getBollLowers(bolls) {
     return result;
 }
 
-// DMI中的adx
+/* // DMI中的adx
 export function getDmiAdxs(dmis) {
     var result = [];
     for (var i = 0, len = dmis.length; i < len; i++) {
@@ -337,7 +337,7 @@ export function getDmipdis(dmis) {
         result.push(dmis[i].pdi)
     }
     return result;
-}
+} */
 
 // 取数据中的最近RECENT_DATE数据
 export function getSlice(datas) {
