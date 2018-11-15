@@ -10,6 +10,7 @@ import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockHistoryDaily;
 import org.stock.fetch.model.StockImportantNews;
+import org.stock.fetch.model.StockLineSettings;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelectedType;
 import org.stock.fetch.model.StockMyStore;
@@ -95,5 +96,7 @@ public interface StockService {
     
     StockHistory averageVol(Long stockId, Date date, int type);
     
-    void deleteByAgoOfDayDate();
+	void deleteByAgoOfDayDate();
+	
+	public List<StockLineSettings> getAvailabelStockLineSettings();
 }

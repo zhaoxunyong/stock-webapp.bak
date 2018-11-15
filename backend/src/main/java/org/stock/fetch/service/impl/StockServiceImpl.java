@@ -18,6 +18,7 @@ import org.stock.fetch.dao.StockDataMapper;
 import org.stock.fetch.dao.StockHistoryDailyMapper;
 import org.stock.fetch.dao.StockHistoryMapper;
 import org.stock.fetch.dao.StockImportantNewsMapper;
+import org.stock.fetch.dao.StockLineSettingsMapper;
 import org.stock.fetch.dao.StockMyDataMapper;
 import org.stock.fetch.dao.StockMySelectedMapper;
 import org.stock.fetch.dao.StockMySelectedTypeMapper;
@@ -30,6 +31,7 @@ import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockHistoryDaily;
 import org.stock.fetch.model.StockImportantNews;
+import org.stock.fetch.model.StockLineSettings;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelected;
 import org.stock.fetch.model.StockMySelectedType;
@@ -77,6 +79,9 @@ public class StockServiceImpl implements StockService {
     
     @Autowired
     private StockHistoryDailyMapper stockHistoryDailyMapper;
+	
+    @Autowired
+    private StockLineSettingsMapper stockLineSettingsMapper;
 
 	@Override
 	public List<StockMyData> getStockMyDatas() {
@@ -611,5 +616,10 @@ public class StockServiceImpl implements StockService {
         Date agoOfDayDate = MyDateUtils.localDate2Date(LocalDate.now().plusDays(-2));
         stockHistoryDailyMapper.deleteByAgoOfDayDate(agoOfDayDate);
     }
+
+    @Override
+    public List<StockLineSettings> getAvailabelStockLineSettings() {
+        return stockLineSettingsMapper.selectAvailableAll();
+	}
 
 }

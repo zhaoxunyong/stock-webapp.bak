@@ -39,6 +39,7 @@ import org.stock.fetch.api.dto.StockDailyTransactionsDto;
 import org.stock.fetch.api.dto.StockDataDto;
 import org.stock.fetch.api.dto.StockHistoryDto;
 import org.stock.fetch.api.dto.StockImportantNewsDto;
+import org.stock.fetch.api.dto.StockLineSettingsDto;
 import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.api.dto.StockMySelectedTypeDto;
 import org.stock.fetch.api.dto.StockMyStoreDto;
@@ -51,6 +52,7 @@ import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
 import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockImportantNews;
+import org.stock.fetch.model.StockLineSettings;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelectedType;
 import org.stock.fetch.model.StockMyStore;
@@ -680,6 +682,15 @@ public class StockApiImpl implements StockApi {
             }
         }
     }
+
+    @Override
+    @GetMapping("/getAvailabelStockLineSettings")
+    public List<StockLineSettingsDto> getAvailabelStockLineSettings() {
+        List<StockLineSettings> stockLineSettingses = stockService.getAvailabelStockLineSettings();
+        return stockLineSettingses.stream().map(model -> {
+            return modelMapper.map(model, StockLineSettingsDto.class);
+        }).collect(Collectors.toList());
+	}
 
     /*@Override
     @GetMapping(value = "/data")

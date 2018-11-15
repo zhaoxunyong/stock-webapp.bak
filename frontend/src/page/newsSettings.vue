@@ -128,9 +128,9 @@ export default {
 </script>
 
 <style scoped>
- .w-5 {
+ /* .w-5 {
   width: ($spacer * .05) !important;
- }
+ } */
 </style>
 
 <!-- <style lang="scss">

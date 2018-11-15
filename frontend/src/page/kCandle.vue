@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :id="'stockLineItem'+kineType">
     <!-- <div class="w-100 px-1 mx-1 kline-height">
       <p class="font-weight-bold text-center align-middle px-1 mx-1" href="#" @click.prevent="showZoomKline">
         日線
@@ -8,34 +8,10 @@
     
     <!-- <chart :options="stockCandle" :auto-resize="resize" @mousemove="openNewKline"></chart> -->
     <!-- stockCandle -->
-    <div>
-      <div :id="'tooltipId1'+kineType" class="tooltips w-100 text-left" v-html="rawHtml1"></div>
-      <div :id="'myChart1'+kineType" class="echarts1"></div>
-    </div>
-    <!-- stockTower -->
-    <div>
-      <div :id="'tooltipId6'+kineType" class="tooltips w-100 text-left" v-html="rawHtml6"></div>
-      <div :id="'myChart6'+kineType" class="echarts1"></div>
-    </div>
-    <!-- stockVol -->
-    <div>
-      <div :id="'tooltipId2'+kineType" class="tooltips w-100 text-left" v-html="rawHtml2"></div>
-      <div :id="'myChart2'+kineType" class="echarts2"></div>
-    </div>
-    <!-- stockRsi -->
-    <div>
-      <div :id="'tooltipId3'+kineType" class="tooltips w-100 text-left" v-html="rawHtml3"></div>
-      <div :id="'myChart3'+kineType" class="echarts2"></div>
-    </div>
-    <!-- stockDmi -->
-    <div>
-      <div :id="'tooltipId4'+kineType" class="tooltips w-100 text-left" v-html="rawHtml4"></div>
-      <div :id="'myChart4'+kineType" class="echarts2"></div>
-    </div>
-    <!-- stockMacd -->
-    <div>
-      <div :id="'tooltipId5'+kineType" class="tooltips w-100 text-left" v-html="rawHtml5"></div>
-      <div :id="'myChart5'+kineType" class="echarts3"></div>
+    <!-- 顺序不能变 1:stockCandle 2:stockVol 3:stockRsi 4:stockDmi 5:stockMacd 6:stockTower -->
+    <div v-for="item in items" class="move-item">
+      <div :id="'tooltipId'+item+kineType" class="tooltips w-100 text-left" :v-html="'rawHtml'+item"></div>
+      <div :id="'myChart'+item+kineType" :class="'echarts'+item"></div>
     </div>
   </div>
 </template>
@@ -44,6 +20,7 @@
 // import MainLayout from '../layouts/Main.vue'
 // import Alert from '../components/alert.vue'
 import Bus from '../eventBus'
+import Sortable from 'sortablejs'
 import stockCandle from '../stock/stockCandle'
 import stockTower from '../stock/stockTower'
 import stockVol from '../stock/stockVol'
@@ -62,17 +39,18 @@ export default {
   },
   data() {
     return {
+      items: [1, 2, 3, 4, 5, 6],
       stockId: '',
       chart: null,
       // stockCandle: null,
       resize: true,
       intervalid1: null,
       rawHtml1: '',
-      rawHtml6: '',
       rawHtml2: '',
       rawHtml3: '',
       rawHtml4: '',
-      rawHtml5: ''
+      rawHtml5: '',
+      rawHtml6: ''
     }
   },
   props: ['kineType'],
@@ -83,8 +61,6 @@ export default {
                 <font color="${STOCK_CONFIG.col.m10}">M10: </font> 
                 <font color="${STOCK_CONFIG.col.m20}">M20: </font> 
                 <font color="${STOCK_CONFIG.col.m60}">M60: </font>`
-                
-    this.rawHtml6 = `<font color="${STOCK_CONFIG.col.rsi12}">寶塔:</font>`
 
     this.rawHtml2 = `<font color="${STOCK_CONFIG.col.volup}">成交量: </font>`
 
@@ -98,7 +74,25 @@ export default {
     this.rawHtml5 = `<font color="${STOCK_CONFIG.col.oscup}">OSC: </font>
                 <font color="${STOCK_CONFIG.col.dif}">DIF: </font>
                 <font color="${STOCK_CONFIG.col.macd}">MACD: </font>`
+                
+    this.rawHtml6 = `<font color="${STOCK_CONFIG.col.rsi12}">寶塔:</font>`
     this.init()
+  
+    let url = '/api/stock/getAvailabelStockLineSettings'
+    this.$api.get(url, null, rs => {
+      // this.items = rs
+    });
+
+    let el = document.getElementById('stockLineItem'+this.kineType)
+    Sortable.create(el, {
+      handle: '.move-item',
+      animation: 150,
+      onUpdate: function (evt){
+        var item = evt.item; // the current dragged HTMLElement
+        // alert(item.outerHTML)
+        
+      }
+    })
   },
   created() {
     // this.getRecentDate()
@@ -120,9 +114,6 @@ export default {
       let chart1 = this.$echarts.init(
         document.getElementById('myChart1' + this.kineType)
       )
-      let chart6 = this.$echarts.init(
-        document.getElementById('myChart6' + this.kineType)
-      )
       let chart2 = this.$echarts.init(
         document.getElementById('myChart2' + this.kineType)
       )
@@ -135,6 +126,9 @@ export default {
       let chart5 = this.$echarts.init(
         document.getElementById('myChart5' + this.kineType)
       )
+      let chart6 = this.$echarts.init(
+        document.getElementById('myChart6' + this.kineType)
+      )
       this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
       this.$echarts.connect([chart1, chart6, chart2, chart3, chart4, chart5])
       /* setTimeout(function() {
@@ -146,7 +140,7 @@ export default {
           chart5.resize();
         };
       }, 200); */
-      /* let _this = this
+      let _this = this
       if(_this.intervalid1 == null) {
         _this.intervalid1 = setInterval(function() {
           if (_this.kineType == 0) {
@@ -161,17 +155,17 @@ export default {
             _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
           }
         }, 10000) // ms
-      } */
+      }
     },
     setOptions(chart1, chart6, chart2, chart3, chart4, chart5) {
       // this.stockCandle = null
       let this_ = this
       let data1s = []
-      let data6s = []
       let data2s = []
       let data3s = []
       let data4s = []
       let data5s = []
+      let data6s = []
       // let dateRange = this.getRecentDate()
       // let dateRange = this.getRecentDate()
       // this.stockId = '402396117293928448'
@@ -200,14 +194,6 @@ export default {
               // let stockHistorys = [rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]
               // console.log(stockHistorys)
               data1s.push([
-                rs[i].date,
-                rs[i].opening,
-                rs[i].closing,
-                rs[i].lowest,
-                rs[i].highest,
-                rs[i].vol
-              ])
-              data6s.push([
                 rs[i].date,
                 rs[i].opening,
                 rs[i].closing,
@@ -247,6 +233,14 @@ export default {
                 rs[i].highest,
                 rs[i].vol
               ])
+              data6s.push([
+                rs[i].date,
+                rs[i].opening,
+                rs[i].closing,
+                rs[i].lowest,
+                rs[i].highest,
+                rs[i].vol
+              ])
             }
           } else {
             this_.$alerts.error('找不到數據:' + this.stockId)
@@ -259,11 +253,11 @@ export default {
           // chart4.hideLoading();
           // chart5.hideLoading();
           chart1.setOption(stockCandle(data1s, this.kineType))
-          chart6.setOption(stockTower(data6s, this.kineType))
           chart2.setOption(stockVol(data2s, this.kineType))
           chart3.setOption(stockRsi(data3s, this.kineType))
           chart4.setOption(stockDmi(data4s, this.kineType))
           chart5.setOption(stockMacd(data5s, this.kineType))
+          chart6.setOption(stockTower(data6s, this.kineType))
 
           /* chart1.on('click', function (params) {
             console.log('params.componentType--->'+params.componentType)
@@ -296,15 +290,15 @@ export default {
   width: 100%;
   height: 580px;
 } */
-.echarts1 {
+.echarts1, .echarts6 {
   width: 100%;
   height: 190px;
 }
-.echarts2 {
+.echarts2,.echarts3,.echarts4 {
   width: 100%;
   height: 90px;
 }
-.echarts3 {
+.echarts5 {
   width: 100%;
   height: 120px;
 }

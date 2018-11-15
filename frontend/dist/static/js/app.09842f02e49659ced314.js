@@ -1496,6 +1496,10 @@ var stockNews_Component = stockNews_normalizeComponent(
 
 /* harmony default export */ var src_page_stockNews = (stockNews_Component.exports);
 
+// EXTERNAL MODULE: ./node_modules/sortablejs/Sortable.js
+var Sortable = __webpack_require__("Lokx");
+var Sortable_default = /*#__PURE__*/__webpack_require__.n(Sortable);
+
 // CONCATENATED MODULE: ./src/utils/stockUtils.js
 // https://github.com/apache/incubator-echarts/issues/6583
 // http://gallery.echartsjs.com/editor.html?c=candlestick-sh
@@ -3130,6 +3134,7 @@ function stockMacd_getData(datasets, kineType) {
 
 
 
+
 // 引用alert文件, alerts.error('xxx')
 // import * as alerts from '../utils/alert.js'
 // import {success, error} from '../utils/alert.js'
@@ -3148,19 +3153,17 @@ function stockMacd_getData(datasets, kineType) {
       resize: true,
       intervalid1: null,
       rawHtml1: '',
-      rawHtml6: '',
       rawHtml2: '',
       rawHtml3: '',
       rawHtml4: '',
-      rawHtml5: ''
+      rawHtml5: '',
+      rawHtml6: ''
     };
   },
 
   props: ['kineType'],
   mounted: function mounted() {
     this.rawHtml1 = '\u6536: \u958B: \u9AD8: \u4F4E:<br/>\n                ' + (this.kineType == 1 ? '月' : '日') + '\u7DDA\n                <font color="' + STOCK_CONFIG.col.m5 + '">M5: </font> \n                <font color="' + STOCK_CONFIG.col.m10 + '">M10: </font> \n                <font color="' + STOCK_CONFIG.col.m20 + '">M20: </font> \n                <font color="' + STOCK_CONFIG.col.m60 + '">M60: </font>';
-
-    this.rawHtml6 = '<font color="' + STOCK_CONFIG.col.rsi12 + '">\u5BF6\u5854:</font>';
 
     this.rawHtml2 = '<font color="' + STOCK_CONFIG.col.volup + '">\u6210\u4EA4\u91CF: </font>';
 
@@ -3169,7 +3172,19 @@ function stockMacd_getData(datasets, kineType) {
     this.rawHtml4 = '<font color="' + STOCK_CONFIG.col.diUp + '">+DI14: </font>\n                <font color="' + STOCK_CONFIG.col.diDown + '">-DI14: </font>\n                <font color="' + STOCK_CONFIG.col.adx + '">ADX14: </font>';
 
     this.rawHtml5 = '<font color="' + STOCK_CONFIG.col.oscup + '">OSC: </font>\n                <font color="' + STOCK_CONFIG.col.dif + '">DIF: </font>\n                <font color="' + STOCK_CONFIG.col.macd + '">MACD: </font>';
+
+    this.rawHtml6 = '<font color="' + STOCK_CONFIG.col.rsi12 + '">\u5BF6\u5854:</font>';
     this.init();
+
+    var _api = this.$api;
+    Sortable_default.a.create(stockLineItem, {
+      handle: '.move-item',
+      animation: 150,
+      onUpdate: function onUpdate(evt) {
+        var item = evt.item; // the current dragged HTMLElement
+        // alert(item.outerHTML)
+      }
+    });
   },
   created: function created() {
     // this.getRecentDate()
@@ -3190,11 +3205,11 @@ function stockMacd_getData(datasets, kineType) {
         return;
       }
       var chart1 = this.$echarts.init(document.getElementById('myChart1' + this.kineType));
-      var chart6 = this.$echarts.init(document.getElementById('myChart6' + this.kineType));
       var chart2 = this.$echarts.init(document.getElementById('myChart2' + this.kineType));
       var chart3 = this.$echarts.init(document.getElementById('myChart3' + this.kineType));
       var chart4 = this.$echarts.init(document.getElementById('myChart4' + this.kineType));
       var chart5 = this.$echarts.init(document.getElementById('myChart5' + this.kineType));
+      var chart6 = this.$echarts.init(document.getElementById('myChart6' + this.kineType));
       this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5);
       this.$echarts.connect([chart1, chart6, chart2, chart3, chart4, chart5]);
       /* setTimeout(function() {
@@ -3229,11 +3244,11 @@ function stockMacd_getData(datasets, kineType) {
       // this.stockCandle = null
       var this_ = this;
       var data1s = [];
-      var data6s = [];
       var data2s = [];
       var data3s = [];
       var data4s = [];
       var data5s = [];
+      var data6s = [];
       // let dateRange = this.getRecentDate()
       // let dateRange = this.getRecentDate()
       // this.stockId = '402396117293928448'
@@ -3258,11 +3273,11 @@ function stockMacd_getData(datasets, kineType) {
               // let stockHistorys = [rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]
               // console.log(stockHistorys)
               data1s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
-              data6s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
               data2s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
               data3s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
               data4s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
               data5s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
+              data6s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
             }
           } else {
             this_.$alerts.error('找不到數據:' + _this.stockId);
@@ -3275,11 +3290,11 @@ function stockMacd_getData(datasets, kineType) {
           // chart4.hideLoading();
           // chart5.hideLoading();
           chart1.setOption(getData(data1s, _this.kineType));
-          chart6.setOption(stockTower_getData(data6s, _this.kineType));
           chart2.setOption(stockVol_getData(data2s, _this.kineType));
           chart3.setOption(stockRsi_getData(data3s, _this.kineType));
           chart4.setOption(stockDmi_getData(data4s, _this.kineType));
           chart5.setOption(stockMacd_getData(data5s, _this.kineType));
+          chart6.setOption(stockTower_getData(data6s, _this.kineType));
 
           /* chart1.on('click', function (params) {
             console.log('params.componentType--->'+params.componentType)
@@ -3304,14 +3319,14 @@ function stockMacd_getData(datasets, kineType) {
     }
   }
 });
-// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-111153f5","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/kCandle.vue
-var kCandle_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId1'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml1)}}),_vm._v(" "),_c('div',{staticClass:"echarts1",attrs:{"id":'myChart1'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId6'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml6)}}),_vm._v(" "),_c('div',{staticClass:"echarts1",attrs:{"id":'myChart6'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId2'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml2)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart2'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId3'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml3)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart3'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId4'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml4)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart4'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId5'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml5)}}),_vm._v(" "),_c('div',{staticClass:"echarts3",attrs:{"id":'myChart5'+_vm.kineType}})])])}
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-3ba02789","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/kCandle.vue
+var kCandle_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"stockLineItem"}},[_c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId1'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml1)}}),_vm._v(" "),_c('div',{staticClass:"echarts1",attrs:{"id":'myChart1'+_vm.kineType}})]),_vm._v(" "),_c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId2'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml2)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart2'+_vm.kineType}})]),_vm._v(" "),_c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId3'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml3)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart3'+_vm.kineType}})]),_vm._v(" "),_c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId4'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml4)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart4'+_vm.kineType}})]),_vm._v(" "),_c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId5'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml5)}}),_vm._v(" "),_c('div',{staticClass:"echarts3",attrs:{"id":'myChart5'+_vm.kineType}})]),_vm._v(" "),_c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId6'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml6)}}),_vm._v(" "),_c('div',{staticClass:"echarts1",attrs:{"id":'myChart6'+_vm.kineType}})])])}
 var kCandle_staticRenderFns = []
 var kCandle_esExports = { render: kCandle_render, staticRenderFns: kCandle_staticRenderFns }
 /* harmony default export */ var page_kCandle = (kCandle_esExports);
 // CONCATENATED MODULE: ./src/page/kCandle.vue
 function kCandle_injectStyle (ssrContext) {
-  __webpack_require__("jxD6")
+  __webpack_require__("WN0j")
 }
 var kCandle_normalizeComponent = __webpack_require__("VU/8")
 /* script */
@@ -3324,7 +3339,7 @@ var kCandle___vue_template_functional__ = false
 /* styles */
 var kCandle___vue_styles__ = kCandle_injectStyle
 /* scopeId */
-var kCandle___vue_scopeId__ = "data-v-111153f5"
+var kCandle___vue_scopeId__ = "data-v-3ba02789"
 /* moduleIdentifier (server only) */
 var kCandle___vue_module_identifier__ = null
 var kCandle_Component = kCandle_normalizeComponent(
@@ -3853,10 +3868,6 @@ var stockDailyTransactions_Component = stockDailyTransactions_normalizeComponent
 
 /* harmony default export */ var src_page_stockDailyTransactions = (stockDailyTransactions_Component.exports);
 
-// EXTERNAL MODULE: ./node_modules/sortablejs/Sortable.js
-var Sortable = __webpack_require__("Lokx");
-var Sortable_default = /*#__PURE__*/__webpack_require__.n(Sortable);
-
 // CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib/selector.js?type=script&index=0!./src/page/editMySelectedType.vue
 //
 //
@@ -4331,14 +4342,14 @@ var editMySelectedType_Component = editMySelectedType_normalizeComponent(
     }
   }
 });
-// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-04b63713","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/newsSettings.vue
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-32ffb636","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/newsSettings.vue
 var newsSettings_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('main-layout',[_c('div',{staticClass:"border border-primary m-2 float-left",staticStyle:{"width":"45%"}},[_c('h5',{staticClass:"text-primary p-1"},[_vm._v("去重關鍵字：\n    "),_c('button',{staticClass:"btn btn-primary",attrs:{"type":"button"},on:{"click":function($event){_vm.saveExcludeItem($event)}}},[_vm._v("保存")]),_vm._v(" "),_c('button',{staticClass:"btn btn-primary",attrs:{"type":"button"},on:{"click":function($event){_vm.addExcludeItem($event)}}},[_vm._v("添加")])]),_vm._v(" "),_vm._l((_vm.excludesItems),function(item){return _c('div',{staticClass:"exclude-item w-5 float-left p-1"},[_c('input',{staticClass:"form-control",attrs:{"type":"text"},domProps:{"value":item.key}})])}),_vm._v(" "),_c('div',{staticClass:"w-3 float-left p-1",attrs:{"id":"add-exclude-item"}}),_vm._v(" "),_c('div',{staticClass:"clearfix"})],2),_vm._v(" "),_c('div',{staticClass:"border border-success m-2 float-left",staticStyle:{"width":"45%"}},[_c('h5',{staticClass:"text-success p-1"},[_vm._v("焦點關鍵字：\n    "),_c('button',{staticClass:"btn btn-success",attrs:{"type":"button"},on:{"click":function($event){_vm.saveIncludeItem($event)}}},[_vm._v("保存")]),_vm._v(" "),_c('button',{staticClass:"btn btn-success",attrs:{"type":"button"},on:{"click":function($event){_vm.addIncludeItem($event)}}},[_vm._v("添加")])]),_vm._v(" "),_vm._l((_vm.includesItems),function(item){return _c('div',{staticClass:"include-item w-5 float-left p-1"},[_c('input',{staticClass:"form-control",attrs:{"type":"text"},domProps:{"value":item.key}})])}),_vm._v(" "),_c('div',{staticClass:"w-3 float-left p-1",attrs:{"id":"add-include-item"}}),_vm._v(" "),_c('div',{staticClass:"clearfix"})],2),_vm._v(" "),_c('div',{staticClass:"clearfix"})])}
 var newsSettings_staticRenderFns = []
 var newsSettings_esExports = { render: newsSettings_render, staticRenderFns: newsSettings_staticRenderFns }
 /* harmony default export */ var page_newsSettings = (newsSettings_esExports);
 // CONCATENATED MODULE: ./src/page/newsSettings.vue
 function newsSettings_injectStyle (ssrContext) {
-  __webpack_require__("yZDo")
+  __webpack_require__("fa4i")
 }
 var newsSettings_normalizeComponent = __webpack_require__("VU/8")
 /* script */
@@ -4351,7 +4362,7 @@ var newsSettings___vue_template_functional__ = false
 /* styles */
 var newsSettings___vue_styles__ = newsSettings_injectStyle
 /* scopeId */
-var newsSettings___vue_scopeId__ = "data-v-04b63713"
+var newsSettings___vue_scopeId__ = "data-v-32ffb636"
 /* moduleIdentifier (server only) */
 var newsSettings___vue_module_identifier__ = null
 var newsSettings_Component = newsSettings_normalizeComponent(
@@ -4831,6 +4842,13 @@ module.exports = __webpack_require__.p + "static/img/stock04.519da72.png";
 
 /***/ }),
 
+/***/ "WN0j":
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
 /***/ "eF9M":
 /***/ (function(module, exports) {
 
@@ -4838,7 +4856,7 @@ module.exports = __webpack_require__.p + "static/img/stock04.519da72.png";
 
 /***/ }),
 
-/***/ "jxD6":
+/***/ "fa4i":
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
@@ -4884,13 +4902,6 @@ module.exports = __webpack_require__.p + "static/img/stock04.519da72.png";
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "static/img/stock02.64af7c8.png";
-
-/***/ }),
-
-/***/ "yZDo":
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
 
 /***/ }),
 

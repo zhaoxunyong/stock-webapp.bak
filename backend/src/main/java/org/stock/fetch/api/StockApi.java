@@ -11,6 +11,7 @@ import org.stock.fetch.api.dto.StockDailyTransactionsDto;
 import org.stock.fetch.api.dto.StockDataDto;
 import org.stock.fetch.api.dto.StockHistoryDto;
 import org.stock.fetch.api.dto.StockImportantNewsDto;
+import org.stock.fetch.api.dto.StockLineSettingsDto;
 import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.api.dto.StockMySelectedTypeDto;
 import org.stock.fetch.api.dto.StockMyStoreDto;
@@ -251,6 +252,11 @@ public interface StockApi {
         @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query")
     })
     public void fetchCurrentHistoryDaily(String stockId);
+
+
+    @ApiOperation(value="getAvailabelStockLineSettings", notes="getAvailabelStockLineSettings")
+    public List<StockLineSettingsDto> getAvailabelStockLineSettings();
+
     /*@ApiOperation(value="data", notes="data")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),

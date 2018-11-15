@@ -3,6 +3,7 @@ package com.stock.fetch;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.stock.StockApplication;
 import org.stock.fetch.constant.StockHistoryEnum;
 import org.stock.fetch.model.StockHistory;
+import org.stock.fetch.model.StockLineSettings;
 import org.stock.fetch.service.FetchService;
 import org.stock.fetch.service.StockService;
 import org.stock.utils.FileMd5Utils;
@@ -90,6 +92,12 @@ public class StockServiceTest {
 //        String startDate = "2015/01/01";
 //        String endDate = "2018/09/01";
         fetchService.fetchCurrentHistoryDaily(no);
+    }
+    
+    @Test
+    public void getAvailabelStockLineSettings() throws Exception {
+        List<StockLineSettings> rs = stockService.getAvailabelStockLineSettings();
+        System.out.println("rs--->"+rs);
     }
     
     @Test
