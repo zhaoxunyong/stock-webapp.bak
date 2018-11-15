@@ -21,13 +21,6 @@ webpackJsonp([1],{
 
 /***/ }),
 
-/***/ "6v35":
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-
 /***/ "8e4C":
 /***/ (function(module, exports) {
 
@@ -57,9 +50,9 @@ window.STOCK_CONFIG = {
         rsi12: 'blue',
         rsi100: 'red',
         // dmi
-        mdi: '#2E2EFE',
-        pdi: '#FE9A2E',
-        adx: '#B45F04',
+        diUp: 'orange',
+        diDown: 'blue',
+        adx: 'brown',
         // macd
         oscup: 'red', // red
         oscdown: '#30d94c', // green
@@ -1542,6 +1535,230 @@ function calculateMA(datas, dayCount) {
     }
     return result;
 }
+// 宝塔图
+function getTowerDatas(datas) {
+    var values = [];
+
+    var dayCount = 3;
+    var zftResult = [];
+    var hhtResult = [];
+    var towerOpenResult = [];
+    var towerCloseResult = [];
+
+    var openPriceTowerResult = [];
+    var lowMinTowerResult = [];
+    var lowMaxTowerResult = [];
+    var closePriceTowerResult = [];
+    for (var i = 0, len = datas.values.length; i < len; i++) {
+        // 涨跌态
+        var zft = -1;
+        // 红黑态
+        var hht = -1;
+        // 宝塔开
+        var towerOpen = 0;
+        // 宝塔收
+        var towerClose = 0;
+
+        // 开盘价宝塔
+        var openPriceTower = 0;
+        // 最高价宝塔
+        var lowMinTower = 0;
+        // 最低价宝塔
+        var lowMaxTower = 0;
+        // 收盘价宝塔
+        var closePriceTower = 0;
+
+        // 当天收盘价
+        var nowClose = datas.values[i][1];
+        if (i > 0) {
+            // 前一天收盘价
+            var previousClose = datas.values[i - 1][1];
+            // --- 涨跌态
+            if (nowClose >= previousClose) {
+                zft = 1;
+            } else {
+                zft = -1;
+            }
+            //--- 红黑态
+            // 前一天红黑态
+            var previousHht = hhtResult[i - 1];
+            // 获取前3天的最低价与最高价
+            var previousLows = [];
+            var previousHigh = [];
+            for (var j = 1; j <= dayCount && i >= j; j++) {
+                previousLows.push(datas.values[i - j][2]);
+                previousHigh.push(datas.values[i - j][3]);
+            }
+            // 求previousLows的最小值
+            // lowMinTower = Math.min(previousLows)
+            // https://aotu.io/notes/2016/04/14/js-reduce/index.html
+            lowMinTower = previousLows.reduce(function (pre, cur) {
+                return pre < cur ? pre : cur;
+            });
+
+            // 求previousHigh的最大值
+            // lowMaxTower = Math.max(previousHigh)
+            lowMaxTower = previousHigh.reduce(function (pre, cur) {
+                return pre > cur ? pre : cur;
+            });
+            if (previousHht >= 0 && nowClose >= lowMinTower || previousHht == -1 && nowClose >= lowMaxTower) {
+                hht = 1;
+            } else {
+                hht = -1;
+            }
+
+            // ---宝塔开
+            var previousTowerOpen = towerOpenResult[i - 1];
+            var previousTowerClose = towerCloseResult[i - 1];
+            if (previousHht == 1 && zft == -1 && nowClose < lowMinTower && previousTowerOpen > previousTowerClose || previousHht == -1 && zft == 1 && nowClose > lowMaxTower && previousTowerOpen < previousTowerClose) {
+                towerOpen = previousTowerOpen;
+            } else {
+                towerOpen = previousTowerClose;
+            }
+        }
+        // --- 宝塔收
+        towerClose = nowClose;
+
+        // --- 开盘价宝塔
+        if (hht == 1 && towerClose < towerOpen || hht == -1 && towerClose > towerOpen) {
+            openPriceTower = towerClose;
+        } else {
+            openPriceTower = towerOpen;
+        }
+        // --- 收盘价宝塔
+        // let closePriceTower = 0
+        if (openPriceTower == towerClose) {
+            closePriceTower = towerOpen;
+        } else {
+            closePriceTower = towerClose;
+        }
+
+        zftResult.push(zft);
+        hhtResult.push(hht);
+        towerOpenResult.push(towerOpen);
+        towerCloseResult.push(towerClose);
+        openPriceTowerResult.push(openPriceTower);
+        lowMinTowerResult.push(lowMinTower);
+        lowMaxTowerResult.push(lowMaxTower);
+        closePriceTowerResult.push(closePriceTower);
+        // opening, closing, lowest, highest, vol
+        // 開盤價_寶塔	收盤價_寶塔 最低價_寶塔	最高價_寶塔	
+        // values.push([openPriceTower, closePriceTower, lowMaxTower, lowMinTower, 0])
+        values.push([openPriceTower, closePriceTower, openPriceTower, closePriceTower, 0]);
+    }
+    return values;
+}
+// DMI
+function getDmis(datas) {
+    var dayCount = 14;
+
+    var trResult = [];
+    var dmUpResult = [];
+    var dmDownResult = [];
+    var dxResult = [];
+
+    var tr14Result = [];
+    var dmUp14Result = [];
+    var dmDown14Result = [];
+    var diUp14Result = [];
+    var diDown14Result = [];
+    var adx14Result = [];
+    // let adxr14Result = []
+
+    for (var i = 0, len = datas.values.length; i < len; i++) {
+        // TR
+        var tr = 0;
+        var dmUp = 0;
+        var dmDown = 0;
+        var dx = 0;
+
+        var tr14 = 0;
+        var dmUp14 = 0;
+        var dmDown14 = 0;
+        var diUp14 = 0;
+        var diDown14 = 0;
+        var adx14 = 0;
+        // let adxr14 = 0
+        if (i > 0) {
+            // 前一天收盘价
+            var lowest = datas.values[i][2];
+            var highest = datas.values[i][3];
+            var previousClose = datas.values[i - 1][1];
+            // TR值(True Range)波動值 = MAX(最高-最低, ABS(最高-昨收), ABS(最低-昨收))
+            var t1 = highest - lowest;
+            var t2 = Math.abs(highest - previousClose);
+            var t3 = Math.abs(lowest - previousClose);
+            tr = [t1, t2, t3].reduce(function (pre, cur) {
+                return pre > cur ? pre : cur;
+            });
+            // TR14 = 前一日TR14 × 13/14 + 今日TR × 1/14
+            var previousTr14 = tr14Result[i - 1];
+            tr14 = previousTr14 * ((dayCount - 1) / dayCount) + tr * (1 / dayCount);
+            // +DM = 最高 - 昨高
+            // -DM = 昨低 - 最低
+            // If +DM > -DM And +DM > 0 Then +DM = +DM Else +DM = 0
+            // If +DM < -DM And -DM > 0 Then -DM = -DM Else -DM = 0
+            var previousLowest = datas.values[i - 1][2];
+            var previousHigh = datas.values[i - 1][3];
+            dmUp = highest - previousHigh;
+            dmDown = previousLowest - lowest;
+            if (!(dmUp > dmDown && dmUp > 0)) {
+                dmUp = 0;
+            }
+            if (!(dmUp < dmDown && dmDown > 0)) {
+                dmDown = 0;
+            }
+            // +DM14 = 前一日+DM14 × 13/14 + +DM × 1/14
+            // -DM14 = 前一日-DM14 × 13/14 + -DM × 1/14
+            var previousDmUp14 = dmUp14Result[i - 1];
+            var previousDmDown14 = dmDown14Result[i - 1];
+            var _dmUp = previousDmUp14 * ((dayCount - 1) / dayCount) + dmUp * (1 / dayCount);
+            var _dmDown = previousDmDown14 * ((dayCount - 1) / dayCount) + dmDown * (1 / dayCount);
+
+            // DI
+            // +DI14 = +DM14 ÷ TR14 × 100
+            // -DI14 = -DM14 ÷ TR14 × 100
+            diUp14 = _dmUp / tr14 * 100;
+            diDown14 = _dmDown / tr14 * 100;
+
+            // DX
+            // DX = ABS(+DI14 - -DI14 ) ÷ (+DI14 + -DI14) × 100
+            if (diUp14 + diDown14 > 0) {
+                dx = Math.abs(diUp14 - diDown14) / (diUp14 + diDown14) * 100;
+            } else {
+                dx = 0;
+            }
+
+            // ADX14
+            // ADX14 = 前一日ADX14 × 13/14 + 今日DX × 1/14
+            var previousAdx14 = adx14Result[i - 1];
+            adx14 = previousAdx14 * ((dayCount - 1) / dayCount) + dx * (1 / dayCount);
+
+            // ADXR14(没用到)
+            // (当日ADX14 + 第前14日ADX14) / 2
+            // let before14Adx = (i-dayCount) >=0 ? adx14Result[i-dayCount] : 0
+            // adxr14 = (adx14 + before14Adx) / 2
+        }
+
+        trResult.push(tr);
+        dmUpResult.push(dmUp);
+        dmDownResult.push(dmDown);
+        dxResult.push(dx);
+
+        tr14Result.push(tr14);
+        dmUp14Result.push(dmUp14);
+        dmDown14Result.push(dmDown14);
+        diUp14Result.push(diUp14);
+        diDown14Result.push(diDown14);
+        adx14Result.push(adx14);
+        // adxr14Result.push(adxr14)
+    }
+    return {
+        adx14: adx14Result,
+        diUp14: diUp14Result,
+        diDown14: diDown14Result
+    };
+}
 
 // 单独抽出收盘价
 function getCloses(datas) {
@@ -1931,6 +2148,147 @@ function getData(datasets, kineType) {
         }]
     };
 }
+// CONCATENATED MODULE: ./src/stock/stockTower.js
+// https://github.com/apache/incubator-echarts/issues/6583
+// http://gallery.echartsjs.com/editor.html?c=candlestick-sh
+// https://github.com/anandanand84/technicalindicators/tree/v1.1.13
+
+
+
+
+function stockTower_getData(datasets, kineType) {
+    var datas = splitData(datasets);
+    return {
+        // 提示框浮层的位置
+        animation: false,
+        tooltip: {
+            trigger: 'axis',
+            backgroundColor: 'black',
+            position: [0, 0],
+            formatter: function formatter(params) {
+                var v = '<font color="' + STOCK_CONFIG.col.rsi12 + '">\u5BF6\u5854:</font> ' + params[0].data[2];
+                $("#tooltipId6" + kineType).html(v);
+                return "";
+            },
+            axisPointer: {
+                type: 'cross',
+                label: {
+                    show: false,
+                    color: '#ff0'
+                },
+                crossStyle: {
+                    // color: '#1e90ff',
+                    width: 1,
+                    type: 'solid'
+                }
+            }
+        },
+        grid: [{
+            top: '8%',
+            left: '9%',
+            right: '0%',
+            height: '80%'
+        }],
+        // 坐标轴指示器（axisPointer）的全局公用设置
+        axisPointer: {
+            link: {
+                // 所有x坐标一起联动
+                xAxisIndex: 'all'
+            },
+            // mouse动时坐标处的文字
+            label: {
+                backgroundColor: '#777'
+            }
+            // triggerOn:'click'
+        },
+        // 上下两个图表的x轴数据
+        xAxis: [{
+            type: 'category',
+            data: getSlice(datas.categoryData),
+            // 坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
+            boundaryGap: true,
+            // 坐标文字内容
+            /* axisLabel: {
+                onZero: false,
+                // 坐标文字相关样式
+                textStyle: {
+                    fontSize: '12px',
+                    color: 'green'
+                } ,
+                formatter: function (value) {
+                    return dateUtils.formatTime('MM/dd', value)
+                }
+            }, */
+            // 坐标刻度
+            axisTick: {
+                show: false
+            },
+            // 坐标文字内容
+            axisLabel: {
+                show: false
+            }
+        }],
+        yAxis: [{
+            /* axisLabel: {
+                lineStyle:{  
+                    color:'red',  
+                },
+                color: STOCK_CONFIG.col.y
+            }, */
+            scale: true,
+            // position: 'right',,
+            splitNumber: 2,
+            // splitArea: {
+            //     show: false
+            // },
+            splitLine: {
+                show: false,
+                lineStyle: {
+                    color: ['#888'],
+                    type: 'dotted'
+                }
+            },
+            axisLabel: {
+                onZero: false
+            }
+        }],
+        dataZoom: [{
+            type: 'inside',
+            disabled: true,
+            start: STOCK_CONFIG.st,
+            end: STOCK_CONFIG.ed
+        }, {
+            show: false,
+            type: 'slider',
+            // y: '94%',
+            start: STOCK_CONFIG.st,
+            end: STOCK_CONFIG.ed
+        }],
+        series: [{
+            type: 'k', //Candlestick 
+            name: '寶塔圖',
+            id: 'tower',
+            // braGap用于设置同一个类目内的柱形之间的间距
+            // barGap: '1%',
+            // barCategoryGap则用于设置不同类目之间的间距
+            barCategoryGap: STOCK_CONFIG.barCategoryGap,
+            barWidth: STOCK_CONFIG.barWidth,
+            data: getSlice(getTowerDatas(datas)),
+            smooth: true,
+            showSymbol: false,
+            symbol: "none",
+            itemStyle: {
+                normal: {
+                    width: 1,
+                    color: STOCK_CONFIG.col.up, //阳线填充色
+                    color0: STOCK_CONFIG.col.down,
+                    borderColor: STOCK_CONFIG.col.up, //阳线边框色
+                    borderColor0: STOCK_CONFIG.col.down
+                }
+            }
+        }]
+    };
+}
 // CONCATENATED MODULE: ./src/stock/stockVol.js
 // https://github.com/apache/incubator-echarts/issues/6583
 // http://gallery.echartsjs.com/editor.html?c=candlestick-sh
@@ -2283,24 +2641,27 @@ function stockRsi_getData(datasets, kineType) {
 
 
 
-
-var ADX = __webpack_require__("k4Xa").ADX;
+// let ADX = require('technicalindicators').ADX
 
 function stockDmi_getData(datasets, kineType) {
     var kDisplay = kineType == 1 ? "月" : "日";
     var datas = splitData(datasets);
-    // DMI
-    var inputDMI = {
-        close: getCloses(datas),
-        high: getHighs(datas),
-        low: getLows(datas),
-        period: 14
-    };
-    var dmis = ADX.calculate(inputDMI);
+    /* // DMI
+    let inputDMI = {
+        close: stockUtils.getCloses(datas),
+        high: stockUtils.getHighs(datas),
+        low: stockUtils.getLows(datas),
+        period : 14
+    }
+    let dmis = ADX.calculate(inputDMI)
+     let adxs = stockUtils.getDmiAdxs(dmis)
+    let mdis = stockUtils.getDmiMdis(dmis)
+    let pdis = stockUtils.getDmipdis(dmis) */
 
-    var adxs = getDmiAdxs(dmis);
-    var mdis = getDmiMdis(dmis);
-    var pdis = getDmipdis(dmis);
+    var dmiResult = getDmis(datas);
+    var adxs = dmiResult.adx14;
+    var diUps = dmiResult.diUp14;
+    var diDowns = dmiResult.diDown14;
 
     return {
         // backgroundColor: '#21202D',
@@ -2323,7 +2684,7 @@ function stockDmi_getData(datasets, kineType) {
             position: [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function formatter(params) {
-                var v = '<font color="' + STOCK_CONFIG.col.mdi + '">MDI:</font> ' + params[0].value.toFixed(1) + '\n                <font color="' + STOCK_CONFIG.col.pdi + '">PDI:</font> ' + params[1].value.toFixed(1) + '\n                <font color="' + STOCK_CONFIG.col.adx + '">ADX:</font> ' + params[2].value.toFixed(1);
+                var v = "<font color=\"" + STOCK_CONFIG.col.diUp + "\">+DI14:</font> " + params[0].value.toFixed(1) + "\n                <font color=\"" + STOCK_CONFIG.col.diDown + "\">-DI14:</font> " + params[1].value.toFixed(1) + "\n                <font color=\"" + STOCK_CONFIG.col.adx + "\">ADX14:</font> " + params[2].value.toFixed(1);
                 $("#tooltipId4" + kineType).html(v);
                 return "";
             },
@@ -2420,33 +2781,33 @@ function stockDmi_getData(datasets, kineType) {
             end: STOCK_CONFIG.ed
         }],
         series: [{
-            name: 'MDI',
+            name: '+DI14',
             type: 'line',
-            data: getSlice(mdis),
+            data: getSlice(diUps),
             smooth: true,
             showSymbol: false,
             symbol: "none",
             lineStyle: {
                 normal: {
                     width: 1,
-                    color: STOCK_CONFIG.col.mdi
+                    color: STOCK_CONFIG.col.diUp
                 }
             }
         }, {
-            name: 'PDI',
+            name: '-DI14',
             type: 'line',
-            data: getSlice(pdis),
+            data: getSlice(diDowns),
             smooth: true,
             showSymbol: false,
             symbol: "none",
             lineStyle: {
                 normal: {
                     width: 1,
-                    color: STOCK_CONFIG.col.pdi
+                    color: STOCK_CONFIG.col.diDown
                 }
             }
         }, {
-            name: 'ADX',
+            name: 'ADX14',
             type: 'line',
             data: getSlice(adxs),
             smooth: true,
@@ -2501,8 +2862,8 @@ function DIF(points) {
   return DIFs;
 }
 
-// DEM = DEA
-function DEA(points, N) {
+// DEM = MACD = DEA
+function MACD(points, N) {
   if (points == null || points.length <= 0) return new Array();
   var dif = DIF(points);
   var result = new Array();
@@ -2516,20 +2877,20 @@ function DEA(points, N) {
   return result;
 }
 
-// BAR = OSC
-function BAR(points) {
+// BAR = OSC  OSC=DIF-MACD
+function OSC(points) {
   if (points == null || points.length <= 0) return new Array();
   var dif = DIF(points);
-  var dea = DEA(points, 9);
-  var bar = new Array();
+  var macd = MACD(points, 9);
+  var osc = new Array();
   for (var i = 0; i < points.length; i++) {
-    bar.push(2 * formartNumber(dif[i] - dea[i]));
+    osc.push(formartNumber(dif[i] - macd[i]));
   }
-  return bar;
+  return osc;
 }
 
 function formartNumber(n) {
-  return Number(n.toFixed(2));
+  return Number(n.toFixed(1));
 }
 
 
@@ -2546,8 +2907,8 @@ function stockMacd_getData(datasets, kineType) {
     var kDisplay = kineType == 1 ? "月" : "日";
     var datas = splitData(datasets);
     var difs = DIF(datas.values); // DIF
-    var macds = DEA(datas.values, 9); // 也就是DEM或MACD
-    var oscs = BAR(datas.values); // 也就是OSC
+    var macds = MACD(datas.values, 9); // 也就是DEM或MACD
+    var oscs = OSC(datas.values); // 也就是OSC
 
     return {
         // backgroundColor: '#21202D',
@@ -2753,10 +3114,16 @@ function stockMacd_getData(datasets, kineType) {
 //
 //
 //
+//
+//
+//
+//
+//
 
 // https://github.com/chovy/techan-vue/blob/master/src/components/Hello.vue
 // import MainLayout from '../layouts/Main.vue'
 // import Alert from '../components/alert.vue'
+
 
 
 
@@ -2781,6 +3148,7 @@ function stockMacd_getData(datasets, kineType) {
       resize: true,
       intervalid1: null,
       rawHtml1: '',
+      rawHtml6: '',
       rawHtml2: '',
       rawHtml3: '',
       rawHtml4: '',
@@ -2792,11 +3160,13 @@ function stockMacd_getData(datasets, kineType) {
   mounted: function mounted() {
     this.rawHtml1 = '\u6536: \u958B: \u9AD8: \u4F4E:<br/>\n                ' + (this.kineType == 1 ? '月' : '日') + '\u7DDA\n                <font color="' + STOCK_CONFIG.col.m5 + '">M5: </font> \n                <font color="' + STOCK_CONFIG.col.m10 + '">M10: </font> \n                <font color="' + STOCK_CONFIG.col.m20 + '">M20: </font> \n                <font color="' + STOCK_CONFIG.col.m60 + '">M60: </font>';
 
+    this.rawHtml6 = '<font color="' + STOCK_CONFIG.col.rsi12 + '">\u5BF6\u5854:</font>';
+
     this.rawHtml2 = '<font color="' + STOCK_CONFIG.col.volup + '">\u6210\u4EA4\u91CF: </font>';
 
     this.rawHtml3 = '<font color="' + STOCK_CONFIG.col.rsi12 + '">RSI-12: </font>\n                <font color="' + STOCK_CONFIG.col.rsi100 + '">RSI-100: </font>';
 
-    this.rawHtml4 = '<font color="' + STOCK_CONFIG.col.mdi + '">MDI: </font>\n                <font color="' + STOCK_CONFIG.col.pdi + '">PDI: </font>\n                <font color="' + STOCK_CONFIG.col.adx + '">ADX: </font>';
+    this.rawHtml4 = '<font color="' + STOCK_CONFIG.col.diUp + '">+DI14: </font>\n                <font color="' + STOCK_CONFIG.col.diDown + '">-DI14: </font>\n                <font color="' + STOCK_CONFIG.col.adx + '">ADX14: </font>';
 
     this.rawHtml5 = '<font color="' + STOCK_CONFIG.col.oscup + '">OSC: </font>\n                <font color="' + STOCK_CONFIG.col.dif + '">DIF: </font>\n                <font color="' + STOCK_CONFIG.col.macd + '">MACD: </font>';
     this.init();
@@ -2814,26 +3184,19 @@ function stockMacd_getData(datasets, kineType) {
     openNewKline: function openNewKline(param) {
       // console.log(param)
     },
-
-    /* getRecentDate() {
-      var now = new Date();
-      var newDate = dateAdd("d", -RECENT_DATE, now);
-      return {
-        startDate: newDate.toLocaleDateString(),
-        endDate: new Date().toLocaleDateString()
-      };
-    }, */
     init: function init() {
+      // chart對象沒有其他用處，只作是否加載判斷
       if (this.chart != null) {
         return;
       }
       var chart1 = this.$echarts.init(document.getElementById('myChart1' + this.kineType));
+      var chart6 = this.$echarts.init(document.getElementById('myChart6' + this.kineType));
       var chart2 = this.$echarts.init(document.getElementById('myChart2' + this.kineType));
       var chart3 = this.$echarts.init(document.getElementById('myChart3' + this.kineType));
       var chart4 = this.$echarts.init(document.getElementById('myChart4' + this.kineType));
       var chart5 = this.$echarts.init(document.getElementById('myChart5' + this.kineType));
-      this.setOptions(chart1, chart2, chart3, chart4, chart5);
-      this.$echarts.connect([chart1, chart2, chart3, chart4, chart5]);
+      this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5);
+      this.$echarts.connect([chart1, chart6, chart2, chart3, chart4, chart5]);
       /* setTimeout(function() {
         window.onresize = function() {
           chart1.resize();
@@ -2843,27 +3206,30 @@ function stockMacd_getData(datasets, kineType) {
           chart5.resize();
         };
       }, 200); */
-      var _this = this;
-      if (_this.intervalid1 == null) {
-        _this.intervalid1 = setInterval(function () {
+      /* let _this = this
+      if(_this.intervalid1 == null) {
+        _this.intervalid1 = setInterval(function() {
           if (_this.kineType == 0) {
             // 重新抓取数据
-            var url = '/api/stock/fetchCurrentHistoryDaily?stockId=' + _this.stockId;
-            _this.$api.post(url, null, function (rs) {
-              _this.setOptions(chart1, chart2, chart3, chart4, chart5);
-            });
+            let url = `/api/stock/fetchCurrentHistoryDaily?stockId=${
+              _this.stockId
+            }`
+            _this.$api.post(url, null, rs => {
+              _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
+            })
           } else {
-            _this.setOptions(chart1, chart2, chart3, chart4, chart5);
+            _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
           }
-        }, 10000); // ms
-      }
+        }, 10000) // ms
+      } */
     },
-    setOptions: function setOptions(chart1, chart2, chart3, chart4, chart5) {
-      var _this2 = this;
+    setOptions: function setOptions(chart1, chart6, chart2, chart3, chart4, chart5) {
+      var _this = this;
 
       // this.stockCandle = null
       var this_ = this;
       var data1s = [];
+      var data6s = [];
       var data2s = [];
       var data3s = [];
       var data4s = [];
@@ -2892,13 +3258,14 @@ function stockMacd_getData(datasets, kineType) {
               // let stockHistorys = [rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]
               // console.log(stockHistorys)
               data1s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
+              data6s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
               data2s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
               data3s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
               data4s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
               data5s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
             }
           } else {
-            this_.$alerts.error('找不到數據:' + _this2.stockId);
+            this_.$alerts.error('找不到數據:' + _this.stockId);
             // alert("找不到數據:"+this.stockId)
           }
           // return stockCandle(datas, this.kineType)
@@ -2907,11 +3274,12 @@ function stockMacd_getData(datasets, kineType) {
           // chart3.hideLoading();
           // chart4.hideLoading();
           // chart5.hideLoading();
-          chart1.setOption(getData(data1s, _this2.kineType));
-          chart2.setOption(stockVol_getData(data2s, _this2.kineType));
-          chart3.setOption(stockRsi_getData(data3s, _this2.kineType));
-          chart4.setOption(stockDmi_getData(data4s, _this2.kineType));
-          chart5.setOption(stockMacd_getData(data5s, _this2.kineType));
+          chart1.setOption(getData(data1s, _this.kineType));
+          chart6.setOption(stockTower_getData(data6s, _this.kineType));
+          chart2.setOption(stockVol_getData(data2s, _this.kineType));
+          chart3.setOption(stockRsi_getData(data3s, _this.kineType));
+          chart4.setOption(stockDmi_getData(data4s, _this.kineType));
+          chart5.setOption(stockMacd_getData(data5s, _this.kineType));
 
           /* chart1.on('click', function (params) {
             console.log('params.componentType--->'+params.componentType)
@@ -2936,14 +3304,14 @@ function stockMacd_getData(datasets, kineType) {
     }
   }
 });
-// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-9ab5adfc","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/kCandle.vue
-var kCandle_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId1'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml1)}}),_vm._v(" "),_c('div',{staticClass:"echarts1",attrs:{"id":'myChart1'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId2'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml2)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart2'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId3'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml3)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart3'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId4'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml4)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart4'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId5'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml5)}}),_vm._v(" "),_c('div',{staticClass:"echarts3",attrs:{"id":'myChart5'+_vm.kineType}})])])}
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-111153f5","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/kCandle.vue
+var kCandle_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId1'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml1)}}),_vm._v(" "),_c('div',{staticClass:"echarts1",attrs:{"id":'myChart1'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId6'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml6)}}),_vm._v(" "),_c('div',{staticClass:"echarts1",attrs:{"id":'myChart6'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId2'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml2)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart2'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId3'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml3)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart3'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId4'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml4)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart4'+_vm.kineType}})]),_vm._v(" "),_c('div',[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId5'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml5)}}),_vm._v(" "),_c('div',{staticClass:"echarts3",attrs:{"id":'myChart5'+_vm.kineType}})])])}
 var kCandle_staticRenderFns = []
 var kCandle_esExports = { render: kCandle_render, staticRenderFns: kCandle_staticRenderFns }
 /* harmony default export */ var page_kCandle = (kCandle_esExports);
 // CONCATENATED MODULE: ./src/page/kCandle.vue
 function kCandle_injectStyle (ssrContext) {
-  __webpack_require__("6v35")
+  __webpack_require__("jxD6")
 }
 var kCandle_normalizeComponent = __webpack_require__("VU/8")
 /* script */
@@ -2956,7 +3324,7 @@ var kCandle___vue_template_functional__ = false
 /* styles */
 var kCandle___vue_styles__ = kCandle_injectStyle
 /* scopeId */
-var kCandle___vue_scopeId__ = "data-v-9ab5adfc"
+var kCandle___vue_scopeId__ = "data-v-111153f5"
 /* moduleIdentifier (server only) */
 var kCandle___vue_module_identifier__ = null
 var kCandle_Component = kCandle_normalizeComponent(
@@ -4464,6 +4832,13 @@ module.exports = __webpack_require__.p + "static/img/stock04.519da72.png";
 /***/ }),
 
 /***/ "eF9M":
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ "jxD6":
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
