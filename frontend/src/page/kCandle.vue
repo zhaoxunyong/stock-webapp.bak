@@ -77,7 +77,19 @@ export default {
         // alert(sortOrders)
         let url ='/api/stock/updateStockLineSettingsOrder?orders='+encodeURI(sortOrders.join(","))
         this_.$api.post(url, null, function(){
+          // this_.chartInit()
+          // window.location.assign(window.location.href)
           this_.$alerts.success('調整顯示順序成功！')
+          // this_.$router.push(this_.$route.path)
+          // this_.$forceUpdate()
+          window.location.reload()
+          /* let currentPath = this_.$route.path
+          this_.$router.go({
+            path: currentPath,
+            query: {
+                t: + new Date()
+            }
+          }) */
         })
       }
     })
@@ -106,6 +118,10 @@ export default {
   methods: {
     openNewKline(param) {
       // console.log(param)
+    },
+    allinit() {
+      this.init()
+      this.chartInit()
     },
     init() {
       this.rawHtml1 = `收: 開: 高: 低:<br/>
@@ -149,6 +165,7 @@ export default {
     },
     chartInit() {
       let chartArray = []
+      let chartObj = []
       for(let i=0;i<this.items.length;i++) {
         let type = this.items[i].type
         let memo = this.items[i].memo
@@ -159,13 +176,14 @@ export default {
         }
         let el = document.getElementById('myChart' + type+ '' + this.kineType)
         let chart = this.$echarts.init(el)
+        chartObj.push(chart)
         chartArray.push({
           type: type,
           chart: chart
         })
       }
       this.setOptions(chartArray)
-      this.$echarts.connect(chartArray)
+      this.$echarts.connect(chartObj)
 
       /* setTimeout(function() {
         window.onresize = function() {
@@ -323,10 +341,10 @@ export default {
   },
   // 从stockmydata.vue中的第一次之后的请求
   watch: {
+    // '$route': 'allinit',
     $route(to, from) {
       // this.getData()
-      this.init()
-      this.chartInit()
+      this.allinit()
       //this.$router.push('/content/' + this.getStatus(this.$route.path))
     }
   }

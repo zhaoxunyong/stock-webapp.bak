@@ -205,8 +205,12 @@ export default {
     getData () {
       this.$api.get('/api/stock/getStockMyDatasByStore', null, r => {
         this.list = r
-        this.firstStockId = r[0].stockId
-        // let stockId = this.$route.params.stockId == undefined || this.$route.params.stockId == 0 ? this.firstStockId : this.$route.params.stockId
+        if(this.$route.params.stockId != null && this.$route.params.stockId.length > 10) { // 不是正常的id长度
+          this.firstStockId = this.$route.params.stockId
+        } else {
+          this.firstStockId = r[0].stockId
+        }
+        // let stockId =  ? this.firstStockId : this.$route.params.stockId
         //改变路由的地址
         this.push('/content/' + this.firstStockId+'/1')
       })
