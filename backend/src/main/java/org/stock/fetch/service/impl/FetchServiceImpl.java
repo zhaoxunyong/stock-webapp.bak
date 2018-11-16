@@ -386,7 +386,7 @@ public class FetchServiceImpl implements FetchService {
                     for(StockNews news : stockNewses) {
                         if(news.getNewsDate().getTime() <= newDate.getTime()) {
                             // 用system.out.println，可以在nohup.out文件中查看
-                            logger.info("fetchLatestNews: "+stockData.getNo()+"-"+stockData.getCompany()+"已经导到了"+DatesUtils.YYMMDDHHMMSS.toString(newDate)+"，无需再导入!");
+                            // logger.info("fetchLatestNews: "+stockData.getNo()+"-"+stockData.getCompany()+"已经导到了"+DatesUtils.YYMMDDHHMMSS.toString(newDate)+"，无需再导入!");
                             return ;
                         }
                     }
@@ -525,7 +525,7 @@ public class FetchServiceImpl implements FetchService {
                 if(stockImportantNewses!=null && !stockImportantNewses.isEmpty()) {
                     for(StockImportantNews importantNews : stockImportantNewses) {
                         if(importantNews != null && importantNews.getNewsDate()!=null && importantNews.getNewsDate().getTime() <= newDate.getTime()) {
-                            logger.info("stockImportantNews: 已经导到了"+newDate+"，无需再导入!");
+                            // logger.info("stockImportantNews: 已经导到了"+newDate+"，无需再导入!");
 //                            break labelA;
                             return;
                         }
