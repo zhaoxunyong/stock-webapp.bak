@@ -104,6 +104,7 @@ export default {
         // this_.items = [1, 2, 3, 4, 5, 6]
         
       }); */
+      // 此处需要同步加载数据，否则显示不了
       $.ajax({
           url: url,
           type: "get",
