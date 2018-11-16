@@ -74,13 +74,6 @@ window.STOCK_CONFIG = {
 
 /***/ }),
 
-/***/ "A9Mc":
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-
 /***/ "CqWP":
 /***/ (function(module, exports) {
 
@@ -3106,6 +3099,7 @@ function stockMacd_getData(datasets, kineType) {
 //
 //
 //
+//
 
 // https://github.com/chovy/techan-vue/blob/master/src/components/Hello.vue
 // import MainLayout from '../layouts/Main.vue'
@@ -3366,14 +3360,14 @@ function stockMacd_getData(datasets, kineType) {
     }
   }
 });
-// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-8dc9ef96","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/kCandle.vue
-var kCandle_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":'stockLineItem'+_vm.kineType}},_vm._l((_vm.items),function(item){return _c('div',{class:item.type == 1 ? 'move1-item' : 'move-item'},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId'+item.type+_vm.kineType,"charttype":item.type,"v-html":'rawHtml'+item.type}}),_vm._v(" "),_c('div',{class:'echarts'+item.type,attrs:{"id":'myChart'+item.type+_vm.kineType,"data":item.type}})])}))}
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-09191522","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/kCandle.vue
+var kCandle_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":'stockLineItem'+_vm.kineType}},_vm._l((_vm.items),function(item){return _c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId'+item.type+_vm.kineType,"charttype":item.type,"v-html":'rawHtml'+item.type}}),_vm._v(" "),_c('div',{class:'echarts'+item.type,attrs:{"id":'myChart'+item.type+_vm.kineType,"data":item.type}})])}))}
 var kCandle_staticRenderFns = []
 var kCandle_esExports = { render: kCandle_render, staticRenderFns: kCandle_staticRenderFns }
 /* harmony default export */ var page_kCandle = (kCandle_esExports);
 // CONCATENATED MODULE: ./src/page/kCandle.vue
 function kCandle_injectStyle (ssrContext) {
-  __webpack_require__("A9Mc")
+  __webpack_require__("WpAK")
 }
 var kCandle_normalizeComponent = __webpack_require__("VU/8")
 /* script */
@@ -3386,7 +3380,7 @@ var kCandle___vue_template_functional__ = false
 /* styles */
 var kCandle___vue_styles__ = kCandle_injectStyle
 /* scopeId */
-var kCandle___vue_scopeId__ = "data-v-8dc9ef96"
+var kCandle___vue_scopeId__ = "data-v-09191522"
 /* moduleIdentifier (server only) */
 var kCandle___vue_module_identifier__ = null
 var kCandle_Component = kCandle_normalizeComponent(
@@ -4883,6 +4877,13 @@ module.exports = __webpack_require__.p + "static/img/stock04.519da72.png";
 /***/ }),
 
 /***/ "UFhp":
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
+/***/ "WpAK":
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
