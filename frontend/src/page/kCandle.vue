@@ -77,22 +77,6 @@ export default {
                 
     this.rawHtml6 = `<font color="${STOCK_CONFIG.col.rsi12}">寶塔:</font>`
     this.init()
-  
-    let url = '/api/stock/getAvailabelStockLineSettings'
-    this.$api.get(url, null, rs => {
-      // this.items = rs
-    });
-
-    let el = document.getElementById('stockLineItem'+this.kineType)
-    Sortable.create(el, {
-      handle: '.move-item',
-      animation: 150,
-      onUpdate: function (evt){
-        var item = evt.item; // the current dragged HTMLElement
-        // alert(item.outerHTML)
-        
-      }
-    })
   },
   created() {
     // this.getRecentDate()
@@ -107,30 +91,40 @@ export default {
       // console.log(param)
     },
     init() {
-      // chart對象沒有其他用處，只作是否加載判斷
-      if (this.chart != null) {
-        return
-      }
-      let chart1 = this.$echarts.init(
-        document.getElementById('myChart1' + this.kineType)
-      )
-      let chart2 = this.$echarts.init(
-        document.getElementById('myChart2' + this.kineType)
-      )
-      let chart3 = this.$echarts.init(
-        document.getElementById('myChart3' + this.kineType)
-      )
-      let chart4 = this.$echarts.init(
-        document.getElementById('myChart4' + this.kineType)
-      )
-      let chart5 = this.$echarts.init(
-        document.getElementById('myChart5' + this.kineType)
-      )
-      let chart6 = this.$echarts.init(
-        document.getElementById('myChart6' + this.kineType)
-      )
-      this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
-      this.$echarts.connect([chart1, chart6, chart2, chart3, chart4, chart5])
+      let this_ = this
+      let url = '/api/stock/getAvailabelStockLineSettings'
+      this_.$api.get(url, null, rs => {
+        // this.items = rs
+        let chartArray = []
+        for(let i=0;i<rs.length;i++) {
+          let type = rs[i].type
+          let memo = rs[i].memo
+          console.log("rs--->"+type+"/"+memo)
+          // chart對象沒有其他用處，只作是否加載判斷
+          if (this_.chart != null) {
+            return
+          }
+          let el = document.getElementById('myChart' + type+ '' + this_.kineType)
+          let chart = this_.$echarts.init(el)
+          chartArray.push({
+            type: type,
+            chart: chart
+          })
+        }
+        this_.setOptions(chartArray)
+        this_.$echarts.connect(chartArray)
+      });
+
+      let el = document.getElementById('stockLineItem'+this.kineType)
+      Sortable.create(el, {
+        handle: '.move-item',
+        animation: 150,
+        onUpdate: function (evt){
+          var item = evt.item; // the current dragged HTMLElement
+          // alert(item.outerHTML)
+          
+        }
+      })
       /* setTimeout(function() {
         window.onresize = function() {
           chart1.resize();
@@ -140,7 +134,7 @@ export default {
           chart5.resize();
         };
       }, 200); */
-      let _this = this
+      /* let _this = this
       if(_this.intervalid1 == null) {
         _this.intervalid1 = setInterval(function() {
           if (_this.kineType == 0) {
@@ -155,9 +149,10 @@ export default {
             _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
           }
         }, 10000) // ms
-      }
+      } */
     },
-    setOptions(chart1, chart6, chart2, chart3, chart4, chart5) {
+    setOptions(chartArray) {
+      // chart1, chart6, chart2, chart3, chart4, chart5
       // this.stockCandle = null
       let this_ = this
       let data1s = []
@@ -169,16 +164,16 @@ export default {
       // let dateRange = this.getRecentDate()
       // let dateRange = this.getRecentDate()
       // this.stockId = '402396117293928448'
-      this.stockId = this.$route.params.stockId
+      this_.stockId = this_.$route.params.stockId
       if (
-        this.stockId != undefined &&
-        this.stockId != '' &&
-        this.stockId != 0
+        this_.stockId != undefined &&
+        this_.stockId != '' &&
+        this_.stockId != 0
       ) {
         // type 0: 日 1: 周 2: 月
         // let url = `/api/stock/selectHistory?stockId=${this.stockId}&type=${kineType}&startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`
         let url = `/api/stock/selectLastDayHistory?stockId=${this.stockId}`
-        if (this.kineType == 1) {
+        if (this_.kineType == 1) {
           url = `/api/stock/selectLastWeekHistory?stockId=${this.stockId}`
         }
         // alert("kDay url--->"+url)
@@ -187,7 +182,7 @@ export default {
         // chart3.showLoading();
         // chart4.showLoading();
         // chart5.showLoading();
-        this.$api.get(url, null, rs => {
+        this_.$api.get(url, null, rs => {
           if (rs != undefined && rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
               // alert(this.stockId+"--->"+rs[i].date+"--->"+rs[i].opening+"--->"+rs[i].highest+"--->"+rs[i].lowest+"--->"+rs[i].closing+"--->"+rs[i].vol)
@@ -243,7 +238,7 @@ export default {
               ])
             }
           } else {
-            this_.$alerts.error('找不到數據:' + this.stockId)
+            this_.$alerts.error('找不到數據:' + this_.stockId)
             // alert("找不到數據:"+this.stockId)
           }
           // return stockCandle(datas, this.kineType)
@@ -252,12 +247,32 @@ export default {
           // chart3.hideLoading();
           // chart4.hideLoading();
           // chart5.hideLoading();
-          chart1.setOption(stockCandle(data1s, this.kineType))
-          chart2.setOption(stockVol(data2s, this.kineType))
-          chart3.setOption(stockRsi(data3s, this.kineType))
-          chart4.setOption(stockDmi(data4s, this.kineType))
-          chart5.setOption(stockMacd(data5s, this.kineType))
-          chart6.setOption(stockTower(data6s, this.kineType))
+          for(let j=0;j<chartArray.length;j++) {
+            let chartJson = chartArray[j]
+            let chartType = chartJson.type
+            let chartObj = chartJson.chart
+            switch(chartType) {
+              case 1:
+              default:
+                chartObj.setOption(stockCandle(data1s, this_.kineType))
+                break;
+              case 2:
+                chartObj.setOption(stockVol(data2s, this_.kineType))
+                break;
+              case 3:
+                chartObj.setOption(stockRsi(data3s, this_.kineType))
+                break;
+              case 4:
+                chartObj.setOption(stockDmi(data4s, this_.kineType))
+                break;
+              case 5:
+                chartObj.setOption(stockMacd(data5s, this_.kineType))
+                break;
+              case 6:
+                chartObj.setOption(stockTower(data6s, this_.kineType))
+                break;
+            }
+          }
 
           /* chart1.on('click', function (params) {
             console.log('params.componentType--->'+params.componentType)
