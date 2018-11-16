@@ -61,6 +61,38 @@ export default {
  */
   mounted() {
     this.chartInit()
+    let this_ = this
+    let el = document.getElementById('stockLineItem'+this.kineType)
+    Sortable.create(el, {
+      handle: '.move-item',
+      animation: 150,
+      onUpdate: function (evt){
+        var item = evt.item; // the current dragged HTMLElement
+        // alert(item.outerHTML)
+        let sortOrders = []
+        $('#stockLineItem'+this_.kineType).find('.tooltips').each(function() {
+          sortOrders.push($(this).attr("charttype"))
+        });
+        // alert(sortOrders)
+        let url ='/api/stock/updateStockLineSettingsOrder?orders='+encodeURI(sortOrders.join(","))
+        this_.$api.post(url, null, function(){
+          this_.$alerts.success('調整顯示順序成功！')
+        })
+      }
+    })
+    if(this.intervalid1 == null) {
+      this.intervalid1 = setInterval(function() {
+        if (this_.kineType == 0) {
+          // 重新抓取数据
+          let url = `/api/stock/fetchCurrentHistoryDaily?stockId=${this_.stockId}`
+          this_.$api.post(url, null, rs => {
+            this_.chartInit()
+          })
+        } else {
+          this_.chartInit()
+        }
+      }, 10000) // ms
+    }
   },
   created() {
     this.init()
@@ -134,25 +166,6 @@ export default {
       this.setOptions(chartArray)
       this.$echarts.connect(chartArray)
 
-      let this_ = this
-      let el = document.getElementById('stockLineItem'+this.kineType)
-      Sortable.create(el, {
-        handle: '.move-item',
-        animation: 150,
-        onUpdate: function (evt){
-          var item = evt.item; // the current dragged HTMLElement
-          // alert(item.outerHTML)
-          let sortOrders = []
-          $('#stockLineItem'+this_.kineType).find('.tooltips').each(function() {
-            sortOrders.push($(this).attr("charttype"))
-          });
-          // alert(sortOrders)
-          let url ='/api/stock/updateStockLineSettingsOrder?orders='+encodeURI(sortOrders.join(","))
-          this_.$api.post(url, null, function(){
-            this_.$alerts.success('調整顯示順序成功！')
-          })
-        }
-      })
       /* setTimeout(function() {
         window.onresize = function() {
           chart1.resize();
@@ -162,22 +175,6 @@ export default {
           chart5.resize();
         };
       }, 200); */
-      /* let _this = this
-      if(_this.intervalid1 == null) {
-        _this.intervalid1 = setInterval(function() {
-          if (_this.kineType == 0) {
-            // 重新抓取数据
-            let url = `/api/stock/fetchCurrentHistoryDaily?stockId=${
-              _this.stockId
-            }`
-            _this.$api.post(url, null, rs => {
-              _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
-            })
-          } else {
-            _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
-          }
-        }, 10000) // ms
-      } */
     },
     setOptions(chartArray) {
       // chart1, chart6, chart2, chart3, chart4, chart5
@@ -210,6 +207,11 @@ export default {
         // chart3.showLoading();
         // chart4.showLoading();
         // chart5.showLoading();
+        /* for(let j=0;j<chartArray.length;j++) {
+            let chartJson = chartArray[j]
+            let chartObj = chartJson.chart
+            chartObj.showLoading();
+        } */
         this_.$api.get(url, null, rs => {
           if (rs != undefined && rs.length > 0) {
             for (let i = 0; i < rs.length; i++) {
@@ -300,6 +302,7 @@ export default {
                 chartObj.setOption(stockTower(data6s, this_.kineType))
                 break;
             }
+            // chartObj.hideLoading()
           }
 
           /* chart1.on('click', function (params) {

@@ -7,6 +7,13 @@ webpackJsonp([1],{
 
 /***/ }),
 
+/***/ "0PI8":
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+
 /***/ "1/oy":
 /***/ (function(module, exports) {
 
@@ -1818,32 +1825,32 @@ function getBollLowers(bolls) {
     return result;
 }
 
-// DMI中的adx
-function getDmiAdxs(dmis) {
+/* // DMI中的adx
+export function getDmiAdxs(dmis) {
     var result = [];
     for (var i = 0, len = dmis.length; i < len; i++) {
-        result.push(dmis[i].adx);
+        result.push(dmis[i].adx)
     }
     return result;
 }
 
 // DMI中的mdi
-function getDmiMdis(dmis) {
+export function getDmiMdis(dmis) {
     var result = [];
     for (var i = 0, len = dmis.length; i < len; i++) {
-        result.push(dmis[i].mdi);
+        result.push(dmis[i].mdi)
     }
     return result;
 }
 
 // DMI中的pdi
-function getDmipdis(dmis) {
+export function getDmipdis(dmis) {
     var result = [];
     for (var i = 0, len = dmis.length; i < len; i++) {
-        result.push(dmis[i].pdi);
+        result.push(dmis[i].pdi)
     }
     return result;
-}
+} */
 
 // 取数据中的最近RECENT_DATE数据
 function getSlice(datas) {
@@ -3099,30 +3106,6 @@ function stockMacd_getData(datasets, kineType) {
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 // https://github.com/chovy/techan-vue/blob/master/src/components/Hello.vue
 // import MainLayout from '../layouts/Main.vue'
@@ -3147,6 +3130,7 @@ function stockMacd_getData(datasets, kineType) {
   },
   data: function data() {
     return {
+      items: [1, 2, 3, 4, 5, 6],
       stockId: '',
       chart: null,
       // stockCandle: null,
@@ -3176,8 +3160,13 @@ function stockMacd_getData(datasets, kineType) {
     this.rawHtml6 = '<font color="' + STOCK_CONFIG.col.rsi12 + '">\u5BF6\u5854:</font>';
     this.init();
 
-    var _api = this.$api;
-    Sortable_default.a.create(stockLineItem, {
+    var url = '/api/stock/getAvailabelStockLineSettings';
+    this.$api.get(url, null, function (rs) {
+      // this.items = rs
+    });
+
+    var el = document.getElementById('stockLineItem' + this.kineType);
+    Sortable_default.a.create(el, {
       handle: '.move-item',
       animation: 150,
       onUpdate: function onUpdate(evt) {
@@ -3221,25 +3210,23 @@ function stockMacd_getData(datasets, kineType) {
           chart5.resize();
         };
       }, 200); */
-      /* let _this = this
-      if(_this.intervalid1 == null) {
-        _this.intervalid1 = setInterval(function() {
+      var _this = this;
+      if (_this.intervalid1 == null) {
+        _this.intervalid1 = setInterval(function () {
           if (_this.kineType == 0) {
             // 重新抓取数据
-            let url = `/api/stock/fetchCurrentHistoryDaily?stockId=${
-              _this.stockId
-            }`
-            _this.$api.post(url, null, rs => {
-              _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
-            })
+            var url = '/api/stock/fetchCurrentHistoryDaily?stockId=' + _this.stockId;
+            _this.$api.post(url, null, function (rs) {
+              _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5);
+            });
           } else {
-            _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5)
+            _this.setOptions(chart1, chart6, chart2, chart3, chart4, chart5);
           }
-        }, 10000) // ms
-      } */
+        }, 10000); // ms
+      }
     },
     setOptions: function setOptions(chart1, chart6, chart2, chart3, chart4, chart5) {
-      var _this = this;
+      var _this2 = this;
 
       // this.stockCandle = null
       var this_ = this;
@@ -3280,7 +3267,7 @@ function stockMacd_getData(datasets, kineType) {
               data6s.push([rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]);
             }
           } else {
-            this_.$alerts.error('找不到數據:' + _this.stockId);
+            this_.$alerts.error('找不到數據:' + _this2.stockId);
             // alert("找不到數據:"+this.stockId)
           }
           // return stockCandle(datas, this.kineType)
@@ -3289,12 +3276,12 @@ function stockMacd_getData(datasets, kineType) {
           // chart3.hideLoading();
           // chart4.hideLoading();
           // chart5.hideLoading();
-          chart1.setOption(getData(data1s, _this.kineType));
-          chart2.setOption(stockVol_getData(data2s, _this.kineType));
-          chart3.setOption(stockRsi_getData(data3s, _this.kineType));
-          chart4.setOption(stockDmi_getData(data4s, _this.kineType));
-          chart5.setOption(stockMacd_getData(data5s, _this.kineType));
-          chart6.setOption(stockTower_getData(data6s, _this.kineType));
+          chart1.setOption(getData(data1s, _this2.kineType));
+          chart2.setOption(stockVol_getData(data2s, _this2.kineType));
+          chart3.setOption(stockRsi_getData(data3s, _this2.kineType));
+          chart4.setOption(stockDmi_getData(data4s, _this2.kineType));
+          chart5.setOption(stockMacd_getData(data5s, _this2.kineType));
+          chart6.setOption(stockTower_getData(data6s, _this2.kineType));
 
           /* chart1.on('click', function (params) {
             console.log('params.componentType--->'+params.componentType)
@@ -3319,14 +3306,14 @@ function stockMacd_getData(datasets, kineType) {
     }
   }
 });
-// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-3ba02789","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/kCandle.vue
-var kCandle_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":"stockLineItem"}},[_c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId1'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml1)}}),_vm._v(" "),_c('div',{staticClass:"echarts1",attrs:{"id":'myChart1'+_vm.kineType}})]),_vm._v(" "),_c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId2'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml2)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart2'+_vm.kineType}})]),_vm._v(" "),_c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId3'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml3)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart3'+_vm.kineType}})]),_vm._v(" "),_c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId4'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml4)}}),_vm._v(" "),_c('div',{staticClass:"echarts2",attrs:{"id":'myChart4'+_vm.kineType}})]),_vm._v(" "),_c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId5'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml5)}}),_vm._v(" "),_c('div',{staticClass:"echarts3",attrs:{"id":'myChart5'+_vm.kineType}})]),_vm._v(" "),_c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId6'+_vm.kineType},domProps:{"innerHTML":_vm._s(_vm.rawHtml6)}}),_vm._v(" "),_c('div',{staticClass:"echarts1",attrs:{"id":'myChart6'+_vm.kineType}})])])}
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-2a16b7db","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/kCandle.vue
+var kCandle_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":'stockLineItem'+_vm.kineType}},_vm._l((_vm.items),function(item){return _c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId'+item+_vm.kineType,"v-html":'rawHtml'+item}}),_vm._v(" "),_c('div',{class:'echarts'+item,attrs:{"id":'myChart'+item+_vm.kineType}})])}))}
 var kCandle_staticRenderFns = []
 var kCandle_esExports = { render: kCandle_render, staticRenderFns: kCandle_staticRenderFns }
 /* harmony default export */ var page_kCandle = (kCandle_esExports);
 // CONCATENATED MODULE: ./src/page/kCandle.vue
 function kCandle_injectStyle (ssrContext) {
-  __webpack_require__("WN0j")
+  __webpack_require__("0PI8")
 }
 var kCandle_normalizeComponent = __webpack_require__("VU/8")
 /* script */
@@ -3339,7 +3326,7 @@ var kCandle___vue_template_functional__ = false
 /* styles */
 var kCandle___vue_styles__ = kCandle_injectStyle
 /* scopeId */
-var kCandle___vue_scopeId__ = "data-v-3ba02789"
+var kCandle___vue_scopeId__ = "data-v-2a16b7db"
 /* moduleIdentifier (server only) */
 var kCandle___vue_module_identifier__ = null
 var kCandle_Component = kCandle_normalizeComponent(
@@ -4836,13 +4823,6 @@ module.exports = __webpack_require__.p + "static/img/stock04.519da72.png";
 /***/ }),
 
 /***/ "UFhp":
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-
-/***/ "WN0j":
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
