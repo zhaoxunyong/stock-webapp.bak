@@ -10,8 +10,8 @@
     <!-- stockCandle -->
     <!-- 顺序不能变 1:stockCandle 2:stockVol 3:stockRsi 4:stockDmi 5:stockMacd 6:stockTower -->
     <div v-for="item in items" class="move-item">
-      <div :id="'tooltipId'+item+kineType" class="tooltips w-100 text-left" :v-html="'rawHtml'+item"></div>
-      <div :id="'myChart'+item+kineType" :class="'echarts'+item"></div>
+      <div :id="'tooltipId'+item.type+kineType" class="tooltips w-100 text-left" :v-html="'rawHtml'+item.type"></div>
+      <div :id="'myChart'+item.type+kineType" :class="'echarts'+item.type"></div>
     </div>
   </div>
 </template>
@@ -39,7 +39,7 @@ export default {
   },
   data() {
     return {
-      items: [1, 2, 3, 4, 5, 6],
+      items: [],
       stockId: '',
       chart: null,
       // stockCandle: null,
@@ -54,32 +54,16 @@ export default {
     }
   },
   props: ['kineType'],
+  // https://blog.csdn.net/zeroyulong/article/details/80255323
+/* 一般在 created（或beforeRouter） 里面就可以，如果涉及到需要页面加载完成之后的话就用 mounted。
+在created的时候，视图中的html并没有渲染出来，所以此时如果直接去操作html的dom节点，一定找不到相关的元素
+而在mounted中，由于此时html已经渲染出来了，所以可以直接操作dom节点，（此时document.getelementById 即可生效了）。
+ */
   mounted() {
-    this.rawHtml1 = `收: 開: 高: 低:<br/>
-                ${this.kineType == 1 ? '月' : '日'}線
-                <font color="${STOCK_CONFIG.col.m5}">M5: </font> 
-                <font color="${STOCK_CONFIG.col.m10}">M10: </font> 
-                <font color="${STOCK_CONFIG.col.m20}">M20: </font> 
-                <font color="${STOCK_CONFIG.col.m60}">M60: </font>`
-
-    this.rawHtml2 = `<font color="${STOCK_CONFIG.col.volup}">成交量: </font>`
-
-    this.rawHtml3 = `<font color="${STOCK_CONFIG.col.rsi12}">RSI-12: </font>
-                <font color="${STOCK_CONFIG.col.rsi100}">RSI-100: </font>`
-
-    this.rawHtml4 = `<font color="${STOCK_CONFIG.col.diUp}">+DI14: </font>
-                <font color="${STOCK_CONFIG.col.diDown}">-DI14: </font>
-                <font color="${STOCK_CONFIG.col.adx}">ADX14: </font>`
-
-    this.rawHtml5 = `<font color="${STOCK_CONFIG.col.oscup}">OSC: </font>
-                <font color="${STOCK_CONFIG.col.dif}">DIF: </font>
-                <font color="${STOCK_CONFIG.col.macd}">MACD: </font>`
-                
-    this.rawHtml6 = `<font color="${STOCK_CONFIG.col.rsi12}">寶塔:</font>`
-    this.init()
+    this.chartInit()
   },
   created() {
-    // this.getRecentDate()
+    this.init()
   },
   destroyed: function() {
     if (this.intervalid1 != null) {
@@ -91,29 +75,63 @@ export default {
       // console.log(param)
     },
     init() {
+      this.rawHtml1 = `收: 開: 高: 低:<br/>
+                  ${this.kineType == 1 ? '月' : '日'}線
+                  <font color="${STOCK_CONFIG.col.m5}">M5: </font> 
+                  <font color="${STOCK_CONFIG.col.m10}">M10: </font> 
+                  <font color="${STOCK_CONFIG.col.m20}">M20: </font> 
+                  <font color="${STOCK_CONFIG.col.m60}">M60: </font>`
+
+      this.rawHtml2 = `<font color="${STOCK_CONFIG.col.volup}">成交量: </font>`
+
+      this.rawHtml3 = `<font color="${STOCK_CONFIG.col.rsi12}">RSI-12: </font>
+                  <font color="${STOCK_CONFIG.col.rsi100}">RSI-100: </font>`
+
+      this.rawHtml4 = `<font color="${STOCK_CONFIG.col.diUp}">+DI14: </font>
+                  <font color="${STOCK_CONFIG.col.diDown}">-DI14: </font>
+                  <font color="${STOCK_CONFIG.col.adx}">ADX14: </font>`
+
+      this.rawHtml5 = `<font color="${STOCK_CONFIG.col.oscup}">OSC: </font>
+                  <font color="${STOCK_CONFIG.col.dif}">DIF: </font>
+                  <font color="${STOCK_CONFIG.col.macd}">MACD: </font>`
+                  
+      this.rawHtml6 = `<font color="${STOCK_CONFIG.col.rsi12}">寶塔:</font>`
+      
       let this_ = this
+      // this_.items = [{"id":"402379055645396992","type":6,"memo":"stockTower","status":1,"sortOrder":1},{"id":"402378966034092032","type":2,"memo":"stockVol","status":1,"sortOrder":2},{"id":"402378966617100288","type":3,"memo":"stockRsi","status":1,"sortOrder":3},{"id":"402379033608523776","type":4,"memo":"stockDmi","status":1,"sortOrder":4},{"id":"402379042320093184","type":5,"memo":"stockMacd","status":1,"sortOrder":5},{"id":"402378924086857728","type":1,"memo":"stockCandle","status":1,"sortOrder":6}]
       let url = '/api/stock/getAvailabelStockLineSettings'
-      this_.$api.get(url, null, rs => {
-        // this.items = rs
-        let chartArray = []
-        for(let i=0;i<rs.length;i++) {
-          let type = rs[i].type
-          let memo = rs[i].memo
-          console.log("rs--->"+type+"/"+memo)
-          // chart對象沒有其他用處，只作是否加載判斷
-          if (this_.chart != null) {
-            return
+      /* this.$api.get(url, null, rs => {
+        // this_.items = [1, 2, 3, 4, 5, 6]
+        
+      }); */
+      $.ajax({
+          url: url,
+          type: "get",
+          async: false,
+          success: function(rs){
+            this_.items = rs
           }
-          let el = document.getElementById('myChart' + type+ '' + this_.kineType)
-          let chart = this_.$echarts.init(el)
-          chartArray.push({
-            type: type,
-            chart: chart
-          })
-        }
-        this_.setOptions(chartArray)
-        this_.$echarts.connect(chartArray)
       });
+    },
+    chartInit() {
+      let chartArray = []
+      for(let i=0;i<this.items.length;i++) {
+        let type = this.items[i].type
+        let memo = this.items[i].memo
+        console.log("rs--->"+type+"/"+memo)
+        // chart對象沒有其他用處，只作是否加載判斷
+        if (this.chart != null) {
+          return
+        }
+        let el = document.getElementById('myChart' + type+ '' + this.kineType)
+        let chart = this.$echarts.init(el)
+        chartArray.push({
+          type: type,
+          chart: chart
+        })
+      }
+      this.setOptions(chartArray)
+      this.$echarts.connect(chartArray)
 
       let el = document.getElementById('stockLineItem'+this.kineType)
       Sortable.create(el, {
@@ -294,6 +312,7 @@ export default {
     $route(to, from) {
       // this.getData()
       this.init()
+      this.chartInit()
       //this.$router.push('/content/' + this.getStatus(this.$route.path))
     }
   }
