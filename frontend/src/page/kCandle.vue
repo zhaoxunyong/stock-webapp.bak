@@ -9,9 +9,9 @@
     <!-- <chart :options="stockCandle" :auto-resize="resize" @mousemove="openNewKline"></chart> -->
     <!-- stockCandle -->
     <!-- 顺序不能变 1:stockCandle 2:stockVol 3:stockRsi 4:stockDmi 5:stockMacd 6:stockTower -->
-    <div v-for="item in items" class="move-item">
-      <div :id="'tooltipId'+item.type+kineType" class="tooltips w-100 text-left" :v-html="'rawHtml'+item.type"></div>
-      <div :id="'myChart'+item.type+kineType" :class="'echarts'+item.type"></div>
+    <div v-for="item in items" :class="item.type == 1 ? 'move1-item' : 'move-item'">
+      <div :id="'tooltipId'+item.type+kineType" :charttype="item.type" class="tooltips w-100 text-left" :v-html="'rawHtml'+item.type"></div>
+      <div :id="'myChart'+item.type+kineType" :data="item.type" :class="'echarts'+item.type"></div>
     </div>
   </div>
 </template>
@@ -119,7 +119,7 @@ export default {
       for(let i=0;i<this.items.length;i++) {
         let type = this.items[i].type
         let memo = this.items[i].memo
-        console.log("rs--->"+type+"/"+memo)
+        // console.log("rs--->"+type+"/"+memo)
         // chart對象沒有其他用處，只作是否加載判斷
         if (this.chart != null) {
           return
@@ -134,6 +134,7 @@ export default {
       this.setOptions(chartArray)
       this.$echarts.connect(chartArray)
 
+      let this_ = this
       let el = document.getElementById('stockLineItem'+this.kineType)
       Sortable.create(el, {
         handle: '.move-item',
@@ -141,7 +142,15 @@ export default {
         onUpdate: function (evt){
           var item = evt.item; // the current dragged HTMLElement
           // alert(item.outerHTML)
-          
+          let sortOrders = []
+          $('#stockLineItem'+this_.kineType).find('.tooltips').each(function() {
+            sortOrders.push($(this).attr("charttype"))
+          });
+          // alert(sortOrders)
+          let url ='/api/stock/updateStockLineSettingsOrder?orders='+encodeURI(sortOrders.join(","))
+          this_.$api.post(url, null, function(){
+            this_.$alerts.success('調整顯示順序成功！')
+          })
         }
       })
       /* setTimeout(function() {

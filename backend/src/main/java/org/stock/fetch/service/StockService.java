@@ -99,4 +99,6 @@ public interface StockService {
 	void deleteByAgoOfDayDate();
 	
 	public List<StockLineSettings> getAvailabelStockLineSettings();
+
+	public void updateBySortOrder(List<Integer> sortOrders);
 }

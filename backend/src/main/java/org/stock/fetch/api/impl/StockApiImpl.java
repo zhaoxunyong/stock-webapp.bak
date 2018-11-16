@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -691,6 +692,13 @@ public class StockApiImpl implements StockApi {
             return modelMapper.map(model, StockLineSettingsDto.class);
         }).collect(Collectors.toList());
 	}
+
+    @Override
+    @PostMapping("/updateStockLineSettingsOrder")
+    public void updateStockLineSettingsOrder(String orders) {
+        List<Integer> sortOrders = Arrays.stream(orders.split(",")).map(p->Integer.parseInt(p)).collect(Collectors.toList());
+        stockService.updateBySortOrder(sortOrders);
+    }
 
     /*@Override
     @GetMapping(value = "/data")

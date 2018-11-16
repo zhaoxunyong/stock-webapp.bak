@@ -257,6 +257,13 @@ public interface StockApi {
     @ApiOperation(value="getAvailabelStockLineSettings", notes="getAvailabelStockLineSettings")
     public List<StockLineSettingsDto> getAvailabelStockLineSettings();
 
+
+    @ApiOperation(value="updateStockLineSettingsOrder", notes="updateStockLineSettingsOrder")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "orders", value = "orders,用逗号分隔", required = true, dataType = "string", paramType = "query")
+    })
+    public void updateStockLineSettingsOrder(String orders);
+
     /*@ApiOperation(value="data", notes="data")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),

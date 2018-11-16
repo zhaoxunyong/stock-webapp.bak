@@ -622,4 +622,13 @@ public class StockServiceImpl implements StockService {
         return stockLineSettingsMapper.selectAvailableAll();
 	}
 
+    @Override
+    public void updateBySortOrder(List<Integer> sortOrders) {
+        for(int i=0;i<sortOrders.size();i++) {
+            int order = i+1;
+            int type = sortOrders.get(i);
+            stockLineSettingsMapper.updateBySortOrder(type, order);
+        }
+    }
+
 }
