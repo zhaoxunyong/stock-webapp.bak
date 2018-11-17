@@ -11,7 +11,7 @@
     <!-- 顺序不能变 1:stockCandle 2:stockVol 3:stockRsi 4:stockDmi 5:stockMacd 6:stockTower -->
     <!-- <div v-for="item in items" :class="item.type == 1 ? 'move1-item' : 'move-item'"> -->
       <div v-for="item in items" class="move-item">
-      <div :id="'tooltipId'+item.type+kineType" :charttype="item.type" class="tooltips w-100 text-left" :v-html="'rawHtml'+item.type"></div>
+      <div :id="'tooltipId'+item.type+kineType" :charttype="item.type" class="tooltips w-100 text-left"></div>
       <div :id="'myChart'+item.type+kineType" :data="item.type" :class="'echarts'+item.type"></div>
     </div>
   </div>
@@ -45,13 +45,7 @@ export default {
       chart: null,
       // stockCandle: null,
       resize: true,
-      intervalid1: null,
-      rawHtml1: '',
-      rawHtml2: '',
-      rawHtml3: '',
-      rawHtml4: '',
-      rawHtml5: '',
-      rawHtml6: ''
+      intervalid1: null
     }
   },
   props: ['kineType'],
@@ -141,28 +135,6 @@ export default {
             this_.items = rs
           }
       });
-
-      this.rawHtml1 = `收: 開: 高: 低:<br/>
-                  ${this.kineType == 1 ? '月' : '日'}線
-                  <font color="${STOCK_CONFIG.col.m5}">M5: </font> 
-                  <font color="${STOCK_CONFIG.col.m10}">M10: </font> 
-                  <font color="${STOCK_CONFIG.col.m20}">M20: </font> 
-                  <font color="${STOCK_CONFIG.col.m60}">M60: </font>`
-
-      this.rawHtml2 = `<font color="${STOCK_CONFIG.col.volup}">成交量: </font>`
-
-      this.rawHtml3 = `<font color="${STOCK_CONFIG.col.rsi12}">RSI-12: </font>
-                  <font color="${STOCK_CONFIG.col.rsi100}">RSI-100: </font>`
-
-      this.rawHtml4 = `<font color="${STOCK_CONFIG.col.diUp}">+DI14: </font>
-                  <font color="${STOCK_CONFIG.col.diDown}">-DI14: </font>
-                  <font color="${STOCK_CONFIG.col.adx}">ADX14: </font>`
-
-      this.rawHtml5 = `<font color="${STOCK_CONFIG.col.oscup}">OSC: </font>
-                  <font color="${STOCK_CONFIG.col.dif}">DIF: </font>
-                  <font color="${STOCK_CONFIG.col.macd}">MACD: </font>`
-                  
-      this.rawHtml6 = `<font color="${STOCK_CONFIG.col.rsi12}">寶塔:</font>`
     },
     chartInit() {
       let chartArray = []
