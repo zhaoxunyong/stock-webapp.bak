@@ -322,6 +322,24 @@ export default {
                 chartObj.setOption(stockTower(data6s, this_.kineType))
                 break;
             }
+        // var index = 50; //播放所在下标
+				// var mTime = setInterval(function() {
+				// 	chartObj.dispatchAction({
+				// 		type: 'showTip',
+				// 		seriesIndex: 0,
+				// 		dataIndex: index
+				// 	});
+        // }, 100);
+        
+        setTimeout(function(){
+            chartObj.dispatchAction({
+                type: 'showTip',
+                seriesIndex:0,  // 显示第几个series
+                dataIndex: 37 // 显示第几个数据
+            });
+        }, 10)
+
+            
             // chartObj.hideLoading()
           }
 
