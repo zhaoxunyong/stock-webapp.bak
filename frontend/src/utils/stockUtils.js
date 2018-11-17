@@ -150,7 +150,7 @@ export function getTowerDatas(datas) {
 }
 // DMI
 export function getDmis(datas) {
-    let dayCount = 14
+    const dayCount = 14
     
     let trResult = []
     let dmUpResult = []
@@ -163,7 +163,7 @@ export function getDmis(datas) {
     let diUp14Result = []
     let diDown14Result = []
     let adx14Result = []
-    // let adxr14Result = []
+    let adxr14Result = []
 
     for (var i = 0, len = datas.values.length; i < len; i++) {
         // TR
@@ -178,7 +178,7 @@ export function getDmis(datas) {
         let diUp14 = 0
         let diDown14 = 0
         let adx14 = 0
-        // let adxr14 = 0
+        let adxr14 = 0
         if (i > 0) {
             // 前一天收盘价
             let lowest = datas.values[i][2]
@@ -191,7 +191,7 @@ export function getDmis(datas) {
             tr = [t1, t2, t3].reduce((pre,cur) => pre>cur?pre:cur)
             // TR14 = 前一日TR14 × 13/14 + 今日TR × 1/14
             let previousTr14 = tr14Result[i-1]
-            tr14 = previousTr14 * ((dayCount-1) / dayCount) + tr * (1 / dayCount)
+            tr14 = previousTr14 * (dayCount-1) / dayCount + tr / dayCount
             // +DM = 最高 - 昨高
             // -DM = 昨低 - 最低
             // If +DM > -DM And +DM > 0 Then +DM = +DM Else +DM = 0
@@ -210,9 +210,10 @@ export function getDmis(datas) {
             // -DM14 = 前一日-DM14 × 13/14 + -DM × 1/14
             let previousDmUp14 = dmUp14Result[i-1]
             let previousDmDown14 = dmDown14Result[i-1]
-            let dmUp14 = previousDmUp14 * ((dayCount-1) / dayCount) + dmUp * (1 / dayCount)
-            let dmDown14 = previousDmDown14 * ((dayCount-1) / dayCount) + dmDown * (1 / dayCount)
-
+            dmUp14 = previousDmUp14 * (dayCount-1) / dayCount + dmUp / dayCount
+            dmDown14 = previousDmDown14 * (dayCount-1) / dayCount + dmDown / dayCount
+            // console.log('previousDmUp14->'+previousDmUp14+"/dmUp->"+dmUp+"/dmUp14->"+dmUp14)
+            // console.log('previousDmDown14->'+previousDmDown14+"/dmDown->"+dmDown+"/dmDown14->"+dmDown14)
             // DI
             // +DI14 = +DM14 ÷ TR14 × 100
             // -DI14 = -DM14 ÷ TR14 × 100
@@ -230,12 +231,12 @@ export function getDmis(datas) {
             // ADX14
             // ADX14 = 前一日ADX14 × 13/14 + 今日DX × 1/14
             let previousAdx14 = adx14Result[i-1]
-            adx14 = previousAdx14 * ((dayCount-1) / dayCount) + dx * (1 / dayCount)
+            adx14 = previousAdx14 * (dayCount-1) / dayCount + dx / dayCount
 
             // ADXR14(没用到)
             // (当日ADX14 + 第前14日ADX14) / 2
-            // let before14Adx = (i-dayCount) >=0 ? adx14Result[i-dayCount] : 0
-            // adxr14 = (adx14 + before14Adx) / 2
+            let before14Adx = (i-dayCount) >=0 ? adx14Result[i-dayCount] : 0
+            adxr14 = (adx14 + before14Adx) / 2
         }
 
         trResult.push(tr)
@@ -246,15 +247,37 @@ export function getDmis(datas) {
         tr14Result.push(tr14)
         dmUp14Result.push(dmUp14)
         dmDown14Result.push(dmDown14)
+        // console.log("dmUp14Result push++++>"+dmUp14)
+        // console.log("dmDown14Result push++++>"+dmDown14)
+        // console.log("dmUp14Result++++>"+dmUp14Result)
+        // console.log("dmDown14Result++++>"+dmDown14Result)
         diUp14Result.push(diUp14)
         diDown14Result.push(diDown14)
         adx14Result.push(adx14)
-        // adxr14Result.push(adxr14)
+        adxr14Result.push(adxr14)
     }
+    // console.log("tr14Result->"+tr14Result)
+    // console.log("dmUpResult->"+dmUpResult)
+    // console.log("dmDownResult->"+dmDownResult)
+    // console.log("dmUp14Result->"+dmUp14Result)
+    // console.log("dmDown14Result->"+dmDown14Result)
+    // console.log("dxResult->"+dxResult)
+    // console.log("diUp14Result->"+diUp14Result)
+    // console.log("diDown14Result->"+diDown14Result)
+    // console.log("adx14Result->"+adx14Result)
+    // console.log("adxr14Result->"+adxr14Result)
     return {
-        adx14: adx14Result,
-        diUp14: diUp14Result,
-        diDown14: diDown14Result
+        trResult: trResult,
+        tr14Result: tr14Result,
+        dmUpResult: dmUpResult,
+        dmDownResult: dmDownResult,
+        dmUp14Result: dmUp14Result,
+        dmDown14Result: dmDown14Result,
+        dxResult: dxResult,
+        diUp14Result: diUp14Result,
+        diDown14Result: diDown14Result,
+        adx14Result: adx14Result,
+        adxr14Result: adxr14Result
     }
 }
 

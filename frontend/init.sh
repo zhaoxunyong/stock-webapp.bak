@@ -10,6 +10,8 @@ cnpm install open-iconic --save
 cnpm install sortablejs --save
 cnpm install stock-auto-complete --save
 cnpm install vue-message --save
+#cnpm install mathjs --save
+#cnpm install decimal.js --save
 # resloved:Vue BrowserslistError: Unknown browser query `dead`
 #https://github.com/browserslist/browserslist/issues/276
 #Downgraded bootstrap to 4.1.0 fixes the issue for me

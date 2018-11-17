@@ -23,9 +23,22 @@ export default function getData (datasets, kineType) {
     let pdis = stockUtils.getDmipdis(dmis) */
     
     let dmiResult = stockUtils.getDmis(datas)
-    let adxs = dmiResult.adx14
-    let diUps = dmiResult.diUp14
-    let diDowns = dmiResult.diDown14
+    // let adxs = dmiResult.adx14
+    // let diUps = dmiResult.diUp14
+    // let diDowns = dmiResult.diDown14
+
+    let diUp14Results = dmiResult.diUp14Result
+    let diDown14Results = dmiResult.diDown14Result
+    let adx14Results = dmiResult.adx14Result
+
+    // let trResults = dmiResult.trResult
+    // let tr14Results = dmiResult.tr14Result
+    // let dmUpResults = dmiResult.dmUpResult
+    // let dmDownResults = dmiResult.dmDownResult
+    // let dmUp14Results = dmiResult.dmUp14Result
+    // let dmDown14Results = dmiResult.dmDown14Result
+    // let dxResults = dmiResult.dxResult
+    // let adxr14Results = dmiResult.adxr14Result
 
     return {
         // backgroundColor: '#21202D',
@@ -48,9 +61,18 @@ export default function getData (datasets, kineType) {
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function (params) {
-                let v = `<font color="${STOCK_CONFIG.col.diUp}">+DI14:</font> ${params[0].value.toFixed(1)}
-                <font color="${STOCK_CONFIG.col.diDown}">-DI14:</font> ${params[1].value.toFixed(1)}
-                <font color="${STOCK_CONFIG.col.adx}">ADX14:</font> ${params[2].value.toFixed(1)}`
+                let v = `<font color="${STOCK_CONFIG.col.diUp}">+DI14:</font> ${params[0].value.toFixed(2)}
+                <font color="${STOCK_CONFIG.col.diDown}">-DI14:</font> ${params[1].value.toFixed(2)}
+                <font color="${STOCK_CONFIG.col.adx}">ADX14:</font> ${params[2].value.toFixed(2)}
+                `
+                // <font color="${STOCK_CONFIG.col.adx}">trResult:</font> ${params[3].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">tr14Result:</font> ${params[4].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">dmUpResult:</font> ${params[5].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">dmDownResult:</font> ${params[6].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">dmUp14Result:</font> ${params[7].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">dmDown14Result:</font> ${params[8].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">dxResult:</font> ${params[9].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">adxr14Result:</font> ${params[10].value.toFixed(2)}
                 $("#tooltipId4"+kineType).html(v)
                 return "";
             },
@@ -150,7 +172,7 @@ export default function getData (datasets, kineType) {
             {
                 name: '+DI14',
                 type: 'line',
-                data: stockUtils.getSlice(diUps),
+                data: stockUtils.getSlice(diUp14Results),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -163,7 +185,7 @@ export default function getData (datasets, kineType) {
             }, {
                 name: '-DI14',
                 type: 'line',
-                data: stockUtils.getSlice(diDowns),
+                data: stockUtils.getSlice(diDown14Results),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -176,7 +198,7 @@ export default function getData (datasets, kineType) {
             }, {
                 name: 'ADX14',
                 type: 'line',
-                data: stockUtils.getSlice(adxs),
+                data: stockUtils.getSlice(adx14Results),
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -186,7 +208,111 @@ export default function getData (datasets, kineType) {
                         color: STOCK_CONFIG.col.adx
                     }
                 }
-            }
+            }/* , {
+                name: 'tr14Result',
+                type: 'line',
+                data: stockUtils.getSlice(trResults),
+                smooth: true,
+                showSymbol: false,
+                symbol: "none",
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: STOCK_CONFIG.col.adx
+                    }
+                }
+            }, {
+                name: 'tr14Result',
+                type: 'line',
+                data: stockUtils.getSlice(tr14Results),
+                smooth: true,
+                showSymbol: false,
+                symbol: "none",
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: STOCK_CONFIG.col.adx
+                    }
+                }
+            }, {
+                name: 'dmUpResult',
+                type: 'line',
+                data: stockUtils.getSlice(dmUpResults),
+                smooth: true,
+                showSymbol: false,
+                symbol: "none",
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: STOCK_CONFIG.col.adx
+                    }
+                }
+            }, {
+                name: 'dmDownResult',
+                type: 'line',
+                data: stockUtils.getSlice(dmDownResults),
+                smooth: true,
+                showSymbol: false,
+                symbol: "none",
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: STOCK_CONFIG.col.adx
+                    }
+                }
+            }, {
+                name: 'dmUp14Result',
+                type: 'line',
+                data: stockUtils.getSlice(dmUp14Results),
+                smooth: true,
+                showSymbol: false,
+                symbol: "none",
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: STOCK_CONFIG.col.adx
+                    }
+                }
+            }, {
+                name: 'dmDown14Result',
+                type: 'line',
+                data: stockUtils.getSlice(dmDown14Results),
+                smooth: true,
+                showSymbol: false,
+                symbol: "none",
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: STOCK_CONFIG.col.adx
+                    }
+                }
+            }, {
+                name: 'dxResult',
+                type: 'line',
+                data: stockUtils.getSlice(dxResults),
+                smooth: true,
+                showSymbol: false,
+                symbol: "none",
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: STOCK_CONFIG.col.adx
+                    }
+                }
+            }, {
+                name: 'adxr14Result',
+                type: 'line',
+                data: stockUtils.getSlice(adxr14Results),
+                smooth: true,
+                showSymbol: false,
+                symbol: "none",
+                lineStyle: {
+                    normal: {
+                        width: 1,
+                        color: STOCK_CONFIG.col.adx
+                    }
+                }
+            } */
         ]
     }
 }

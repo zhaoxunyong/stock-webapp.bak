@@ -124,6 +124,24 @@ export default {
       this.chartInit()
     },
     init() {
+      
+      let this_ = this
+      // this_.items = [{"id":"402379055645396992","type":6,"memo":"stockTower","status":1,"sortOrder":1},{"id":"402378966034092032","type":2,"memo":"stockVol","status":1,"sortOrder":2},{"id":"402378966617100288","type":3,"memo":"stockRsi","status":1,"sortOrder":3},{"id":"402379033608523776","type":4,"memo":"stockDmi","status":1,"sortOrder":4},{"id":"402379042320093184","type":5,"memo":"stockMacd","status":1,"sortOrder":5},{"id":"402378924086857728","type":1,"memo":"stockCandle","status":1,"sortOrder":6}]
+      let url = '/api/stock/getAvailabelStockLineSettings'
+      /* this.$api.get(url, null, rs => {
+        // this_.items = [1, 2, 3, 4, 5, 6]
+        
+      }); */
+      // 此处需要同步加载数据，否则显示不了
+      $.ajax({
+          url: url,
+          type: "get",
+          async: false,
+          success: function(rs){
+            this_.items = rs
+          }
+      });
+
       this.rawHtml1 = `收: 開: 高: 低:<br/>
                   ${this.kineType == 1 ? '月' : '日'}線
                   <font color="${STOCK_CONFIG.col.m5}">M5: </font> 
@@ -145,23 +163,6 @@ export default {
                   <font color="${STOCK_CONFIG.col.macd}">MACD: </font>`
                   
       this.rawHtml6 = `<font color="${STOCK_CONFIG.col.rsi12}">寶塔:</font>`
-      
-      let this_ = this
-      // this_.items = [{"id":"402379055645396992","type":6,"memo":"stockTower","status":1,"sortOrder":1},{"id":"402378966034092032","type":2,"memo":"stockVol","status":1,"sortOrder":2},{"id":"402378966617100288","type":3,"memo":"stockRsi","status":1,"sortOrder":3},{"id":"402379033608523776","type":4,"memo":"stockDmi","status":1,"sortOrder":4},{"id":"402379042320093184","type":5,"memo":"stockMacd","status":1,"sortOrder":5},{"id":"402378924086857728","type":1,"memo":"stockCandle","status":1,"sortOrder":6}]
-      let url = '/api/stock/getAvailabelStockLineSettings'
-      /* this.$api.get(url, null, rs => {
-        // this_.items = [1, 2, 3, 4, 5, 6]
-        
-      }); */
-      // 此处需要同步加载数据，否则显示不了
-      $.ajax({
-          url: url,
-          type: "get",
-          async: false,
-          success: function(rs){
-            this_.items = rs
-          }
-      });
     },
     chartInit() {
       let chartArray = []

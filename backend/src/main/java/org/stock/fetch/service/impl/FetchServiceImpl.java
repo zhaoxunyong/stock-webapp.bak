@@ -542,7 +542,7 @@ public class FetchServiceImpl implements FetchService {
         return WebClientUtils.process(webClient -> {
             Date date = new Date();
             String newUrl = ROOT_URL + "/news_list/url/d/e/N1.html?q=&pg="+fetchPage;
-            logger.info("fetchImportantNews newUrl--->" + newUrl);
+            // logger.info("fetchImportantNews newUrl--->" + newUrl);
             HtmlPage page = processGuceOathCom(webClient.getPage(newUrl));
             List<StockImportantNews> stockImportantNewses = Lists.newArrayList();
             HtmlElement ele = page.getHtmlElementById("newListContainer");
