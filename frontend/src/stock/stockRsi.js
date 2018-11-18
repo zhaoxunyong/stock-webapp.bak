@@ -66,7 +66,7 @@ export default function getData (datasets, kineType) {
             }
         },
         grid: [{
-            top: '5%',
+            top: '3%',
             left: '9%',
             right: '0%',
             height: '60%'

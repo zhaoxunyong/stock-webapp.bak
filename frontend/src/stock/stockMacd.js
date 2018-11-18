@@ -54,7 +54,7 @@ export default function getData (datasets, kineType) {
             }
         },
         grid: [{
-            top: '5%',
+            top: '3%',
             left: '9%',
             right: '0%',
             height: '60%'
@@ -77,20 +77,13 @@ export default function getData (datasets, kineType) {
             data: stockUtils.getSlice(datas.categoryData),
             // 坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
             boundaryGap: true,
+            // 坐标刻度
+            axisTick: {
+                show: false
+            },
             // 坐标文字内容
             axisLabel: {
-                onZero: false,
-			    /* lineStyle:{  
-                    color:'red',  
-                }, */
-                // 坐标文字相关样式
-                textStyle: {
-                    fontSize: '12px',
-                    color: 'green'
-                } ,
-                formatter: function (value) {
-                    return dateUtils.formatTime('MM/dd', value)
-                }
+                show: false
             }
         }],
         // 

@@ -347,17 +347,13 @@ export default {
   width: 100%;
   height: 580px;
 } */
-.echarts1, .echarts6 {
+.echarts1 {
   width: 100%;
   height: 190px;
 }
-.echarts2,.echarts3,.echarts4 {
+.echarts2, .echarts3, .echarts4, .echarts5, .echarts6 {
   width: 100%;
   height: 90px;
-}
-.echarts5 {
-  width: 100%;
-  height: 120px;
 }
 .tooltips {
   font-size: 100%;
