@@ -24,9 +24,10 @@ window.STOCK_CONFIG = {
         rsi12: 'blue',
         rsi100: 'red',
         // dmi
-        diUp: 'orange',
-        diDown: 'blue',
-        adx: 'brown',
+        diUp: 'red',
+        diDown: 'green',
+        adx: 'blue',
+        adxr: 'purple',
         // macd
         oscup: 'red', // red
         oscdown: '#30d94c', // green

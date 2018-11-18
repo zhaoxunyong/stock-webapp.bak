@@ -57,9 +57,10 @@ window.STOCK_CONFIG = {
         rsi12: 'blue',
         rsi100: 'red',
         // dmi
-        diUp: 'orange',
-        diDown: 'blue',
-        adx: 'brown',
+        diUp: 'red',
+        diDown: 'green',
+        adx: 'blue',
+        adxr: 'purple',
         // macd
         oscup: 'red', // red
         oscdown: '#30d94c', // green
@@ -2706,7 +2707,7 @@ function stockDmi_getData(datasets, kineType) {
     // let dmUp14Results = dmiResult.dmUp14Result
     // let dmDown14Results = dmiResult.dmDown14Result
     // let dxResults = dmiResult.dxResult
-    // let adxr14Results = dmiResult.adxr14Result
+    var adxr14Results = dmiResult.adxr14Result;
 
     return {
         // backgroundColor: '#21202D',
@@ -2729,15 +2730,14 @@ function stockDmi_getData(datasets, kineType) {
             position: [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function formatter(params) {
-                var v = "<font color=\"" + STOCK_CONFIG.col.diUp + "\">+DI14:</font> " + params[0].value.toFixed(2) + "\n                <font color=\"" + STOCK_CONFIG.col.diDown + "\">-DI14:</font> " + params[1].value.toFixed(2) + "\n                <font color=\"" + STOCK_CONFIG.col.adx + "\">ADX14:</font> " + params[2].value.toFixed(2) + "\n                ";
-                // <font color="${STOCK_CONFIG.col.adx}">trResult:</font> ${params[3].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">tr14Result:</font> ${params[4].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">dmUpResult:</font> ${params[5].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">dmDownResult:</font> ${params[6].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">dmUp14Result:</font> ${params[7].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">dmDown14Result:</font> ${params[8].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">dxResult:</font> ${params[9].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">adxr14Result:</font> ${params[10].value.toFixed(2)}
+                var v = "\n                <font color=\"" + STOCK_CONFIG.col.diUp + "\">+DI14:</font> " + params[0].value.toFixed(2) + "\n                <font color=\"" + STOCK_CONFIG.col.diDown + "\">-DI14:</font> " + params[1].value.toFixed(2) + "\n                <font color=\"" + STOCK_CONFIG.col.adx + "\">ADX14:</font> " + params[2].value.toFixed(2) + "\n                <font color=\"" + STOCK_CONFIG.col.adxr + "\">ADXR14:</font> " + params[3].value.toFixed(2) + "\n                ";
+                // <font color="${STOCK_CONFIG.col.adx}">TR:</font> ${params[3].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">TR14:</font> ${params[4].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">+DM:</font> ${params[5].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">-DM:</font> ${params[6].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">+DM14:</font> ${params[7].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">-DM14:</font> ${params[8].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">DX:</font> ${params[9].value.toFixed(2)}
                 $("#tooltipId4" + kineType).html(v);
                 return "";
             },
@@ -2871,111 +2871,111 @@ function stockDmi_getData(datasets, kineType) {
                     width: 1,
                     color: STOCK_CONFIG.col.adx
                 }
-            } /* , {
-                 name: 'tr14Result',
-                 type: 'line',
-                 data: stockUtils.getSlice(trResults),
-                 smooth: true,
-                 showSymbol: false,
-                 symbol: "none",
-                 lineStyle: {
-                     normal: {
-                         width: 1,
-                         color: STOCK_CONFIG.col.adx
-                     }
-                 }
-              }, {
-                 name: 'tr14Result',
-                 type: 'line',
-                 data: stockUtils.getSlice(tr14Results),
-                 smooth: true,
-                 showSymbol: false,
-                 symbol: "none",
-                 lineStyle: {
-                     normal: {
-                         width: 1,
-                         color: STOCK_CONFIG.col.adx
-                     }
-                 }
-              }, {
-                 name: 'dmUpResult',
-                 type: 'line',
-                 data: stockUtils.getSlice(dmUpResults),
-                 smooth: true,
-                 showSymbol: false,
-                 symbol: "none",
-                 lineStyle: {
-                     normal: {
-                         width: 1,
-                         color: STOCK_CONFIG.col.adx
-                     }
-                 }
-              }, {
-                 name: 'dmDownResult',
-                 type: 'line',
-                 data: stockUtils.getSlice(dmDownResults),
-                 smooth: true,
-                 showSymbol: false,
-                 symbol: "none",
-                 lineStyle: {
-                     normal: {
-                         width: 1,
-                         color: STOCK_CONFIG.col.adx
-                     }
-                 }
-              }, {
-                 name: 'dmUp14Result',
-                 type: 'line',
-                 data: stockUtils.getSlice(dmUp14Results),
-                 smooth: true,
-                 showSymbol: false,
-                 symbol: "none",
-                 lineStyle: {
-                     normal: {
-                         width: 1,
-                         color: STOCK_CONFIG.col.adx
-                     }
-                 }
-              }, {
-                 name: 'dmDown14Result',
-                 type: 'line',
-                 data: stockUtils.getSlice(dmDown14Results),
-                 smooth: true,
-                 showSymbol: false,
-                 symbol: "none",
-                 lineStyle: {
-                     normal: {
-                         width: 1,
-                         color: STOCK_CONFIG.col.adx
-                     }
-                 }
-              }, {
-                 name: 'dxResult',
-                 type: 'line',
-                 data: stockUtils.getSlice(dxResults),
-                 smooth: true,
-                 showSymbol: false,
-                 symbol: "none",
-                 lineStyle: {
-                     normal: {
-                         width: 1,
-                         color: STOCK_CONFIG.col.adx
-                     }
-                 }
-              }, {
-                 name: 'adxr14Result',
-                 type: 'line',
-                 data: stockUtils.getSlice(adxr14Results),
-                 smooth: true,
-                 showSymbol: false,
-                 symbol: "none",
-                 lineStyle: {
-                     normal: {
-                         width: 1,
-                         color: STOCK_CONFIG.col.adx
-                     }
-                 }
-              } */
+            }
+        }, /* {
+            name: 'TR',
+            type: 'line',
+            data: stockUtils.getSlice(trResults),
+            smooth: true,
+            showSymbol: false,
+            symbol: "none",
+            lineStyle: {
+                normal: {
+                    width: 1,
+                    color: STOCK_CONFIG.col.adx
+                }
+            }
+           }, {
+            name: 'TR14',
+            type: 'line',
+            data: stockUtils.getSlice(tr14Results),
+            smooth: true,
+            showSymbol: false,
+            symbol: "none",
+            lineStyle: {
+                normal: {
+                    width: 1,
+                    color: STOCK_CONFIG.col.adx
+                }
+            }
+           }, {
+            name: '+DM',
+            type: 'line',
+            data: stockUtils.getSlice(dmUpResults),
+            smooth: true,
+            showSymbol: false,
+            symbol: "none",
+            lineStyle: {
+                normal: {
+                    width: 1,
+                    color: STOCK_CONFIG.col.adx
+                }
+            }
+           }, {
+            name: '-DM',
+            type: 'line',
+            data: stockUtils.getSlice(dmDownResults),
+            smooth: true,
+            showSymbol: false,
+            symbol: "none",
+            lineStyle: {
+                normal: {
+                    width: 1,
+                    color: STOCK_CONFIG.col.adx
+                }
+            }
+           }, {
+            name: '+DM14',
+            type: 'line',
+            data: stockUtils.getSlice(dmUp14Results),
+            smooth: true,
+            showSymbol: false,
+            symbol: "none",
+            lineStyle: {
+                normal: {
+                    width: 1,
+                    color: STOCK_CONFIG.col.adx
+                }
+            }
+           }, {
+            name: '-DM14',
+            type: 'line',
+            data: stockUtils.getSlice(dmDown14Results),
+            smooth: true,
+            showSymbol: false,
+            symbol: "none",
+            lineStyle: {
+                normal: {
+                    width: 1,
+                    color: STOCK_CONFIG.col.adx
+                }
+            }
+           }, {
+            name: 'DX',
+            type: 'line',
+            data: stockUtils.getSlice(dxResults),
+            smooth: true,
+            showSymbol: false,
+            symbol: "none",
+            lineStyle: {
+                normal: {
+                    width: 1,
+                    color: STOCK_CONFIG.col.adx
+                }
+            }
+           },  */{
+            name: 'ADXR14',
+            type: 'line',
+            data: getSlice(adxr14Results),
+            smooth: true,
+            showSymbol: false,
+            symbol: "none",
+            lineStyle: {
+                normal: {
+                    width: 1,
+                    color: STOCK_CONFIG.col.adxr
+                }
+            }
         }]
     };
 }
@@ -3282,13 +3282,7 @@ function stockMacd_getData(datasets, kineType) {
       chart: null,
       // stockCandle: null,
       resize: true,
-      intervalid1: null,
-      rawHtml1: '',
-      rawHtml2: '',
-      rawHtml3: '',
-      rawHtml4: '',
-      rawHtml5: '',
-      rawHtml6: ''
+      intervalid1: null
     };
   },
 
@@ -3331,19 +3325,19 @@ function stockMacd_getData(datasets, kineType) {
         });
       }
     });
-    if (this.intervalid1 == null) {
-      this.intervalid1 = setInterval(function () {
+    /* if(this.intervalid1 == null) {
+      this.intervalid1 = setInterval(function() {
         if (this_.kineType == 0) {
           // 重新抓取数据
-          var url = '/api/stock/fetchCurrentHistoryDaily?stockId=' + this_.stockId;
-          this_.$api.post(url, null, function (rs) {
-            this_.chartInit();
-          });
+          let url = `/api/stock/fetchCurrentHistoryDaily?stockId=${this_.stockId}`
+          this_.$api.post(url, null, rs => {
+            this_.chartInit()
+          })
         } else {
-          this_.chartInit();
+          this_.chartInit()
         }
-      }, 10000); // ms
-    }
+      }, 10000) // ms
+    } */
   },
   created: function created() {
     this.init();
@@ -3380,18 +3374,6 @@ function stockMacd_getData(datasets, kineType) {
           this_.items = rs;
         }
       });
-
-      this.rawHtml1 = '\u6536: \u958B: \u9AD8: \u4F4E:<br/>\n                  ' + (this.kineType == 1 ? '月' : '日') + '\u7DDA\n                  <font color="' + STOCK_CONFIG.col.m5 + '">M5: </font> \n                  <font color="' + STOCK_CONFIG.col.m10 + '">M10: </font> \n                  <font color="' + STOCK_CONFIG.col.m20 + '">M20: </font> \n                  <font color="' + STOCK_CONFIG.col.m60 + '">M60: </font>';
-
-      this.rawHtml2 = '<font color="' + STOCK_CONFIG.col.volup + '">\u6210\u4EA4\u91CF: </font>';
-
-      this.rawHtml3 = '<font color="' + STOCK_CONFIG.col.rsi12 + '">RSI-12: </font>\n                  <font color="' + STOCK_CONFIG.col.rsi100 + '">RSI-100: </font>';
-
-      this.rawHtml4 = '<font color="' + STOCK_CONFIG.col.diUp + '">+DI14: </font>\n                  <font color="' + STOCK_CONFIG.col.diDown + '">-DI14: </font>\n                  <font color="' + STOCK_CONFIG.col.adx + '">ADX14: </font>';
-
-      this.rawHtml5 = '<font color="' + STOCK_CONFIG.col.oscup + '">OSC: </font>\n                  <font color="' + STOCK_CONFIG.col.dif + '">DIF: </font>\n                  <font color="' + STOCK_CONFIG.col.macd + '">MACD: </font>';
-
-      this.rawHtml6 = '<font color="' + STOCK_CONFIG.col.rsi12 + '">\u5BF6\u5854:</font>';
     },
     chartInit: function chartInit() {
       var chartArray = [];
@@ -3554,14 +3536,14 @@ function stockMacd_getData(datasets, kineType) {
     }
   }
 });
-// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-05998b3d","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/kCandle.vue
-var kCandle_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":'stockLineItem'+_vm.kineType}},_vm._l((_vm.items),function(item){return _c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId'+item.type+_vm.kineType,"charttype":item.type,"v-html":'rawHtml'+item.type}}),_vm._v(" "),_c('div',{class:'echarts'+item.type,attrs:{"id":'myChart'+item.type+_vm.kineType,"data":item.type}})])}))}
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/template-compiler?{"id":"data-v-4e5d82b8","hasScoped":true,"transformToRequire":{"video":["src","poster"],"source":"src","img":"src","image":"xlink:href"},"buble":{"transforms":{}}}!./node_modules/vue-loader/lib/selector.js?type=template&index=0!./src/page/kCandle.vue
+var kCandle_render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{attrs:{"id":'stockLineItem'+_vm.kineType}},_vm._l((_vm.items),function(item){return _c('div',{staticClass:"move-item"},[_c('div',{staticClass:"tooltips w-100 text-left",attrs:{"id":'tooltipId'+item.type+_vm.kineType,"charttype":item.type}}),_vm._v(" "),_c('div',{class:'echarts'+item.type,attrs:{"id":'myChart'+item.type+_vm.kineType,"data":item.type}})])}))}
 var kCandle_staticRenderFns = []
 var kCandle_esExports = { render: kCandle_render, staticRenderFns: kCandle_staticRenderFns }
 /* harmony default export */ var page_kCandle = (kCandle_esExports);
 // CONCATENATED MODULE: ./src/page/kCandle.vue
 function kCandle_injectStyle (ssrContext) {
-  __webpack_require__("PeKe")
+  __webpack_require__("UrMz")
 }
 var kCandle_normalizeComponent = __webpack_require__("VU/8")
 /* script */
@@ -3574,7 +3556,7 @@ var kCandle___vue_template_functional__ = false
 /* styles */
 var kCandle___vue_styles__ = kCandle_injectStyle
 /* scopeId */
-var kCandle___vue_scopeId__ = "data-v-05998b3d"
+var kCandle___vue_scopeId__ = "data-v-4e5d82b8"
 /* moduleIdentifier (server only) */
 var kCandle___vue_module_identifier__ = null
 var kCandle_Component = kCandle_normalizeComponent(
@@ -5070,14 +5052,14 @@ module.exports = __webpack_require__.p + "static/img/stock04.519da72.png";
 
 /***/ }),
 
-/***/ "PeKe":
+/***/ "UFhp":
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
 
-/***/ "UFhp":
+/***/ "UrMz":
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

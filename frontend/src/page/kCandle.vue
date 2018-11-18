@@ -87,7 +87,7 @@ export default {
         })
       }
     })
-    if(this.intervalid1 == null) {
+    /* if(this.intervalid1 == null) {
       this.intervalid1 = setInterval(function() {
         if (this_.kineType == 0) {
           // 重新抓取数据
@@ -99,7 +99,7 @@ export default {
           this_.chartInit()
         }
       }, 10000) // ms
-    }
+    } */
   },
   created() {
     this.init()

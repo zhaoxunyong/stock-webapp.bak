@@ -38,7 +38,7 @@ export default function getData (datasets, kineType) {
     // let dmUp14Results = dmiResult.dmUp14Result
     // let dmDown14Results = dmiResult.dmDown14Result
     // let dxResults = dmiResult.dxResult
-    // let adxr14Results = dmiResult.adxr14Result
+    let adxr14Results = dmiResult.adxr14Result
 
     return {
         // backgroundColor: '#21202D',
@@ -61,18 +61,19 @@ export default function getData (datasets, kineType) {
             position : [0, 0],
             // extraCssText:'width:100px;height:60px;',
             formatter: function (params) {
-                let v = `<font color="${STOCK_CONFIG.col.diUp}">+DI14:</font> ${params[0].value.toFixed(2)}
+                let v = `
+                <font color="${STOCK_CONFIG.col.diUp}">+DI14:</font> ${params[0].value.toFixed(2)}
                 <font color="${STOCK_CONFIG.col.diDown}">-DI14:</font> ${params[1].value.toFixed(2)}
                 <font color="${STOCK_CONFIG.col.adx}">ADX14:</font> ${params[2].value.toFixed(2)}
+                <font color="${STOCK_CONFIG.col.adxr}">ADXR14:</font> ${params[3].value.toFixed(2)}
                 `
-                // <font color="${STOCK_CONFIG.col.adx}">trResult:</font> ${params[3].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">tr14Result:</font> ${params[4].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">dmUpResult:</font> ${params[5].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">dmDownResult:</font> ${params[6].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">dmUp14Result:</font> ${params[7].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">dmDown14Result:</font> ${params[8].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">dxResult:</font> ${params[9].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">adxr14Result:</font> ${params[10].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">TR:</font> ${params[3].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">TR14:</font> ${params[4].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">+DM:</font> ${params[5].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">-DM:</font> ${params[6].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">+DM14:</font> ${params[7].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">-DM14:</font> ${params[8].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">DX:</font> ${params[9].value.toFixed(2)}
                 $("#tooltipId4"+kineType).html(v)
                 return "";
             },
@@ -208,8 +209,8 @@ export default function getData (datasets, kineType) {
                         color: STOCK_CONFIG.col.adx
                     }
                 }
-            }/* , {
-                name: 'tr14Result',
+            }, /* {
+                name: 'TR',
                 type: 'line',
                 data: stockUtils.getSlice(trResults),
                 smooth: true,
@@ -222,7 +223,7 @@ export default function getData (datasets, kineType) {
                     }
                 }
             }, {
-                name: 'tr14Result',
+                name: 'TR14',
                 type: 'line',
                 data: stockUtils.getSlice(tr14Results),
                 smooth: true,
@@ -235,7 +236,7 @@ export default function getData (datasets, kineType) {
                     }
                 }
             }, {
-                name: 'dmUpResult',
+                name: '+DM',
                 type: 'line',
                 data: stockUtils.getSlice(dmUpResults),
                 smooth: true,
@@ -248,7 +249,7 @@ export default function getData (datasets, kineType) {
                     }
                 }
             }, {
-                name: 'dmDownResult',
+                name: '-DM',
                 type: 'line',
                 data: stockUtils.getSlice(dmDownResults),
                 smooth: true,
@@ -261,7 +262,7 @@ export default function getData (datasets, kineType) {
                     }
                 }
             }, {
-                name: 'dmUp14Result',
+                name: '+DM14',
                 type: 'line',
                 data: stockUtils.getSlice(dmUp14Results),
                 smooth: true,
@@ -274,7 +275,7 @@ export default function getData (datasets, kineType) {
                     }
                 }
             }, {
-                name: 'dmDown14Result',
+                name: '-DM14',
                 type: 'line',
                 data: stockUtils.getSlice(dmDown14Results),
                 smooth: true,
@@ -287,7 +288,7 @@ export default function getData (datasets, kineType) {
                     }
                 }
             }, {
-                name: 'dxResult',
+                name: 'DX',
                 type: 'line',
                 data: stockUtils.getSlice(dxResults),
                 smooth: true,
@@ -299,8 +300,8 @@ export default function getData (datasets, kineType) {
                         color: STOCK_CONFIG.col.adx
                     }
                 }
-            }, {
-                name: 'adxr14Result',
+            },  */{
+                name: 'ADXR14',
                 type: 'line',
                 data: stockUtils.getSlice(adxr14Results),
                 smooth: true,
@@ -309,10 +310,10 @@ export default function getData (datasets, kineType) {
                 lineStyle: {
                     normal: {
                         width: 1,
-                        color: STOCK_CONFIG.col.adx
+                        color: STOCK_CONFIG.col.adxr
                     }
                 }
-            } */
+            }
         ]
     }
 }
