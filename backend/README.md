@@ -21,7 +21,6 @@ character-set-server=utf8
 collation-server=utf8_general_ci
 lower_case_table_names=1
 
-#5.7.24不需要添加
 sql_mode ='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
 
 windows安装：
