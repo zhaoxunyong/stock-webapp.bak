@@ -118,24 +118,6 @@ export default {
   watch: {
     '$route' (to, from) {
       this.getData()
-      /* this.currentPage = this.$route.params.pageNum
-      this.items = []
-      items = []
-      let rootUrl = (this.type == undefined || this.type == 0) ? '/api/stock/getImportantNewsInclude/' : '/api/stock/getImportantNewsExclude/'
-      let url = rootUrl+this.currentPage+"/"+this.pageSize
-      this.$api.get(url, null, rs => {
-        // this.items = rs
-        this.numberOfPages = rs.pageTotal
-        $(rs.rows).each(function(){
-          let context = "<a target=\"_blank\" href=\""+this.url+"\">"+this.froms+"</a>"
-          items.push({
-            content_title: context
-          })
-        });
-        this.items = items
-      })
-      $("#content_id").parent().remove() */
-      //this.$router.push('/content/' + this.getStatus(this.$route.path))
     }
   }
 }
