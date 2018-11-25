@@ -1003,12 +1003,12 @@ public class FetchServiceImpl implements FetchService {
 //                          stockHistoryDaily.setCreateDate(new Date());
                             stockHistoryDaily.setStockId(stockId);
                             stockHistoryDaily.setDate(date);
-                            stockHistoryDaily.setBuy(new BigDecimal(buy));
-                            stockHistoryDaily.setSell(new BigDecimal(sell));
-                            stockHistoryDaily.setVol(new BigDecimal(vol));
-                            stockHistoryDaily.setUpsDowns(new BigDecimal(upsDowns));
-                            stockHistoryDaily.setTotalAmount(new BigDecimal(totalAmount));
-                            stockHistoryDaily.setPratyaksam(new BigDecimal(pratyaksam));
+                            stockHistoryDaily.setBuy(toBigDecimal(buy));
+                            stockHistoryDaily.setSell(toBigDecimal(sell));
+                            stockHistoryDaily.setVol(toBigDecimal(vol));
+                            stockHistoryDaily.setUpsDowns(toBigDecimal(upsDowns));
+                            stockHistoryDaily.setTotalAmount(toBigDecimal(totalAmount));
+                            stockHistoryDaily.setPratyaksam(toBigDecimal(pratyaksam));
 //                            stockHistoryDailyMapper.insert(stockHistoryDaily);
                             stockHistoryDaily4Inserts.add(stockHistoryDaily);
                     	}
@@ -1083,23 +1083,23 @@ public class FetchServiceImpl implements FetchService {
                                 break;
                                 case 1:
                                   // 開盤
-                                    stockHistory.setOpening(new BigDecimal(td.asText()));
+                                    stockHistory.setOpening(toBigDecimal(td.asText()));
                                   break;
                                 case 2:
                                     // 最高    
-                                    stockHistory.setHighest(new BigDecimal(td.asText()));
+                                    stockHistory.setHighest(toBigDecimal(td.asText()));
                                     break;
                                 case 3:
                                     // 最低    
-                                    stockHistory.setLowest(new BigDecimal(td.asText()));
+                                    stockHistory.setLowest(toBigDecimal(td.asText()));
                                     break;
                                 case 4:
                                     // 收盤    
-                                    stockHistory.setClosing(new BigDecimal(td.asText()));
+                                    stockHistory.setClosing(toBigDecimal(td.asText()));
                                     break;
                                 case 5:
                                     // 漲跌    
-                                    stockHistory.setUpsDowns(new BigDecimal(td.asText()));
+                                    stockHistory.setUpsDowns(toBigDecimal(td.asText()));
                                     break;
                                 case 6:
                                     // 漲%    
@@ -1107,11 +1107,11 @@ public class FetchServiceImpl implements FetchService {
                                     break;
                                 case 7:
                                     // 成交量    
-                                    stockHistory.setVol(new BigDecimal(td.asText().replace(",", "")));
+                                    stockHistory.setVol(toBigDecimal(td.asText().replace(",", "")));
                                     break;
                                 case 8:
                                     // 成交金額    
-                                    stockHistory.setAmount(new BigDecimal(td.asText().replace(",", "")));
+                                    stockHistory.setAmount(toBigDecimal(td.asText().replace(",", "")));
                                     break;
                                 case 9:
                                     // 本益比
@@ -1396,6 +1396,7 @@ public class FetchServiceImpl implements FetchService {
     
     private BigDecimal toBigDecimal(String value) {
         try {
+            value = value.replace(",", "");
             return new BigDecimal(value);
         } catch(Exception e) {
             return BigDecimal.ZERO;
