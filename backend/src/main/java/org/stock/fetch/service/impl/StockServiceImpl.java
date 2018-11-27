@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -406,6 +407,41 @@ public class StockServiceImpl implements StockService {
         stockDataMapper.saveCompanyStatus(stockId, companyStatus);
     }
 
+    /**
+     * 处理单天的交易记录
+     */
+    private StockHistory processCurrentStockHistoryDailys(long stockId){
+        // 获取当天的数据,最后一条记录是最新的
+        List<StockHistoryDaily> stockHistoryDailys = this.selectCurrentStockHistoryDailys(stockId);
+        if(stockHistoryDailys!=null && !stockHistoryDailys.isEmpty()) {
+            // 時間   買價  賣價  成交價 漲跌  單量  總量
+            /*當日K線數據中，
+            開盤價=當日交易明細的第一筆成交價，
+            收盤價=當日交易明細的當時的最後一筆成交價，
+            最高價=當日交易明細的最高成交價，
+            最低價=當日交易明細的最低成交價，
+            成交量=當日交易明細的單量加總=當日交易明細的最後一筆的總量*/
+            BigDecimal opening = stockHistoryDailys.get(0).getVol();
+            BigDecimal closing = stockHistoryDailys.get(stockHistoryDailys.size()-1).getVol();
+            BigDecimal lowest = stockHistoryDailys.stream().map(StockHistoryDaily::getVol).reduce(BigDecimal::min).get();
+            BigDecimal highest = stockHistoryDailys.stream().map(StockHistoryDaily::getVol).reduce(BigDecimal::max).get();
+            BigDecimal vol = stockHistoryDailys.stream().map(StockHistoryDaily::getPratyaksam).reduce(new BigDecimal(0), (a, b) -> a.add(b));
+            StockHistory currentStockHistory = new StockHistory();
+            currentStockHistory.setId(IdUtils.genLongId());
+            currentStockHistory.setStockId(stockId);
+            currentStockHistory.setType(StockHistoryEnum.DAY.getType());
+            
+            currentStockHistory.setOpening(opening);
+            currentStockHistory.setClosing(closing);
+            currentStockHistory.setLowest(lowest);
+            currentStockHistory.setHighest(highest);
+            currentStockHistory.setVol(vol);
+            currentStockHistory.setDate(new Date());
+            return currentStockHistory;
+        }
+        return null;
+    }
+
     @Override
     public List<StockHistory> selectHistory(long stockId, Date startDate, Date endDate, int type) {
         List<StockHistory> actuallyStockHistorys = Lists.newArrayList();
@@ -415,34 +451,16 @@ public class StockServiceImpl implements StockService {
         if(!stockHistorys.isEmpty()) {
             Date lastDate = stockHistorys.get(0).getDate();
             if(!MyDateUtils.date2LoalDate(lastDate).isEqual(LocalDate.now())) {
-                // 获取当天的数据,最后一条记录是最新的
-                List<StockHistoryDaily> stockHistoryDailys = this.selectCurrentStockHistoryDailys(stockId);
-                if(stockHistoryDailys!=null && !stockHistoryDailys.isEmpty()) {
-                    // 時間   買價  賣價  成交價 漲跌  單量  總量
-                    /*當日K線數據中，
-                                                        開盤價=當日交易明細的第一筆成交價，
-                                                        收盤價=當日交易明細的當時的最後一筆成交價，
-                                                        最高價=當日交易明細的最高成交價，
-                                                        最低價=當日交易明細的最低成交價，
-                                                        成交量=當日交易明細的單量加總=當日交易明細的最後一筆的總量*/
-                    BigDecimal opening = stockHistoryDailys.get(0).getVol();
-                    BigDecimal closing = stockHistoryDailys.get(stockHistoryDailys.size()-1).getVol();
-                    BigDecimal lowest = stockHistoryDailys.stream().map(StockHistoryDaily::getVol).reduce(BigDecimal::min).get();
-                    BigDecimal highest = stockHistoryDailys.stream().map(StockHistoryDaily::getVol).reduce(BigDecimal::max).get();
-                    BigDecimal vol = stockHistoryDailys.stream().map(StockHistoryDaily::getPratyaksam).reduce(new BigDecimal(0), (a, b) -> a.add(b));
-                    StockHistory currentStockHistory = new StockHistory();
-                    currentStockHistory.setId(IdUtils.genLongId());
-                    currentStockHistory.setStockId(stockId);
-                    currentStockHistory.setType(StockHistoryEnum.DAY.getType());
-                    
-                    currentStockHistory.setOpening(opening);
-                    currentStockHistory.setClosing(closing);
-                    currentStockHistory.setLowest(lowest);
-                    currentStockHistory.setHighest(highest);
-                    currentStockHistory.setVol(vol);
-                    currentStockHistory.setDate(new Date());
+                StockHistory currentStockHistory = processCurrentStockHistoryDailys(stockId);
+                if(currentStockHistory != null) {
                     stockHistorys.add(0, currentStockHistory);
                 }
+            }
+        } else {
+            // 如果没历史记录，只显示当天数据
+            StockHistory currentStockHistory = processCurrentStockHistoryDailys(stockId);
+            if(currentStockHistory != null) {
+                stockHistorys.add(0, currentStockHistory);
             }
         }
         if (type == StockHistoryEnum.DAY.getType()) {
