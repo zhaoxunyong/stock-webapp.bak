@@ -120,6 +120,8 @@ export default function getData (datasets, kineType) {
             },
             scale: true,
             // position: 'right',,
+            min: 0,
+            max: 100,
             splitNumber: 2,
             // splitArea: {
             //     show: false

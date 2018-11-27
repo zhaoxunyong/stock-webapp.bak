@@ -102,7 +102,11 @@ export default function getData (datasets, kineType) {
                 color: STOCK_CONFIG.col.y
             }, */
             scale: true,
-            // position: 'right',,
+            // position: 'right',
+            min: 0,
+            max: function(value) {
+                return (value.max*1.05).toFixed(0);
+            },
             splitNumber: 2,
             // splitArea: {
             //     show: false

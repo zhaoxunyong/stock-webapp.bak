@@ -77,6 +77,12 @@ export default function getData (datasets, kineType) {
             data: stockUtils.getSlice(datas.categoryData),
             // 坐标轴两边留白策略，类目轴和非类目轴的设置和表现不一样。
             boundaryGap: true,
+            min: function(value) {
+                return (value.min*0.95).toFixed(0);
+            },
+            max: function(value) {
+                return (value.max*1.05).toFixed(0);
+            },
             // 坐标刻度
             axisTick: {
                 show: false
