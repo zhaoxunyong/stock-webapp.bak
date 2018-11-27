@@ -1,14 +1,9 @@
 package org.stock.fetch.service;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
 import org.stock.fetch.model.StockData;
-import org.stock.fetch.model.StockHistory;
-import org.stock.fetch.model.StockHistoryDaily;
 import org.stock.fetch.model.StockImportantNews;
 import org.stock.fetch.model.StockNews;
 import org.stock.fetch.model.StockType;
