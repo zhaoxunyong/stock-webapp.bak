@@ -62,18 +62,18 @@ export default function getData (datasets, kineType) {
             // extraCssText:'width:100px;height:60px;',
             formatter: function (params) {
                 let v = `
-                <font color="${STOCK_CONFIG.col.diUp}">+DI14:</font> ${params[0].value.toFixed(2)}
-                <font color="${STOCK_CONFIG.col.diDown}">-DI14:</font> ${params[1].value.toFixed(2)}
-                <font color="${STOCK_CONFIG.col.adx}">ADX14:</font> ${params[2].value.toFixed(2)}
-                <font color="${STOCK_CONFIG.col.adxr}">ADXR14:</font> ${params[3].value.toFixed(2)}
+                <font color="${STOCK_CONFIG.col.diUp}">+DI14:</font> ${params[0].value.toFixed(1)}
+                <font color="${STOCK_CONFIG.col.diDown}">-DI14:</font> ${params[1].value.toFixed(1)}
+                <font color="${STOCK_CONFIG.col.adx}">ADX14:</font> ${params[2].value.toFixed(1)}
+                <font color="${STOCK_CONFIG.col.adxr}">ADXR14:</font> ${params[3].value.toFixed(1)}
                 `
-                // <font color="${STOCK_CONFIG.col.adx}">TR:</font> ${params[3].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">TR14:</font> ${params[4].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">+DM:</font> ${params[5].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">-DM:</font> ${params[6].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">+DM14:</font> ${params[7].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">-DM14:</font> ${params[8].value.toFixed(2)}
-                // <font color="${STOCK_CONFIG.col.adx}">DX:</font> ${params[9].value.toFixed(2)}
+                // <font color="${STOCK_CONFIG.col.adx}">TR:</font> ${params[3].value.toFixed(1)}
+                // <font color="${STOCK_CONFIG.col.adx}">TR14:</font> ${params[4].value.toFixed(1)}
+                // <font color="${STOCK_CONFIG.col.adx}">+DM:</font> ${params[5].value.toFixed(1)}
+                // <font color="${STOCK_CONFIG.col.adx}">-DM:</font> ${params[6].value.toFixed(1)}
+                // <font color="${STOCK_CONFIG.col.adx}">+DM14:</font> ${params[7].value.toFixed(1)}
+                // <font color="${STOCK_CONFIG.col.adx}">-DM14:</font> ${params[8].value.toFixed(1)}
+                // <font color="${STOCK_CONFIG.col.adx}">DX:</font> ${params[9].value.toFixed(1)}
                 $("#tooltipId4"+kineType).html(v)
                 return "";
             },
