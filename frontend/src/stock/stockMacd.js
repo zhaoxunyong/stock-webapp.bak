@@ -12,6 +12,9 @@ export default function getData (datasets, kineType) {
     let difs = macd.DIF(datas.values);  // DIF
     let macds = macd.MACD(datas.values,9); // 也就是DEM或MACD
     let oscs = macd.OSC(datas.values); // 也就是OSC
+    let displayOscs = stockUtils.getSlice(oscs)
+    let lowest = displayOscs.reduce((pre, cur) => pre < cur ? pre : cur)
+    let highest = displayOscs.reduce((pre,cur) => pre>cur?pre:cur)
 
     return {
         // backgroundColor: '#21202D',
@@ -57,7 +60,7 @@ export default function getData (datasets, kineType) {
             top: '5%',
             left: '9%',
             right: '0%',
-            height: '60%'
+            height: '80%'
         }],
         // 坐标轴指示器（axisPointer）的全局公用设置
         axisPointer: {
@@ -101,7 +104,15 @@ export default function getData (datasets, kineType) {
                 color: STOCK_CONFIG.col.y
             },
             scale: true,
-            // position: 'right',,
+            // position: 'right',
+            // min: 'dataMin',
+            // max: 'dataMax',
+            min: function(value) {
+                return (lowest).toFixed(0);
+            },
+            max: function(value) {
+                return (highest).toFixed(0);
+            },
             splitNumber: 2,
             // splitArea: {
             //     show: false
@@ -135,7 +146,7 @@ export default function getData (datasets, kineType) {
                 // barCategoryGap则用于设置不同类目之间的间距
                 barCategoryGap: STOCK_CONFIG.barCategoryGap,
                 barWidth: STOCK_CONFIG.barWidth,
-                data: stockUtils.getSlice(oscs),
+                data: displayOscs,
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -167,7 +178,7 @@ export default function getData (datasets, kineType) {
                     }
                 }
             },{
-                name: 'MACD', // BAR
+                name: 'MACD',
                 type: 'line',
                 data: stockUtils.getSlice(macds),
                 smooth: true,

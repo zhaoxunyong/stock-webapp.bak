@@ -52,7 +52,7 @@ export default function getData (datasets, kineType) {
             top: '5%',
             left: '9%',
             right: '0%',
-            height: '60%'
+            height: '80%'
         }],
         // 坐标轴指示器（axisPointer）的全局公用设置
         axisPointer: {
@@ -126,7 +126,7 @@ export default function getData (datasets, kineType) {
                     color: 'green'
                 } , */
                 formatter: function (value) {
-                    return value >= 1000 ? value / 1000 +'k' : value
+                    return value >= 1000 ? (value / 1000).toFixed(0) +'k' : value
                 }
             }
         }],

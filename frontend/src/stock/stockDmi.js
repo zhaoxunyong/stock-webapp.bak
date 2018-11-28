@@ -94,7 +94,7 @@ export default function getData (datasets, kineType) {
             top: '5%',
             left: '9%',
             right: '0%',
-            height: '60%'
+            height: '80%'
         }],
         // 坐标轴指示器（axisPointer）的全局公用设置
         axisPointer: {

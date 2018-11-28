@@ -23,6 +23,10 @@ export default function getData(datasets, kineType) {
     let lowers = stockUtils.getBollLowers(bolls)
     let middles = stockUtils.getBollMiddles(bolls)
     let uppers = stockUtils.getBollUppers(bolls)
+    let lows = stockUtils.getSlice(stockUtils.getLows(datas))
+    let highs = stockUtils.getSlice(stockUtils.getHighs(datas))
+    let lowest = lows.reduce((pre, cur) => pre < cur ? pre : cur)
+    let highest = highs.reduce((pre,cur) => pre>cur?pre:cur)
 
     return {
         // backgroundColor: '#21202D',
@@ -133,11 +137,17 @@ export default function getData(datasets, kineType) {
             scale: true,
             // min: 'dataMin',
             // max: 'dataMax',
+            // min: function(value) {
+            //     return (value.min*0.95).toFixed(0);
+            // },
+            // max: function(value) {
+            //     return (value.max*1.05).toFixed(0);
+            // },
             min: function(value) {
-                return (value.min*0.95).toFixed(0);
+                return (lowest*0.95).toFixed(0);
             },
             max: function(value) {
-                return (value.max*1.05).toFixed(0);
+                return (highest*1.05).toFixed(0);
             },
             // position: 'right',,
             // type: 'value',
