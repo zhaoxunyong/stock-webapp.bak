@@ -108,10 +108,10 @@ export default function getData (datasets, kineType) {
             // min: 'dataMin',
             // max: 'dataMax',
             min: function(value) {
-                return (lowest).toFixed(0);
+                return (lowest*0.95).toFixed(0);
             },
             max: function(value) {
-                return (highest).toFixed(0);
+                return (highest*1.05).toFixed(0);
             },
             splitNumber: 2,
             // splitArea: {
