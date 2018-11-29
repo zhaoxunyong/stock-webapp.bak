@@ -2,7 +2,7 @@
 // var root = 'https://cnodejs.org/api/v1'
 var root = '/'
 // 引用axios
-var axios = require('axios')
+// var axios = require('axios')
 // import Bus from '../eventBus'
 import * as alerts from '../utils/alert.js'
 

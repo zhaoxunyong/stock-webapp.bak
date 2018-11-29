@@ -172,15 +172,7 @@ export default {
       // chart1, chart6, chart2, chart3, chart4, chart5
       // this.stockCandle = null
       let this_ = this
-      let data1s = []
-      let data2s = []
-      let data3s = []
-      let data4s = []
-      let data5s = []
-      let data6s = []
-      // let dateRange = this.getRecentDate()
-      // let dateRange = this.getRecentDate()
-      // this.stockId = '402396117293928448'
+      let srcDatas = []
       this_.stockId = this_.$route.params.stockId
       if (
         this_.stockId != undefined &&
@@ -210,47 +202,7 @@ export default {
               // alert(this.stockId+"--->"+rs[i].date+"--->"+rs[i].opening+"--->"+rs[i].highest+"--->"+rs[i].lowest+"--->"+rs[i].closing+"--->"+rs[i].vol)
               // let stockHistorys = [rs[i].date, rs[i].opening, rs[i].closing, rs[i].lowest, rs[i].highest, rs[i].vol]
               // console.log(stockHistorys)
-              data1s.push([
-                rs[i].date,
-                rs[i].opening,
-                rs[i].closing,
-                rs[i].lowest,
-                rs[i].highest,
-                rs[i].vol
-              ])
-              data2s.push([
-                rs[i].date,
-                rs[i].opening,
-                rs[i].closing,
-                rs[i].lowest,
-                rs[i].highest,
-                rs[i].vol
-              ])
-              data3s.push([
-                rs[i].date,
-                rs[i].opening,
-                rs[i].closing,
-                rs[i].lowest,
-                rs[i].highest,
-                rs[i].vol
-              ])
-              data4s.push([
-                rs[i].date,
-                rs[i].opening,
-                rs[i].closing,
-                rs[i].lowest,
-                rs[i].highest,
-                rs[i].vol
-              ])
-              data5s.push([
-                rs[i].date,
-                rs[i].opening,
-                rs[i].closing,
-                rs[i].lowest,
-                rs[i].highest,
-                rs[i].vol
-              ])
-              data6s.push([
+              srcDatas.push([
                 rs[i].date,
                 rs[i].opening,
                 rs[i].closing,
@@ -276,22 +228,40 @@ export default {
             switch(chartType) {
               case 1:
               default:
-                chartObj.setOption(stockCandle(data1s, this_.kineType))
+                chartObj.setOption(stockCandle(chartObj, this_.$utils.clone(srcDatas), this_.kineType))
+                /* chartObj.getZr().on("mousewheel", function (param) {
+                  console.log("mousewheel--->"+chartObj);
+                }); */
+                /* chartObj.on('datazoom', function (params){
+                    //params里面有什么，可以打印出来看一下就明白
+                    console.log(params);
+                    //可以通过params获取缩放的起止百分比，但是鼠标滚轮和伸缩条拖动触发的params格式不同，所以用另一种方法
+                    //获得图表数据数组下标
+                    var startValue = chartObj.getModel().option.dataZoom[0].startValue;
+                    var endValue = chartObj.getModel().option.dataZoom[0].endValue;
+                    //获得起止位置百分比
+                    var startPercent = chartObj.getModel().option.dataZoom[0].start;
+                    var endPercent = chartObj.getModel().option.dataZoom[0].end;
+                    // console.log("startValue--->"+startValue)
+                    // console.log("endValue--->"+endValue)
+                    // console.log("startPercent--->"+startPercent)
+                    // console.log("endPercent--->"+endPercent)
+                }) */
                 break;
               case 2:
-                chartObj.setOption(stockVol(data2s, this_.kineType))
+                chartObj.setOption(stockVol(this_.$utils.clone(srcDatas), this_.kineType))
                 break;
               case 3:
-                chartObj.setOption(stockRsi(data3s, this_.kineType))
+                chartObj.setOption(stockRsi(this_.$utils.clone(srcDatas), this_.kineType))
                 break;
               case 4:
-                chartObj.setOption(stockDmi(data4s, this_.kineType))
+                chartObj.setOption(stockDmi(this_.$utils.clone(srcDatas), this_.kineType))
                 break;
               case 5:
-                chartObj.setOption(stockMacd(data5s, this_.kineType))
+                chartObj.setOption(stockMacd(this_.$utils.clone(srcDatas), this_.kineType))
                 break;
               case 6:
-                chartObj.setOption(stockTower(data6s, this_.kineType))
+                chartObj.setOption(stockTower(this_.$utils.clone(srcDatas), this_.kineType))
                 break;
             }
         // var index = 50; //播放所在下标

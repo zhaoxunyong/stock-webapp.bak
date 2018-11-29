@@ -364,11 +364,18 @@ export function getDmipdis(dmis) {
 
 // 取数据中的最近RECENT_DATE数据
 export function getSlice(datas) {
-    let recentDatas = datas.slice(RECENT_DATE);
+    let recentDatas = datas.slice(RECENT_DATE)
     let absRecentDate = Math.abs(RECENT_DATE)
     if (recentDatas.length < absRecentDate) {
         return leftPad(recentDatas, absRecentDate - recentDatas.length, '-')
     }
+    return recentDatas
+}
+
+export function getDisplaySlice(datas1, start, end) {
+    let datas = getSlice(datas1)
+    let absRecentDate = Math.abs(RECENT_DATE)
+    let recentDatas = datas.slice(start, end)
     return recentDatas
 }
 

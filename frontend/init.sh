@@ -1,12 +1,13 @@
 #!/bin/sh
 #npm cache clean --force
+npm install --save-dev compression-webpack-plugin@1.1.12 --registry=https://registry.npm.taobao.org
 npm install --save --registry=https://registry.npm.taobao.org
 #2.0.0-rc.6
-npm install bootstrap-vue --save --registry=https://registry.npm.taobao.org
+# npm install bootstrap-vue --save --registry=https://registry.npm.taobao.org
 npm install node-sass --save --registry=https://registry.npm.taobao.org
-npm install axios --save --registry=https://registry.npm.taobao.org
+# npm install axios --save --registry=https://registry.npm.taobao.org
 npm install vue-confirm --save --registry=https://registry.npm.taobao.org
-npm install open-iconic --save --registry=https://registry.npm.taobao.org
+# npm install open-iconic --save --registry=https://registry.npm.taobao.org
 npm install sortablejs --save --registry=https://registry.npm.taobao.org
 npm install stock-auto-complete --save --registry=https://registry.npm.taobao.org
 npm install vue-message --save --registry=https://registry.npm.taobao.org
@@ -18,7 +19,7 @@ npm install vue-message --save --registry=https://registry.npm.taobao.org
 #npm uninstall bootstrap --save
 #npm install bootstrap@4.1.0 --save
 
-npm install echarts --registry=https://registry.npm.taobao.org
+# npm install echarts --registry=https://registry.npm.taobao.org
 #npm install vue-echarts --save
 
 npm install http-server -g --registry=https://registry.npm.taobao.org

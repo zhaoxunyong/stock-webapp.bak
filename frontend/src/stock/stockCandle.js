@@ -4,12 +4,13 @@
 
 import * as stockUtils from '../utils/stockUtils'
 import * as dateUtils from '../utils/dateUtils'
+import utils from '../utils/index.js'
 
 // import boll from 'bollinger-bands'
 // var MACD = require('technicalindicators').MACD
 let BB = require('technicalindicators').BollingerBands
 
-export default function getData(datasets, kineType) {
+export default function getData(chartObj, datasets, kineType) {
     let kDisplay = kineType == 1 ? "月" : "日"
     let datas = stockUtils.splitData(datasets)
 
@@ -23,10 +24,16 @@ export default function getData(datasets, kineType) {
     let lowers = stockUtils.getBollLowers(bolls)
     let middles = stockUtils.getBollMiddles(bolls)
     let uppers = stockUtils.getBollUppers(bolls)
-    let lows = stockUtils.getSlice(stockUtils.getLows(datas))
-    let highs = stockUtils.getSlice(stockUtils.getHighs(datas))
-    let lowest = lows.reduce((pre, cur) => pre < cur ? pre : cur)
-    let highest = highs.reduce((pre,cur) => pre>cur?pre:cur)
+
+    let lowDatas = stockUtils.getLows(datas)
+    let heighDatas = stockUtils.getLows(datas)
+
+    // let absRecentDate = Math.abs(RECENT_DATE)
+    // let recentDatas = (absRecentDate * 0.43).toFixed(0)
+    // let lows = stockUtils.getDisplaySlice(utils.clone(lowDatas), recentDatas, 100)
+    // let highs = stockUtils.getDisplaySlice(utils.clone(heighDatas), recentDatas, 100)
+    // let lowest = lows.reduce((pre, cur) => pre < cur ? pre : cur)
+    // let highest = highs.reduce((pre,cur) => pre>cur?pre:cur)
 
     return {
         // backgroundColor: '#21202D',
@@ -143,11 +150,21 @@ export default function getData(datasets, kineType) {
             // max: function(value) {
             //     return (value.max*1.05).toFixed(0);
             // },
-            min: function(value) {
-                return (lowest*0.95).toFixed(0);
+            triggerEvent: true,
+            min: function(value,params) {
+                var startPercent = chartObj.getModel().option.dataZoom[1].start;
+                var endPercent = chartObj.getModel().option.dataZoom[1].end;
+                let lows = stockUtils.getDisplaySlice(utils.clone(lowDatas), startPercent.toFixed(0), endPercent)
+                let lowest = lows.reduce((pre, cur) => pre < cur ? pre : cur)
+                return (lowest*0.95).toFixed(0)
+
             },
-            max: function(value) {
-                return (highest*1.05).toFixed(0);
+            max: function(value,params) {
+                var startPercent = chartObj.getModel().option.dataZoom[1].start;
+                var endPercent = chartObj.getModel().option.dataZoom[1].end;
+                let highs = stockUtils.getDisplaySlice(utils.clone(heighDatas), startPercent.toFixed(0), endPercent)
+                let highest = highs.reduce((pre,cur) => pre>cur?pre:cur)
+                return (highest*1.05).toFixed(0)
             },
             // position: 'right',,
             // type: 'value',
