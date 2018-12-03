@@ -73,10 +73,13 @@ echo "0 */2 * * * /works/app/stock-webapp/sql_backup.sh" > /var/spool/cron/root
 
 #cp -a stock.service /usr/lib/systemd/system/
 
+git config --global user.name "dave.zhao"
+git config --global user.email dave.zhao@zerofinance.cn
 git config --global core.autocrlf false
 git config --global core.safecrlf warn
 git config --global core.filemode false
 git config --global core.whitespace cr-at-eol
+git config --global credential.helper store
 
 docker run -d -p 6379:6379 --restart=always --name redis redis
 
