@@ -12,9 +12,16 @@ export default function getData (datasets, kineType) {
     let difs = macd.DIF(datas.values);  // DIF
     let macds = macd.MACD(datas.values,9); // 也就是DEM或MACD
     let oscs = macd.OSC(datas.values); // 也就是OSC
+
+    let displayDifs = stockUtils.getSlice(difs)
+    let displayMacds = stockUtils.getSlice(macds)
     let displayOscs = stockUtils.getSlice(oscs)
-    let lowest = displayOscs.reduce((pre, cur) => pre < cur ? pre : cur)
-    let highest = displayOscs.reduce((pre,cur) => pre>cur?pre:cur)
+    let allDisplays = new Array()
+    allDisplays.push(displayDifs)
+    allDisplays.push(displayMacds)
+    allDisplays.push(displayOscs)
+    let lowest = allDisplays.reduce((pre, cur) => pre < cur ? pre : cur)
+    let highest = allDisplays.reduce((pre,cur) => pre>cur?pre:cur)
 
     return {
         // backgroundColor: '#21202D',
@@ -167,7 +174,7 @@ export default function getData (datasets, kineType) {
             },{
                 name: 'DIF', // DIF
                 type: 'line',
-                data: stockUtils.getSlice(difs),
+                data: displayDifs,
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
@@ -180,7 +187,7 @@ export default function getData (datasets, kineType) {
             },{
                 name: 'MACD',
                 type: 'line',
-                data: stockUtils.getSlice(macds),
+                data: displayMacds,
                 smooth: true,
                 showSymbol: false,
                 symbol: "none",
