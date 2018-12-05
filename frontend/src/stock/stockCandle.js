@@ -157,7 +157,6 @@ export default function getData(chartObj, datasets, kineType) {
                 let lows = stockUtils.getDisplaySlice(utils.clone(lowDatas), startPercent.toFixed(0), endPercent)
                 let lowest = lows.reduce((pre, cur) => pre < cur ? pre : cur)
                 return (lowest*0.95).toFixed(0)
-
             },
             max: function(value,params) {
                 var startPercent = chartObj.getModel().option.dataZoom[1].start;

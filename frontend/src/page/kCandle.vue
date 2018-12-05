@@ -277,7 +277,7 @@ export default {
             chartObj.dispatchAction({
                 type: 'showTip',
                 seriesIndex:0,  // 显示第几个series
-                dataIndex: 37 // 显示第几个数据
+                dataIndex: 87 // 显示第几个数据
             });
         }, 10)
 
