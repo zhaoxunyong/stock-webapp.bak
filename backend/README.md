@@ -7,7 +7,7 @@ mysql:5.7.24 \
 --character-set-server=utf8 --collation-server=utf8_general_ci --lower_case_table_names=1
 
 sudo apt-cache policy mysql-server
-sudo apt-get install mysql-server=5.7.24-1.el7
+sudo apt-get install mysql-server=5.7.24-0ubuntu0.18.04.1
 
 yum repolist all
 yum --showduplicates list mysql-community-server
@@ -16,12 +16,20 @@ yum install mysql-community-server-5.7.24-1.el7
 
 #choco install mysql --version 5.7.18
 
-在my.ini中加入:
+sudo mkdir -p /var/lib/mysql
+sudo chown -R mysql.mysql /var/lib/mysql
+sudo mysqld --initialize-insecure --user=mysql
+
+ubuntu路径为：/etc/mysql/mysql.conf.d/mysqld.cnf:
+[mysqld]
 character-set-server=utf8
 collation-server=utf8_general_ci
 lower_case_table_names=1
 
 sql_mode ='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
+
+启动服务：
+sudo systemctl restart mysql
 
 windows安装：
 https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.24-winx64.zip
@@ -60,9 +68,9 @@ net start mysql
 
 #https://www.cnblogs.com/conanwang/p/6001196.html
 
-mysql_upgrade -u root -pAa654321
-mysql -u root -pAa654321
+#mysql_upgrade -u root -pAa654321
 
+#mysql -u root
 grant all privileges on *.* to root@'%' identified by 'Aa123#@!' WITH GRANT OPTION;
 grant all privileges on *.* to root@'localhost' identified by 'Aa654321';
 #grant all privileges on *.* to wenchun@'localhost' identified by 'Aa654321';
