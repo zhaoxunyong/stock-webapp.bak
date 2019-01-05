@@ -318,11 +318,11 @@ export default {
   height: 580px;
 } */
 .echarts1 {
-  width: 100%;
+  width: 99%;
   height: 190px;
 }
 .echarts2, .echarts3, .echarts4, .echarts5, .echarts6 {
-  width: 100%;
+  width: 99%;
   height: 90px;
 }
 .tooltips {

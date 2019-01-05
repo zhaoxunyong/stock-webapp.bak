@@ -11,15 +11,16 @@
       </autocomplete>
     </div> -->
 
-    <div class="pt-2 pb-2">
-      <!-- <b-btn size="sm" variant="primary" @click="toFront"><-</b-btn> -->
-      <!-- <b-btn size="sm" v-b-modal.modalPrevent variant="primary">+</b-btn> -->
-      <!-- <b-btn size="sm" variant="primary" @click="toBack">-></b-btn> -->
-      <img src="static/image/left.png" style="width: 35px; height: 35px; cursor: pointer;"  @click="toFront" />
-      <!-- <b-btn size="sm" v-b-modal.modalPrevent variant="primary">+</b-btn> -->
-      <span style="padding: 0px 0px"></span>
-      <img src="static/image/right.png" style="width: 35px; height: 35px; cursor: pointer;" @click="toBack" />
-      <!-- Modal Component -->
+    <div class="ppbt-2 -2">
+      <div class="fixed_div">
+        <div>
+          <img src="static/image/up.png" style="width: 35px; height: 35px; cursor: pointer;"  @click="toFront" />
+        </div>
+        <!-- <b-btn size="sm" v-b-modal.modalPrevent variant="primary">+</b-btn> -->
+        <div>
+          <img src="static/image/down.png" style="width: 35px; height: 35px; cursor: pointer;" @click="toBack" />
+        </div>
+      </div>
       <b-modal id="modalPrevent"
                ref="modal"
                title="請選擇自選股"
@@ -280,4 +281,12 @@ export default {
     margin: 0 auto;
     overflow: auto;
 }
+
+.fixed_div {
+            position: fixed;
+            z-index: 1;
+            left: 41%;
+            top: 30%;
+            width: 400px;
+        }
 </style>

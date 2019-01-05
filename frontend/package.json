@@ -14,7 +14,7 @@
     "bollinger-bands": "^3.0.1",
     "bootstrap-vue": "^2.0.0-rc.11",
     "echarts": "^4.2.0-rc.2",
-    "node-sass": "^4.10.0",
+    "node-sass": "^4.11.0",
     "open-iconic": "^1.1.1",
     "sortablejs": "^1.7.0",
     "stock-auto-complete": "^0.6.5",

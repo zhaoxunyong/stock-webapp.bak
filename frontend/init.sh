@@ -35,6 +35,6 @@ npm install --save technicalindicators@1.1.13 --registry=https://registry.npm.ta
 #npm config set registry=https://registry.npmjs.org/
 #删除build/webpack.prod.conf.js中的uglifyjs内容
 
-git config --global core.filemode false
-git config --global core.autocrlf false
+#git config --global core.filemode false
+#git config --global core.autocrlf false
 
