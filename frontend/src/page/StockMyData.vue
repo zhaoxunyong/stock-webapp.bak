@@ -36,14 +36,13 @@
       </b-modal>
     </div>
 
-    <div class="selected_name text">
-    <h5>{{ myStockSelectedName }}</h5>
-
-    <span v-for="i in list" class="d-lg-block">
-      <a :href="'/content/' + i.stockId+'/1'" @click.prevent="go(i.stockId)" :class="isSelected(i.stockId)">
-        {{ i.company }}
-      </a><br />
-    </span>
+    <div class="selected_name scrollbar" id="style-1">
+      <h5>{{ myStockSelectedName }}</h5>
+      <span v-for="i in list" class="d-lg-block">
+        <a :href="'/content/' + i.stockId+'/1'" @click.prevent="go(i.stockId)" :class="isSelected(i.stockId)">
+          {{ i.company }}
+        </a><br />
+      </span>
     </div>
   </div>
 </template>
@@ -276,17 +275,34 @@ export default {
   color: red;
 }
 
-.text {
+/* .text {
+    height: 73vh;
+    margin: 0 auto;
+    overflow: auto;
+} */
+
+.fixed_div {
+    position: fixed;
+    z-index: 1;
+    left: 41%;
+    top: 30%;
+    width: 400px;
+}
+
+.scrollbar {
     height: 73vh;
     margin: 0 auto;
     overflow: auto;
 }
-
-.fixed_div {
-            position: fixed;
-            z-index: 1;
-            left: 41%;
-            top: 30%;
-            width: 400px;
-        }
+#style-1::-webkit-scrollbar {
+    width: 8px;
+    background-color: #F5F5F5;
+} 
+#style-1::-webkit-scrollbar-thumb {
+    background-color: #72df184d;
+}
+#style-1::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #F5F5F5;
+}
 </style>
