@@ -98,7 +98,7 @@ export default function getData(chartObj, datasets, kineType) {
         }, */
         grid: [{
             top: '8%',
-            left: '10%',
+            left: '6%',
             right: '0%',
             height: '80%'
         }],

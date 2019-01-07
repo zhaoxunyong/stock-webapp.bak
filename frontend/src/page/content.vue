@@ -17,7 +17,7 @@
           <!--个股详情与新闻-->
           <b-row>
             <!--个股左侧信息-->
-            <b-col cols="9" sm="9" class="pl-1">
+            <b-col cols="9" sm="9">
               <!--个股K线图-->
               <StockKLineChart></StockKLineChart>
               <!--新闻-->

@@ -284,7 +284,7 @@ export default {
 .fixed_div {
     position: fixed;
     z-index: 1;
-    left: 41%;
+    left: 40%;
     top: 30%;
     width: 400px;
 }
@@ -293,6 +293,7 @@ export default {
     height: 73vh;
     margin: 0 auto;
     overflow: auto;
+    z-index: 1;
 }
 #style-1::-webkit-scrollbar {
     width: 8px;

@@ -1,5 +1,5 @@
 <template>
-  <div :id="'stockLineItem'+kineType">
+  <div :id="'stockLineItem'+kineType" class="kcandle_div">
     <!-- <div class="w-100 px-1 mx-1 kline-height">
       <p class="font-weight-bold text-center align-middle px-1 mx-1" href="#" @click.prevent="showZoomKline">
         日線
@@ -317,6 +317,11 @@ export default {
   width: 100%;
   height: 580px;
 } */
+.kcandle_div {
+  margin-left: 0;
+  padding-left: 0;
+  /* border: 1px solid red; */
+}
 .echarts1 {
   width: 99%;
   height: 190px;
