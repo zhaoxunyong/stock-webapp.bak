@@ -284,7 +284,7 @@ export default {
 .fixed_div {
     position: fixed;
     z-index: 1;
-    left: 41%;
+    left: 38%;
     top: 30%;
     width: 400px;
 }
