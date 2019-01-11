@@ -17,18 +17,21 @@
           <!--个股详情与新闻-->
           <b-row>
             <!--个股左侧信息-->
-            <b-col cols="9" sm="9">
-              <!--个股K线图-->
-              <StockKLineChart></StockKLineChart>
-              <!--新闻-->
+            <b-col style="max-width: 70%">
               <b-row class="mt-3">
-                <b-col cols="12" sm="12" class="pl-0 pr-0">
+                <b-col cols="12" sm="12" class="pl-3 pr-3">
+                  <!--个股K线图-->
+                  <StockKLineChart></StockKLineChart>
+                </b-col>
+              </b-row>
+              <b-row class="mt-3">
+                <b-col cols="12" sm="12" class="pl-3 pr-3">
                   <stock-news></stock-news>
                 </b-col>
               </b-row>
             </b-col>
             <!--个股右侧信息-->
-            <b-col cols="3" sm="3" class="pl-0 pr-0">
+            <b-col style="max-width: 30%" class="pl-0 pr-0">
               <img src="../images/stock02.png" class="w-80" />
               <img src="../images/stock04.png" class="w-80" />
             </b-col>
