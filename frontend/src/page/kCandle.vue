@@ -158,14 +158,12 @@ export default {
       this.setOptions(chartArray)
       this.$echarts.connect(chartObj)
 
-        window.onresize = function() {
-          window.location.reload()
-          /* for(let j=0;j<chartArray.length;j++) {
-            let chartJson = chartArray[j]
-            let chartObj = chartJson.chart
-            chartObj.resize()s
-          } */
-        };
+      /* window.onresize = function() {
+        for(let j=0;j<chartArray.length;j++) {
+          let chartObj = chartJson.chart
+          chartObj.resize()
+        }
+      }; */
     },
     setOptions(chartArray) {
       // chart1, chart6, chart2, chart3, chart4, chart5
