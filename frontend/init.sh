@@ -28,7 +28,7 @@ npm install http-server -g --registry=https://registry.npm.taobao.org
 #npm install --save bollinger-bands
 
 npm install --save technicalindicators@1.1.13 --registry=https://registry.npm.taobao.org
-
+npm shrinkwrap
 #npm uninstall node-sass
 #npm i node-sass --sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
 #https://nodejs.org/download/release/v8.9.4/
