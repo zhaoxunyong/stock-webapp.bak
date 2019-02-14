@@ -28,4 +28,3 @@ frontend/node/
 /backend/src/main/resources/public/
 .history/
 .vscode/
-frontend/package-lock.json
