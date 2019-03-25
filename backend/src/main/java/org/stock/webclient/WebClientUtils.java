@@ -23,8 +23,11 @@ public class WebClientUtils {
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());// 设置ajax请求
         webClient.getOptions().setTimeout(30000); // milliseconds
         webClient.waitForBackgroundJavaScript(10000); // timeoutMillis
-        return webClient;
+		// webClient.setWebConnection(new InterceptWebConnection(webClient));
+		webClient.setWebConnection(new MyWrapper(webClient));
+		return webClient;
     }
+
 
     public static <T> T process(WebClientCallBack<T> callback) {
         WebClient webClient = null;
