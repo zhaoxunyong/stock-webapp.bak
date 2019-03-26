@@ -22,7 +22,7 @@ public class WebClientUtils {
         webClient.getOptions().setJavaScriptEnabled(false);// 设置js是否生效
         webClient.setAjaxController(new NicelyResynchronizingAjaxController());// 设置ajax请求
         webClient.getOptions().setTimeout(30000); // milliseconds
-        webClient.waitForBackgroundJavaScript(10000); // timeoutMillis
+        webClient.waitForBackgroundJavaScript(30000); // timeoutMillis
 		// webClient.setWebConnection(new InterceptWebConnection(webClient));
 		webClient.setWebConnection(new MyWrapper(webClient));
 		return webClient;
@@ -33,6 +33,7 @@ public class WebClientUtils {
         WebClient webClient = null;
         try {
             webClient = getWebClient();
+
             return callback.process(webClient);
         } catch (Exception e) {
             throw new DatasAccessException(e);

@@ -11,7 +11,7 @@ import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
 
 public class MyWrapper extends WebConnectionWrapper {
 
-	public static final String[] PATTERNS_TO_SKIP = { "showad.ad" };
+	public static final String[] PATTERNS_TO_SKIP = { "showad.ad", "inc_cookie.asp" };
 
 	public MyWrapper(WebClient arg0) throws IllegalArgumentException {
 		super(arg0);
