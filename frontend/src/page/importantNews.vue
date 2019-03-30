@@ -9,7 +9,12 @@
         <b-table striped hover :items="items" :fields="fields">
           <span slot="content_title" slot-scope="data" v-html="data.value" />
         </b-table>
-        <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" :link-gen="linkGen" />
+        <div align="center">
+          <span class="oi oi-arrow-thick-left" style="cursor: pointer;"  @click="toBack"></span>
+          <span style="padding-left: 10px;"></span>
+          <span class="oi oi-arrow-thick-right" style="cursor: pointer;" @click="toFront"></span>
+        </div>
+        <!-- <b-pagination-nav align="center" :number-of-pages="numberOfPages" base-url="#" :link-gen="linkGen" /> -->
       </div>
     </template>
   </main-layout>
@@ -43,7 +48,8 @@ export default {
     Bus.$on('initCurrentPage', (pageNum) => {
       this.currentPage = pageNum
     })
-    this.timeOutsetInterval()
+    // this.timeOutsetInterval()
+    this.autoFetch()
   },
   destroyed:function(){
     if(this.intervalid1 != null) {
@@ -51,7 +57,7 @@ export default {
     }
   },
   methods: {
-    timeOutsetInterval (){
+    /* timeOutsetInterval (){
       if(this.intervalid1 != null) {
         clearInterval(this.intervalid1)
       }
@@ -61,12 +67,46 @@ export default {
         // this.changes = ((Math.random() * 100).toFixed(2))+'%';
         this.autoFetch($this)
       }, 10 * 60 * 1000);
+    } */
+
+    // 上一个股票
+    toFront () {
+      let _router = this.$router
+      // let obj = $(".selected").get(0)
+      // let aObj = $(obj).closest("span").prev().find("a");
+      // let href = aObj.attr('href')
+      // if(href != undefined) {
+      //   this.push("/importantNews/")
+      // }
+      if(!this.items.length || this.items.length == 0) {
+        alert("已经没有下一页了.")
+      } else {
+        let nextPage = parseInt(this.currentPage)+1
+        _router.push("/importantNews/"+nextPage)
+      }
     },
-    autoFetch($this) {
+
+    // 下一个股票
+    toBack () {
+      let _router = this.$router
+      // let obj = $(".selected").get(0)
+      // let aObj = $(obj).closest("span").next().find("a");
+      // let href = aObj.attr('href')
+      // if(href != undefined) {
+      //   this.push(href)
+      // }
+      let nextPage = parseInt(this.currentPage)-1
+      if(nextPage<1) {
+        alert("已经没有上一页了.")
+      } else {
+        _router.push("/importantNews/"+nextPage)
+      }
+    },
+    autoFetch() {
       Bus.$emit('loading', "正在自動獲取最新的新聞中...", true)
       console.log("News autoFetch importantNews started......")
       let url = "/api/stock/fetchImportantLatestNews"
-      $this.$api.post(url, null, rs => {
+      this.$api.post(url, null, rs => {
         Bus.$emit('success', "自動更新新聞成功!")
         this.getData(1)
         console.log("News autoFetch importantNews end......")

@@ -48,7 +48,7 @@ public class ScheduledTasks {
     
 //    @Scheduled(fixedRate = 999999999)
 //    @Scheduled(fixedRate = 20 * 60 * 1000)
-    @Scheduled(cron="0 */15 8-23 * * ?")
+    @Scheduled(cron="0 */10 8-23 * * ?")
     public void fetchNews() throws Exception {
         if(!IS_FETCH_NEW) {
             try {
@@ -65,15 +65,15 @@ public class ScheduledTasks {
     /**
      * 每天凌晨1点执行
      */
-    /*@Scheduled(cron="0 0 1 * * ?")
+    @Scheduled(cron="0 0 1 * * ?")
     public void fetchAllMyStock() throws Exception {
         fetchService.fetchAllMyStock();
-    }*/
+    }
     
     /**
-     * 每天17点执行
+     * 每周六6点执行
      */
-    @Scheduled(cron="0 0 17 * * ?")
+    @Scheduled(cron="0 0 6 ? * SAT")
     public void fetchAllHistory() throws Exception {
         if(!IS_FETCH_HISTORY) {
             try {

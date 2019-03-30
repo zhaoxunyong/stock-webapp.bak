@@ -275,14 +275,17 @@ public class StockApiImpl implements StockApi {
     @RequestMapping(value = "/getImportantNewsExclude/{curPage}/{pageSize}", method = GET)
     public PageDto<StockImportantNewsDto> getImportantNewsExclude(@PathVariable int curPage, @PathVariable int pageSize) {
         PageDto<StockImportantNewsDto> pageDto = new PageDto<StockImportantNewsDto>(curPage, pageSize);
-        
+        // long s = System.currentTimeMillis();
         List<StockImportantNews> stockImportantNewses = stockService.getImportantNewsExclude(pageDto.getStart(), pageSize);
         List<StockImportantNewsDto> dtoList = stockImportantNewses.stream().map(model -> {
             return modelMapper.map(model, StockImportantNewsDto.class);
         }).collect(Collectors.toList());
-        
+        // System.out.println("1--->"+(System.currentTimeMillis()-s)+"ms");
+        // s = System.currentTimeMillis();
         // 查詢列表記錄總數
-        int total = stockService.getImportantNewsExcludeCount();
+        int total = 0;
+        // int total = stockService.getImportantNewsExcludeCount();
+        // System.out.println("2--->"+(System.currentTimeMillis()-s)+"ms");
         
         // 設置分頁信息
         pageDto.setRows(dtoList);
@@ -301,7 +304,8 @@ public class StockApiImpl implements StockApi {
         }).collect(Collectors.toList());
         
         // 查詢列表記錄總數
-        int total = stockService.getImportantNewsIncludeCount();
+        int total = 0;
+        // int total = stockService.getImportantNewsIncludeCount();
         
         // 設置分頁信息
         pageDto.setRows(dtoList);
