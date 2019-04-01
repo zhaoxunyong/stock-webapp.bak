@@ -397,24 +397,24 @@ public class FetchServiceImpl implements FetchService {
     }
     
    private HtmlPage processGuceOathCom(HtmlPage page) {
-       List<HtmlForm> forms = page.getForms();
-       if (forms != null && !forms.isEmpty()) {
-           for (HtmlForm form : forms) {
-               HtmlElement ele = null;
-               try {
-                   ele = form.getOneHtmlElementByAttribute("input", "name", "agree");
-               } catch (Exception e) {
-//                   e.printStackTrace();
-               }
-               if (ele != null) {
-                   try {
-                    page = ele.click();
-                } catch (IOException e) {
-//                    e.printStackTrace();
-                }
-               }
-           }
-       }
+    //    List<HtmlForm> forms = page.getForms();
+//        if (forms != null && !forms.isEmpty()) {
+//            for (HtmlForm form : forms) {
+//                HtmlElement ele = null;
+//                try {
+//                    ele = form.getOneHtmlElementByAttribute("input", "name", "agree");
+//                } catch (Exception e) {
+// //                   e.printStackTrace();
+//                }
+//                if (ele != null) {
+//                    try {
+//                     page = ele.click();
+//                 } catch (IOException e) {
+// //                    e.printStackTrace();
+//                 }
+//                }
+//            }
+//        }
        return page;
    }
 

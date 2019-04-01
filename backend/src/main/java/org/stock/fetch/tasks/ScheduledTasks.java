@@ -63,17 +63,17 @@ public class ScheduledTasks {
     }
     
     /**
-     * 每天凌晨1点执行
+     * 每周六6点执行
      */
-    @Scheduled(cron="0 0 1 * * ?")
+    @Scheduled(cron="0 0 6 ? * SAT")
     public void fetchAllMyStock() throws Exception {
         fetchService.fetchAllMyStock();
     }
     
     /**
-     * 每周六6点执行
+     * 每天17点执行
      */
-    @Scheduled(cron="0 0 6 ? * SAT")
+    @Scheduled(cron="0 0 17 * * ?")
     public void fetchAllHistory() throws Exception {
         if(!IS_FETCH_HISTORY) {
             try {
