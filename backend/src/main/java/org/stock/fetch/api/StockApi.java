@@ -240,7 +240,6 @@ public interface StockApi {
     @ApiOperation(value="refetchAllHistory", notes="refetchAllHistory")
     public String refetchAllHistory();
     
-    // test
     @ApiOperation(value="fetchHistory", notes="fetchHistory")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "no", value = "no", required = true, dataType = "string", paramType = "query")

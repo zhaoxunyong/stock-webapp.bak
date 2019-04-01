@@ -661,7 +661,6 @@ public class StockApiImpl implements StockApi {
         return "ok";
     }
     
-    // test
     @Override
     @PostMapping(value = "/fetchHistory")
     public String fetchHistory(String no) {

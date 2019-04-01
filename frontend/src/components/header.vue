@@ -64,8 +64,16 @@ export default {
     },
     selectedProcess (result, refs) {
       refs.clear()
-      this.push('/content/' + result.value+'/1')
-      Bus.$emit('selectedProcess')
+      let displays = result.display.split(" ")
+      let no = displays[0].trim();
+      console.info("no===>", no);
+      Bus.$emit('loading', "正在检查是否有新的历史记录...", true)
+      this.$api.post('/api/stock/fetchHistory?no='+no, null, r => {
+        // Bus.$emit('success', "自動更新新聞成功!")
+        this.push('/content/' + result.value+'/1')
+        Bus.$emit('selectedProcess')
+
+      })
       /*$(".form-control input[type='hidden']").each(function(index, data){
         let inputValue = $(data).val()
         // alert("value->"+result.value+"/inputValue->"+inputValue)
