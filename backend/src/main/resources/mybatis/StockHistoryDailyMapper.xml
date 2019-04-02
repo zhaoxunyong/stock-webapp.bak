@@ -57,6 +57,7 @@
     from stock_history_daily
     where stock_id = #{stockId,jdbcType=BIGINT}
     and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
+    order by date asc
   </select>
   
   <select id="selectLastStockHistoryDaily" resultMap="BaseResultMap" >
