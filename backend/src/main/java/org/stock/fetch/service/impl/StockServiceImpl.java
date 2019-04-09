@@ -420,12 +420,13 @@ public class StockServiceImpl implements StockService {
             收盤價=當日交易明細的當時的最後一筆成交價，
             最低價=當日交易明細的最低成交價，
             最高價=當日交易明細的最高成交價，
-            成交量=當日交易明細的單量加總=當日交易明細的最後一筆的總量*/
-            BigDecimal opening = stockHistoryDailys.get(0).getBuy();
-            BigDecimal closing = stockHistoryDailys.get(stockHistoryDailys.size()-1).getSell();
-            BigDecimal lowest = stockHistoryDailys.stream().map(StockHistoryDaily::getBuy).reduce(BigDecimal::min).get();
-            BigDecimal highest = stockHistoryDailys.stream().map(StockHistoryDaily::getSell).reduce(BigDecimal::max).get();
-            BigDecimal vol = stockHistoryDailys.stream().map(StockHistoryDaily::getPratyaksam).reduce(new BigDecimal(0), (a, b) -> a.add(b));
+            成交量=當日交易明細的总量加總=當日交易明細的最後一筆的總量*/
+            BigDecimal opening = stockHistoryDailys.get(0).getVol();
+            BigDecimal closing = stockHistoryDailys.get(stockHistoryDailys.size()-1).getVol();
+            BigDecimal lowest = stockHistoryDailys.stream().map(StockHistoryDaily::getVol).reduce(BigDecimal::min).get();
+            BigDecimal highest = stockHistoryDailys.stream().map(StockHistoryDaily::getVol).reduce(BigDecimal::max).get();
+            // BigDecimal vol = stockHistoryDailys.stream().map(StockHistoryDaily::getTotalAmount).reduce(new BigDecimal(0), (a, b) -> a.add(b));
+            BigDecimal vol = stockHistoryDailys.get(stockHistoryDailys.size()-1).getTotalAmount();
             StockHistory currentStockHistory = new StockHistory();
             currentStockHistory.setId(IdUtils.genLongId());
             currentStockHistory.setStockId(stockId);
