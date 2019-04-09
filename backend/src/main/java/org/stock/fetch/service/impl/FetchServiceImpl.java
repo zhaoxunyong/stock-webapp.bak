@@ -986,7 +986,8 @@ public class FetchServiceImpl implements FetchService {
                     if(tdNodes != null && !tdNodes.isEmpty()) {
                         // 時間	買價	賣價	成交價	漲跌	單量	總量
                         String dateStr = tdNodes.get(0).asText();
-                        String datetimeStr = DatesUtils.YYMMDD2.toString()+" "+dateStr;
+                        // 把01替换为13点
+                        String datetimeStr = DatesUtils.YYMMDD2.toString()+" "+dateStr.replaceAll("01", "13").replaceAll("02", "14");
                         Date date = DatesUtils.YYMMDDHHMMSS2.toDate(datetimeStr);
 						boolean isExisted = stockHistoryDaily4Inserts.stream().map(StockHistoryDaily::getDate)
 								.anyMatch(p -> date.getTime() == p.getTime());
