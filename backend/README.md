@@ -9,6 +9,8 @@ mysql:5.7.24 \
 sudo apt-cache policy mysql-server
 sudo apt-get install mysql-server=5.7.24-0ubuntu0.18.04.1
 
+wget http://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
+rpm -ivh mysql57-community-release-el7-9.noarch.rpm
 yum repolist all
 yum --showduplicates list mysql-community-server
 #yum install mysql-community-server-5.7.18-1.el7
@@ -29,7 +31,8 @@ lower_case_table_names=1
 sql_mode ='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'
 
 启动服务：
-sudo systemctl restart mysql
+sudo systemctl enable mysqld
+sudo systemctl restart mysqld
 
 windows安装：
 https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.24-winx64.zip
@@ -77,7 +80,7 @@ grant all privileges on *.* to root@'localhost' identified by 'Aa654321';
 CREATE DATABASE `wenchun` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; 
 FLUSH PRIVILEGES; 
 
-echo "0 */2 * * * /works/app/stock-webapp/sql_backup.sh" > /var/spool/cron/root  
+echo "0 4 * * * /works/app/stock-webapp/sql_backup.sh" > /var/spool/cron/root  
 
 #cp -a stock.service /usr/lib/systemd/system/
 
@@ -94,4 +97,5 @@ docker run -d -p 6379:6379 --restart=always --name redis redis
 http://localhost:8080/fetch/index
 http://localhost:8080/fetch/index2
 
-http://120.79.159.6:8082
+#http://120.79.159.6:8082
+http://47.75.13.140:8082

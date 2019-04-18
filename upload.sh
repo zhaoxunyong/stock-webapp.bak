@@ -1,2 +1,2 @@
 #!/bin/sh
-scp backend/target/stock-webapp-1.1.0-SNAPSHOT.jar root@120.79.159.6:/works/app/stock-webapp/
+scp backend/target/stock-webapp-1.1.0-SNAPSHOT.jar root@47.75.13.140:/works/app/stock-webapp/
