@@ -18,6 +18,11 @@ yum install mysql-community-server-5.7.24-1.el7
 
 #choco install mysql --version 5.7.18
 
+mac:
+brew install mysql@5.7
+https://cdn.mysql.com//Downloads/MySQL-5.7/mysql-5.7.25-macos10.14-x86_64.dmg
+set password = password('Aa654321');
+
 sudo mkdir -p /var/lib/mysql
 sudo chown -R mysql.mysql /var/lib/mysql
 sudo mysqld --initialize-insecure --user=mysql
