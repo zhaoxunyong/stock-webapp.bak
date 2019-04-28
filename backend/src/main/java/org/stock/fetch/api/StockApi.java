@@ -5,12 +5,13 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.stock.fetch.api.dto.ChangeStockMySelectedDto;
-import org.stock.fetch.api.dto.ChangeStockMySelectedTypeDto;
 import org.stock.fetch.api.dto.ChangeStockMySelectedTypeParams;
 import org.stock.fetch.api.dto.PageDto;
 import org.stock.fetch.api.dto.StockDailyTransactionsDto;
 import org.stock.fetch.api.dto.StockDataDto;
+import org.stock.fetch.api.dto.StockHistoryDto;
 import org.stock.fetch.api.dto.StockImportantNewsDto;
+import org.stock.fetch.api.dto.StockLineSettingsDto;
 import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.api.dto.StockMySelectedTypeDto;
 import org.stock.fetch.api.dto.StockMyStoreDto;
@@ -36,28 +37,52 @@ public interface StockApi {
         @ApiImplicitParam(name = "type", value = "type", required = true, dataType = "string", paramType = "path"),
       })
 	public List<StockMyDataDto> getStockMyDatasByType(String type);
+    
+//    @ApiOperation(value="getStockMyDatasByTypeReverse", notes="getStockMyDatasByTypeReversal")
+//    @ApiImplicitParams({
+//        @ApiImplicitParam(name = "type", value = "type", required = true, dataType = "string", paramType = "path"),
+//      })
+//    public List<StockMyDataDto> getStockMyDatasByTypeReverse(String type);
 	
 	@ApiOperation(value="getStockData", notes="getStockData")
 	@ApiImplicitParams({
         @ApiImplicitParam(name = "id", value = "id", required = true, dataType = "string", paramType = "path"),
       })
 	public StockDataDto getStockData(String id);
-	
-	@ApiOperation(value="getNewsExcludeBystockId", notes="getNewsExcludeBystockId")
-	@ApiImplicitParams({
-		@ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "path"),
-		@ApiImplicitParam(name = "curPage", value = "curPage", required = true, dataType = "int", paramType = "path"),
-		@ApiImplicitParam(name = "pageSize", value = "pageSize", required = true, dataType = "int", paramType = "path"),
-	})
-	public PageDto<StockNewsDto> getNewsExcludeBystockId(String stockId, int curPage, int pageSize);
     
-    @ApiOperation(value="getNewsIncludeBystockId", notes="getNewsIncludeBystockId")
+    @ApiOperation(value="getNewsExcludeBystockId4All", notes="getNewsExcludeBystockId4All")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "path"),
         @ApiImplicitParam(name = "curPage", value = "curPage", required = true, dataType = "int", paramType = "path"),
         @ApiImplicitParam(name = "pageSize", value = "pageSize", required = true, dataType = "int", paramType = "path"),
     })
-    public PageDto<StockNewsDto> getNewsIncludeBystockId(String stockId, int curPage, int pageSize);
+    public PageDto<StockNewsDto> getNewsExcludeBystockId4All(String stockId, int curPage, int pageSize);
+    
+    @ApiOperation(value="getNewsIncludeBystockId4All", notes="getNewsIncludeBystockId4All")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "path"),
+        @ApiImplicitParam(name = "curPage", value = "curPage", required = true, dataType = "int", paramType = "path"),
+        @ApiImplicitParam(name = "pageSize", value = "pageSize", required = true, dataType = "int", paramType = "path"),
+    })
+    public PageDto<StockNewsDto> getNewsIncludeBystockId4All(String stockId, int curPage, int pageSize);
+	
+	@ApiOperation(value="getNewsExcludeBystockId", notes="getNewsExcludeBystockId")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "path"),
+		@ApiImplicitParam(name = "selectedType", value = "selectedType", required = true, dataType = "string", paramType = "path"),
+		@ApiImplicitParam(name = "curPage", value = "curPage", required = true, dataType = "int", paramType = "path"),
+		@ApiImplicitParam(name = "pageSize", value = "pageSize", required = true, dataType = "int", paramType = "path"),
+	})
+	public PageDto<StockNewsDto> getNewsExcludeBystockId(String stockId, String selectedType, int curPage, int pageSize);
+    
+    @ApiOperation(value="getNewsIncludeBystockId", notes="getNewsIncludeBystockId")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "path"),
+        @ApiImplicitParam(name = "selectedType", value = "selectedType", required = true, dataType = "string", paramType = "path"),
+        @ApiImplicitParam(name = "curPage", value = "curPage", required = true, dataType = "int", paramType = "path"),
+        @ApiImplicitParam(name = "pageSize", value = "pageSize", required = true, dataType = "int", paramType = "path"),
+    })
+    public PageDto<StockNewsDto> getNewsIncludeBystockId(String stockId, String selectedType, int curPage, int pageSize);
 	
 	@ApiOperation(value="getImportantNewsExclude", notes="getImportantNewsExclude")
 	@ApiImplicitParams({
@@ -179,4 +204,70 @@ public interface StockApi {
         @ApiImplicitParam(name = "fetchPage", value = "fetchPage", required = true, dataType = "string", paramType = "query")
     })
     public void fetchImportantNews(int fetchPage);
+    
+    @ApiOperation(value="selectHistory", notes="selectHistory")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "startDate", value = "startDate", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "endDate", value = "endDate", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "type", value = "type", required = true, dataType = "integer", paramType = "query")
+    })
+    public List<StockHistoryDto> selectHistory(String stockId, String startDate, String endDate, int type);
+    
+    @ApiOperation(value="selectLastDayHistory", notes="selectLastDayHistory")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+    })
+    public List<StockHistoryDto> selectLastDayHistory(String stockId);
+    
+    @ApiOperation(value="selectLastWeekHistory", notes="selectLastWeekHistory")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+    })
+    public List<StockHistoryDto> selectLastWeekHistory(String stockId);
+    
+    @ApiOperation(value="selectLastMonthHistory", notes="selectLastMonthHistory")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+    })
+    public List<StockHistoryDto> selectLastMonthHistory(String stockId);
+    
+    // test
+    @ApiOperation(value="fetchAllHistory", notes="fetchAllHistory")
+    public String fetchAllHistory();
+    
+    // test
+    @ApiOperation(value="refetchAllHistory", notes="refetchAllHistory")
+    public String refetchAllHistory();
+    
+    @ApiOperation(value="fetchHistory", notes="fetchHistory")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "no", value = "no", required = true, dataType = "string", paramType = "query")
+    })
+    public String fetchHistory(String no);
+    
+    @ApiOperation(value="fetchCurrentHistoryDaily", notes="fetchCurrentHistoryDaily")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query")
+    })
+    public void fetchCurrentHistoryDaily(String stockId);
+
+
+    @ApiOperation(value="getAvailabelStockLineSettings", notes="getAvailabelStockLineSettings")
+    public List<StockLineSettingsDto> getAvailabelStockLineSettings();
+
+
+    @ApiOperation(value="updateStockLineSettingsOrder", notes="updateStockLineSettingsOrder")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "orders", value = "orders,用逗号分隔", required = true, dataType = "string", paramType = "query")
+    })
+    public void updateStockLineSettingsOrder(String orders);
+
+    /*@ApiOperation(value="data", notes="data")
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "stockId", value = "stockId", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "startDate", value = "startDate", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "endDate", value = "endDate", required = true, dataType = "string", paramType = "query")
+    })
+    public String data(String stockId, String startDate, String endDate);*/
 }

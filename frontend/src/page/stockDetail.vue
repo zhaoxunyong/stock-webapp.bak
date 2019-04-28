@@ -1,19 +1,23 @@
 <template>
   <div>
-    <div class="float-left mt-3">
-      <div><h2>{{ company }}({{no}})</h2></div>
-      <div v-if="typeName !='' || electronics != ''">{{typeName}} - {{electronics}}</div>
+    <div class="float-left mt-1 text-center">
+      <div>
+        <h4>{{ company }}</h4>
+        <h6>({{no}})</h6>
+        <h6 v-if="type!=''">{{type}} - {{typeName}}</h6>
+      </div>
+      <!-- <div v-if="typeName !='' || electronics != ''">{{typeName}} - {{electronics}}</div> -->
     </div>
-    <div class="float-left px-3 mt-3">
-      <div><a href="#" v-b-modal.modalPrevent><span class="oi oi-plus"></span></a></div>
-      <div><a href="#" @click.prevent="removeOneStockMySelected"><span class="oi oi-minus"></span></a></div>
+    <div class="float-left pl-2 mt-3">
+      <div class="py-2"><a href="#" v-b-modal.modalPrevent><span class="oi oi-plus"></span></a></div>
+      <div class="py-2"><a href="#" @click.prevent="removeOneStockMySelected"><span class="oi oi-minus"></span></a></div>
     </div>
     <!--<div class="float-left">-->
       <!--<b-btn size="sm" v-b-modal.modalPrevent variant="primary">+</b-btn><br/>-->
       <!--<b-btn size="sm" variant="primary" @click="toBack">-</b-btn>-->
     <!--</div>-->
 
-    <div class="float-left pl-3" style="width: 65%">
+    <div class="float-left pl-2" style="width: 75%">
       <!--<b-nav tabs>-->
         <!--<b-nav-item active>Active</b-nav-item>-->
         <!--<b-nav-item>Link</b-nav-item>-->
@@ -38,14 +42,15 @@
           <!--<br>Disabled tab!-->
         </b-tab>
         <div>
-          <input class="form-control" id="formControlTextarea1" v-model="companyStatus" />
+          <input class="float-left form-control my-3" style="width: 75%" id="formControlTextarea1" v-model="companyStatus" />
+          <b-button class="float-left ml-3 my-3" variant="success" @click="saveCompanyStatus">保存</b-button>
           <!--<textarea class="form-control" id="formControlTextarea1" rows="3" v-model="stockData.companyStatus"></textarea>-->
         </div>
       </b-tabs>
     </div>
-    <div class="float-left" style="height: 125px;padding-top: 40px;padding-left: 10px">
+    <!-- <div class="float-left border" style="height: 125px;padding-top: 40px;padding-left: 10px">
       <b-button variant="success" @click="saveCompanyStatus">保存</b-button>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -57,6 +62,7 @@ export default {
       // stockData: null,
       company: '',
       no: '',
+      type: '',
       typeName: '',
       electronics: '',
       currSelectedType: '',
@@ -122,6 +128,13 @@ export default {
       }
     },
     getData (stockId) {
+      this.company = ''
+      this.no = ''
+      this.typeName = ''
+      this.electronics = ''
+      this.companyStatus = ''
+      this.typeName = ''
+      this.type = ''
       if(stockId != undefined && stockId != '' && stockId != 0) {
         this.$api.get('/api/stock/getStockData/'+stockId, null, stockData => {
           if(stockData != '' && stockData != undefined) {
@@ -131,6 +144,12 @@ export default {
             this.typeName = stockData.typeName
             this.electronics = stockData.electronics
             this.companyStatus = stockData.companyStatus
+            this.typeName = stockData.typeName
+            if(stockData.type == 0) {
+              this.type = '上市'
+            } else if(stockData.type == 1) {
+              this.type = "上櫃"
+            }
           }
         })
       }
@@ -144,3 +163,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.mt-4 {
+  margin-top: 38px !important;
+}
+</style>

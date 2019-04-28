@@ -32,8 +32,9 @@ module.exports = {
      */
 
     // https://webpack.js.org/configuration/devtool/#development
-    devtool: 'cheap-module-eval-source-map',
-
+    // devtool: 'cheap-module-eval-source-map',
+    devtool: 'source-map',
+    
     // If you have problems debugging vue-files in devtools,
     // set this to false - it *may* help
     // https://vue-loader.vuejs.org/en/options.html#cachebusting
@@ -63,7 +64,7 @@ module.exports = {
     // Surge or Netlify already gzip all static assets for you.
     // Before setting to `true`, make sure to:
     // npm install --save-dev compression-webpack-plugin
-    productionGzip: false,
+    productionGzip: true,
     productionGzipExtensions: ['js', 'css'],
 
     // Run the build command with an extra argument to
@@ -71,5 +72,15 @@ module.exports = {
     // `npm run build --report`
     // Set to `true` or `false` to always turn it on or off
     bundleAnalyzerReport: process.env.npm_config_report
+  },
+
+  resolve: {
+    mainFields: ["module", "main"]
+  },
+  externals: {
+    'vue': 'Vue',
+    'vue-router': 'Router',
+    'axios': 'axios',
+    "echarts": "echarts"
   }
 }

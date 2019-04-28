@@ -21,20 +21,37 @@
             新聞設置
           </b-dropdown-item>
           <b-dropdown-item href="#" @click.prevent="go('/editMySelectedType')">
-            自選股
+            自選股設置
           </b-dropdown-item>
           <b-dropdown-item href="#" @click.prevent="go('/stockDailyTransactions')">
             交易資料導入與查詢
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
+
+      <!-- Right aligned nav items -->
+    <b-navbar-nav>
+        <autocomplete
+        ref="autocomplete"
+        :source="getUrl"
+        input-class="form-control empty-form-control"
+        results-property="data"
+        :results-display="formattedDisplay"
+        @selected="selectedProcess">
+      </autocomplete>
+    </b-navbar-nav>
     </b-collapse>
   </b-navbar>
   </div>
 </template>
 
 <script>
+import Bus from '../eventBus'
+import Autocomplete from 'stock-auto-complete'
 export default {
+  components: {
+    Autocomplete
+  },
   data () {
     return {
     }
@@ -42,6 +59,38 @@ export default {
   created () {
   },
   methods: {
+    getUrl (input) {
+      return '/api/stock/search4StockData?query='+input
+    },
+    selectedProcess (result, refs) {
+      refs.clear()
+      let displays = result.display.split(" ")
+      let no = displays[0].trim();
+      console.info("no===>", no);
+      Bus.$emit('loading', "正在检查是否有新的历史记录...", true)
+      this.$api.post('/api/stock/fetchHistory?no='+no, null, r => {
+        // Bus.$emit('success', "自動更新新聞成功!")
+        this.push('/content/' + result.value+'/1')
+        Bus.$emit('selectedProcess')
+
+      })
+      /*$(".form-control input[type='hidden']").each(function(index, data){
+        let inputValue = $(data).val()
+        // alert("value->"+result.value+"/inputValue->"+inputValue)
+        if(inputValue != "" && inputValue == result.value) {
+          refs.clear()
+          // alert(result.display+"已經存在!")
+          Bus.$emit('alerts', result.display+"已經存在!")
+        }
+      })*/
+    },
+    formattedDisplay (result) {
+      return result.no + ' ' + result.company
+    },
+    push(url) {
+      this.$router.push(url)
+      Bus.$emit('initCurrentPage', 1)
+    },
     go (url) {
       // '/content/' + i.stockId+'/1'
       this.$router.push(url)

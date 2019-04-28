@@ -1,9 +1,3 @@
-/*
- * 描述： <描述>
- * 修改人： Evan.fang
- * 修改时间： 2017年8月28日
- * 项目： los-core
- */
 package org.stock.fetch.mapping;
 
 import org.modelmapper.PropertyMap;

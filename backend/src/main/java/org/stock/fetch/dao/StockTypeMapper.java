@@ -10,6 +10,8 @@ import org.stock.fetch.model.StockType;
 public interface StockTypeMapper {
     int deleteByPrimaryKey(Long id);
     
+    int deleteAll();
+    
     int deleteByName(@Param("name") String name, @Param("type") Integer type);
 
     int insert(StockType record);

@@ -81,6 +81,6 @@
 		stock_data b
 	WHERE
 		a.stock_id = b.id
-	ORDER BY b.company ASC
+	ORDER BY a.stock_id ASC
   </select>
 </mapper>

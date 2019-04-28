@@ -7,16 +7,25 @@ server:
 
 #攔截器需排除的路徑
 interceptor: 
-  excludePath: /api/login
+  includePath: /api/.*
+  # 不需要token与url签名校验的路径，多个用逗号分隔，每个路径为正则表达式匹配
+  excludePath: |
+    #登录
+    /api/login, 
+    /api/stock/fetchAllHistory, 
+    /api/stock/fetchHistory,
+    #monitor
+    /myhealth,
+    /ops/.*
   
 spring:
   application:
     name: stock-webapp
     
   datasource: 
-    url: jdbc:mysql://192.168.99.100:3306/wenchun?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
-    username: wenchun
-    password: Aa123456
+    url: jdbc:mysql://127.0.0.1:3306/wenchun?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&useSSL=false
+    username: root
+    password: Aa654321
     driver-class-name: com.mysql.jdbc.Driver
         
   # 这个开发配置为false，避免改了模板还要重启服务器
@@ -39,20 +48,12 @@ mybatis:
 stock:
   upload-temp-folder: /temp
 
-# Log
-logging:
-  level:
-    root: INFO
-  pattern:
-    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%thread]){faint} %clr(%-40.40logger{39}){cyan} Line:%L %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
-  file: /works/log/stock-webapp/stock-webapp.log
-
 ---
 spring:
   profiles: prod
   
   datasource: 
-    url: jdbc:mysql://127.0.0.1:3306/wenchun?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+    url: jdbc:mysql://127.0.0.1:3306/wenchun?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&useSSL=false
     username: root
     password: Aa654321
     driver-class-name: com.mysql.jdbc.Driver

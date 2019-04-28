@@ -15,20 +15,26 @@ package org.stock.fetch.constant;
  * @since [产品/模块版本]
  */
 public enum StockTypeEnum {
-    MARKET(0),
-    COUNTER(1),
-    ELECTRONIC(2),
-    CONCEPT(3),
-    GROUP(4);
+    MARKET(0, "上市"),
+    COUNTER(1, "上櫃"),
+    ELECTRONIC(2, "電子產業"),
+    CONCEPT(3, "概念股"),
+    GROUP(4, "集團股");
     
     int type;
+    String name;
     
-    StockTypeEnum(int type) {
+    StockTypeEnum(int type, String name) {
         this.type = type;
+        this.name= name;
     }
 
     public int getType() {
         return type;
+    }
+    
+    public String getName() {
+        return name;
     }
     
 }

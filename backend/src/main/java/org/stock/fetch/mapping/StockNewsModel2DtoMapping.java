@@ -1,9 +1,3 @@
-/*
- * 描述： 合同Model轉Dto類
- * 修改人： Weng.weng
- * 修改时间： Jun 14, 2017
- * 项目： los-core
- */
 package org.stock.fetch.mapping;
 
 import org.modelmapper.PropertyMap;

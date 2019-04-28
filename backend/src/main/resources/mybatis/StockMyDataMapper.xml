@@ -62,12 +62,12 @@
 		(
 			SELECT
 				a.id,
-				b. NO,
+				b. no,
 				b.company,
 				a.stock_id,
 				a.kinds,
 				a.industry,
-				a. STATUS,
+				a. status,
 				a.create_date,
 				a.update_date
 			FROM
@@ -78,7 +78,7 @@
 			ORDER BY
 				b.company ASC
 		) my_data
-	LEFT JOIN stock_my_selected c ON my_data.stock_id = c.stock_id
+	LEFT JOIN stock_my_selected c ON my_data.stock_id = c.stock_id and my_data.status = 1
 	GROUP BY my_data.stock_id
   </select>
   
@@ -103,8 +103,9 @@
 	WHERE
 		a.stock_id = b.id
 	AND a.stock_id = c.stock_id
+	AND b.status = 1
 	AND c.selected_type = #{type,jdbcType=BIGINT}
 	GROUP BY a.stock_id
-	ORDER BY c.id ASC
+	ORDER BY c.id DESC
   </select>
 </mapper>

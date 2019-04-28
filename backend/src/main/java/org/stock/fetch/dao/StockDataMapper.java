@@ -8,6 +8,8 @@ import org.stock.fetch.model.StockData;
 
 @Mapper
 public interface StockDataMapper {
+    int updateAllStatus(boolean status);
+    
     int deleteByPrimaryKey(Long id);
     
     int deleteByNo(String no);

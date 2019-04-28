@@ -8,12 +8,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,17 +38,22 @@ import org.stock.fetch.api.dto.ChangeStockMySelectedTypeParams;
 import org.stock.fetch.api.dto.PageDto;
 import org.stock.fetch.api.dto.StockDailyTransactionsDto;
 import org.stock.fetch.api.dto.StockDataDto;
+import org.stock.fetch.api.dto.StockHistoryDto;
 import org.stock.fetch.api.dto.StockImportantNewsDto;
+import org.stock.fetch.api.dto.StockLineSettingsDto;
 import org.stock.fetch.api.dto.StockMyDataDto;
 import org.stock.fetch.api.dto.StockMySelectedTypeDto;
 import org.stock.fetch.api.dto.StockMyStoreDto;
 import org.stock.fetch.api.dto.StockNewsDto;
 import org.stock.fetch.api.dto.StockNewsKeyDto;
+import org.stock.fetch.constant.StockHistoryEnum;
 import org.stock.fetch.constant.StockNewsKeyTypeEnum;
 import org.stock.fetch.model.ChangeStockMySelectedType;
 import org.stock.fetch.model.StockDailyTransactions;
 import org.stock.fetch.model.StockData;
+import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockImportantNews;
+import org.stock.fetch.model.StockLineSettings;
 import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockMySelectedType;
 import org.stock.fetch.model.StockMyStore;
@@ -68,6 +75,9 @@ import com.google.common.collect.Lists;
 public class StockApiImpl implements StockApi {
     
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    
+    // 由于js需要处理数据，需要多获取些数据，然后再在js中取48天的数据
+    private final static int PERIOD = 288;
 	
 	@Autowired
 	private ModelMapper modelMapper;
@@ -100,6 +110,34 @@ public class StockApiImpl implements StockApi {
         }).collect(Collectors.toList());
         return dtoList;
 	}
+    
+    /**
+     * 用于左侧股票列表时降序显示，因为在自行股列表中是升序，两个用的是同一个方法
+    
+    @Override
+    @RequestMapping(value = "/getStockMyDatasByTypeReverse/{type}", method = GET)
+    public List<StockMyDataDto> getStockMyDatasByTypeReverse(@PathVariable String type) {
+        List<StockMyData> stockDatas = stockService.getStockMyDatasByType(Long.parseLong(type));
+        Collections.sort(stockDatas, new Comparator<StockMyData>() {
+
+            @Override
+            public int compare(StockMyData o1, StockMyData o2) {
+                if(o2.getId() > o1.getId()) {
+                    return 1;
+                } else  if(o2.getId() < o1.getId()) {
+                    return 1;
+                }
+                return 0;
+            }
+            
+        });
+        List<StockMyDataDto> dtoList = stockDatas.stream().map(model -> {
+            return modelMapper.map(model, StockMyDataDto.class);
+        })
+//        .sorted(Collections.reverseOrder())
+        .collect(Collectors.toList());
+        return dtoList;
+    } */
 
 	@Override
     @RequestMapping(value = "/getStockMyDatasByType/{type}", method = GET)
@@ -137,21 +175,19 @@ public class StockApiImpl implements StockApi {
         pageDto.setTotal(total);
         return pageDto;
 	}*/
-	
-
 
     @Override
-    @RequestMapping(value = "/getNewsExcludeBystockId/{stockId}/{curPage}/{pageSize}", method = GET)
-    public PageDto<StockNewsDto> getNewsExcludeBystockId(@PathVariable String stockId, @PathVariable int curPage, @PathVariable int pageSize) {
+    @RequestMapping(value = "/getNewsExcludeBystockId4All/{stockId}/{curPage}/{pageSize}", method = GET)
+    public PageDto<StockNewsDto> getNewsExcludeBystockId4All(@PathVariable String stockId, @PathVariable int curPage, @PathVariable int pageSize) {
         PageDto<StockNewsDto> pageDto = new PageDto<StockNewsDto>(curPage, pageSize);
         
-        List<StockNews> stockNewses = stockService.getNewsExcludeBystockId(Long.parseLong(stockId), pageDto.getStart(), pageSize);
+        List<StockNews> stockNewses = stockService.getNewsExcludeBystockId4All(Long.parseLong(stockId), pageDto.getStart(), pageSize);
         List<StockNewsDto> dtoList = stockNewses.stream().map(model -> {
             return modelMapper.map(model, StockNewsDto.class);
         }).collect(Collectors.toList());
         
         // 查詢列表記錄總數
-        int total = stockService.getNewsExcludeCountBystockId(Long.parseLong(stockId));
+        int total = stockService.getNewsExcludeCountBystockId4All(Long.parseLong(stockId));
         
         // 設置分頁信息
         pageDto.setRows(dtoList);
@@ -160,17 +196,55 @@ public class StockApiImpl implements StockApi {
     }
 
     @Override
-    @RequestMapping(value = "/getNewsIncludeBystockId/{stockId}/{curPage}/{pageSize}", method = GET)
-    public PageDto<StockNewsDto> getNewsIncludeBystockId(@PathVariable String stockId, @PathVariable int curPage, @PathVariable int pageSize) {
+    @RequestMapping(value = "/getNewsIncludeBystockId4All/{stockId}/{curPage}/{pageSize}", method = GET)
+    public PageDto<StockNewsDto> getNewsIncludeBystockId4All(@PathVariable String stockId, @PathVariable int curPage, @PathVariable int pageSize) {
         PageDto<StockNewsDto> pageDto = new PageDto<StockNewsDto>(curPage, pageSize);
         
-        List<StockNews> stockNewses = stockService.getNewsIncludeBystockId(Long.parseLong(stockId), pageDto.getStart(), pageSize);
+        List<StockNews> stockNewses = stockService.getNewsIncludeBystockId4All(Long.parseLong(stockId), pageDto.getStart(), pageSize);
         List<StockNewsDto> dtoList = stockNewses.stream().map(model -> {
             return modelMapper.map(model, StockNewsDto.class);
         }).collect(Collectors.toList());
         
         // 查詢列表記錄總數
-        int total = stockService.getNewsIncludeCountBystockId(Long.parseLong(stockId));
+        int total = stockService.getNewsIncludeCountBystockId4All(Long.parseLong(stockId));
+        
+        // 設置分頁信息
+        pageDto.setRows(dtoList);
+        pageDto.setTotal(total);
+        return pageDto;
+    }
+	
+    @Override
+    @RequestMapping(value = "/getNewsExcludeBystockId/{stockId}/{selectedType}/{curPage}/{pageSize}", method = GET)
+    public PageDto<StockNewsDto> getNewsExcludeBystockId(@PathVariable String stockId, @PathVariable String selectedType, @PathVariable int curPage, @PathVariable int pageSize) {
+        PageDto<StockNewsDto> pageDto = new PageDto<StockNewsDto>(curPage, pageSize);
+        
+        List<StockNews> stockNewses = stockService.getNewsExcludeBystockId(Long.parseLong(stockId), Long.parseLong(selectedType), pageDto.getStart(), pageSize);
+        List<StockNewsDto> dtoList = stockNewses.stream().map(model -> {
+            return modelMapper.map(model, StockNewsDto.class);
+        }).collect(Collectors.toList());
+        
+        // 查詢列表記錄總數
+        int total = stockService.getNewsExcludeCountBystockId(Long.parseLong(stockId), Long.parseLong(selectedType));
+        
+        // 設置分頁信息
+        pageDto.setRows(dtoList);
+        pageDto.setTotal(total);
+        return pageDto;
+    }
+
+    @Override
+    @RequestMapping(value = "/getNewsIncludeBystockId/{stockId}/{selectedType}/{curPage}/{pageSize}", method = GET)
+    public PageDto<StockNewsDto> getNewsIncludeBystockId(@PathVariable String stockId, @PathVariable String selectedType, @PathVariable int curPage, @PathVariable int pageSize) {
+        PageDto<StockNewsDto> pageDto = new PageDto<StockNewsDto>(curPage, pageSize);
+        
+        List<StockNews> stockNewses = stockService.getNewsIncludeBystockId(Long.parseLong(stockId), Long.parseLong(selectedType), pageDto.getStart(), pageSize);
+        List<StockNewsDto> dtoList = stockNewses.stream().map(model -> {
+            return modelMapper.map(model, StockNewsDto.class);
+        }).collect(Collectors.toList());
+        
+        // 查詢列表記錄總數
+        int total = stockService.getNewsIncludeCountBystockId(Long.parseLong(stockId), Long.parseLong(selectedType));
         
         // 設置分頁信息
         pageDto.setRows(dtoList);
@@ -201,14 +275,17 @@ public class StockApiImpl implements StockApi {
     @RequestMapping(value = "/getImportantNewsExclude/{curPage}/{pageSize}", method = GET)
     public PageDto<StockImportantNewsDto> getImportantNewsExclude(@PathVariable int curPage, @PathVariable int pageSize) {
         PageDto<StockImportantNewsDto> pageDto = new PageDto<StockImportantNewsDto>(curPage, pageSize);
-        
+        // long s = System.currentTimeMillis();
         List<StockImportantNews> stockImportantNewses = stockService.getImportantNewsExclude(pageDto.getStart(), pageSize);
         List<StockImportantNewsDto> dtoList = stockImportantNewses.stream().map(model -> {
             return modelMapper.map(model, StockImportantNewsDto.class);
         }).collect(Collectors.toList());
-        
+        // System.out.println("1--->"+(System.currentTimeMillis()-s)+"ms");
+        // s = System.currentTimeMillis();
         // 查詢列表記錄總數
-        int total = stockService.getImportantNewsExcludeCount();
+        int total = 0;
+        // int total = stockService.getImportantNewsExcludeCount();
+        // System.out.println("2--->"+(System.currentTimeMillis()-s)+"ms");
         
         // 設置分頁信息
         pageDto.setRows(dtoList);
@@ -227,7 +304,8 @@ public class StockApiImpl implements StockApi {
         }).collect(Collectors.toList());
         
         // 查詢列表記錄總數
-        int total = stockService.getImportantNewsIncludeCount();
+        int total = 0;
+        // int total = stockService.getImportantNewsIncludeCount();
         
         // 設置分頁信息
         pageDto.setRows(dtoList);
@@ -450,14 +528,14 @@ public class StockApiImpl implements StockApi {
     @Override
     @RequestMapping(value = "/fetchLatestNews", method = POST)
     public void fetchLatestNews(String stockId) {
-        if(!ScheduledTasks.IS_FETCH_ING) {
-            ScheduledTasks.IS_FETCH_ING = true;
+        if(!ScheduledTasks.IS_FETCH_NEW) {
+            ScheduledTasks.IS_FETCH_NEW = true;
             try {
                 fetchService.fetchLatestNews(stockService.getStockData(Long.parseLong(stockId)));
             } catch (Exception e) {
                 throw new BusinessException(e);
             } finally {
-                ScheduledTasks.IS_FETCH_ING = false;
+                ScheduledTasks.IS_FETCH_NEW = false;
             }
         } else {
             logger.warn("fetchLatestNews: 後臺已經在抓取數據中...");
@@ -467,14 +545,14 @@ public class StockApiImpl implements StockApi {
     @Override
     @RequestMapping(value = "/fetchNews", method = POST)
     public void fetchNews(String stockId, int fetchPage) {
-        if(!ScheduledTasks.IS_FETCH_ING) {
-            ScheduledTasks.IS_FETCH_ING = true;
+        if(!ScheduledTasks.IS_FETCH_NEW) {
+            ScheduledTasks.IS_FETCH_NEW = true;
             try {
                 fetchService.fetchNews(stockService.getStockData(Long.parseLong(stockId)), fetchPage);
             } catch (Exception e) {
                 throw new BusinessException(e);
             } finally {
-                ScheduledTasks.IS_FETCH_ING = false;
+                ScheduledTasks.IS_FETCH_NEW = false;
             }
         } else {
             logger.warn("fetchNews: 後臺已經在抓取數據中...");
@@ -484,14 +562,14 @@ public class StockApiImpl implements StockApi {
     @Override
     @RequestMapping(value = "/fetchImportantLatestNews", method = POST)
     public void fetchImportantLatestNews() {
-        if(!ScheduledTasks.IS_FETCH_ING) {
-            ScheduledTasks.IS_FETCH_ING = true;
+        if(!ScheduledTasks.IS_FETCH_IMPORTANT_NEW) {
+            ScheduledTasks.IS_FETCH_IMPORTANT_NEW = true;
             try {
                 fetchService.fetchImportantLatestNews();
             } catch (Exception e) {
                 throw new BusinessException(e);
             } finally {
-                ScheduledTasks.IS_FETCH_ING = false;
+                ScheduledTasks.IS_FETCH_IMPORTANT_NEW = false;
             }
         } else {
             logger.warn("fetchImportantLatestNews: 後臺已經在抓取數據中...");
@@ -501,18 +579,149 @@ public class StockApiImpl implements StockApi {
     @Override
     @RequestMapping(value = "/fetchImportantNews", method = POST)
     public void fetchImportantNews(int fetchPage) {
-        if(!ScheduledTasks.IS_FETCH_ING) {
-            ScheduledTasks.IS_FETCH_ING = true;
+        if(!ScheduledTasks.IS_FETCH_IMPORTANT_NEW) {
+            ScheduledTasks.IS_FETCH_IMPORTANT_NEW = true;
             try {
                 fetchService.fetchImportantNews(fetchPage);
             } catch (Exception e) {
                 throw new BusinessException(e);
             } finally {
-                ScheduledTasks.IS_FETCH_ING = false;
+                ScheduledTasks.IS_FETCH_IMPORTANT_NEW = false;
             }
         } else {
             logger.warn("fetchImportantNews: 後臺已經在抓取數據中...");
         }
     }
+
+    @Override
+    @GetMapping(value = "/selectHistory")
+    public List<StockHistoryDto> selectHistory(String stockId, String startDate, String endDate, int type) {
+        List<StockHistory> stockHistorys = stockService.selectHistory(Long.parseLong(stockId), DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate), type);
+        
+        List<StockHistoryDto> dtoList = stockHistorys.stream().map(model -> {
+            return modelMapper.map(model, StockHistoryDto.class);
+        }).collect(Collectors.toList());
+        return Lists.reverse(dtoList);
+    }
+    
+
+    @Override
+    @GetMapping(value = "/selectLastDayHistory")
+    public List<StockHistoryDto> selectLastDayHistory(String stockId) {
+        Date endDate = new Date();
+        Date startDate = DateUtils.addDays(endDate, -PERIOD);
+        return this.selectHistory(stockId, DatesUtils.YYMMDD2.toString(startDate), DatesUtils.YYMMDD2.toString(endDate), StockHistoryEnum.DAY.getType());
+    }
+
+    @Override
+    @GetMapping(value = "/selectLastWeekHistory")
+    public List<StockHistoryDto> selectLastWeekHistory(String stockId) {
+        Date endDate = new Date();
+        Date startDate = DateUtils.addWeeks(endDate, -PERIOD);
+        return this.selectHistory(stockId, DatesUtils.YYMMDD2.toString(startDate), DatesUtils.YYMMDD2.toString(endDate), StockHistoryEnum.WEEK.getType());
+    }
+
+    @Override
+    @GetMapping(value = "/selectLastMonthHistory")
+    public List<StockHistoryDto> selectLastMonthHistory(String stockId) {
+        Date endDate = new Date();
+        Date startDate = DateUtils.addMonths(endDate, -PERIOD);
+        return this.selectHistory(stockId, DatesUtils.YYMMDD2.toString(startDate), DatesUtils.YYMMDD2.toString(endDate), StockHistoryEnum.MONTH.getType());
+    }
+
+    // test
+    @Override
+    @PostMapping(value = "/fetchAllHistory")
+    public String fetchAllHistory() {
+        new Thread() {
+            public void run() {
+                try {
+                    fetchService.fetchAllHistory();
+                } catch (Exception e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }.start();
+        return "ok";
+    }
+
+    // test
+    @Override
+    @PostMapping(value = "/refetchAllHistory")
+    public String refetchAllHistory() {
+        new Thread() {
+            public void run() {
+                try {
+                    fetchService.refetchAllHistory();
+                } catch (Exception e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }.start();
+        return "ok";
+    }
+    
+    @Override
+    @PostMapping(value = "/fetchHistory")
+    public String fetchHistory(String no) {
+        try {
+            fetchService.fetchHistory(no);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return "ok";
+    }
+
+    @Override
+    @PostMapping(value = "/fetchCurrentHistoryDaily")
+    public void fetchCurrentHistoryDaily(String stockId) {
+        if(!ScheduledTasks.IS_FETCH_HISTORY_DAILY) {
+            try {
+                ScheduledTasks.IS_FETCH_HISTORY_DAILY = true;
+                fetchService.fetchCurrentHistoryDaily(stockService.getStockData(Long.parseLong(stockId)).getNo());
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            } finally {
+                ScheduledTasks.IS_FETCH_HISTORY_DAILY = false;
+            }
+        }
+    }
+
+    @Override
+    @GetMapping("/getAvailabelStockLineSettings")
+    public List<StockLineSettingsDto> getAvailabelStockLineSettings() {
+        List<StockLineSettings> stockLineSettingses = stockService.getAvailabelStockLineSettings();
+        return stockLineSettingses.stream().map(model -> {
+            return modelMapper.map(model, StockLineSettingsDto.class);
+        }).collect(Collectors.toList());
+	}
+
+    @Override
+    @PostMapping("/updateStockLineSettingsOrder")
+    public void updateStockLineSettingsOrder(String orders) {
+        List<Integer> sortOrders = Arrays.stream(orders.split(",")).map(p->Integer.parseInt(p)).collect(Collectors.toList());
+        stockService.updateBySortOrder(sortOrders);
+    }
+
+    /*@Override
+    @GetMapping(value = "/data")
+    public String data(String stockId, String startDate, String endDate) {
+        List<StockHistoryDto> dtoList = selectHistory(stockId, startDate, endDate);
+        StringBuilder str = new StringBuilder();
+        str.append("Date,Open,High,Low,Close,Volume").append("\n");
+//        Date,Open,High,Low,Close,Volume
+//        9-Jun-14,62.40,63.34,61.79,62.88,37617413
+        if(dtoList != null && !dtoList.isEmpty()) {
+            for(StockHistoryDto history : dtoList) {
+                str.append(history.getDate()).append(",")
+                   .append(history.getOpening()).append(",")
+                   .append(history.getHighest()).append(",")
+                   .append(history.getLowest()).append(",")
+                   .append(history.getClosing()).append(",")
+                   .append(history.getVol().replace(",", "")).append("\n");
+            }
+        }
+        return str.toString();
+    }*/
 
 }

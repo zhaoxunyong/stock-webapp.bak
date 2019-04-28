@@ -35,10 +35,10 @@
 //        return view;
 //    }*/
 //    
-//    /*@RequestMapping("/data")
+//    @RequestMapping("/data")
 //    @ResponseBody
 //    public String data(String startDate, String endDate) {
-//        List<StockHistory> historys = fetchService.select(DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
+//        List<StockHistory> historys = fetchService.se(DatesUtils.YYMMDD2.toDate(startDate), DatesUtils.YYMMDD2.toDate(endDate));
 //        StringBuilder str = new StringBuilder();
 //        str.append("Date,Open,High,Low,Close,Volume").append("\n");
 ////        Date,Open,High,Low,Close,Volume
@@ -54,5 +54,5 @@
 //            }
 //        }
 //        return str.toString();
-//    }*/
+//    }
 //}

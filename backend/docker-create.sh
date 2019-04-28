@@ -1,4 +1,6 @@
 #!/bin/sh
+export PATH="/usr/local/bin:/usr/bin:$JAVA_HOME/bin:$MVN_HOME/bin:$PATH"
+
 registry=192.168.100.87:5000
 version=1.0.0-SNAPSHOT
 appname=stock-webapp

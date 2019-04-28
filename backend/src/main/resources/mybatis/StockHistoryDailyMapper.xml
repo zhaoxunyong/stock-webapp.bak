@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.stock.fetch.dao.StockHistoryDailyMapper" >
+  <resultMap id="BaseResultMap" type="org.stock.fetch.model.StockHistoryDaily" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="stock_id" property="stockId" jdbcType="BIGINT" />
+    <result column="date" property="date" jdbcType="TIMESTAMP" />
+    <result column="buy" property="buy" jdbcType="DECIMAL" />
+    <result column="sell" property="sell" jdbcType="DECIMAL" />
+    <result column="vol" property="vol" jdbcType="DECIMAL" />
+    <result column="ups_downs" property="upsDowns" jdbcType="DECIMAL" />
+    <result column="total_amount" property="totalAmount" jdbcType="DECIMAL" />
+    <result column="pratyaksam" property="pratyaksam" jdbcType="DECIMAL" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from stock_history_daily
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByAgoOfDayDate" >
+  <![CDATA[
+    DELETE from stock_history_daily where date < #{agoOfDayDate,jdbcType=TIMESTAMP}
+  ]]>
+  </delete>
+  <insert id="insert" parameterType="org.stock.fetch.model.StockHistoryDaily" useGeneratedKeys="true" keyProperty="id" >
+    insert into stock_history_daily (id, stock_id, date, buy, 
+      sell, vol, ups_downs, total_amount, 
+      pratyaksam, create_date, update_date
+      )
+    values (#{id,jdbcType=BIGINT}, #{stockId,jdbcType=BIGINT}, #{date,jdbcType=TIMESTAMP}, #{buy,jdbcType=DECIMAL}, 
+      #{sell,jdbcType=DECIMAL}, #{vol,jdbcType=DECIMAL}, #{upsDowns,jdbcType=DECIMAL}, #{totalAmount,jdbcType=DECIMAL}, 
+      #{pratyaksam,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.stock.fetch.model.StockHistoryDaily" >
+    update stock_history_daily
+    set stock_id = #{stockId,jdbcType=BIGINT},
+      date = #{date,jdbcType=TIMESTAMP},
+      buy = #{buy,jdbcType=DECIMAL},
+      sell = #{sell,jdbcType=DECIMAL},
+      vol = #{vol,jdbcType=DECIMAL},
+      ups_downs = #{upsDowns,jdbcType=DECIMAL},
+      total_amount = #{totalAmount,jdbcType=DECIMAL},
+      pratyaksam = #{pratyaksam,jdbcType=DECIMAL},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, stock_id, date, buy, sell, vol, ups_downs, total_amount, pratyaksam, create_date, update_date
+    from stock_history_daily
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectStockHistoryDailys" resultMap="BaseResultMap" >
+    select id, stock_id, date, buy, sell, vol, ups_downs, total_amount, pratyaksam, create_date, update_date
+    from stock_history_daily
+    where stock_id = #{stockId,jdbcType=BIGINT}
+    and date BETWEEN #{startDate,jdbcType=TIMESTAMP} AND #{endDate,jdbcType=TIMESTAMP}
+    order by date asc
+  </select>
+  
+  <select id="selectLastStockHistoryDaily" resultMap="BaseResultMap" >
+    SELECT
+		a.*
+	FROM
+		stock_history_daily a, stock_data b
+	WHERE
+		a.stock_id = b.id and b.no = #{no,jdbcType=VARCHAR} order by date desc limit 1
+  </select>
+</mapper>

@@ -1,13 +1,10 @@
 package org.stock.fetch.service;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import org.stock.fetch.model.StockData;
-import org.stock.fetch.model.StockHistory;
 import org.stock.fetch.model.StockImportantNews;
-import org.stock.fetch.model.StockMyData;
 import org.stock.fetch.model.StockNews;
 import org.stock.fetch.model.StockType;
 
@@ -18,13 +15,14 @@ public interface FetchService {
     /**
      * 獲取所有股票的信息
      */
-    public void fetchAll() throws Exception;
+    public void fetchAllMyStock() throws Exception;
+    
+    public void fetchStocks(StockType stockType) throws Exception;
     
     /**
      * 細產類別
      */
-    @Deprecated
-    public void fetchDetail() throws Exception;
+//    public void fetchDetail() throws Exception;
     
     /**
      * 獲取某個股票的新聞
@@ -43,7 +41,15 @@ public interface FetchService {
     /**
      * 獲取某只股票的歷史交易數據
      */
-    public void fetchHistory(String no, String startDate, String endDate) throws Exception;
+//    public void fetchAllHistory(String startDate, String endDate) throws Exception;
+    public void fetchAllHistory() throws Exception;
+    public void refetchAllHistory() throws Exception;
+    public void fetchHistory(String no) throws Exception;
+    
+    public void fetchAllHistoryDaily() throws Exception;
+    public void refetchAllHistoryDaily() throws Exception;
+    public void fetchCurrentHistoryDaily(String no) throws Exception;
+//    public void fetchHistory(String no, LocalDate startDate, LocalDate endDate) throws Exception;
     
 //    List<StockHistory> select(Date startDate, Date endDate);
     
